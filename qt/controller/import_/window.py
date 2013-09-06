@@ -135,8 +135,9 @@ class ImportWindow(QWidget):
     def show(self):
         # For non-modal dialogs, show() is not enough to bring the window at the forefront, we have
         # to call raise() as well
-        QWidget.show(self)
-        self.raise_()
+        QWidget.showNormal(self)
+        QWidget.raise_(self)
+        QWidget.activateWindow(self)
     
     def update_selected_pane(self):
         index = self.model.selected_pane_index

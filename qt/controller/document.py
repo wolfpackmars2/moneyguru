@@ -58,6 +58,15 @@ class Document(QObject):
         title = tr("Select a document to import")
         filters = tr("Supported files (*.moneyguru *.ofx *.qfx *.qif *.csv *.txt)")
         docpath = str(QFileDialog.getOpenFileName(self.app.mainWindow, title, '', filters))
+        # There's a strange glitch under GNOME where, right after the dialog is gone, the main
+        # window isn't the active window, but it will become active if we give it enough time. If we
+        # start showing the import window before that happens, we'll end up with an import window
+        # under the main window, which is bad. Therefore, we process events until this happens. We
+        # do this in a big forloop instead of a while to avoid a possible infinite loop.
+        for i in range(10000):
+            if self.app.mainWindow.isActiveWindow():
+                break
+            QApplication.processEvents()
         if docpath:
             try:
                 self.model.parse_file_for_import(docpath)
