@@ -129,6 +129,23 @@ def test_set_split_account(app):
     app.show_pview()
     eq_(app.istatement.income[0].name, 'bar') # The bar account was autocreated
 
+@with_app(app_one_entry)
+def test_divide_split_amount_rounding(app):
+    # When setting an amount with an expression that results in amounts that are over the currency's
+    # exponent, make sure that we don't end up with rounding errors.
+    # First, let's change the entry's main amount so that we have two 12.37 splits.
+    app.etable[0].increase = '12.37'
+    app.etable.save_edits()
+    app.tpanel.load()
+    dindex, cindex = first_debit_credit_indexes(app)
+    app.stable.select([dindex])
+    app.stable[dindex].debit = '12.37/2'
+    app.stable.save_edits()
+    # This creates a 3rd split with the balance. Then, we test that we don't end up with two 6.18
+    # splits! We test things so that we don't care which is 6.19 and which is 6.18 because wouldn't
+    # want a specific python implementation to come and create a false failure.
+    assert {app.stable[dindex].debit, app.stable[2].debit} == {'6.18', '6.19'}
+    
 #--- Entry without transfer
 def app_entry_without_transfer():
     app = TestApp()

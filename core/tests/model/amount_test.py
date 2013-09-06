@@ -317,6 +317,13 @@ def test_parse_currencies_with_large_exponents():
     ABC = Currency.register('ABC', 'My foo currency', exponent=5)
     eq_(parse_amount('1.23456 abc'), Amount(1.23456, ABC))
 
+def test_parse_divide_rounding():
+    # Make sure that the value of an amount resulting from a division has the same precision as its
+    # currency, not more (otherwise, we end up with errors when balancing them out).
+    # we test for either 6.19 or 6.18 because we don't care about the details of rounding and we
+    # wouldn't want a specific python implementation to come and create a false failure.
+    assert parse_amount('12.37/2', USD).value in {6.18, 6.19}
+
 #--- Format amount
 def test_format_blank_zero():
     # When blank_zero is True, 0 is rendered as an empty string.
