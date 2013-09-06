@@ -72,7 +72,8 @@ class Loader(SGMLParser, base.Loader):
 
     def start_stmtrs(self, attributes):
         self.start_account()
-
+    start_ccstmtrs = start_stmtrs
+        
     def end_stmtrs(self):
         a = self.account_info
         if hasattr(a, 'ofx_bank_id') and hasattr(a, 'ofx_acct_id'):

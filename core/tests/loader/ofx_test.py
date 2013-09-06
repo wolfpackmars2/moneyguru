@@ -121,3 +121,22 @@ def test_reference_fortis():
     eq_(account.reference, 'FORTIS||001-5587496-84')
     transaction = loader.transaction_infos[0]
     eq_(transaction.reference, '20080026')
+
+#---
+def loader_ccstmtrs():
+    loader = ofx.Loader(EUR)
+    loader.parse(testdata.filepath('ofx', 'ccstmtrs.ofx'))
+    loader.load()
+    return loader
+
+def test_ccstmtrs():
+    # Sometimes, instead of STMTRS tags, we have CCSTMTRS tags and they need to be correctly
+    # handled
+    loader = loader_ccstmtrs()
+    eq_(len(loader.accounts), 2)
+    account = loader.accounts[0]
+    eq_(account.name, '4XXXXXXXXXXXXXX5')
+    eq_(len(account.entries), 2)
+    account = loader.accounts[1]
+    eq_(account.name, '4XXXXXXXXXXXXXX9')
+    eq_(len(account.entries), 3)

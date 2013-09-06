@@ -381,6 +381,9 @@ class AccountInfo:
         self.account_number = ''
         self.notes = ''
     
+    def __repr__(self):
+        return '<AccountInfo: %s>' % self.name
+    
     def is_valid(self):
         return bool(self.name)
     
