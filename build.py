@@ -50,10 +50,15 @@ def parse_args():
     return args
 
 def clean():
-    TOCLEAN = ['build', 'dist', 'install']
+    TOCLEAN = ['build', 'dist', 'install', op.join('help', 'en', 'image')]
     for path in TOCLEAN:
-        if op.exists(path):
-            shutil.rmtree(path)
+        try:
+            os.remove(path)
+        except Exception:
+            try:
+                shutil.rmtree(path)
+            except Exception:
+                pass
 
 def cocoa_compile_command():
     return '{0} waf configure && {0} waf'.format(sys.executable)
