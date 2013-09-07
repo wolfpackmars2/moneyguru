@@ -75,12 +75,13 @@ def test_ask_for_rates_in_the_past():
     eq_(len(log), 2)
     eq_(log[1], (date(2008, 5, 19), date(2008, 5, 19), 'USD'))
 
-def test_ask_for_rates_in_the_future():
+def test_ask_for_rates_in_the_future(monkeypatch):
     # If a rate is asked for a date equal or higher than the lowest fetched date, fetch cached_end - today.
+    monkeypatch.patch_today(2008, 5, 30)
     db, log = set_ratedb_for_tests()
     db.set_CAD_value(date(2008, 5, 20), 'USD', 1.42)
-    db.ensure_rates(date(2008, 5, 20), ['USD']) # this one should fetch 2008-5-21 up to today
-    expected = [(date(2008, 5, 21), date.today(), 'USD')]
+    db.ensure_rates(date(2008, 5, 20), ['USD']) # this one should fetch 2008-5-21 up to today-1
+    expected = [(date(2008, 5, 21), date(2008, 5, 29), 'USD')]
     eq_(log, expected)
 
 #--- Test for the default XMLRPC provider

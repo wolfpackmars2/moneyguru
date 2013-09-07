@@ -74,7 +74,8 @@ def test_set_account_list_currency_on_load(app, fake_server):
     eq_(pview.istatement.income[0].cash_flow, '12.00')
 
 #--- One empty account EUR
-def app_one_empty_account_eur():
+def app_one_empty_account_eur(monkeypatch):
+    monkeypatch.patch_today(2008, 5, 25)
     app = TestApp()
     app.add_account('Checking', EUR)
     app.show_account()
@@ -88,8 +89,8 @@ def test_add_entry_with_foreign_amount(app):
     app.add_entry('20/5/2008', increase='12 usd')
     # A request is made for both the amount that has just been written and the account of the entry
     expected = {
-        (date(2008, 5, 20), date.today(), 'USD'),
-        (date(2008, 5, 20), date.today(), 'EUR'),
+        (date(2008, 5, 20), date(2008, 5, 24), 'USD'),
+        (date(2008, 5, 20), date(2008, 5, 24), 'EUR'),
     }
     eq_(set(log), expected)
 
@@ -104,8 +105,8 @@ def test_add_transaction_with_foreign_amount(app):
     app.ttable.save_edits()
     # A request is made for both the amount that has just been written and the account of the entry
     expected = {
-        (date(2008, 5, 20), date.today(), 'EUR'),
-        (date(2008, 5, 20), date.today(), 'USD'),
+        (date(2008, 5, 20), date(2008, 5, 24), 'EUR'),
+        (date(2008, 5, 20), date(2008, 5, 24), 'USD'),
     }
     eq_(set(log), expected)
 
@@ -286,9 +287,10 @@ class TestCaseDifferentCurrencies:
     
 
 #--- Three currencies two entries
-def app_three_currencies_two_entries():
+def app_three_currencies_two_entries(monkeypatch):
     # Three account of different currencies, and 2 entries on differenet date. The app is saved, 
     # and then loaded (The goal of this is to test that moneyguru ensures it got the rates it needs).
+    monkeypatch.patch_today(2008, 4, 30)
     theapp = Application(ApplicationGUI(), default_currency=CAD)
     app = TestApp(app=theapp)
     app.add_account('first account')
@@ -305,8 +307,8 @@ def test_ensures_rates_multiple_currencies(app):
     db, log = set_ratedb_for_tests()
     app.save_and_load()
     expected = {
-        (date(2008, 4, 20), date.today(), 'USD'), 
-        (date(2008, 4, 20), date.today(), 'EUR'),
+        (date(2008, 4, 20), date(2008, 4, 29), 'USD'), 
+        (date(2008, 4, 20), date(2008, 4, 29), 'EUR'),
     }
     eq_(set(log), expected)
     # Now let's test that the rates are in the DB

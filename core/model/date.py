@@ -45,6 +45,7 @@ class DateRange:
         return self.start <= date <= self.end
     
     def __iter__(self):
+        # XXX when we only have python 3.3 to support, we can yield from hscommon.util.iterdaterange()
         date = self.start
         end = self.end
         while date <= end:
