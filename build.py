@@ -178,7 +178,7 @@ def build_help(dev):
     image_dst = op.join(current_path, 'help', 'en', 'image')
     if not op.exists(image_dst):
         os.symlink(image_src, image_dst)
-    tixurl = "https://hardcoded.lighthouseapp.com/projects/31473-moneyguru/tickets/{0}"
+    tixurl = "https://github.com/hsoft/moneyguru/issues/{}"
     confrepl = {'platform': current_platform}
     sphinxgen.gen(help_basepath, help_destpath, changelog_path, tixurl, confrepl, confpath)
 
