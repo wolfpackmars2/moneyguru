@@ -1,3 +1,11 @@
+=== 2.7.1 (2013-09-07)
+
+* Improved OFX parsing. (#369)
+* Fixed rounding error when changing split amounts. (#367)
+* Fixed Qt import window glitch. (#371)
+* Improved currency rates fetching reliability.
+* Fixed occasional hard crashes on accounts drag & drop. [Mac] (#354)
+
 === 2.7.0 (2013-05-26)
 
 * Added support for custom currencies. (#33)
