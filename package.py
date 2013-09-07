@@ -48,11 +48,9 @@ def package_windows(dev):
     shutil.copytree('build\\help', 'dist\\help')
     shutil.copytree('build\\locale', 'dist\\locale')
     shutil.copytree('plugin_examples', 'dist\\plugin_examples')
-    if is64bit:
-        # In 64bit mode, we don't install the VC redist as a prerequisite. We just bundle the
-        # appropriate dlls.
-        shutil.copy(find_in_path('msvcr100.dll'), 'dist')
-        shutil.copy(find_in_path('msvcp100.dll'), 'dist')
+    
+    shutil.copy(find_in_path('msvcr100.dll'), 'dist')
+    shutil.copy(find_in_path('msvcp100.dll'), 'dist')
     
     if not dev:
         # AdvancedInstaller.com has to be in your PATH

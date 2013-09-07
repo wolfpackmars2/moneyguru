@@ -179,7 +179,7 @@ def build_help(dev):
     if not op.exists(image_dst):
         try:
             os.symlink(image_src, image_dst)
-        except NotImplementedError: # winxp
+        except (NotImplementedError, OSError): # Windows crappy symlink support
             shutil.copytree(image_src, image_dst)
     tixurl = "https://github.com/hsoft/moneyguru/issues/{}"
     confrepl = {'platform': current_platform}
