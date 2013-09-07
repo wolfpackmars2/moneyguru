@@ -105,7 +105,7 @@ def package_source_tgz():
     app_version = MoneyGuru.VERSION
     name = 'moneyguru-src-{}.tar.gz'.format(app_version)
     dest = op.join('build', name)
-    print_and_do('hg archive -t tgz -S {}'.format(dest))
+    print_and_do('git archive -o {} HEAD'.format(dest))
 
 def main():
     args = parse_args()
