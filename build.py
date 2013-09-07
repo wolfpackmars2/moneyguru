@@ -177,7 +177,10 @@ def build_help(dev):
     image_src = op.join(current_path, 'help', 'image_{}'.format(current_platform))
     image_dst = op.join(current_path, 'help', 'en', 'image')
     if not op.exists(image_dst):
-        os.symlink(image_src, image_dst)
+        try:
+            os.symlink(image_src, image_dst)
+        except NotImplementedError: # winxp
+            shutil.copytree(image_src, image_dst)
     tixurl = "https://github.com/hsoft/moneyguru/issues/{}"
     confrepl = {'platform': current_platform}
     sphinxgen.gen(help_basepath, help_destpath, changelog_path, tixurl, confrepl, confpath)
