@@ -26,3 +26,4 @@ installer_tmp-cache
 /run.py
 /help/*/conf.py
 /help/*/changelog.rst
+/help/*/image
