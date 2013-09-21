@@ -18,7 +18,7 @@ class Plugin:
     NAME = ''
     IS_VIEW = False
 
-class ViewPlugin:
+class ViewPlugin(Plugin):
     IS_VIEW = True
     
     def __init__(self, mainwindow):

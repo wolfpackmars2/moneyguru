@@ -7,6 +7,7 @@
 # http://www.hardcoded.net/licenses/bsd_license
 
 from hscommon.gui.selectable_list import GUISelectableList
+from hscommon.util import first
 
 from ..const import PaneType
 from .base import BaseView
@@ -27,6 +28,8 @@ class EmptyView(BaseView):
         index = self.plugin_list.selected_index
         if index is None:
             return
-        plugin = self.mainwindow.app.plugins[index]
-        self.mainwindow.set_current_pane_with_plugin(plugin)
+        plugin_name = self.plugin_list[index]
+        plugin = first(p for p in self.mainwindow.app.plugins if p.NAME == plugin_name)
+        if plugin is not None:
+            self.mainwindow.set_current_pane_with_plugin(plugin)
     
