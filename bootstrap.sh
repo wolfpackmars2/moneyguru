@@ -10,6 +10,7 @@ if [ ! -d "env" ]; then
     # With a new venv, we want to force (without checking if it exists first) installing a venv pip
     # or else we'll end up with the system one.
     curl https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py | python
+    rm setuptools-*.tar.gz
     easy_install pip
 else
     echo "Activating env"
