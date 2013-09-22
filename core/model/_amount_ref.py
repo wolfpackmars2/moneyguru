@@ -25,7 +25,7 @@ def cmp_wrap(op):
     return wrapper
 
 
-class Amount(object):
+class Amount:
     """A class to store money amounts
     
     Amounts have a currency attribute, which can be None.
@@ -64,6 +64,9 @@ class Amount(object):
     
     def __repr__(self):
         return 'Amount(%.*f, %r)' % (self.currency.exponent, self.value, self.currency)
+    
+    def __hash__(self):
+        return hash((self._value, self._currency))
     
     def __eq__(self, other):
         if other == 0:
