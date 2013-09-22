@@ -61,13 +61,16 @@ def package_windows(dev):
         print_and_do('AdvancedInstaller.com /build installer_tmp.aip -force')
         os.remove('installer_tmp.aip')
     
-def copy_source_files(destpath, packages):
+def copy_files_to_package(destpath, packages, with_so):
+    # when with_so is true, we keep .so files in the package, and otherwise, we don't. We need this
+    # flag because when building debian src pkg, we *don't* want .so files (they're compiled later)
+    # and when we're packaging under Arch, we're packaging a binary package, so we want them.
     if op.exists(destpath):
         shutil.rmtree(destpath)
     os.makedirs(destpath)
     shutil.copy('run.py', op.join(destpath, 'run.py'))
-    # It's source files we're copying, we don't want to copy .so files
-    copy_packages(packages, destpath, extra_ignores=['*.so'])
+    extra_ignores = ['*.so'] if not with_so else None
+    copy_packages(packages, destpath, extra_ignores=extra_ignores)
     shutil.copytree(op.join('build', 'help'), op.join(destpath, 'help'))
     shutil.copytree(op.join('build', 'locale'), op.join(destpath, 'locale'))
     shutil.copy(op.join('images', 'logo_small.png'), destpath)
@@ -78,7 +81,8 @@ def package_debian(distribution):
     version = '{}~{}'.format(MoneyGuru.VERSION, distribution)
     destpath = op.join('build', 'moneyguru-{}'.format(version))
     srcpath = op.join(destpath, 'src')
-    copy_source_files(srcpath, ['qt', 'hscommon', 'core', 'qtlib', 'plugin_examples', 'sgmllib'])
+    packages = ['qt', 'hscommon', 'core', 'qtlib', 'plugin_examples', 'sgmllib']
+    copy_files_to_package(srcpath, packages, with_so=False)
     shutil.copytree('debian', op.join(destpath, 'debian'))
     move(op.join(destpath, 'debian', 'Makefile'), op.join(destpath, 'Makefile'))
     move(op.join(destpath, 'debian', 'build_modules.py'), op.join(destpath, 'build_modules.py'))
@@ -92,12 +96,12 @@ def package_debian(distribution):
     os.chdir('../..')
 
 def package_arch():
-    # For now, package_arch() will only copy the source files into build/. It copies less packages
-    # than package_debian because there are more python packages available in Arch (so we don't
-    # need to include them).
+    # This is called from inside makepkg and gathers what is going to end up in /usr/share/moneyguru
+    # in the same folder.
     print("Packaging for Arch")
     srcpath = op.join('build', 'moneyguru-arch')
-    copy_source_files(srcpath, ['qt', 'hscommon', 'core', 'qtlib', 'plugin_examples', 'sgmllib'])
+    packages = ['qt', 'hscommon', 'core', 'qtlib', 'plugin_examples', 'sgmllib']
+    copy_files_to_package(srcpath, packages, with_so=True)
 
 def package_source_tgz():
     app_version = MoneyGuru.VERSION
