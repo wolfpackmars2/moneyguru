@@ -11,7 +11,8 @@ import socket
 import xmlrpc.client
 from datetime import date, datetime
 
-from hscommon.currency import Currency, RatesDB, BUILTIN_CURRENCY_CODES, CurrencyNotSupportedException
+from hscommon.currency import (Currency, RatesDB, BUILTIN_CURRENCY_CODES,
+    CurrencyNotSupportedException, RateProviderUnavailable)
 
 CURRENCY_SERVER = 'http://currency.hardcoded.net/'
 
@@ -32,10 +33,10 @@ def default_currency_rate_provider(currency, start_date, end_date):
         return [(xmlrpcdate2normaldate(d), r) for d, r in values]
     except (socket.gaierror, socket.error, xmlrpc.client.Error) as e:
         logging.warning("Communication problem with currency.hardcoded.net: %s", e)
-        return None # We can't connect
+        raise RateProviderUnavailable()
     except Exception as e:
         logging.warning("Unknown error while doing currency rates fetching: %s", e)
-        return None
+        raise RateProviderUnavailable()
 
 def initialize_db(path):
     """Initialize the app wide currency db if not already initialized."""

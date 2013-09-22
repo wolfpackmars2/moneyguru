@@ -11,7 +11,7 @@ import xmlrpc.client
 import time
 
 from pytest import raises
-from hscommon.currency import Currency, USD, CAD
+from hscommon.currency import Currency, USD, CAD, RateProviderUnavailable
 from hscommon.testutil import jointhreads, eq_
 
 from ...model.amount import convert_amount
@@ -99,10 +99,8 @@ def test_no_internet(monkeypatch):
     from socket import gaierror
     monkeypatch.setattr(xmlrpc.client, 'ServerProxy', FakeServer)
     FakeServer.ERROR_TO_RAISE = gaierror
-    try:
+    with raises(RateProviderUnavailable):
         default_currency_rate_provider('USD', date(2008, 5, 20), date(2008, 5, 20))
-    except gaierror:
-        assert False
 
 def test_connection_timeout(monkeypatch):
     # No crash occur the connection times out.
@@ -111,10 +109,8 @@ def test_connection_timeout(monkeypatch):
         raise error()
     monkeypatch.setattr(xmlrpc.client, 'ServerProxy', FakeServer)
     FakeServer.ERROR_TO_RAISE = error
-    try:
+    with raises(RateProviderUnavailable):
         default_currency_rate_provider('USD', date(2008, 5, 20), date(2008, 5, 20))
-    except error:
-        assert False
 
 def test_xmlrpc_error(monkeypatch):
     # No crash occur when there's an error on the xmlrpc level.
@@ -122,8 +118,6 @@ def test_xmlrpc_error(monkeypatch):
         raise xmlrpc.client.Error()
     monkeypatch.setattr(xmlrpc.client, 'ServerProxy', FakeServer)
     FakeServer.ERROR_TO_RAISE = xmlrpc.client.Error
-    try:
+    with raises(RateProviderUnavailable):
         default_currency_rate_provider('USD', date(2008, 5, 20), date(2008, 5, 20))
-    except xmlrpc.client.Error:
-        assert False
 
