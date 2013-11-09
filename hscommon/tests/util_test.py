@@ -11,7 +11,6 @@ from io import StringIO
 from pytest import raises
 
 from ..testutil import eq_
-from .. import io
 from ..path import Path
 from ..util import *
 
@@ -215,34 +214,34 @@ class TestCase_delete_if_empty:
     def test_is_empty(self, tmpdir):
         testpath = Path(str(tmpdir))
         assert delete_if_empty(testpath)
-        assert not io.exists(testpath)
+        assert not testpath.exists()
     
     def test_not_empty(self, tmpdir):
         testpath = Path(str(tmpdir))
-        io.mkdir(testpath + 'foo')
+        testpath['foo'].mkdir()
         assert not delete_if_empty(testpath)
-        assert io.exists(testpath)
+        assert testpath.exists()
     
     def test_with_files_to_delete(self, tmpdir):
         testpath = Path(str(tmpdir))
-        io.open(testpath + 'foo', 'w')
-        io.open(testpath + 'bar', 'w')
+        testpath['foo'].open('w')
+        testpath['bar'].open('w')
         assert delete_if_empty(testpath, ['foo', 'bar'])
-        assert not io.exists(testpath)
+        assert not testpath.exists()
     
     def test_directory_in_files_to_delete(self, tmpdir):
         testpath = Path(str(tmpdir))
-        io.mkdir(testpath + 'foo')
+        testpath['foo'].mkdir()
         assert not delete_if_empty(testpath, ['foo'])
-        assert io.exists(testpath)
+        assert testpath.exists()
     
     def test_delete_files_to_delete_only_if_dir_is_empty(self, tmpdir):
         testpath = Path(str(tmpdir))
-        io.open(testpath + 'foo', 'w')
-        io.open(testpath + 'bar', 'w')
+        testpath['foo'].open('w')
+        testpath['bar'].open('w')
         assert not delete_if_empty(testpath, ['foo'])
-        assert io.exists(testpath)
-        assert io.exists(testpath + 'foo')
+        assert testpath.exists()
+        assert testpath['foo'].exists()
     
     def test_doesnt_exist(self):
         # When the 'path' doesn't exist, just do nothing.
@@ -251,7 +250,7 @@ class TestCase_delete_if_empty:
     def test_is_file(self, tmpdir):
         # When 'path' is a file, do nothing.
         p = Path(str(tmpdir)) + 'filename'
-        io.open(p, 'w').close()
+        p.open('w').close()
         delete_if_empty(p) # no crash
     
     def test_ioerror(self, tmpdir, monkeypatch):
@@ -259,7 +258,7 @@ class TestCase_delete_if_empty:
         def do_raise(*args, **kw):
             raise OSError()
         
-        monkeypatch.setattr(io, 'rmdir', do_raise)
+        monkeypatch.setattr(Path, 'rmdir', do_raise)
         delete_if_empty(Path(str(tmpdir))) # no crash
     
 
