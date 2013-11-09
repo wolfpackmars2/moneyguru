@@ -1,6 +1,5 @@
-#define PY_SSIZE_T_CLEAN
+#define Py_LIMITED_API
 #include <Python.h>
-#include "structmember.h"
 
 #ifdef _MSC_VER
 typedef __int64 int64_t;
@@ -15,7 +14,9 @@ typedef struct {
     PyObject *rval; /* Real value, as a python float instance */
 } Amount;
 
-static PyTypeObject Amount_Type; /* Forward declaration */
+static PyObject *Amount_Type;
+
+#define Amount_Check(v) (Py_TYPE(v) == (PyTypeObject *)Amount_Type)
 
 /* Utility funcs */
 
@@ -25,7 +26,7 @@ get_amount_ival(PyObject *amount)
     /* Returns amount's ival if it's an amount, or 0 if it's an int with a value of 0.
        Call check_amount() before using this.
     */
-    if (PyObject_TypeCheck(amount, &Amount_Type)) {
+    if (Amount_Check(amount)) {
         return ((Amount *)amount)->ival;
     }
     else { /* it's an int and it *has* to be 0 */
@@ -76,7 +77,7 @@ check_amount(PyObject *o)
     /* Returns true if o is an amount and false otherwise.
        A valid amount is either an Amount instance or an int instance with the value of 0.
     */
-    if (PyObject_TypeCheck(o, &Amount_Type)) {
+    if (Amount_Check(o)) {
         return 1;
     }
     if (!PyLong_Check(o)) {
@@ -115,8 +116,7 @@ create_amount(int64_t ival, PyObject *currency)
     Amount *r;
     double dtmp;
     int exponent;
-    
-    r = (Amount *)Amount_Type.tp_alloc(&Amount_Type, 0);
+    r = (Amount *)PyType_GenericAlloc((PyTypeObject *)Amount_Type, 0);
     r->ival = ival;
     r->currency = currency;
     Py_INCREF(currency);
@@ -136,7 +136,7 @@ Amount_dealloc(Amount *self)
 {
     Py_XDECREF(self->currency);
     Py_XDECREF(self->rval);
-    Py_TYPE(self)->tp_free((PyObject *)self);
+    PyObject_Del(self);
 }
 
 static PyObject *
@@ -144,7 +144,7 @@ Amount_new(PyTypeObject *type, PyObject *args, PyObject *kwds)
 {
     Amount *self;
     
-    self = (Amount *)type->tp_alloc(type, 0);
+    self = (Amount *)PyType_GenericAlloc(type, 0);
     if (self == NULL) {
         return NULL;
     }
@@ -392,11 +392,11 @@ Amount_mul(PyObject *a, PyObject *b)
     int64_t ival;
     
     /* first, for simplicity, handle reverse op */
-    if (!PyObject_TypeCheck(a, &Amount_Type) && PyObject_TypeCheck(b, &Amount_Type)) {
+    if (!Amount_Check(a) && Amount_Check(b)) {
         return Amount_mul(b, a);
     }
     /* it is assumed that a is an amount */
-    if (PyObject_TypeCheck(b, &Amount_Type)) {
+    if (Amount_Check(b)) {
         PyErr_SetString(PyExc_TypeError, "Can't multiply two amounts together");
         return NULL;
     }
@@ -420,12 +420,12 @@ Amount_true_divide(PyObject *a, PyObject *b)
     double dval;
     int64_t ival;
     
-    if (!PyObject_TypeCheck(a, &Amount_Type)) {
+    if (!Amount_Check(a)) {
         PyErr_SetString(PyExc_TypeError, "An amount can't divide something else.");
         return NULL;
     }
     
-    if (PyObject_TypeCheck(b, &Amount_Type)) {
+    if (Amount_Check(b)) {
         if (!amounts_are_compatible(a, b)) {
             PyErr_SetString(PyExc_ValueError, "Amounts of different currency can't be divided.");
             return NULL;
@@ -463,109 +463,48 @@ Amount_getvalue(Amount *self)
     return self->rval;
 }
 
-static PyMemberDef Amount_members[] = {
-    {NULL}  /* Sentinel */
-};
-
 /* We need both __copy__ and __deepcopy__ methods for amounts to behave correctly in undo_test. */
 
 static PyMethodDef Amount_methods[] = {
     {"__copy__", (PyCFunction)Amount_copy, METH_NOARGS, ""},
     {"__deepcopy__", (PyCFunction)Amount_deepcopy, METH_VARARGS, ""},
-    {NULL}  /* Sentinel */
+    {0, 0, 0, 0},
 };
 
 static PyGetSetDef Amount_getseters[] = {
     {"currency", (getter)Amount_getcurrency, NULL, "currency", NULL},
     {"value", (getter)Amount_getvalue, NULL, "value", NULL},
-    {NULL}  /* Sentinel */
+    {0, 0, 0, 0, 0},
 };
 
-static PyNumberMethods Amount_as_number = {
-	(binaryfunc)Amount_add, /* nb_add */
-	(binaryfunc)Amount_sub, /* nb_subtract */
-	(binaryfunc)Amount_mul, /* nb_multiply */
-	0, /* nb_remainder */
-	0, /* nb_divmod */
-	0, /* nb_power */
-	(unaryfunc)Amount_neg, /* nb_negative */
-	0, /* nb_positive */
-	(unaryfunc)Amount_abs, /* nb_absolute */
-	(inquiry)Amount_bool, /* nb_bool */
-	0,					/*nb_invert*/
-	0,					/*nb_lshift*/
-	0,					/*nb_rshift*/
-	0,					/*nb_and*/
-	0,					/*nb_xor*/
-	0,					/*nb_or*/
-	0,					/*nb_int*/
-	0,  				/*reserved*/
-	(unaryfunc)Amount_float, /*nb_float*/
-	
-	0,					/*nb_inplace_add*/
-	0,					/*nb_inplace_subtract*/
-	0,					/*nb_inplace_multiply*/
-	0,					/*nb_inplace_remainder*/
-	0,					/*nb_inplace_power*/
-	0,					/*nb_inplace_lshift*/
-	0,					/*nb_inplace_rshift*/
-	0,					/*nb_inplace_and*/
-	0,					/*nb_inplace_xor*/
-	0,					/*nb_inplace_or*/
-	
-	0,  				/* nb_floor_divide */
-	(binaryfunc)Amount_true_divide,	/* nb_true_divide */
-	0,					/* nb_inplace_floor_divide */
-	0,					/* nb_inplace_true_divide */
-	0                   /* nb_index */
+static PyType_Slot Amount_Slots[] = {
+    {Py_tp_new, Amount_new},
+    {Py_tp_init, Amount_init},
+    {Py_tp_dealloc, Amount_dealloc},
+    {Py_tp_repr, Amount_repr},
+    {Py_tp_hash, Amount_hash},
+    {Py_tp_traverse, Amount_traverse},
+    {Py_tp_clear, Amount_clear},
+    {Py_tp_richcompare, Amount_richcompare},
+    {Py_tp_methods, Amount_methods},
+    {Py_tp_getset, Amount_getseters},
+    {Py_nb_add, Amount_add},
+    {Py_nb_subtract, Amount_sub},
+    {Py_nb_multiply, Amount_mul},
+    {Py_nb_negative, Amount_neg},
+    {Py_nb_absolute, Amount_abs},
+    {Py_nb_bool, Amount_bool},
+    {Py_nb_float, Amount_float},
+    {Py_nb_true_divide, Amount_true_divide},
+    {0, 0},
 };
 
-static PyTypeObject Amount_Type = {
-    PyVarObject_HEAD_INIT(NULL, 0)
-    "_amount.Amount",             /*tp_name*/
-    sizeof(Amount),             /*tp_basicsize*/
-    0,                         /*tp_itemsize*/
-    (destructor)Amount_dealloc, /*tp_dealloc*/
-    0,                         /*tp_print*/
-    0,                         /*tp_getattr*/
-    0,                         /*tp_setattr*/
-    0,                         /*tp_reserved*/
-    (reprfunc)Amount_repr,     /*tp_repr*/
-    &Amount_as_number,          /*tp_as_number*/
-    0,                         /*tp_as_sequence*/
-    0,                         /*tp_as_mapping*/
-    (hashfunc)Amount_hash,     /*tp_hash */
-    0,                         /*tp_call*/
-    0,                         /*tp_str*/
-    0,                         /*tp_getattro*/
-    0,                         /*tp_setattro*/
-    0,                         /*tp_as_buffer*/
-    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE, /*tp_flags*/
-    "Amount object",           /* tp_doc */
-    (traverseproc)Amount_traverse,       /* tp_traverse */
-    (inquiry)Amount_clear,            /* tp_clear */
-    (richcmpfunc)Amount_richcompare, /* tp_richcompare */
-    0,		               /* tp_weaklistoffset */
-    0,		               /* tp_iter */
-    0,		               /* tp_iternext */
-    Amount_methods,             /* tp_methods */
-    Amount_members,             /* tp_members */
-    Amount_getseters,          /* tp_getset */
-    0,                         /* tp_base */
-    0,                         /* tp_dict */
-    0,                         /* tp_descr_get */
-    0,                         /* tp_descr_set */
-    0,                         /* tp_dictoffset */
-    (initproc)Amount_init,      /* tp_init */
-    0,                         /* tp_alloc */
-    Amount_new,                 /* tp_new */
-    0,                          /* tp_free */
-    0,                          /* tp_is_gcc */
-    0,                          /* tp_bases */
-    0,                          /* tp_mro */
-    0,                          /* tp_cache */
-    0,                          /* tp_subclasses */
-    0                          /* tp_weaklist */
+static PyType_Spec Amount_Type_Spec = {
+    "_amount.Amount",
+    sizeof(Amount),
+    0,
+    Py_TPFLAGS_DEFAULT | Py_TPFLAGS_BASETYPE,
+    Amount_Slots,
 };
 
 static PyMethodDef module_methods[] = {
@@ -589,16 +528,13 @@ PyInit__amount(void)
 {
     PyObject *m;
     
-    if (PyType_Ready(&Amount_Type) < 0) {
-        return NULL;
-    }
+    Amount_Type = PyType_FromSpec(&Amount_Type_Spec);
     
     m = PyModule_Create(&AmountDef);
     if (m == NULL) {
         return NULL;
     }
     
-    Py_INCREF(&Amount_Type);
-    PyModule_AddObject(m, "Amount", (PyObject *)&Amount_Type);
+    PyModule_AddObject(m, "Amount", Amount_Type);
     return m;
 }

@@ -265,7 +265,12 @@ set MSSdk=1
 4. Try the build command again.
         """)
     exts = []
-    exts.append(Extension('_amount', [op.join('core', 'modules', 'amount.c')]))
+    exts.append(Extension(
+        '_amount',
+        [op.join('core', 'modules', 'amount.c')],
+        # Needed to avoid tricky compile warnings after having enabled the strict ABI
+        extra_compile_args=['-fno-strict-aliasing'],
+    ))
     setup(
         script_args = ['build_ext', '--inplace'],
         ext_modules = exts,
