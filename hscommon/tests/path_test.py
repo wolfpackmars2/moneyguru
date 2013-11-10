@@ -240,3 +240,12 @@ def test_pathify():
     assert b == 0
     assert isinstance(c, Path)
     assert c == Path('bar')
+
+def test_pathify_preserve_none():
+    # @pathify preserves None value and doesn't try to return a Path
+    @pathify
+    def foo(a: Path):
+        return a
+    
+    a = foo(None)
+    assert a is None

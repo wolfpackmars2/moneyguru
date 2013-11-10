@@ -268,14 +268,17 @@ def iterdaterange(start, end):
 
 @pathify
 def modified_after(first_path: Path, second_path: Path):
-    """Returns True if first_path's mtime is higher than second_path's mtime."""
+    """Returns ``True`` if first_path's mtime is higher than second_path's mtime.
+    
+    If one of the files doesn't exist or is ``None``, it is considered "never modified".
+    """
     try:
         first_mtime = first_path.stat().st_mtime
-    except EnvironmentError:
+    except (EnvironmentError, AttributeError):
         return False
     try:
         second_mtime = second_path.stat().st_mtime
-    except EnvironmentError:
+    except (EnvironmentError, AttributeError):
         return True
     return first_mtime > second_mtime
 

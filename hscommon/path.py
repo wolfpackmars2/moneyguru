@@ -205,11 +205,13 @@ def pathify(f):
     sig = signature(f)
     pindexes = {i for i, p in enumerate(sig.parameters.values()) if p.annotation is Path}
     pkeys = {k: v for k, v in sig.parameters.items() if v.annotation is Path}
+    def path_or_none(p):
+        return None if p is None else Path(p)
     
     @wraps(f)
     def wrapped(*args, **kwargs):
-        args = tuple((Path(a) if i in pindexes else a) for i, a in enumerate(args))
-        kwargs = {k: (Path(v) if k in pkeys else v) for k, v in kwargs.items()}
+        args = tuple((path_or_none(a) if i in pindexes else a) for i, a in enumerate(args))
+        kwargs = {k: (path_or_none(v) if k in pkeys else v) for k, v in kwargs.items()}
         return f(*args, **kwargs)
     
     return wrapped

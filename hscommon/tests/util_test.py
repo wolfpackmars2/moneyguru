@@ -209,6 +209,16 @@ class TestCase_modified_after:
         monkeyplus.patch_osstat('first', st_mtime=42)
         assert modified_after('first', 'does_not_exist') # no crash
     
+    def test_first_file_is_none(self, monkeyplus):
+        # when the first file is None, we return False
+        monkeyplus.patch_osstat('second', st_mtime=42)
+        assert not modified_after(None, 'second') # no crash
+    
+    def test_second_file_is_none(self, monkeyplus):
+        # when the second file is None, we return True
+        monkeyplus.patch_osstat('first', st_mtime=42)
+        assert modified_after('first', None) # no crash
+    
 
 class TestCase_delete_if_empty:
     def test_is_empty(self, tmpdir):
