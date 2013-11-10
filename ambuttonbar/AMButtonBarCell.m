@@ -14,7 +14,7 @@
 #import "NSColor_AMAdditions.h"
 #import "NSFont_AMFixes.h"
 #import "NSShadow_AMAdditions.h"
-#import </usr/include/math.h>
+#import <math.h>
 
 static CGFloat am_backgroundInset = 1.5;
 static CGFloat am_textGap = 1.5;
