@@ -271,6 +271,9 @@ EUR = Currency(code='EUR')
 class CurrencyNotSupportedException(Exception):
     """The current exchange rate provider doesn't support the requested currency."""
 
+class RateProviderUnavailable(Exception):
+    """The rate provider is temporarily unavailable."""
+
 def date2str(date):
     return '%d%02d%02d' % (date.year, date.month, date.day)
 
@@ -452,11 +455,19 @@ class RatesDB:
                         values = rate_provider(currency, fetch_start, fetch_end)
                     except CurrencyNotSupportedException:
                         continue
+                    except RateProviderUnavailable:
+                        logging.debug("Fetching failed due to temporary problems.")
+                        break
                     else:
-                        if values:
-                            self._fetched_values.put((values, currency, fetch_start, fetch_end))
-                            logging.debug("Fetching successful!")
-                            break
+                        if not values:
+                            # We didn't get any value from the server, which means that we asked for
+                            # rates that couldn't be delivered. Still, we report empty values so
+                            # that the cache can correctly remember this unavailability so that we
+                            # don't repeatedly fetch those ranges.
+                            values = []
+                        self._fetched_values.put((values, currency, fetch_start, fetch_end))
+                        logging.debug("Fetching successful!")
+                        break
                 else:
                     logging.debug("Fetching failed!")
         
