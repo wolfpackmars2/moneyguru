@@ -98,6 +98,7 @@ def build_xibless(dest='cocoa/autogen'):
         srcpath = op.join('cocoa', 'ui', srcname)
         dstpath = op.join(dest, dstname)
         if modified_after(srcpath, dstpath + '.h'):
+            print("Generating xibless UI %s" % srcpath)
             xibless.generate(srcpath, dstpath, localizationTable='Localizable')
 
 def build_cocoa(dev):
@@ -145,6 +146,7 @@ def build_cocoa(dev):
     print_and_do(cocoa_compile_command())
     os.chdir('..')
     app.copy_executable('cocoa/build/moneyGuru')
+    build_help()
     print("Copying resources and frameworks")
     resources = ['cocoa/dsa_pub.pem', 'build/mg_cocoa.py', 'build/help', 'data/example.moneyguru',
         'plugin_examples'] + glob.glob('images/*')
@@ -160,13 +162,11 @@ def build_qt(dev):
     qrc_path = op.join('qt', 'mg.qrc')
     pyrc_path = op.join('qt', 'mg_rc.py')
     print_and_do("pyrcc4 -py3 {0} > {1}".format(qrc_path, pyrc_path))
+    build_help()
     print("Creating the run.py file")
     shutil.copy('run_template_qt.py', 'run.py')
 
-def build_help(dev):
-    if dev:
-        print("Generating devdocs")
-        print_and_do('sphinx-build devdoc devdoc_html')
+def build_help():
     print("Generating Help")
     current_platform = 'osx' if ISOSX else 'win'
     current_path = op.abspath('.')
@@ -338,7 +338,6 @@ def build_cocoa_bridging_interfaces():
     objp.const.generate_objc_code(mg_const, 'cocoa/autogen/PyConst.h')
 
 def build_normal(ui, dev):
-    build_help(dev)
     build_localizations(ui)
     build_ext()
     if ui == 'cocoa':
