@@ -10,7 +10,6 @@ from datetime import date
 
 from pytest import raises
 from hscommon.testutil import eq_
-from hscommon import io as hsio
 from hscommon.currency import Currency, CAD
 
 from .base import ApplicationGUI, TestApp, with_app, testdata
@@ -426,7 +425,7 @@ def test_date_format_guessing(tmpdir):
         # To test the date format guessing part, we create a QIF, which uses date guessing.
         app = TestApp()
         contents = "!Type:Bank\nD{str_date}\nT42.32\n^".format(str_date=str_date)
-        hsio.open(filepath, 'wt', encoding='utf-8').write(contents)
+        open(filepath, 'wt', encoding='utf-8').write(contents)
         app.doc.parse_file_for_import(filepath)
         eq_(app.itable[0].date_import, expected_date)
     

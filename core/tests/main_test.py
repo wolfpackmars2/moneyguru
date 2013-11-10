@@ -7,12 +7,11 @@
 # http://www.hardcoded.net/licenses/bsd_license
 
 import sys
+import os
 from datetime import date
 
 from pytest import raises
-from hscommon import io
 from hscommon.currency import EUR
-from hscommon.path import Path
 from hscommon.testutil import eq_
 
 from .base import ApplicationGUI, TestApp, with_app, testdata
@@ -181,14 +180,14 @@ class TestOneEmptyAccountRangeOnOctober2007:
         cache_path = str(tmpdir)
         app.app.cache_path = cache_path
         app.doc.must_autosave()
-        eq_(len(io.listdir(cache_path)), 1)
+        eq_(len(os.listdir(cache_path)), 1)
         app.check_gui_calls_partial(app.etable_gui, not_expected=['stop_edition'])
         assert app.doc.is_dirty
         # test that the autosave file rotation works
         for i in range(AUTOSAVE_BUFFER_COUNT):
             app.doc.must_autosave()
         # The extra autosave file has been deleted
-        eq_(len(io.listdir(cache_path)), AUTOSAVE_BUFFER_COUNT)
+        eq_(len(os.listdir(cache_path)), AUTOSAVE_BUFFER_COUNT)
     
     @with_app(do_setup)
     def test_balance_recursion_limit(self, app):

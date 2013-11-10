@@ -19,7 +19,6 @@ import importlib
 
 from hscommon.currency import Currency, USD
 from hscommon.notify import Broadcaster
-from hscommon import io
 from hscommon.util import nonone
 from hscommon.trans import tr
 
@@ -60,8 +59,8 @@ class Application(Broadcaster):
         # cache_path is required, but for tests, we don't want to bother specifying it. When 
         # cache_path is kept as None, the path of the currency db will be ':memory:'
         if cache_path:
-            if not io.exists(cache_path):
-                io.makedirs(cache_path)
+            if not op.exists(cache_path):
+                os.makedirs(cache_path)
             db_path = op.join(cache_path, 'currency.db')
         else:
             db_path = ':memory:'

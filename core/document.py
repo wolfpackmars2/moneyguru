@@ -15,7 +15,6 @@ import os.path as op
 
 from hscommon.currency import Currency
 from hscommon.notify import Repeater
-from hscommon import io
 from hscommon.util import nonone, allsame, dedupe, extract, first
 from hscommon.trans import tr
 from hscommon.gui.base import GUIObject
@@ -131,7 +130,7 @@ class Document(Repeater, GUIObject):
             autosave_name = 'autosave{0}.moneyguru'.format(timestamp)
         self.save_to_xml(op.join(self.app.cache_path, autosave_name), autosave=True)
         if len(existing_names) >= AUTOSAVE_BUFFER_COUNT:
-            io.remove(op.join(self.app.cache_path, existing_names[0]))
+            os.remove(op.join(self.app.cache_path, existing_names[0]))
     
     def _change_transaction(self, transaction, date=NOEDIT, description=NOEDIT, payee=NOEDIT, 
             checkno=NOEDIT, from_=NOEDIT, to=NOEDIT, amount=NOEDIT, currency=NOEDIT, 

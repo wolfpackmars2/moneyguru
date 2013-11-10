@@ -12,7 +12,6 @@ import os.path as op
 
 from hscommon.testutil import eq_, log_calls
 from hscommon.currency import Currency, USD, EUR, CAD
-from hscommon import io
 
 from ..app import Application
 from ..model import currency
@@ -32,7 +31,7 @@ def test_cache_path_is_auto_created(fake_server, tmpdir):
     # the cache_path directory is automatically created.
     cache_path = str(tmpdir.join('foo/bar'))
     app = Application(ApplicationGUI(), cache_path=cache_path)
-    assert io.exists(cache_path)
+    assert op.exists(cache_path)
 
 def test_cache_path_is_none(fake_server, monkeypatch):
     # currency.initialize_db() is called with :memory: when cache_path is None.
