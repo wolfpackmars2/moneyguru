@@ -7,6 +7,7 @@
 # http://www.hardcoded.net/licenses/bsd_license
 
 import os.path as op
+import logging
 
 class SpecialFolder:
     AppData = 1
@@ -77,4 +78,14 @@ except ImportError:
             return str(QDesktopServices.storageLocation(qtfolder))
         
     except ImportError:
-        raise Exception("Can't setup desktop functions!")
+        # We're either running tests, and these functions don't matter much or we're in a really
+        # weird situation. Let's just have dummy fallbacks.
+        logging.warning("Can't setup desktop functions!")
+        def _open_path(path):
+            pass
+        
+        def _reveal_path(path):
+            pass
+        
+        def _special_folder_path(special_folder, appname=None):
+            return '/tmp'
