@@ -6,7 +6,15 @@
 # which should be included with this package. The terms are also available at 
 # http://www.hardcoded.net/licenses/bsd_license
 
-NOEDIT = object()
+class Const:
+    def __init__(self, repr):
+        self.repr = repr
+    def __repr__(self):
+        return self.repr
+    __str__ = __repr__
+    
+NOEDIT = Const("NOEDIT")
+
 DATE_FORMAT_FOR_PREFERENCES = '%d/%m/%Y'
 
 # These constants are in sync with the GUI

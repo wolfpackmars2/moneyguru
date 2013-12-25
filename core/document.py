@@ -12,6 +12,7 @@ import uuid
 import logging
 import os
 import os.path as op
+from functools import wraps
 
 from hscommon.currency import Currency
 from hscommon.notify import Repeater
@@ -47,6 +48,15 @@ DATE_RANGE_ALL_TRANSACTIONS = 'all_transactions'
 DATE_RANGE_CUSTOM = 'custom'
 
 class FilterType:
+    """Available types for filter at :attr:`Document.filter_type`.
+    
+    * ``Unassigned``
+    * ``Income``
+    * ``Expense``
+    * ``Transfer``
+    * ``Reconciled``
+    * ``NotReconciled``.
+    """
     Unassigned = object()
     Income = object() # in etable, the filter is for increase
     Expense = object() # in etable, the filter is for decrease
@@ -62,6 +72,7 @@ class ScheduleScope:
 AUTOSAVE_BUFFER_COUNT = 10 # Number of autosave files that will be kept in the cache.
 
 def handle_abort(method):
+    @wraps(method)
     def wrapper(self, *args, **kwargs):
         try:
             return method(self, *args, **kwargs)
@@ -71,6 +82,24 @@ def handle_abort(method):
     return wrapper
 
 class Document(Repeater, GUIObject):
+    """Manages everything (including views) about an opened document.
+    
+    If there's one core class in moneyGuru, this is it. It represents a new or opened document and
+    holds all model instances associated to it (accounts, transactions, etc.). The ``Document`` is
+    also responsible for notifying all gui instances of changes. While it's OK for GUI instances to
+    directly access models (through :attr:`transactions` and :attr:`accounts`, for example), any
+    modification to those models have to go through ``Document``'s public methods.
+
+    Another important role of the ``Document`` is to manage undo points. For undo to work properly,
+    every mutative action must be properly recorded, and that's what the ``Document`` does.
+
+    When calling methods that take "hard values" (dates, descriptions, etc..), it is expected that
+    these values have already been parsed (it's the role of the GUI instances to parse data). So
+    dates are ``datetime.date`` instances, amounts are :class:`Amount` instances, indexes are
+    ``int``.
+    
+    Subclasses :class:`hscommon.notify.Repeater` and :class:`hscommon.gui.base.GUIObject`.
+    """
     REPEATED_NOTIFICATIONS = {'saved_custom_ranges_changed'}
     
     def __init__(self, app):
@@ -283,8 +312,21 @@ class Document(Repeater, GUIObject):
         self.set_default(EXCLUDED_ACCOUNTS_PREFERENCE, excluded_account_names)
     
     #--- Account
-    def change_accounts(self, accounts, name=NOEDIT, type=NOEDIT, currency=NOEDIT, group=NOEDIT,
+    def change_accounts(
+            self, accounts, name=NOEDIT, type=NOEDIT, currency=NOEDIT, group=NOEDIT,
             account_number=NOEDIT, notes=NOEDIT):
+        """Properly sets properties for ``accounts``.
+        
+        Sets ``accounts``' properties in a proper manner and post a ``account_changed``
+        notification. Attributes corresponding to arguments set to ``NOEDIT`` will not be touched.
+        
+        :param accounts: List of :class:`.Account` to be changed.
+        :param name: ``str``
+        :param type: :class:`.AccountType`
+        :param currency: :class:`.Currency`
+        :param group: :class:`.Group`
+        :param account_number: ``str``
+        """
         assert all (a is not None for a in accounts)
         action = Action(tr('Change account'))
         action.change_accounts(accounts)
@@ -308,6 +350,14 @@ class Document(Repeater, GUIObject):
         self.notify('account_changed')
     
     def delete_accounts(self, accounts, reassign_to=None):
+        """Removes ``accounts`` from the document.
+        
+        If the account has entries assigned to it, these entries will be reassigned to the
+        ``reassign_to`` account.
+        
+        :param accounts: List of :class:`.Account` to be removed.
+        :param accounts: :class:`.Account` to use for reassignment.
+        """
         action = Action(tr('Remove account'))
         accounts = set(accounts)
         action.delete_accounts(accounts)
@@ -339,6 +389,17 @@ class Document(Repeater, GUIObject):
         self.notify('account_deleted')
     
     def new_account(self, type, group):
+        """Create a new account in the document.
+        
+        Creates a new account of type ``type``, within the ``group`` (which can be ``None`` to
+        indicate no group). The new account will have a unique name based on the string
+        "New Account" (if it exists already, a unique number will be appended to it). Once created,
+        the account is added to the account list, and ``account_added`` is broadcasted.
+        
+        :param type: :class:`.AccountType`
+        :param group: :class:`.Group`
+        :rtype: :class:`.Account`
+        """
         name = self.accounts.new_name(tr('New account'))
         account = Account(name, self.default_currency, type)
         account.group = group
@@ -350,6 +411,14 @@ class Document(Repeater, GUIObject):
         return account
     
     def toggle_accounts_exclusion(self, accounts):
+        """Toggles "excluded" state for ``accounts``.
+        
+        If the current excluded state for ``accounts`` is not homogenous, we set all non-excluded
+        accounts as excluded and leave excluded accounts in their current state. Afterwards,
+        ``accounts_excluded`` is broadcasted.
+        
+        :param accounts: a ``set`` of :class:`.Account`
+        """
         if accounts <= self.excluded_accounts: # all accounts are already excluded. re-include all
             self.excluded_accounts -= accounts
         else:
@@ -358,6 +427,14 @@ class Document(Repeater, GUIObject):
     
     #--- Group
     def change_group(self, group, name=NOEDIT):
+        """Properly sets properties for ``group``.
+        
+        Sets ``group``'s properties in a proper manner and post a ``account_changed`` notification.
+        Attributes corresponding to arguments set to ``NOEDIT`` will not be touched.
+        
+        :param group: :class:`.Group` to be changed
+        :param name: ``str``
+        """
         assert group is not None
         action = Action(tr('Change group'))
         action.change_groups([group])
@@ -367,6 +444,13 @@ class Document(Repeater, GUIObject):
         self.notify('account_changed')
     
     def delete_groups(self, groups):
+        """Removes ``groups`` from the document.
+        
+        Removes ``groups`` from the group list and broadcasts ``account_deleted``. All accounts
+        belonging to the deleted group have their :attr:`.Account.group` attribute set to ``None``.
+        
+        :param groups: list of :class:`.Group`
+        """
         groups = set(groups)
         accounts = [a for a in self.accounts if a.group in groups]
         action = Action(tr('Remove group'))
@@ -380,6 +464,15 @@ class Document(Repeater, GUIObject):
         self.notify('account_deleted')
     
     def new_group(self, type):
+        """Creates a new group of type ``type``.
+        
+        The new group will have a unique name based on the string "New Group" (if it exists, a
+        unique number will be appended to it). Once created, the group is added to the group list,
+        and ``account_added`` is broadcasted.
+        
+        :param type: :class:`.AccountType`
+        :rtype: :class:`.Group`
+        """
         name = self.groups.new_name(tr('New group'), type)
         group = Group(name, type)
         action = Action(tr('Add group'))
@@ -391,6 +484,17 @@ class Document(Repeater, GUIObject):
     
     #--- Transaction
     def can_move_transactions(self, transactions, before, after):
+        """Returns whether ``transactions`` can be be moved (re-ordered).
+        
+        Transactions can only be moved when all transactions are of the same date, and that the date
+        of those transaction is between the date of ``before`` and ``after``. When ``before`` or
+        ``after`` is ``None``, it means that it's the end or beginning of the list.
+        
+        :param transactions: a collection of :class:`Transaction`
+        :param before: :class:`Transaction`
+        :param after: :class:`Transaction`
+        :rtype: ``bool``
+        """
         assert transactions
         if any(isinstance(txn, Spawn) for txn in transactions):
             return False
@@ -403,6 +507,24 @@ class Document(Repeater, GUIObject):
     
     @handle_abort
     def change_transaction(self, original, new):
+        """Changes the attributes of ``original`` so that they match those of ``new``.
+        
+        This is used by the :class:`.TransactionPanel`, and ``new`` is originally a copy of
+        ``original`` which has been changed. Accounts linked to splits in ``new`` don't have to be
+        accounts that are part of the document. This method will automatically internalize accounts
+        linked to splits (and create new accounts if necessary).
+        
+        If ``new``'s date is outside of the current date range, the date range will automatically be
+        changed so that it contains ``new``.
+        
+        If ``original`` is a schedule :class:`.Spawn`, the UI will be queried for a scope, which
+        might result in the change being aborted.
+        
+        After the transaction change, ``transaction_changed`` is broadcasted.
+        
+        :param original: :class:`.Transaction`
+        :param new: :class:`.Transaction`, a modified copy of ``original``.
+        """
         global_scope = self._query_for_scope_if_needed([original])
         action = Action(tr('Change transaction'))
         action.change_transactions([original])
@@ -423,8 +545,31 @@ class Document(Repeater, GUIObject):
             self.notify('transaction_changed')
     
     @handle_abort
-    def change_transactions(self, transactions, date=NOEDIT, description=NOEDIT, payee=NOEDIT, 
-            checkno=NOEDIT, from_=NOEDIT, to=NOEDIT, amount=NOEDIT, currency=NOEDIT):
+    def change_transactions(
+            self, transactions, date=NOEDIT, description=NOEDIT, payee=NOEDIT,  checkno=NOEDIT,
+            from_=NOEDIT, to=NOEDIT, amount=NOEDIT, currency=NOEDIT):
+        """Properly sets properties for ``transactions``.
+        
+        Changes the attributes of every transaction in ``transactions`` to the values specified in
+        the arguments (arguments left to ``NOEDIT`` have no effect).
+        
+        ``from_`` and ``to`` are account **names** rather than being :class:`.Account` instances. If
+        the names don't exist, they'll automatically be created.
+        
+        If any transaction in ``transactions`` is a schedule :class:`.Spawn`, the UI will be queried
+        for a scope, which might result in the change being aborted.
+        
+        After the transaction change, ``transaction_changed`` is broadcasted.
+        
+        :param date: ``datetime.date``
+        :param description: ``str``
+        :param payee: ``str``
+        :param checkno: ``str``
+        :param from_: ``str`` (account name)
+        :param to: ``str`` (account name)
+        :param amount: :class:`.Amount`
+        :param currency: :class:`.Currency`
+        """
         if from_ is not NOEDIT:
             from_ = self.accounts.find(from_, AccountType.Income) if from_ else None
         if to is not NOEDIT:
@@ -454,6 +599,21 @@ class Document(Repeater, GUIObject):
     
     @handle_abort
     def delete_transactions(self, transactions, from_account=None):
+        """Removes every transaction in ``transactions`` from the document.
+        
+        If any transaction in ``transactions`` is a schedule :class:`.Spawn`, the UI will be queried
+        for a scope, which might result in the deletion being aborted.
+        
+        After the transaction deletion, ``transaction_deleted`` is broadcasted.
+        
+        ``from_account`` represents, in the UI, the account from which this deletion was triggered.
+        By specifying it, you will prevent it from being automatically purged by
+        :meth:`_clean_empty_categories` (we don't want to delete an account that is actively being
+        worked on by the user).
+        
+        :param transactions: a collection of :class:`.Transaction`.
+        :param from_account: the :class:`.Account` from which the operation takes place, if any.
+        """
         action = Action(tr('Remove transaction'))
         spawns, txns = extract(lambda x: isinstance(x, Spawn), transactions)
         global_scope = self._query_for_scope_if_needed(spawns)
@@ -479,6 +639,15 @@ class Document(Repeater, GUIObject):
             self.notify('schedule_changed')
     
     def duplicate_transactions(self, transactions):
+        """Create copies of ``transactions`` in the document.
+        
+        For each transaction in ``transactions``, add a new transaction with the same attributes to
+        the document.
+        
+        After the operation, ``transaction_changed`` is broadcasted.
+        
+        :param transactions: a collection of :class:`.Transaction` to duplicate.
+        """
         if not transactions:
             return
         action = Action(tr('Duplicate transactions'))
@@ -493,6 +662,18 @@ class Document(Repeater, GUIObject):
         self.notify('transaction_changed')
     
     def move_transactions(self, transactions, to_transaction):
+        """Re-orders ``transactions`` so that they are right before ``to_transaction``.
+        
+        If ``to_transaction`` is ``None``, it means that we move transactions at the end of the
+        list.
+        
+        Make sure your move is legal by calling :meth:`can_move_transactions` first.
+        
+        After the move, ``transaction_changed`` is broadcasted.
+        
+        :param transactions: a collection of :class:`.Transaction` to move.
+        :param to_transaction: target :class:`.Transaction` to move to.
+        """
         affected = set(transactions)
         affected_date = transactions[0].date
         affected |= set(self.transactions.transactions_at_date(affected_date))
@@ -507,8 +688,27 @@ class Document(Repeater, GUIObject):
     
     #--- Entry
     @handle_abort
-    def change_entry(self, entry, date=NOEDIT, reconciliation_date=NOEDIT, description=NOEDIT, 
-            payee=NOEDIT, checkno=NOEDIT, transfer=NOEDIT, amount=NOEDIT):
+    def change_entry(
+            self, entry, date=NOEDIT, reconciliation_date=NOEDIT, description=NOEDIT, payee=NOEDIT,
+            checkno=NOEDIT, transfer=NOEDIT, amount=NOEDIT):
+        """Properly sets properties for ``entry``.
+        
+        Changes the attributes of ``entry`` (and the transaction in which ``entry`` is) to specified
+        values and then post a ``transaction_changed`` notification. Attributes with ``NOEDIT``
+        values are not touched.
+        
+        ``transfer`` is the name of the transfer to assign the entry to. If it's not found, a new
+        account will be created.
+        
+        :param entry: :class:`.Entry`
+        :param date: ``datetime.date``
+        :param reconciliation_date: ``datetime.date``
+        :param description: ``str``
+        :param payee: ``str``
+        :param checkno: ``str``
+        :param transfer: ``str`` (name of account)
+        :param amount: :class:`.Amount`
+        """
         assert entry is not None
         if date is not NOEDIT and amount is not NOEDIT and amount != 0:
             Currency.get_rates_db().ensure_rates(date, [amount.currency.code, entry.account.currency.code])
@@ -543,12 +743,20 @@ class Document(Repeater, GUIObject):
             self.notify('transaction_changed')
     
     def delete_entries(self, entries):
+        """Remove transactions in which ``entries`` belong from the document's transaction list.
+        
+        :param entries: list of :class:`.Entry`
+        """
         from_account = first(entries).account
         transactions = dedupe(e.transaction for e in entries)
         self.delete_transactions(transactions, from_account=from_account)
     
     def toggle_entries_reconciled(self, entries):
         """Toggle the reconcile flag of `entries`.
+        
+        Sets the ``reconciliation_date`` to entries' date, or unset it when turning the flag off.
+        
+        :param entries: list of :class:`.Entry`
         """
         if not entries:
             return
@@ -577,9 +785,21 @@ class Document(Repeater, GUIObject):
     
     #--- Budget
     def budgeted_amount_for_target(self, target, date_range, filter_excluded=True):
-        """Returns the sum of all the budgeted amounts targeting 'target'. The currency of the 
-        result is target's currency. The result is normalized (reverted if target is a liability).
-        If target is None, all accounts are used.
+        """Returns the amount budgeted for **all** budgets targeting ``target``.
+        
+        The amount is pro-rated according to ``date_range``.
+        
+        The currency of the result is ``target``'s currency. The result is normalized (reverted if
+        target is a liability).
+        
+        If target is ``None``, all accounts are used.
+        
+        If ``filter_excluded`` is true, we ignore accounts in "excluded" state.
+        
+        :param target: :class:`.Account`
+        :param date_range: ``datetime.date``
+        :param filter_excluded: ``bool``
+        :rtype: :class:`.Amount`
         """
         if target is None:
             budgets = self.budgets[:]
@@ -600,6 +820,14 @@ class Document(Repeater, GUIObject):
         return budgeted_amount
     
     def change_budget(self, original, new):
+        """Changes the attributes of ``original`` so that they match those of ``new``.
+        
+        This is used by the :class:`.BudgetPanel`, and ``new`` is originally a copy of ``original``
+        which has been changed.
+        
+        :param original: :class:`.Budget`
+        :param new: :class:`.Budget`
+        """
         if original in self.budgets:
             action = Action(tr('Change Budget'))
             action.change_budget(original)
@@ -623,6 +851,10 @@ class Document(Repeater, GUIObject):
         self.notify('budget_changed')
     
     def delete_budgets(self, budgets):
+        """Removes ``budgets`` from the document.
+        
+        :param budgets: list of :class:`.Budget`
+        """
         if not budgets:
             return
         action = Action(tr('Remove Budget'))
@@ -636,6 +868,15 @@ class Document(Repeater, GUIObject):
     
     #--- Schedule
     def change_schedule(self, schedule, new_ref, repeat_type, repeat_every, stop_date):
+        """Change attributes of ``schedule``.
+        
+        ``new_ref`` is a reference transaction that the schedule is going to repeat.
+        
+        :param schedule: :class:`.Schedule`
+        :param new_ref: :class:`.Transaction`
+        :param repeat_type: :class:`.RepeatType`
+        :param stop_date: ``datetime.date``
+        """
         for split in new_ref.splits:
             if split.account is not None:
                 # same as in change_transaction()
@@ -663,6 +904,10 @@ class Document(Repeater, GUIObject):
         self.notify('schedule_changed')
     
     def delete_schedules(self, schedules):
+        """Removes ``schedules`` from the document.
+        
+        :param schedules: list of :class:`.Schedule`
+        """
         if not schedules:
             return
         action = Action(tr('Remove Schedule'))
@@ -676,6 +921,10 @@ class Document(Repeater, GUIObject):
     
     #--- Load / Save / Import
     def adjust_example_file(self):
+        """Adjusts all document's transactions so that they become current.
+        
+        This is used when loading the example document so that it's not necessary to do it manually.
+        """
         def inc_month_overflow(refdate, count):
             newdate = inc_month(refdate, count)
             if newdate.day < refdate.day: # must overflow
@@ -714,10 +963,17 @@ class Document(Repeater, GUIObject):
         self.notify('document_changed') # do it again to refresh the guis
     
     def clear(self):
+        """Removes all data from the document (transactions, accounts, schedules, etc.)."""
         self._clear()
         self.notify('document_changed')
     
     def load_from_xml(self, filename):
+        """Clears the document and loads data from ``filename``.
+        
+        ``filename`` must be a path to a moneyGuru XML document.
+        
+        :param filename: ``str``
+        """
         loader = native.Loader(self.default_currency)
         try:
             loader.parse(filename)
@@ -747,6 +1003,17 @@ class Document(Repeater, GUIObject):
         self._refresh_date_range()
     
     def save_to_xml(self, filename, autosave=False):
+        """Saves the document to ``filename``.
+        
+        ``filename`` must be a path to a moneyGuru XML document.
+        
+        If ``autosave`` is true, the operation will not affect the document's modified state and
+        will not make editing stop, if editing there is (like it normally does without the autosave
+        flag to make sure that the input being currently done by the user is saved).
+        
+        :param filename: ``str``
+        :param autosave: ``bool``
+        """
         # When called from _async_autosave, it should not disrupt the user: no stop edition, no
         # change in the save state.
         if not autosave:
@@ -760,6 +1027,13 @@ class Document(Repeater, GUIObject):
             self._dirty_flag = False
     
     def parse_file_for_import(self, filename):
+        """Parses ``filename`` in preparation for importing.
+        
+        Opens and parses ``filename`` and try to determine its format by successively trying to read
+        is as a moneyGuru file, an OFX, a QIF and finally a CSV. Once parsed, take the appropriate
+        action for the file which is either to show the CSV options window or to call
+        :meth:`load_parsed_file_for_import`.
+        """
         default_date_format = DateFormat(self.app.date_format).sys_format
         for loaderclass in (native.Loader, ofx.Loader, qif.Loader, csv.Loader):
             try:
@@ -779,6 +1053,12 @@ class Document(Repeater, GUIObject):
         
     
     def load_parsed_file_for_import(self):
+        """Load a parsed file for import and trigger the opening of the Import window.
+        
+        When the document's ``loader`` has finished parsing (either after having done CSV
+        configuration or directly after :meth:`parse_file_for_import`), call this method to load the
+        parsed data into model instances, ready to be shown in the Import window.
+        """
         self.loader.load()
         if self.loader.accounts and self.loader.transactions:
             self.notify('file_loaded_for_import')
@@ -786,6 +1066,17 @@ class Document(Repeater, GUIObject):
             raise FileFormatError('This file does not contain any account to import.')
     
     def import_entries(self, target_account, ref_account, matches):
+        """Imports entries in ``mathes`` into ``target_account``.
+        
+        ``target_account`` can be either an existing account in the document or not.
+        
+        ``ref_account`` is a reference to the temporary :class:`.Account` created by the loader.
+        
+        ``matches`` is a list of tuples ``(entry, ref)`` with ``entry`` being the entry being
+        imported and ``ref`` being an existing entry in the ``target_account`` bound to ``entry``.
+        ``ref`` can be ``None`` and it's only possible to have a ``ref`` side when the target
+        account already exists in the document.
+        """
         # Matches is a list of 2 sized tuples (entry, ref), ref being the existing entry that 'entry'
         # has been matched with. 'ref' can be None
         # PREPARATION
@@ -842,6 +1133,7 @@ class Document(Repeater, GUIObject):
         self.notify('transactions_imported')
     
     def is_dirty(self):
+        """Returns whether the document has been modified since the last time it was saved."""
         return self._dirty_flag or self._undoer.modified
     
     def set_dirty(self):
@@ -852,21 +1144,36 @@ class Document(Repeater, GUIObject):
     
     #--- Date Range
     def select_month_range(self, starting_point):
+        """Sets :attr:`date_range` to a :class:`.MonthRange`.
+        
+        :param starting_point: ``datetime.date`` around which to wrap the range.
+        """
         self.date_range = MonthRange(starting_point)
     
     def select_quarter_range(self, starting_point):
+        """Sets :attr:`date_range` to a :class:`.QuarterRange`.
+        
+        :param starting_point: ``datetime.date`` around which to wrap the range.
+        """
         self.date_range = QuarterRange(starting_point)
     
     def select_year_range(self, starting_point):
+        """Sets :attr:`date_range` to a :class:`.YearRange`.
+        
+        :param starting_point: ``datetime.date`` around which to wrap the range.
+        """
         self.date_range = YearRange(starting_point, year_start_month=self.year_start_month)
     
     def select_year_to_date_range(self):
+        """Sets :attr:`date_range` to a :class:`.YearToDateRange`."""
         self.date_range = YearToDateRange(year_start_month=self.year_start_month)
     
     def select_running_year_range(self):
+        """Sets :attr:`date_range` to a :class:`.RunningYearRange`."""
         self.date_range = RunningYearRange(ahead_months=self.ahead_months)
     
     def select_all_transactions_range(self):
+        """Sets :attr:`date_range` to a :class:`.AllTransactionsRange`."""
         if not self.transactions:
             return
         first_date = self.transactions[0].date
@@ -875,25 +1182,40 @@ class Document(Repeater, GUIObject):
             ahead_months=self.ahead_months)
     
     def select_custom_date_range(self, start_date=None, end_date=None):
+        """Sets :attr:`date_range` to a :class:`.CustomDateRange`.
+        
+        :param start_date: ``datetime.date``
+        :param end_date: ``datetime.date``
+        """
         if start_date is not None and end_date is not None:
             self.date_range = CustomDateRange(start_date, end_date, self.app.format_date)
         else: # summon the panel
             self.notify('custom_date_range_selected')
     
     def select_prev_date_range(self):
+        """If the current date range is navigable, select the previous range."""
         if self.date_range.can_navigate:
             self.date_range = self.date_range.prev()
     
     def select_next_date_range(self):
+        """If the current date range is navigable, select the next range."""
         if self.date_range.can_navigate:
             self.date_range = self.date_range.next()
     
     def select_today_date_range(self):
+        """If the current date range is navigable, select the range containing today."""
         if self.date_range.can_navigate:
             self.date_range = self.date_range.around(datetime.date.today())
     
     @property
     def date_range(self):
+        """*get/set*. Current date range of the document.
+        
+        The date range is very influential of how data is displayed in the UI. For transaction and
+        entry list, it tells which are shown and which are not. For reports (net worth, profit),
+        it tells the scope of it (we want a net worth report for... this month? this year?
+        last year?).
+        """
         return self._date_range
     
     @date_range.setter
@@ -908,24 +1230,30 @@ class Document(Repeater, GUIObject):
     
     #--- Undo
     def can_undo(self):
+        """Returns whether the document has something to undo."""
         return self._undoer.can_undo()
     
     def undo_description(self):
+        """Returns a string describing what would be undone if :meth:`undo` was called."""
         return self._undoer.undo_description()
     
     def undo(self):
+        """Undo the last undoable action."""
         self.stop_edition()
         self._undoer.undo()
         self._cook()
         self.notify('performed_undo_or_redo')
     
     def can_redo(self):
+        """Returns whether the document has something to redo."""
         return self._undoer.can_redo()
     
     def redo_description(self):
+        """Returns a string describing what would be redone if :meth:`redo` was called."""
         return self._undoer.redo_description()
     
     def redo(self):
+        """Redo the last redoable action."""
         self.stop_edition()
         self._undoer.redo()
         self._cook()
@@ -933,6 +1261,11 @@ class Document(Repeater, GUIObject):
     
     #--- Misc
     def close(self):
+        """Cleanup the document and close it.
+        
+        Saves preferences and tells GUI elements about the document closing (so that they can save
+        their own preferences if needed).
+        """
         self._save_preferences()
         self.notify('document_will_close')
     
@@ -974,6 +1307,11 @@ class Document(Repeater, GUIObject):
     #--- Properties
     @property
     def filter_string(self):
+        """*get/set*. Restrict visible elements in lists to those matching the string.
+        
+        When set to an non empty string, it restricts visible transactions/entries in
+        :class:`.TransactionTable` and :class:`.EntryTable` to those matching with the string.
+        """
         return self._filter_string
     
     @filter_string.setter
@@ -987,6 +1325,12 @@ class Document(Repeater, GUIObject):
     # use FilterType.* consts or None
     @property
     def filter_type(self):
+        """*get/set*. Restrict visible elements in lists to those matching the type.
+        
+        When set to something else than ``None``, it restricts visible transactions/entries in
+        :class:`.TransactionTable` and :class:`.EntryTable` to those matching having the specified
+        :class:`.FilterType`
+        """
         return self._filter_type
     
     @filter_type.setter
