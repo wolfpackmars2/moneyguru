@@ -5,59 +5,48 @@ How to build moneyGuru
 Dependencies
 ============
 
-Before being able to build moneyGuru, a few dependencies have to be installed:
+Before being able to build moneyGuru, a few "non-pip-installable" dependencies have to be installed:
 
-General dependencies
---------------------
+* All systems: Python 3.3+
+* Mac OS X: The last XCode to have the 10.6 SDK included.
+* Windows: Visual Studio 2010, PyQt 4.7+, cx_Freeze and Advanced Installer (you only need the last
+  two if you want to create an installer)
 
-- Python 3.2 (http://www.python.org)
-- sgmllib3k (http://bitbucket.org/hsoft/sgmllib)
-- Sphinx 1.1.2 (http://sphinx.pocoo.org/)
-- polib 0.7.0 (http://bitbucket.org/izi/polib)
-- pytest 2.0.0, to run unit tests. (http://pytest.org/)
-- pytest-monkeyplus, a pytest plugin. (http://bitbucket.org/hsoft/pytest-monkeyplus)
+On Ubuntu, the apt-get command to install all pre-requisites is:
 
-OS X prerequisites
-------------------
+    $ apt-get install python3-dev python3-pyqt4 pyqt4-dev-tools
 
-- XCode 4.2's command line tools
-- objp 1.2.0 (https://bitbucket.org/hsoft/objp)
-- xibless 0.5.0 (https://bitbucket.org/hsoft/xibless)
+On Arch, it's:
 
-Windows prerequisites
----------------------
+    $ pacman -S python-pyqt4
 
-- PyQt 4.7.5 (http://www.riverbankcomputing.co.uk/news)
-- cx_Freeze, if you want to build a exe. You don't need it if you just want to run moneyGuru. (http://cx-freeze.sourceforge.net/)
-- Advanced Installer, if you want to build the installer file. (http://www.advancedinstaller.com/)
+Setting up the virtual environment
+==================================
 
-The easy way!
--------------
+Use Python's built-in ``pyvenv`` to create a virtual environment in which we're going to install our
+Python-related dependencies. ``pyvenv`` is built-in Python but, unlike its ``virtualenv``
+predecessor, it doesn't install setuptools and pip, so it has to be installed manually::
 
-There's an easy way to install the majority of the prerequisites above, and it's `pip <http://www.pip-installer.org/>`_ which has recently started to support Python 3. So install it and then run::
+    $ pyvenv --system-site-packages env
+    $ source env/bin/activate
+    $ wget https://bitbucket.org/pypa/setuptools/raw/bootstrap/ez_setup.py -O - | python
+    $ easy_install pip
 
-    pip install -r requirements-[osx|win].txt
+Then, you can install pip requirements in your virtualenv::
 
+    $ pip install -r requirements-[osx|win].txt
+    
 [osx|win] depends on your platform. On Linux, run the base requirements file, requirements.txt.
 Sparkle and Advanced Installer, having nothing to do with Python, have to be manually installed.
 
 PyQt isn't in the requirements file either (there's no package uploaded on PyPI) and you also have
 to install it manually.
 
-Gotchas
--------
-
-If you didn't use mercurial to download this source, you probably have an incomplete source folder!
-External projects (hscommon, qtlib, cocoalib) need to be at the root of the moneyGuru project 
-folder. You'll have to download those separately. Or use mercurial, it's much easier.
-
-Whenever you have a problem, always double-check that you're running the correct python version. 
-You'll probably have to tweak your $PATH.
-
 Building moneyGuru
 ==================
 
-First, make sure you meet the dependencies listed in the section above. Then you need to configure your build with::
+First, make sure you meet the dependencies listed in the section above. Then you need to configure
+your build with::
 
 	python configure.py
 	
