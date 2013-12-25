@@ -187,8 +187,6 @@ def build_help():
 
 def build_base_localizations():
     loc.compile_all_po('locale')
-    loc.compile_all_po(op.join('hscommon', 'locale'))
-    loc.merge_locale_dir(op.join('hscommon', 'locale'), 'locale')
 
 def build_qt_localizations():
     loc.compile_all_po(op.join('qtlib', 'locale'))
@@ -234,8 +232,6 @@ def build_updatepot():
     # When we're not under OS X, we don't want to overwrite ui.pot because it contains Cocoa locs
     # We want to merge the generated pot with the old pot in the most preserving way possible.
     loc.generate_pot(['qt'], op.join('locale', 'ui.pot'), ['tr'], merge=(not ISOSX))
-    print("Building hscommon.pot")
-    loc.generate_pot(['hscommon'], op.join('hscommon', 'locale', 'hscommon.pot'), ['tr'])
     print("Building qtlib.pot")
     loc.generate_pot(['qtlib'], op.join('qtlib', 'locale', 'qtlib.pot'), ['tr'])
     if ISOSX:
@@ -249,7 +245,6 @@ def build_updatepot():
 def build_mergepot():
     print("Updating .po files using .pot files")
     loc.merge_pots_into_pos('locale')
-    loc.merge_pots_into_pos(op.join('hscommon', 'locale'))
     loc.merge_pots_into_pos(op.join('qtlib', 'locale'))
 
 def build_ext():
