@@ -24,5 +24,5 @@ Contents
    devprocess
    architecture
    refactorings
-   api/index
+   core/index
    hscommon/index
