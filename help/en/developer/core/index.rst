@@ -12,8 +12,7 @@ out, from the code, what everything is about.
 
 .. toctree::
     :maxdepth: 2
+    :glob:
     
     document
-    model/account
-    model/transaction
-    model/transaction_list
+    model/*
