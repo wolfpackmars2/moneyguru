@@ -17,17 +17,39 @@ from ..const import NOEDIT
 from .amount import Amount, convert_amount, same_currency, of_currency
 
 class Transaction:
+    """A movement of money between two or more accounts at a specific date.
+    
+    Money movements that a transaction implies are listed in :attr:`splits`. The splits of a
+    transaction *always balance*, which means that the sum of amounts in its splits is always zero.
+    
+    Whenever a potentially unbalancing operation is made on the splits, call :meth:`balance` to
+    balance the transaction out.
+    
+    Initialization arguments are mostly just directly assigned to their relevant attributes in the
+    transaction, except for ``account`` and ``amount`` (there is no such attributes). If specified,
+    we initialize what would otherwise be an empty split list with two splits: One adding ``amount``
+    to ``account``, and the other adding ``-amount`` to ``None`` (an unassigned split).
+    """
     def __init__(self, date, description=None, payee=None, checkno=None, account=None, amount=None):
+        #: Date at which the transation occurs.
         self.date = date
+        #: Description of the transaction.
         self.description = nonone(description, '')
+        #: Person or entity related to the transaction.
         self.payee = nonone(payee, '')
+        #: Check number related to the transaction.
         self.checkno = nonone(checkno, '')
+        #: Freeform note about the transaction.
         self.notes = ''
         if amount is not None:
             self.splits = [Split(self, account, amount), Split(self, None, -amount)]
         else:
+            #: The list of :class:`Split` affecting this transaction. These splits always balance.
             self.splits = []
+        #: Ordering attributes. When two transactions have the same date, we order them with this.
         self.position = 0
+        #: Timestamp of the last modification. Used in the UI to let the user sort his transactions.
+        #: This is useful for finding a mistake that we know was introduced recently.
         self.mtime = 0
     
     def __repr__(self):
@@ -35,8 +57,11 @@ class Transaction:
     
     @classmethod
     def from_transaction(cls, transaction):
-        # The goal here is to have a deepcopy of self, but *without copying the accounts*. We want
-        # the splits to link to the same account instances.
+        """Create a copy of ``transaction`` and returns it.
+        
+        The goal here is to have a deepcopy of ``transaction``, but *without copying the accounts*.
+        We want the splits to link to the same :class:`.Account` instances.
+        """
         txn = transaction
         result = cls(txn.date, txn.description, txn.payee, txn.checkno)
         result.notes = txn.notes
@@ -49,20 +74,53 @@ class Transaction:
         return result
     
     def amount_for_account(self, account, currency):
+        """Returns the total sum attributed to ``account``.
+        
+        All amounts are converted (see :meth:`.convert_amount`) to ``currency`` before doing the
+        sum. This is needed because we might have amounts with different currencies here.
+        
+        :param account: :class:`.Account`
+        :param currency: :class:`.Currency`
+        """
         splits = (s for s in self.splits if s.account is account)
         return sum(convert_amount(s.amount, currency, self.date) for s in splits)
     
     def affected_accounts(self):
+        """Returns a set of all accounts affected by self.
+        
+        ... meaning all accounts references by our :attr:`splits`.
+        """
         return set(s.account for s in self.splits if s.account is not None)
     
     def balance(self, strong_split=None, keep_two_splits=False):
-        # strong_split is the split that was last edited.
-        # keep_two_splits is a flag that, if enabled and that a strong_split is defined, causes the
-        # balance process to set the weak split to the invert value of the strong one so that we
-        # don't end up with a third unassigned split.
+        """Balance out :attr:`splits` if needed.
         
-        # When the flag is false and for the special case where there is 2 splits on the same
-        # "side" and a strong split, we reverse the weak split.
+        A balanced transaction has all its splits making a zero sum. Balancing a transaction is
+        rather easy: We sum all our splits and create an unassigned split of the opposite of that
+        amount. To avoid polluting our splits, we look if we already have an unassigned split and,
+        if we do, we adjust its amount instead of creating a new split.
+        
+        There's a special case to that rule, and that is when we have two splits. When those two
+        splits are on the same "side" (both positive or both negative), we assume that the user has
+        just reversed ``strong_split``'s side and that the logical next step is to also reverse the
+        other split (the "weak" split), which we'll do.
+        
+        If ``keep_two_splits`` is true, we'll go one step further and adjust the weak split's amount
+        to fit what was just entered in the strong split. If it's false, we'll create an unassigned
+        split if needed.
+        
+        Easy, right? Things get a bit more complicated when a have a
+        :ref:`multi-currency transaction <multi-currency-txn>`. When that happens, we do a more
+        complicated balancing, which happens in :meth:`balance_currencies`.
+        
+        :param strong_split: The split that was last edited. The reason why we're balancing the
+                             transaction now. If set, it will not be adjusted by the balancing
+                             because we don't want to pull the rug from under our user's feet and
+                             undo an edit he's just made.
+        :type strong_split: :class:`Split`
+        :param bool keep_two_splits: If set and if we have a two-split transaction, we'll keep it
+                                     that way, adjusting the "weak" split amount as needed.
+        """
         if len(self.splits) == 2 and strong_split is not None:
             weak_split = self.splits[0] if self.splits[0] is not strong_split else self.splits[1]
             if keep_two_splits:
@@ -89,6 +147,24 @@ class Transaction:
                 self.splits.remove(split)
     
     def balance_currencies(self, strong_split=None):
+        """Balances a :ref:`multi-currency transaction <multi-currency-txn>`.
+        
+        Balancing out multi-currencies transasctions can be real easy because we consider that
+        currencies can never mix (and we would never make the gross mistake of using market exchange
+        rates to do our balancing), so, if we have at least one split on each side of different
+        currencies, we consider ourselves balanced and do nothing.
+        
+        However, we might be in a situation of "logical imbalance", which means that the transaction
+        doesn't logically makes sense. For example, if all our splits are on the same side, we can't
+        possibly balance out. If we have EUR and CAD splits, that CAD splits themselves balance out
+        but that EUR splits are all on the same side, we have a logical imbalance.
+        
+        This method finds those imbalance and fix them by creating unsassigned splits balancing out
+        every currency being in that situation.
+        
+        :param strong_split: The split that was last edited. See :meth:`balance`.
+        :type strong_split: :class:`Split`
+        """
         splits_with_amount = [s for s in self.splits if s.amount != 0]
         if not splits_with_amount:
             return
@@ -109,8 +185,32 @@ class Transaction:
                 else:
                     self.splits.append(Split(self, None, -amount))
     
-    def change(self, date=NOEDIT, description=NOEDIT, payee=NOEDIT, checkno=NOEDIT, from_=NOEDIT, 
+    def change(
+            self, date=NOEDIT, description=NOEDIT, payee=NOEDIT, checkno=NOEDIT, from_=NOEDIT, 
             to=NOEDIT, amount=NOEDIT, currency=NOEDIT, notes=NOEDIT):
+        """Changes our transaction and do all proper stuff.
+        
+        Sets all specified arguments to their specified values and do proper adjustments, such as
+        making sure that our :attr:`Split.reconciliation_date` still make sense and updates our
+        :attr:`mtime`.
+        
+        Moreover, it offers a convenient interface to specify a two-way transaction with ``from_``,
+        ``to`` and ``amount``. When those are set, we'll set up splits corresponding to this two-way
+        money movement.
+        
+        If ``currency`` is set, it changes the currency of the amounts in all :attr:`splits`,
+        without conversion with exchange rates. Amounts are kept intact.
+        
+        :param date: ``datetime.date``
+        :param description: ``str``
+        :param payee: ``str``
+        :param checkno: ``str``
+        :param from_: :class:`.Account`
+        :param to: :class:`.Account`
+        :param amount: :class:`.Amount`
+        :param currency: :class:`.Currency`
+        :param notes: ``str``
+        """
         # from_ and to are Account instances
         if date is not NOEDIT:
             # If reconciliation dates were equal to txn date, make it follow
@@ -156,8 +256,23 @@ class Transaction:
         self.mtime = time.time()
     
     def matches(self, query):
-        """Return whether 'self' is matching query, which is a dict containing various arguments,
-        such as 'all', 'amount', 'account'...
+        """Return whether ``self`` is matching ``query``.
+        
+        ``query`` is a ``dict`` of all criteria to look for (example: ``{'payee': 'Barber shop'}``.
+        List of possible dict keys:
+        
+        * description
+        * payee
+        * checkno
+        * memo
+        * amount
+        * account
+        * group
+        
+        All of these queries are string-based, except ``amount``, which requires an
+        :class:`.Amount`.
+        
+        Returns true if any criteria matches, false otherwise.
         """
         query_description = query.get('description')
         if query_description is not None:
@@ -196,7 +311,17 @@ class Transaction:
         return False
     
     def mct_balance(self, new_split_currency):
-        # when calling this, the transaction is supposed to be balanced with balance() already
+        """Balances a :ref:`multi-currency transaction <multi-currency-txn>` using exchange rates.
+        
+        *This balancing doesn't occur automatically, it is a user-initiated action.*
+        
+        Sums up the value of all splits in ``new_split_currency``, using exchange rates for
+        :attr:`date`. If not zero, create a new unassigned split with the opposite of that amount.
+        
+        Of course, we need to have called :meth:`balance` before we can call this.
+        
+        :param new_split_currency: :class:`.Currency`
+        """
         converted_amounts = (convert_amount(split.amount, new_split_currency, self.date) for split in self.splits)
         converted_total = sum(converted_amounts)
         if converted_total != 0:
@@ -207,15 +332,24 @@ class Transaction:
                 self.splits.append(Split(self, None, -converted_total))
     
     def reassign_account(self, account, reassign_to=None):
+        """Reassign all splits from ``account`` to ``reassign_to``.
+        
+        All :attr:`splits` belonging to ``account`` will be changed to ``reassign_to``.
+        
+        :param account: :class:`.Account`
+        :param reassign_to: :class:`.Account`
+        """
         for split in self.splits:
             if split.account is account:
                 split.reconciliation_date = None
                 split.account = reassign_to
     
     def replicate(self):
+        """Returns a copy of self using :meth:`from_transaction`."""
         return Transaction.from_transaction(self)
     
     def set_splits(self, splits):
+        """Sets :attr:`splits` to copies of splits in ``splits``."""
         self.splits = []
         for split in splits:
             newsplit = copy(split)
@@ -223,8 +357,12 @@ class Transaction:
             self.splits.append(newsplit)
     
     def splitted_splits(self):
-        """Returns (froms, tos) where 'froms' is the splits that belong to the 'from' column, and
-        'tos', the rest.
+        """Returns :attr:`splits` separated in two groups ("froms" and "tos").
+        
+        "froms" are splits with a negative amount and "tos", the positive ones. Null splits are
+        generally sent to the "froms" side, unless "tos" is empty.
+        
+        Returns ``(froms, tos)``.
         """
         splits = self.splits
         null_amounts = [s for s in splits if s.amount == 0]
@@ -238,6 +376,14 @@ class Transaction:
     #--- Properties
     @property
     def amount(self):
+        """*get/set*. :class:`.Amount`. Total amount of the transaction.
+        
+        In short, the sum of all positive :attr:`splits`.
+        
+        Can only be set if :attr:`can_set_amount` is true, that is, if we have less than two splits.
+        When set, we'll set :attr:`splits` in order to create a two-way transaction of that amount,
+        preserving from and to accounts if needed.
+        """
         if self.is_mct:
             # We need an approximation for the amount value. What we do is we take the currency of the
             # first split and use it as a base currency. Then, we sum up all amounts, convert them, and
@@ -263,14 +409,20 @@ class Transaction:
     
     @property
     def can_set_amount(self):
+        """*readonly*. ``bool``. Whether we can set :attr:`amount`.
+        
+        True is we have two or less splits of the same currency.
+        """
         return (len(self.splits) <= 2) and (not self.is_mct)
     
     @property
     def has_unassigned_split(self):
+        """*readonly*. ``bool``. Whether any of our splits is unassigned (None)."""
         return any(s.account is None for s in self.splits)
     
     @property
     def is_mct(self):
+        """*readonly*. ``bool``. Whether our splits contain more than one currency."""
         splits_with_amount = (s for s in self.splits if s.amount != 0)
         try:
             return not allsame(s.amount.currency for s in splits_with_amount)
@@ -279,16 +431,22 @@ class Transaction:
     
     @property
     def is_null(self):
+        """*readonly*. ``bool``. Whether our splits all have null amounts."""
         return all(not s.amount for s in self.splits)
     
 
 class Split:
+    """Assignment of money to an :class:`.Account` within a :class:`Transaction`."""
     def __init__(self, transaction, account, amount):
+        #: Transaction within which our split lives.
         self.transaction = transaction
         self._account = account
+        #: Freeform memo about that split.
         self.memo = ''
         self._amount = amount
+        #: Date at which the user reconciled this split with an external source.
         self.reconciliation_date = None
+        #: Unique reference from an external source.
         self.reference = None
     
     def __repr__(self):
@@ -309,6 +467,12 @@ class Split:
     #--- Properties
     @property
     def account(self):
+        """*get/set*. :class:`.Account` our split is assigned to.
+        
+        Can be ``None``. We are then considered an "unassigned split".
+        
+        Setting this resets :attr:`reconciliation_date` to ``None``.
+        """
         return self._account
     
     @account.setter
@@ -320,10 +484,19 @@ class Split:
     
     @property
     def account_name(self):
+        """*readonly*. Name for :attr:`account` or an empty string if ``None``."""
         return self.account.name if self.account is not None else ''
     
     @property
     def amount(self):
+        """*get/set*. :class:`.Amount` by which we affect our :attr:`account`.
+        
+        * A value higher than ``0`` makes this a "debit split".
+        * A value lower than ``0`` makes this a "credit split".
+        * A value of ``0`` makes this a "null split".
+        
+        Setting this resets :attr:`reconciliation_date` to ``None``.
+        """
         return self._amount
     
     @amount.setter
@@ -334,13 +507,16 @@ class Split:
     
     @property
     def credit(self):
+        """*readonly*. Returns :attr:`amount` (reverted so it's positive) if < 0. Otherwise, 0."""
         return -self._amount if self._amount < 0 else 0
     
     @property
     def debit(self):
+        """*readonly*. Returns :attr:`amount` if > 0. Otherwise, 0."""
         return self._amount if self._amount > 0 else 0
     
     @property
     def reconciled(self):
+        """*readonly*. ``bool``. Whether :attr:`reconciliation_date` is set to something."""
         return self.reconciliation_date is not None
     
