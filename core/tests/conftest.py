@@ -8,6 +8,8 @@
 
 # This unit is required to make tests work with py.test. When running
 
+import os
+import time
 import py
 
 from hscommon.testutil import pytest_funcarg__app
@@ -30,6 +32,10 @@ def pytest_configure(config):
     # avoid hitting the currency server during tests. However, some tests still need it. This is
     # why we keep it around so that those tests can re-patch it.
     global_monkeypatch.setattr(currency_module, 'initialize_db', fake_initialize_db)
+    # Avoid false test failures caused by timezones messing up our date fakeries.
+    # See http://stackoverflow.com/questions/9915058/pythons-fromtimestamp-does-a-discrete-jump
+    os.environ['TZ'] = 'UTC'
+    time.tzset()
 
 def pytest_unconfigure(config):
     global global_monkeypatch
