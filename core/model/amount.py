@@ -6,12 +6,15 @@
 # which should be included with this package. The terms are also available at 
 # http://www.hardcoded.net/licenses/bsd_license
 
+import os
 import re
 from itertools import groupby
 
 from hscommon.currency import Currency
 
 try:
+    if os.environ.get('USE_PY_AMOUNT'):
+        raise ImportError()
     from ._amount import Amount
 except ImportError:
     print("Using amount_ref")
@@ -33,8 +36,36 @@ re_decimal_sep_x = re.compile(r"[,.](?=\d{1,10}$)")
 # A valid amount, once it has been pre-processed
 re_amount = re.compile(r"\d+\.\d+|\.\d+|\d+")
 
-def format_amount(amount, default_currency=None, blank_zero=False, zero_currency=None, 
-                  decimal_sep='.', grouping_sep=''):
+def format_amount(
+        amount, default_currency=None, blank_zero=False, zero_currency=None, decimal_sep='.',
+        grouping_sep=''):
+    """Returns a formatted string from ``amount``.
+    
+    From a regular amount, will return (depending on the options of course), something like
+    "CAD 42.54", or maybe only "42.54".
+    
+    This all depends on ``default_currency``, which is a settings in moneyGuru which we pass onto
+    this function. To lighten the UI a bit, moneyGuru only displays "foreign" (non-default)
+    currencies in amounts. Therefore, if ``amount.currency`` is the same as ``default_currency``, we
+    don't include our amount currency code in our result.
+    
+    When amount is null (zero), we don't display currency code because, well, nothingness doesn't
+    have a currency.
+    
+    Another caveat: The number of digits we print depends on our currency's
+    :attr:`exponent <.Currency.exponent>` (most of the time 2, but sometimes 0 or 3).
+    
+    :param default_currency: The user's "native" currency.
+    :type default_currency: :class:`.Currency`.
+    :param bool blank_zero: If amount is zero, return ``''`` instead of ``0.00``.
+    :param zero_currency: If we really want to specify a currency when amount is zero, we can
+                          specify which here.
+    :type zero_currency: :class:`.Currency`.
+    :param str decimal_sep: The decimal separator to use for formatting.
+    :param str grouping_sep: The thousands separator to use for formatting.
+    
+    .. seealso:: :doc:`/currencies`
+    """
     if amount is None:
         return ''
     number = '0.00'
@@ -111,9 +142,21 @@ def parse_amount_single(string, exponent, auto_decimal_place):
     return value
 
 def parse_amount(string, default_currency=None, with_expression=True, auto_decimal_place=False):
-    # set 'with_expression' to False when you know 'string' doesn't contain any. It speeds up parsing
-    # Note that auto_decimal_place has no effect is the string is an expression (it would be too
-    # complicated to implement for nothing)
+    """Returns an :class:`Amount` from ``string``.
+    
+    We can parse strings like "42.54 cad" or "CAD 42.54".
+    
+    If ``default_currency`` is set, we can parse amounts that don't contain a currency code and will
+    give the amount that currency.
+    
+    If ``with_expression`` is true, we can parse stuff like "42*4 cad" or "usd (1+2)/3". If you know
+    your string doesn't contain any expression, turn this flag off to greatly speed up parsing.
+    
+    ``auto_decimal_place`` allows for quick decimal-less typing. We assume that the number has been
+    typed to the last precision digit and automatically place our decimal separator if there isn't
+    one. For example, "1234" would be parsed as "12.34" in a CAD context (in BHD, a currency with 3
+    digits, it would be parsed as "1.234"). This doesn't work with expressions.
+    """
     if string is None or not string.strip():
         return 0
     
@@ -154,6 +197,14 @@ def parse_amount(string, default_currency=None, with_expression=True, auto_decim
         raise ValueError('No currency given')
 
 def convert_amount(amount, target_currency, date):
+    """Returns ``amount`` converted to ``target_currency`` using ``date`` exchange rates.
+    
+    .. seealso:: :meth:`.Currency.value_in`
+    
+    :param amount: :class:`Amount`
+    :param target_currency: :class:`.Currency`
+    :param date: ``datetime.date``
+    """
     if amount == 0:
         return amount
     currency = amount.currency
@@ -163,10 +214,16 @@ def convert_amount(amount, target_currency, date):
     return Amount(amount.value * exchange_rate, target_currency)
 
 def prorate_amount(amount, spread_over_range, wanted_range):
-    """Returns the prorated part of `amount` spread over `spread_over_range`, for the `wanted_range`.
+    """Returns the prorated part of ``amount`` spread over ``spread_over_range`` for the ``wanted_range``.
     
-    For example, if 100$ are spead over a range that lasts 10 days and that there's an overlap of 4
-    days between `spread_over_range` and `wanted_range`, the result will be 40$.
+    For example, if 100$ are spead over a range that lasts 10 days (let's say between the 10th and
+    the 20th) and that there's an overlap of 4 days between ``spread_over_range`` and
+    ``wanted_range`` (let's say the 16th and the 26th), the result will be 40$. Why? Because each
+    day is worth 10$ and we're wanting the value of 4 of those days.
+    
+    :param amount: :class:`Amount`
+    :param spread_over_range: :class:`.DateRange`
+    :param wanted_range: :class:`.DateRange`
     """
     if not spread_over_range:
         return 0

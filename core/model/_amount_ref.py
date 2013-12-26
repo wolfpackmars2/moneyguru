@@ -6,6 +6,10 @@
 # http://www.hardcoded.net/licenses/bsd_license
 
 # This is a reference implementation for the amount.c module
+# It's also kept up to date to have a "readable" version of what we're supposed to have in amount.c
+# It's not such a good reference implementation because this reference was partially optimized (at
+# the cost of a little clarity) before being written in C. But well...
+# Its docstrings are also used for the developer documentation.
 
 import operator
 
@@ -26,26 +30,32 @@ def cmp_wrap(op):
 
 
 class Amount:
-    """A class to store money amounts
+    """Represent an immutable amount of money in a specific :class:`.Currency`.
     
-    Amounts have a currency attribute, which can be None.
+    Amounts have a currency attribute, which can be ``None``.
     When created, all Amounts are rounded to 2 digits.
     Arithmetic operations can't be performed between Amount of different currencies (even between
-    None and not-None amounts). However, if the other part of the operation is not an Amount, it's ok
-    (such as when you want to multiply by a float rate).
-    Comparison rules (==, !=)
-    - An amount is equal to another amount if their values and currencies match
-    - An amount with a value of 0 is equal to 0
+    None and not-None amounts). However, if the other part of the operation is not an Amount, it's
+    ok (such as when you want to multiply by a float rate).
+    
+    Comparison rules (==, !=):
+    
+    * An amount is equal to another amount if their values and currencies match
+    * An amount with a value of 0 is equal to 0
+    
     Comparison rules (<, <=, >, >=):
-    - When comparing 2 Amounts, if the currencies are different, raise ValueError.
-    - When comparing Amount with another type, raise TypeError.
-    - Special case: amounts can be compared with 0
+    
+    * When comparing 2 Amounts, if the currencies are different, raise ``ValueError``.
+    * When comparing Amount with another type, raise ``TypeError``.
+    * Special case: amounts can be compared with 0
+    
+    :param value: Numerical value for our amount
+    :type value: any number
+    :param currency: :class:`.Currency`. Don't send a string.
+    :param bool _value_is_shifted: Internal use only.
     """    
     def __init__(self, value, currency, _value_is_shifted=False):
-        """Create an amount.
-
-        The _value_is_shifted argument is for internal use."""
-        assert isinstance(currency, Currency)     # This is just to make sure nobody sends a string.
+        assert isinstance(currency, Currency) # This is just to make sure nobody sends a string.
         if _value_is_shifted:
             self._shifted_value = value
             self._value = value / 10 ** currency.exponent
@@ -150,9 +160,11 @@ class Amount:
 
     @property
     def currency(self):
+        "*readonly*. :class:`.Currency`. Currency of the amount."""
         return self._currency
 
     @property
     def value(self):
+        "*readonly*. ``float``. numerical value of the amount."""
         return self._value
     

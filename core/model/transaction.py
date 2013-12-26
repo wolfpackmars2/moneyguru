@@ -76,11 +76,13 @@ class Transaction:
     def amount_for_account(self, account, currency):
         """Returns the total sum attributed to ``account``.
         
-        All amounts are converted (see :meth:`.convert_amount`) to ``currency`` before doing the
-        sum. This is needed because we might have amounts with different currencies here.
+        All amounts are converted to ``currency`` before doing the sum. This is needed because we
+        might have amounts with different currencies here.
         
         :param account: :class:`.Account`
         :param currency: :class:`.Currency`
+        
+        .. seealso:: :func:`.convert_amount`
         """
         splits = (s for s in self.splits if s.account is account)
         return sum(convert_amount(s.amount, currency, self.date) for s in splits)
