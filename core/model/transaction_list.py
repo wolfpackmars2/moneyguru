@@ -9,6 +9,14 @@
 from operator import itemgetter
 
 class TransactionList(list):
+    """Manages the :class:`.Transaction` instances of a document.
+    
+    This class is mostly about managing transactions sorting order, moving them around and keeping
+    a cache of values to use for completion. There's only one of those in a document, in
+    :attr:`.Document.transactions`.
+    
+    Subclasses ``list``.
+    """
     def __init__(self, *args, **kwargs):
         list.__init__(self, *args, **kwargs)
         self._descriptions = None
@@ -17,6 +25,7 @@ class TransactionList(list):
     
     #--- Overrides
     def remove(self, transaction):
+        """Removes ``transaction`` from the list."""
         list.remove(self, transaction)
         self.clear_cache()
     
@@ -24,7 +33,7 @@ class TransactionList(list):
     def _compute_completion_list(self, data_and_mtime):
         """Returns a list of unique data sorted in mtime order.
         
-        `data_and_mtime` is an iterable containing (data, mtime) pairs.
+        ``data_and_mtime`` is an iterable containing ``(data, mtime)`` pairs.
         """
         data2mtime = {}
         for data, mtime in data_and_mtime:
@@ -52,10 +61,10 @@ class TransactionList(list):
     
     #--- Public
     def add(self, transaction, keep_position=False, position=None):
-        """Adds 'transaction' to self
+        """Adds ``transaction`` to self
         
-        If you want transaction.position to stay intact, call with keep_position at True. If you 
-        specify a position, this is the one that will be used.
+        If you want ``transaction.position`` to stay intact, call with ``keep_position`` at True. If
+        you  specify a position, this is the one that will be used.
         """
         if position is not None:
             transaction.position = position
@@ -67,6 +76,7 @@ class TransactionList(list):
         self.clear_cache()
     
     def clear(self):
+        """Clears the list of all transactions."""
         del self[:]
         self.clear_cache()
     
@@ -81,7 +91,11 @@ class TransactionList(list):
         self._account_names = None
     
     def reassign_account(self, account, reassign_to=None):
-        """Removes 'account' reference in all transactions"""
+        """Calls :meth:`.Transaction.reassign_account` on all transactions.
+        
+        If, after such an operation, a transaction ends up referencing no account at all, it is
+        removed.
+        """
         for transaction in self[:]:
             transaction.reassign_account(account, reassign_to)
             if not transaction.affected_accounts():
@@ -89,10 +103,10 @@ class TransactionList(list):
         self.clear_cache()
     
     def move_before(self, from_transaction, to_transaction):
-        """Moves from_transaction just before to_transaction
+        """Moves ``from_transaction`` just before ``to_transaction``.
         
-        If to_transaction is None, from_transaction is moved to the end of the
-        list. You must recook after having done a move (or a bunch of moves)
+        If ``to_transaction`` is ``None``, ``from_transaction`` is moved to the end of the
+        list. You must :ref:`recook <cooking>` after having done a move (or a bunch of moves)
         """
         if from_transaction not in self:
             return
@@ -112,9 +126,11 @@ class TransactionList(list):
                 transaction.position += 1
     
     def move_last(self, transaction):
+        """Equivalent to :meth:`move_before` with ``to_transaction`` to ``None``."""
         self.move_before(transaction, None)
     
     def transactions_at_date(self, target_date):
+        """Returns a set of all transactions occurring on ``target_date``."""
         return set(t for t in self if t.date == target_date)
     
     #--- Properties

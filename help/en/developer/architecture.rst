@@ -35,6 +35,8 @@ Therefore, the way :mod:`core.gui` instances work is that they happily dig direc
 fetch data, but when comes the time to change anything, they call the corresponding
 :class:`.Document` method.
 
+.. _cooking:
+
 Raw data and Cooked data
 ========================
 

@@ -112,9 +112,13 @@ class Document(Repeater, GUIObject):
             'year_start_month': 1,
             'default_currency': self.app._default_currency,
         }
+        #: :class:`.AccountList` containing all accounts of the document.
         self.accounts = AccountList(self.default_currency)
+        #: Set of accounts that are currently in "excluded" state.
         self.excluded_accounts = set()
+        #: :class:`.GroupList` containing all account groups of the document.
         self.groups = GroupList()
+        #: :class:`.TransactionList` containing all transactions of the document.
         self.transactions = TransactionList()
         # I did not manage to create a repeatable test for it, but self.schedules has to be ordered
         # because the order in which the spawns are created must stay the same

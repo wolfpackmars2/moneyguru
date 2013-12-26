@@ -16,3 +16,4 @@ out, from the code, what everything is about.
     document
     model/account
     model/transaction
+    model/transaction_list
