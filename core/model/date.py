@@ -17,8 +17,39 @@ ONE_DAY = timedelta(1)
 #--- Date Ranges
 
 class DateRange:
+    """A range between two dates.
+    
+    Much of the information supplied by moneyGuru is done so in a date range context. Give me a
+    profit report for this year, give me a running total chart for this month, and so on and so on.
+    
+    This class represents that range, supplies a couple of useful methods, and can be subclassed to
+    represent more specific ranges, such as :class:`YearRange`.
+    
+    Some ranges are :attr:`navigable <can_navigate>`, which means that they mostly represent a
+    duration, which can be placed anywhere in time. We can thus "navigate" time with this range
+    using prev/next buttons. Example: :class:`MonthRange`.
+    
+    Other ranges, such as :class:`YearToDateRange`, represent two very fixed points in time: 1st of
+    january to today. These are not navigable.
+    
+    The two most important attributes of a date range: :attr:`start` and :attr:`end`.
+    
+    A couple of operators that can be used with ranges:
+    
+    * r1 == r2 -> only if start and end are the same.
+    * bool(r) == True -> if it's a range that makes sense (start <= end)
+    * r1 & r2 -> intersection range between the two.
+    * date in r -> if start <= date <= end
+    * iter(r) -> iterates over all dates between start and end (inclusive).
+    
+    The thing is hashable while, at the same time, being mutable. Use your common sense: don't go
+    around using date ranges as dict keys and then mutate them. Also, mutation of a date range is
+    a rather rare occurence and is only needed in a couple of tight spots. Try avoiding them.
+    """
     def __init__(self, start, end):
+        #: ``datetime.date``. Start of the range.
         self.start = start
+        #: ``datetime.date``. End of the range.
         self.end = end
     
     def __repr__(self):
@@ -56,32 +87,68 @@ class DateRange:
         return hash((self.start, self.end))
     
     def adjusted(self, new_date):
-        # Some date ranges change when new transactions are beind added or changed. This is where
-        # it happens. Returns a new adjusted date range or None.
+        """Kinda like :meth:`around`, but it can possibly enlarge the range.
+        
+        Returns ``None`` if ``new_date`` doesn't trigger any adjustments.
+        
+        To be frank, that method is there only for :class:`AllTransactionsRange`. When we add a new
+        transaction, we call this method to possibly enlarge/reposition the range. If it isn't
+        changed, we don't want to trigger all UI updated related to a date range adjustment, so we
+        return ``None`` to mean "nope, nothing happened here" (which is most of the time).
+        
+        If it's changed, we return the new range.
+        """
         return None
     
     def around(self, date):
+        """Returns a date range of the same type as ``self`` that contains ``new_date``.
+        
+        Some date ranges change when new transactions are beind added or changed. This is where
+        it happens. Returns a new adjusted date range.
+        
+        For a non-navigable range, returns ``self``.
+        """
         return self
 
     def next(self):
+        """Returns the next range if navigable.
+        
+        For example, if we're a month range, return a range with start and end increased by a month.
+        """
         return self
 
     def prev(self):
+        """Returns the previous range if navigable.
+        
+        For example, if we're a month range, return a range with start and end decreased by a month.
+        
+        We make a bit of an exception for this method and implement it in all ranges, rather than
+        only navigable ones. This is because it's used in the profit report for the "Last" column
+        (we want to know what our results were for the last date range). Some ranges, although not
+        navigable, can return a meaningful result here, like :class:`YearToDateRange`, which can
+        return the same period last year. Others, like :class:`AllTransactionsRange`, have nothing
+        to return, so they return an empty range.
+        """
         return self
     
     @property
-    def can_navigate(self): # if it's possible to use prev/next to navigate in date ranges
+    def can_navigate(self):
+        """Returns whether this range is navigable.
+        
+        In other words, if it's possible to use prev/next to navigate in date ranges.
+        """
         return False
     
     @property
     def days(self):
-        """The number of days in the date range.
-        """
+        """The number of days in the date range."""
         return (self.end - self.start).days + 1
     
     @property
     def future(self):
         """The future part of the date range.
+        
+        That is, the part of the range that is later than today.
         """
         today = date.today()
         if self.start > today:
@@ -92,6 +159,8 @@ class DateRange:
     @property
     def past(self):
         """The past part of the date range.
+        
+        That is, the part of the range that is earlier than today.
         """
         today = date.today()
         if self.end < today:
@@ -101,6 +170,12 @@ class DateRange:
     
 
 class NavigableDateRange(DateRange):
+    """A navigable date range.
+    
+    Properly implements navigation-related methods so that subclasses don't have to.
+    
+    Subclasses :class:`DateRange`.
+    """
     def adjusted(self, new_date):
         result = self.around(new_date)
         if result == self:
@@ -122,6 +197,15 @@ class NavigableDateRange(DateRange):
     
 
 class MonthRange(NavigableDateRange):
+    """A navigable date range lasting one month.
+    
+    ``seed`` is a date for the range to wrap around.
+    
+    A monthly range always starts at the first of the month and ends at the last day of that same
+    month.
+    
+    Subclasses :class:`NavigableDateRange`.
+    """
     def __init__(self, seed):
         if isinstance(seed, DateRange):
             seed = seed.start
@@ -134,10 +218,20 @@ class MonthRange(NavigableDateRange):
     
     @property
     def display(self):
+        """String representation of the range (ex: "July 2013")."""
         return self.start.strftime('%B %Y')
     
 
 class QuarterRange(NavigableDateRange):
+    """A navigable date range lasting one quarter.
+    
+    ``seed`` is a date for the range to wrap around.
+    
+    A quarterly range always starts at the first day of the first month of the quarter and ends at
+    the last day of the last month of that same quarter.
+    
+    Subclasses :class:`NavigableDateRange`.
+    """
     def __init__(self, seed):
         if isinstance(seed, DateRange):
             seed = seed.start
@@ -152,10 +246,23 @@ class QuarterRange(NavigableDateRange):
     
     @property
     def display(self):
+        """String representation of the range (ex: "Q2 2013")."""
         return tr('Q{0} {1}').format(self.start.month // 3 + 1, self.start.year)
     
 
 class YearRange(NavigableDateRange):
+    """A navigable date range lasting one year.
+    
+    ``seed`` is a date for the range to wrap around.
+    
+    We can specify ``year_start_month`` if we're weird and we want our year to start at a month
+    other than January.
+    
+    A yearly range always starts at the first day of the first month of the year and ends at
+    the last day of the month 11 months later.
+    
+    Subclasses :class:`NavigableDateRange`.
+    """
     def __init__(self, seed, year_start_month=1):
         assert 1 <= year_start_month <= 12
         if isinstance(seed, DateRange):
@@ -178,10 +285,20 @@ class YearRange(NavigableDateRange):
     
     @property
     def display(self):
+        """String representation of the range (ex: "Jan 2013 - Dec 2013")."""
         return '{0} - {1}'.format(self.start.strftime('%b %Y'), self.end.strftime('%b %Y'))
     
 
 class YearToDateRange(DateRange):
+    """A date range starting at the beginning of the year and ending now.
+    
+    We can specify ``year_start_month`` if we're weird and we want our year to start at a month
+    other than January.
+    
+    A YTD range always starts at the first day of the first month of the year and ends today.
+    
+    Subclasses :class:`DateRange`.
+    """
     def __init__(self, year_start_month=1):
         start_year = date.today().year
         if date.today().month < year_start_month:
@@ -190,13 +307,14 @@ class YearToDateRange(DateRange):
         end = date.today()
         DateRange.__init__(self, start, end)
     
-    def prev(self): # for income statement's Last column
+    def prev(self):
         start = inc_year(self.start, -1)
         end = inc_year(self.end, -1)
         return DateRange(start, end)
     
     @property
     def display(self):
+        """String representation of the range (ex: "Jan 2013 - Now")."""
         return tr('{0} - Now').format(self.start.strftime('%b %Y'))
     
 
@@ -210,6 +328,20 @@ def compute_ahead_months(ahead_months):
     return month_range.end
 
 class RunningYearRange(DateRange):
+    """A weird date range, spanning one year, with a user-defined buffer around today.
+    
+    The goal of this date range is to represent the "current situation", spanning one year. We want
+    to see a bit in the future (to forecast stuff) and a bit in the past, for introspection.
+    
+    The ``ahead_months`` preference tells us where we place our year compared to today's date. This
+    preference is the number of months we want to see in the future. ``0`` means "stop the range
+    at the end of the current month", ``1`` means "stop the range at the end of the next month", and
+    so on.
+    
+    Once we know our end point, then we know our start point, which is exactly one year earlier.
+    
+    Subclasses :class:`DateRange`.
+    """
     def __init__(self, ahead_months):
         end = compute_ahead_months(ahead_months)
         end_plus_one = end + ONE_DAY
@@ -218,17 +350,24 @@ class RunningYearRange(DateRange):
             start = inc_month(start, 1).replace(day=1)
         DateRange.__init__(self, start, end)
     
-    def prev(self): # for income statement's Last column
+    def prev(self):
         start = self.start.replace(year=self.start.year - 1)
         end = self.start - ONE_DAY
         return DateRange(start, end)
     
     @property
     def display(self):
+        """String representation of the range (ex: "Running year (Jun - May)")."""
         return tr('Running year ({0} - {1})').format(self.start.strftime('%b'), self.end.strftime('%b'))
     
 
 class AllTransactionsRange(DateRange):
+    """A range big enough to show all transactions (+ ``ahead_months``).
+    
+    Date ranges don't know anything about transactions, so those limit dates have to be supplied
+    "manually". In the spirit of :class:`RunningYearRange`, we go ahead of the last transaction by
+    ``ahead_months`` months.
+    """
     def __init__(self, first_date, last_date, ahead_months):
         start = first_date
         end = max(last_date, compute_ahead_months(ahead_months))
@@ -244,38 +383,59 @@ class AllTransactionsRange(DateRange):
             result = None
         return result
     
-    def prev(self): # for income statement's Last column
+    def prev(self):
         start = self.start - ONE_DAY
         return DateRange(start, start) # whatever, as long as there's nothing in it
     
     @property
     def display(self):
+        """String representation of the range. Always "All Transactions"."""
         return tr("All Transactions")
     
 
 class CustomDateRange(DateRange):
+    """A date range with limits of the user's choosing.
+    
+    ``format_func`` is needed for :attr:`display`, which is depnds on the user locale.
+    """
     def __init__(self, start, end, format_func):
         DateRange.__init__(self, start, end)
         self._format_func = format_func
     
-    def prev(self): # for income statement's Last column
+    def prev(self):
         end = self.start - ONE_DAY
         start = end - (self.end - self.start)
         return CustomDateRange(start, end, self._format_func)
     
     @property
     def display(self):
+        """String representation of the range (ex: "01-01-2013 - 15-01-2013")."""
         return '{0} - {1}'.format(self._format_func(self.start), self._format_func(self.end))
 
 #--- Date Incrementing
 
 def inc_day(date, count):
+    """Increments ``date`` by ``count`` days.
+    
+    ``count`` can be negative.
+    """
     return date + timedelta(count)
 
 def inc_week(date, count):
+    """Increments ``date`` by ``count * 7`` days.
+    
+    ``count`` can be negative.
+    """
     return inc_day(date, count * 7)
 
 def inc_month(date, count):
+    """Increments ``date`` by ``count`` months.
+    
+    That is, we'll end up with a date on the same day of a different month. If that's impossible
+    (31st incrementing in a 30-days month), the day will be the last of the month.
+    
+    ``count`` can be negative.
+    """
     y, m, d = date.year, date.month, date.day
     m += count
     y += (m - 1) // 12
@@ -285,9 +445,22 @@ def inc_month(date, count):
     return date.replace(year=y, month=m, day=d)
 
 def inc_year(date, count):
+    """Increments ``date`` by ``count * 12`` months.
+    
+    ``count`` can be negative.
+    """
     return inc_month(date, count * 12)
 
 def inc_weekday_in_month(date, count):
+    """Increments ``date`` by ``count`` months, preserving weekday.
+    
+    For example, if ``date`` is the 2nd friday of its month, then the result will be the 2nd friday
+    of ``count`` months later.
+    
+    ``count`` can be negative.
+    
+    If the result doesn't exist, returns ``None``.
+    """
     weekday = date.weekday()
     weekno = (date.day - 1) // 7
     new_month = inc_month(date, count)
@@ -301,6 +474,13 @@ def inc_weekday_in_month(date, count):
         return None
 
 def inc_last_weekday_in_month(date, count):
+    """Increments ``date`` by ``count`` months, preserving weekday, returning the last.
+    
+    For example, if ``date`` is a friday, then the result will be the last friday of ``count``
+    months later.
+    
+    ``count`` can be negative.
+    """
     weekday = date.weekday()
     new_month = inc_month(date, count)
     days_in_month = monthrange(new_month.year, new_month.month)[1]
@@ -322,17 +502,29 @@ def inc_last_weekday_in_month(date, count):
 re_separators = re.compile(r'/|-|\.| ')
 
 def clean_format(format):
-    """Removes any format element that is not supported. If the result is an invalid format, return
-    a fallback format
+    """Removes any format element that is not supported.
+    
+    If the result is an invalid format, return a fallback format.
+    
+    :param format: ``str``
+    :rtype: str
     """
     format = DateFormat(format)
     format.make_numerical()
     return format.iso_format
 
 def parse_date(string, format):
+    """Parses ``string`` into a ``datetime.date`` using ``format`` (ISO).
+    
+    .. seealso:: :class:`DateFormat`
+    """
     return DateFormat(format).parse_date(string)
 
 def format_date(date, format):
+    """Formats ``date`` using ``format`` (ISO).
+    
+    .. seealso:: :class:`DateFormat`
+    """
     return format_year_month_day(date.year, date.month, date.day, format)
 
 def format_year_month_day(year, month, day, format):
@@ -345,6 +537,18 @@ def format_year_month_day(year, month, day, format):
     return result
 
 class DateFormat:
+    """Bridge "system" date formats (``%d-%m-%Y``) and "ISO" date formats (``dd-MM-yyyy``).
+    
+    We only support simple short and numerical date formats, but we can freely convert each of them
+    from/to iso/sys, which is rather convenient.
+    
+    This class also supports date format inputs with a moderate amount of garbage in it. It looks
+    for a separator, a day, a month and a year element, checks their order and precision, and
+    ignores the rest. In case of an unreadable format, it defaults to ``dd/MM/yyyy``.
+    
+    The default initialization takes an ISO format. If you want to create a date format from a sys
+    format, use :meth:`from_sysformat`.
+    """
     ISO2SYS = {'yyyy': '%Y', 'yy': '%y', 'MMM': '%b', 'MM': '%m', 'M': '%m', 'dd': '%d', 'd': '%d'}
     SYS2ISO = {'%Y': 'yyyy', '%y': 'yy', '%m': 'MM', '%b': 'MMM', '%d': 'dd'}
     
@@ -363,6 +567,7 @@ class DateFormat:
     
     @staticmethod
     def from_sysformat(format):
+        """Creates a new instance from a "sys" format (``%d-%m-%Y``)."""
         if format is None:
             format = ''
         for key, value in DateFormat.SYS2ISO.items():
@@ -370,22 +575,26 @@ class DateFormat:
         return DateFormat(format)
     
     def copy(self):
+        """Returns a copy of self."""
         return DateFormat(self.iso_format)
     
     def parse_date(self, string):
+        """Parses ``string`` to a ``datetime.date``."""
         return datetime.strptime(string, self.sys_format).date()
     
     def make_numerical(self):
-        # If the date format contains a non-numerical month, change it to a numerical one.
+        """If the date format contains a non-numerical month, change it to a numerical one."""
         if 'MMM' in self.elements:
             self.elements[self.elements.index('MMM')] = 'MM'
     
     @property
     def iso_format(self):
+        """Returns the format as ISO (``dd-MM-yyyy``)."""
         return self.separator.join(self.elements)
     
     @property
     def sys_format(self):
+        """Returns the format as sys (``%d-%m-%Y``)."""
         repl_elems = [self.ISO2SYS[elem] for elem in self.elements]
         return self.separator.join(repl_elems)
 
