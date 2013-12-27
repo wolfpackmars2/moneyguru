@@ -69,7 +69,7 @@ class Account:
         self.account_number = ''
         #: Freeform notes about the account.
         self.notes = ''
-        #: *readonly*. List of :class:`.Entry` belonging to that account. This list is computed from
+        #: *readonly*. :class:`.EntryList` belonging to that account. This list is computed from
         #: :attr:`.Document.transactions` by the :class:`.Oven`.
         self.entries = EntryList(self)
         
