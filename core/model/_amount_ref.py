@@ -64,6 +64,8 @@ class Amount:
             self._value = value
         self._currency = currency
     
+    # We override __module__ so that it correctly shows in the sphinx docs.
+    __module__ = 'core.model.amount'
     __slots__ = ['_value', '_shifted_value', '_currency']
     
     def __bool__(self):

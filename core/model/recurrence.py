@@ -19,6 +19,15 @@ from .date import (inc_day, inc_week, inc_month, inc_year, inc_weekday_in_month,
 from .transaction import Transaction
 
 class RepeatType:
+    """Available repetition types for :class:`Recurrence`.
+
+    * ``Daily``
+    * ``Weekly``
+    * ``Monthly``
+    * ``Yearly``
+    * ``Weekday`` (every 2nd friday of the month)
+    * ``WeekdayLast`` (every last friday of the month)
+    """
     Daily = 'daily'
     Weekly = 'weekly'
     Monthly = 'monthly'
@@ -38,6 +47,30 @@ RTYPE2INCFUNC = {
 ONE_DAY = datetime.timedelta(1)
 
 class DateCounter:
+    """Iterates over dates in a regular manner.
+
+    This is an iterator, so once we've created our DateCounter, we simply iterate over it to get our
+    dates (we yield ``datetime.date`` instances).
+
+    Sometimes (well, only with ``RepeatType.Weekday``), we have to skip a beat. If, for example, we
+    have to return the 5th friday of the month and that our current month doesn't have it, we skip
+    it and return the first month to have it. So, sometimes, we can have big gap in between our
+    dates.
+
+    :param base_date: Date from which we start our iteration. For weekly repeat types, this date
+                      also determines which weekday we're looking for in our next dates. If our base
+                      date is the 2nd friday of its month, then we're going to iterate over all 2nd
+                      friday of months.
+    :type base_date: datetime.date
+    :param repeat_type: The type of interval we want to put in between our yielded dates.
+    :type repeat_type: :class:`RepeatType`
+    :param int repeat_every: Amplitude of the interval to put in between our dates. For example,
+                             with a monthly repeat type, ``3`` would mean "every 3 months". For
+                             "weekday" types, ``repeat_every`` is also in months.
+    :param datetime.date end: Date at which to stop the iteration.
+
+    .. seealso:: :doc:`/forecast`
+    """
     def __init__(self, base_date, repeat_type, repeat_every, end):
         self.base_date = base_date
         self.end = end
@@ -68,11 +101,32 @@ class DateCounter:
     
 
 class Spawn(Transaction):
+    """Instance of a recurrent transaction at a specific date.
+
+    :class:`Recurrence` (schedules) are transactions that are repeated multiple times. Spawns are
+    specific occurrences of a schedule. It's the spawn, not the schedule, that will end up showing
+    up in the transaction list with the little clock icon next to it.
+
+    Other than holding a reference to its recurrence, it behaves pretty much like a normal
+    transaction.
+
+    All initialisation arguments directly set attributes of the same name. If ``date`` isn't set,
+    ``recurrence_date`` is used.
+
+    Subclasses :class:`.Transaction`.
+    """
     def __init__(self, recurrence, ref, recurrence_date, date=None):
         date = date or recurrence_date
         Transaction.__init__(self, date, ref.description, ref.payee, ref.checkno)
+        #: ``datetime.date``. Date at which the spawn is "supposed to happen", which can be
+        #: overridden by the ``date`` argument, if we're in an "exception" situation. We need to
+        #: keep track of this date because it's used as a kind of ID (oh, the spawn
+        #: ``schedule42@03-04-2014``? Yeah, there's an exception for that one) in the save file.
         self.recurrence_date = recurrence_date
+        #: :class:`.Transaction`. Template transaction for our spawn. Most of the time, it's the
+        #: same as :attr:`Recurrence.ref`, unless we have an "exception" in our schedule.
         self.ref = ref
+        #: :class:`Recurrence`. The schedule that created the spawn.
         self.recurrence = recurrence
         self.set_splits(ref.splits)
         for split in self.splits:
@@ -81,16 +135,57 @@ class Spawn(Transaction):
     
 
 class Recurrence:
+    """A recurring transaction (called "Schedule" in the app).
+
+    .. rubric:: Schedule exceptions
+
+    One of the great features of moneyGuru is its ability to easy allow exceptions in its schedule.
+    The amount changes one month? No problem, just change it. The transaction happens a day later?
+    No problem, change it. From now on, every following transaction is going to happen a day later?
+    No problem, hold shift when you commit the change to make it "global".
+
+    All these exceptions, they have to be recorded somewhere. The "one-time" exceptions are kept in
+    :attr:`date2exception`. The date used in the mapping is :attr:`Spawn.recurrent_date` because
+    when we change the date of an exception, we still want to remember which recurrent date it
+    replaces, so we used the date at which the *regular* transaction was supposed to happen.
+
+    There are also the "global" exceptions, which are stored in :attr:`date2globalchange` and work
+    kinda like normal exception, except that from the date they first happen, all following spawns
+    are going to use this exception as a transaction model. This includes date. That is, if a global
+    exception is 3 days later than its :attr:`Spawn.recurrent_date`, then all following spawns are
+    going to to be 3 days later.
+
+    Exceptions can override each other. We can be riding on a global exception and, suddenly, a
+    newer global or local exception is there! Well, we apply that exception.
+
+    An exception can also be a deletion, that is "oh, this week that transaction didn't happen".
+    This is recorded by putting ``None`` in :attr:`date2exception`. When this deletion is done as
+    a global change (from this date, this recurrence doesn't happen anymore), we simply set
+    :attr:`stop_date`.
+
+    .. seealso:: :class:`DateCounter`
+
+    :param ref: See :attr:`ref`
+    :type ref: :class:`.Transaction`
+    :param repeat_type: The type of interval we have in between spawns.
+    :type repeat_type: :class:`RepeatType`
+    :param int repeat_every: The amplitude of that repetition.
+    """
     def __init__(self, ref, repeat_type, repeat_every):
         if repeat_type not in RTYPE2INCFUNC:
             # invalid repeat type, default to monthly
             repeat_type = RepeatType.Monthly
+        #: :class:`.Transaction`. The model transaction that's going to be regularly spawned.
         self.ref = ref
         self._repeat_type = repeat_type
         self._repeat_every = repeat_every
+        #: Date at which our recurrence stops. When ``None`` (the default), it never ends.
         self.stop_date = None
+        #: ``recurrent_date -> transaction`` mapping of schedule exceptions.
         self.date2exception = {}
+        #: ``recurrent_date -> transaction`` mapping of *global* schedule exceptions.
         self.date2globalchange = {}
+        #: ``recurrent_date -> transaction`` mapping of spawns. Used as a cache. Frequently purged.
         self.date2instances = {}
         self.rtype2desc = {
             RepeatType.Daily: tr('Daily'),
@@ -145,12 +240,24 @@ class Recurrence:
     
     #--- Public
     def affected_accounts(self):
+        """Returns a set of all :class:`.Account` affected by the schedule.
+
+        This is pretty much the same as calling
+        :meth:`~core.model.transaction.Transaction.affected_accounts` on :attr:`ref`, except that it
+        also checks in exception instances to make there there isn't another affected account in
+        there.
+        """
         result = self.ref.affected_accounts()
         for exception in self._all_exceptions():
             result |= exception.affected_accounts()
         return result
     
     def change_globally(self, spawn):
+        """Add a user-modified spawn into the global exceptions list.
+
+        :param spawn: The spawn to add to :attr:`date2globalchange`.
+        :type spawn: :class:`.Spawn`
+        """
         for date in list(self.date2globalchange.keys()):
             if date >= spawn.recurrence_date:
                 del self.date2globalchange[date]
@@ -162,19 +269,35 @@ class Recurrence:
         self._update_ref()
     
     def delete(self, spawn):
+        """Create an exception that prevents ``spawn`` from spawning again.
+
+        :param spawn: The spawn to delete.
+        :type spawn: :class:`Spawn`
+        """
         self.delete_at(spawn.recurrence_date)
     
     def delete_at(self, date):
+        """Create an exception that prevents further spawn at ``date``."""
         self.date2exception[date] = None
         self._update_ref()
     
     def get_spawns(self, end):
-        # END DATE ADJUSTMENT
-        # if a changed date end up being smaller than the "spawn date", it's possible that a spawn
-        # that should have been spawned for the date range is not spawned. Therefore, we always
-        # spawn at least until the date of the last exception. For global changes, it's even more
-        # complicated. If the global date delta is negative enough, we can end up with a spawn that
-        # doesn't go far enough, so we must adjust our max date by this delta.
+        """Returns the list of transactions spawned by our recurrence.
+
+        We start at :attr:`start_date` and end at ``end``. We have to specify an end to our spawning
+        to avoid getting infinite results.
+
+        .. rubric:: End date adjustment
+
+        If a changed date end up being smaller than the "spawn date", it's possible that a spawn
+        that should have been spawned for the date range is not spawned. Therefore, we always
+        spawn at least until the date of the last exception. For global changes, it's even more
+        complicated. If the global date delta is negative enough, we can end up with a spawn that
+        doesn't go far enough, so we must adjust our max date by this delta.
+
+        :param datetime.date end: When to stop spawning.
+        :rtype: list of :class:`Spawn`
+        """
         if self.date2exception:
             end = max(end, max(self.date2exception.keys()))
         if self.date2globalchange:
@@ -207,12 +330,18 @@ class Recurrence:
         return result
     
     def reassign_account(self, account, reassign_to=None):
+        """Reassigns accounts for :attr:`ref` and all exceptions.
+
+        .. seealso:: :meth:`affected_accounts`
+                     :meth:`~core.model.transaction.Transaction.reassign_account`
+        """
         self.ref.reassign_account(account, reassign_to)
         for exception in self._all_exceptions():
             exception.reassign_account(account, reassign_to)
         self.reset_spawn_cache()
     
     def replicate(self):
+        """Returns a copy of ``self``."""
         result = copy.copy(self)
         result.date2exception = copy.copy(self.date2exception)
         result.date2globalchange = copy.copy(self.date2globalchange)
@@ -221,28 +350,33 @@ class Recurrence:
         return result
     
     def reset_exceptions(self):
+        """Empties :attr:`date2exception` and :attr:`date2globalchange`."""
         self.date2exception = {}
         self.date2globalchange = {}
     
     def reset_spawn_cache(self):
+        """Empties :attr:`date2instances`."""
         self.date2instances = {}
     
     def stop_at(self, spawn):
+        """Stop further spawning at ``spawn`` (sets :attr:`stop_date`)."""
         self.stop_date = spawn.recurrence_date
     
     def stop_before(self, spawn):
+        """Stop further spawning just before ``spawn`` (sets :attr:`stop_date`)."""
         self.stop_date = spawn.recurrence_date - ONE_DAY
     
     #--- Properties
     @property
     def is_alive(self):
-        """Returns whether get_spawns() can ever return anything given the start and stop date"""
+        """Returns whether :meth:`get_spawns` can ever return anything."""
         if self.stop_date is None:
             return True
         return bool(self.get_spawns(self.stop_date))
     
     @property
     def repeat_every(self):
+        """``int``. See :class:`DateCounter`."""
         return self._repeat_every
     
     @repeat_every.setter
@@ -254,6 +388,7 @@ class Recurrence:
     
     @property
     def repeat_type(self):
+        """:class:`RepeatType`. See :class:`DateCounter`."""
         return self._repeat_type
     
     @repeat_type.setter
@@ -265,10 +400,19 @@ class Recurrence:
     
     @property
     def repeat_type_desc(self):
+        """``str``. User-readable description of our :attr:`repeat_type`.
+
+        Things like "Daily" and "Weekly". For "Weekday" repeat types, the description is dynamic
+        (depending on :attr:`start_date`) and looks like "Every 2nd friday of the month".
+        """
         return self.rtype2desc[self._repeat_type]
     
     @property
     def start_date(self):
+        """``datetime.date``. When our recurrence begins.
+
+        Same as the :attr:`Transaction.date` attribute of :attr:`ref`.
+        """
         return self.ref.date
     
     @start_date.setter
