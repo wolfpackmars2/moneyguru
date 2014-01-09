@@ -358,7 +358,7 @@ def main():
     if not op.exists('build'):
         os.mkdir('build')
     if args.doc:
-        build_help(dev)
+        build_help()
     elif args.loc:
         build_localizations(ui)
     elif args.updatepot:
