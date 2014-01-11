@@ -6,14 +6,6 @@
 # which should be included with this package. The terms are also available at 
 # http://www.hardcoded.net/licenses/bsd_license
 
-# ABOUT BUDGETS
-# Budgets work very similarly to recurrences, except that a twist must be applied to them so they
-# can work properly. The twist is about the spawn's "recurrence" date and the effective date. The
-# recurrence date must be at the beginning of the period, but the effective date must be at the end
-# of it. The reason for it is that since recurrence are only cooked until a certain date (usually
-# the current date range's end), but that the budget is affects the date range *prior* to it, the
-# last budget of the date range will never be represented.
-
 from datetime import date
 
 from hscommon.util import extract
@@ -24,13 +16,42 @@ from .recurrence import Recurrence, Spawn, DateCounter, RepeatType
 from .transaction import Transaction, Split
 
 class BudgetSpawn(Spawn):
+    """:class:`.Spawn`, but for budgets.
+
+    The only difference with a normal spawn is that its ``is_budget`` attribute is true.
+    """
     is_budget = True
 
 class Budget(Recurrence):
+    """Regular budget for a specific account.
+
+    A budgets yields spawns with amounts depending on how much money we've already spent in our
+    account. For example, if I have a monthly budget of 100$ for "Clothing", then the budget spawn
+    for a month that has 25$ worth of clothing in it is going to be 75$. This only works in the
+    future.
+
+    Budgets work very similarly to recurrences, except that a twist must be applied to them so they
+    can work properly. The twist is about the spawn's "recurrence" date and the effective date. The
+    recurrence date must be at the beginning of the period, but the effective date must be at the end
+    of it. The reason for it is that since recurrence are only cooked until a certain date (usually
+    the current date range's end), but that the budget is affects the date range *prior* to it, the
+    last budget of the date range will never be represented.
+
+    All initialization variables are directly assigned to their corresponding attributes.
+
+    Subclasses :class:`.Recurrence`.
+
+    .. seealso:: :doc:`/forecast`
+    """
     def __init__(self, account, target, amount, ref_date, repeat_type=RepeatType.Monthly):
+        #: :class:`.Account` for which we budget. Has to be an income or expense.
         self.account = account
+        #: Target :class:`.Account` for the budget. In other words, the asset or liability account
+        #: in which we want to count the cumulative effect of our future budgets. Can be ``None``.
         self.target = target
+        #: The :class:`.Amount` we budget for our time span.
         self.amount = amount
+        #: ``str``. Freeform notes from the user.
         self.notes = ''
         self._previous_spawns = []
         ref = Transaction(ref_date)
@@ -49,9 +70,20 @@ class Budget(Recurrence):
         return BudgetSpawn(self, ref, recurrence_date=recurrence_date, date=end_date)
     
     def get_spawns(self, end, transactions, consumedtxns):
-        # transactions will affect the amounts of the budget spawns
-        # consumedtxns is a set of txns already "consumed" by a budget. It is the budget's
-        # responsability to add txns to this set as it "consumes" them
+        """Returns the list of transactions spawned by our budget.
+
+        Works pretty much like :meth:`core.model.recurrence.Recurrence.get_spawns`, except for the
+        extra arguments.
+
+        :param transactions: Transactions that can affect our budget spawns' final amount.
+        :type transactions: list of :class:`.Transaction`
+        :param consumedtxns: Transactions that have already been "consumed" by a budget spawn in
+                             this current round of spawning (one a budget "ate" a transaction, we
+                             don't have it affect another). This set is going to be mutated
+                             (augmented) by this method. All you have to do is start with an empty
+                             set and pass it around for each call.
+        :type consumedtxns: set of :class:`.Transaction`
+        """
         spawns = Recurrence.get_spawns(self, end)
         # No spawn in the past
         spawns = [spawn for spawn in spawns if spawn.date > date.today()]
@@ -77,6 +109,22 @@ class Budget(Recurrence):
     
     #--- Public
     def amount_for_date_range(self, date_range, currency):
+        """Returns the budgeted amount for ``date_range``.
+
+        That is, the pro-rated amount we're currently budgeting (with adjustments for transactions
+        "consuming" the budget) for the date range.
+
+        **Warning:** :meth:`get_spawns` must have been called until a date high enough to cover our
+        date range. We're using previously generated spawns to compute that amount.
+
+        :param date_range: The date range we want our budgeted amount for.
+        :type date_range: :class:`.DateRange`
+        :param currency: The currency of the returned amount. If the amount for the budget is
+                         different, the exchange rate for the date of the beggining of the budget
+                         spawn is used.
+        :type currency: :class:`.Currency`
+        :rtype: :class:`.Amount`
+        """
         total_amount = 0
         for spawn in self._previous_spawns:
             amount = spawn.amount_for_account(self.account, currency)
@@ -90,7 +138,25 @@ class Budget(Recurrence):
     
 
 class BudgetList(list):
+    """Manage the collection of budgets of a document.
+
+    This subclasses ``list`` and provides a few methods for getting stats for all budgets in the
+    list.
+    """
     def amount_for_account(self, account, date_range, currency=None):
+        """Returns the amount for all budgets for ``account``.
+
+        In short, we sum up the result of :meth:`Budget.amount_for_date_range` calls.
+
+        :param account: The account we want to count our budget for.
+        :type account: :class:`.Account`
+        :param date_range: The date range we want our budgeted amount for.
+        :type date_range: :class:`.DateRange`
+        :param currency: The currency of the returned amount. If ``None``, we use the currency of
+                         ``account``.
+        :type currency: :class:`.Currency`
+        :rtype: :class:`.Amount`
+        """
         if not date_range.future:
             return 0
         budgets = [b for b in self if b.account is account and b.amount]
@@ -101,9 +167,19 @@ class BudgetList(list):
         return amount
     
     def budgets_for_target(self, target):
+        """Return all budgets with ``target`` as :attr:`Budget.target`.
+
+        :param target: The target account we're looking for.
+        :type target: :class:`.Account`
+        :rtype: List of :class:`Budget`
+        """
         return [b for b in self if b.target is target]
     
     def normal_amount_for_account(self, account, date_range, currency=None):
+        """Normalized version of :meth:`amount_for_account`.
+
+        .. seealso:: :meth:`core.model.account.Account.normalize_amount`
+        """
         budgeted_amount = self.amount_for_account(account, date_range, currency)
         return account.normalize_amount(budgeted_amount)
     
