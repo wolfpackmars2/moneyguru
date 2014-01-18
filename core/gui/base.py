@@ -138,22 +138,28 @@ class HideableObject:
     
 
 class DocumentGUIObject(Listener, GUIObject, DocumentNotificationsMixin):
-    def __init__(self, document):
-        Listener.__init__(self, document)
+    def __init__(self, document, listento=None):
+        if listento is None:
+            listento = document
+        Listener.__init__(self, listento)
         GUIObject.__init__(self)
         self.document = document
         self.app = document.app
     
 
-class ViewChild(Listener, GUIObject, HideableObject, DocumentNotificationsMixin, MainWindowNotificationsMixin):
+class MainWindowGUIObject(DocumentGUIObject, MainWindowNotificationsMixin):
+    def __init__(self, mainwindow, listento=None):
+        if listento is None:
+            listento = mainwindow
+        DocumentGUIObject.__init__(self, mainwindow.document, listento=listento)
+        self.mainwindow = mainwindow
+
+
+class ViewChild(MainWindowGUIObject, HideableObject):
     def __init__(self, parent_view):
-        Listener.__init__(self, parent_view)
-        GUIObject.__init__(self)
+        MainWindowGUIObject.__init__(self, parent_view.mainwindow, listento=parent_view)
         HideableObject.__init__(self)
         self.parent_view = parent_view
-        self.mainwindow = parent_view.mainwindow
-        self.document = self.mainwindow.document
-        self.app = self.document.app
     
     def _process_message(self, msg):
         # We never want to process messages (such as document_restoring_preferences) when our view
