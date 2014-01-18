@@ -22,12 +22,12 @@ from hscommon.gui.base import GUIObject
 
 from .const import NOEDIT, DATE_FORMAT_FOR_PREFERENCES
 from .exception import FileFormatError, OperationAborted
-from .loader import csv, qif, ofx, native
+from .loader import native
 from .model.account import Account, Group, AccountList, GroupList, AccountType
 from .model.amount import parse_amount, format_amount
 from .model.budget import BudgetList
 from .model.date import (MonthRange, QuarterRange, YearRange, YearToDateRange, RunningYearRange,
-    AllTransactionsRange, CustomDateRange, inc_month, DateFormat)
+    AllTransactionsRange, CustomDateRange, inc_month)
 from .model.oven import Oven
 from .model.recurrence import Spawn
 from .model.transaction_list import TransactionList
@@ -1029,19 +1029,6 @@ class Document(Repeater, GUIObject):
         if not autosave:
             self._undoer.set_save_point()
             self._dirty_flag = False
-    
-    def load_parsed_file_for_import(self):
-        """Load a parsed file for import and trigger the opening of the Import window.
-        
-        When the document's ``loader`` has finished parsing (either after having done CSV
-        configuration or directly after :meth:`parse_file_for_import`), call this method to load the
-        parsed data into model instances, ready to be shown in the Import window.
-        """
-        self.loader.load()
-        if self.loader.accounts and self.loader.transactions:
-            self.notify('file_loaded_for_import')
-        else:
-            raise FileFormatError('This file does not contain any account to import.')
     
     def import_entries(self, target_account, ref_account, matches):
         """Imports entries in ``mathes`` into ``target_account``.

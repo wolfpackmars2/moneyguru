@@ -51,9 +51,6 @@ class DocumentNotificationsMixin:
     def edition_must_stop(self):
         """If any GUI is currently in editing mode, this has to stop now."""
     
-    def file_loaded_for_import(self):
-        """A file has been parsed and is ready to be shown to the user in the import window."""
-    
     def filter_applied(self):
         """A filter has just been applied to our transactions."""
     

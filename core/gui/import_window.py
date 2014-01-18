@@ -321,6 +321,12 @@ class ImportWindow(DocumentGUIObject):
         self._refresh_swap_list_items()
         self.import_table.refresh()
     
+    def show(self):
+        self.refresh_panes()
+        self.view.refresh_target_accounts()
+        self.view.refresh_tabs()
+        self.view.show()
+
     #--- Properties
     @property
     def selected_pane(self):
@@ -358,12 +364,6 @@ class ImportWindow(DocumentGUIObject):
         return [tr('< New Account >')] + [a.name for a in self.target_accounts]
     
     #--- Events
-    def file_loaded_for_import(self):
-        self.refresh_panes()
-        self.view.refresh_target_accounts()
-        self.view.refresh_tabs()
-        self.view.show()
-    
     def account_added(self):
         self.refresh_targets()
         self._refresh_target_selection()

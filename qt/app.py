@@ -21,7 +21,6 @@ from core.app import Application as MoneyGuruModel
 
 from .controller.document import Document
 from .controller.main_window import MainWindow
-from .controller.import_.window import ImportWindow
 from .controller.preferences_panel import PreferencesPanel
 from .support.date_edit import DateEdit
 from .preferences import Preferences
@@ -52,7 +51,6 @@ class MoneyGuru(ApplicationBase):
         self.doc = Document(app=self)
         self.doc.model.connect()
         self.mainWindow = MainWindow(doc=self.doc)
-        self.importWindow = ImportWindow(self.mainWindow, doc=self.doc)
         self.preferencesPanel = PreferencesPanel(self.mainWindow, app=self)
         self.aboutBox = AboutBox(self.mainWindow, self, withreg=False)
         if sys.argv[1:] and op.exists(sys.argv[1]):
@@ -82,14 +80,14 @@ class MoneyGuru(ApplicationBase):
     #--- Event Handling
     def applicationFinishedLaunching(self):
         self.prefs.restoreGeometry('mainWindowGeometry', self.mainWindow)
-        self.prefs.restoreGeometry('importWindowGeometry', self.importWindow)
+        self.prefs.restoreGeometry('importWindowGeometry', self.mainWindow.importWindow)
         self.mainWindow.show()
     
     def applicationWillTerminate(self):
         self.doc.close()
         self.willSavePrefs.emit()
         self.prefs.saveGeometry('mainWindowGeometry', self.mainWindow)
-        self.prefs.saveGeometry('importWindowGeometry', self.importWindow)
+        self.prefs.saveGeometry('importWindowGeometry', self.mainWindow.importWindow)
         self.prefs.save()
         self.model.shutdown()
     

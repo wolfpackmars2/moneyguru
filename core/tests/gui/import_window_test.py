@@ -491,7 +491,7 @@ def app_two_accounts_with_common_txn():
     loader.flush_account()
     loader.load()
     app.doc.loader = loader
-    app.doc.notify('file_loaded_for_import')
+    app.iwin.show()
     return app
 
 @with_app(app_two_accounts_with_common_txn)

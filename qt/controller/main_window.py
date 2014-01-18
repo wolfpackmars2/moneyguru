@@ -47,6 +47,7 @@ from .custom_date_range_panel import CustomDateRangePanel
 from .search_field import SearchField
 from .date_range_selector import DateRangeSelector
 from .import_.csv_options import CSVOptionsWindow
+from .import_.window import ImportWindow
 
 tr = trget('ui')
 
@@ -100,6 +101,7 @@ class MainWindow(QMainWindow):
         self.clookup = Lookup(self, model=self.model.completion_lookup)
         self.drsel = DateRangeSelector(mainwindow=self, view=self.dateRangeSelectorView)
         self.sfield = SearchField(model=self.model.search_field, view=self.searchLineEdit)
+        self.importWindow = ImportWindow(self)
         self.csvOptionsWindow = CSVOptionsWindow(self)
         self.recentDocuments = Recent(self.app, 'recentDocuments')
         self.recentDocuments.addMenu(self.menuOpenRecent)

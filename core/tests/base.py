@@ -21,7 +21,6 @@ from ..document import Document, ScheduleScope
 from ..exception import FileFormatError
 from ..const import PaneType
 from ..gui.completable_edit import CompletableEdit
-from ..gui.import_window import ImportWindow
 from ..gui.main_window import MainWindow
 from ..loader import base
 from ..model.account import AccountType
@@ -138,12 +137,12 @@ class TestApp(TestAppBase):
         self.sfield = link_gui(self.mw.search_field)
         self.drsel = link_gui(self.mw.daterange_selector)
         self.csvopt = link_gui(self.mw.csv_options)
-        iwin = ImportWindow(self.doc) # We have to link the import table's gui before we link iwin's
+        # We have to link the import table's gui before we link iwin's
         # The order in which the gui is linked in linked_gui causes a crash in pref_test.
         # import_table.columns has to be linked first.
-        link_gui(iwin.import_table.columns)
-        self.itable = link_gui(iwin.import_table)
-        self.iwin = link_gui(iwin)
+        link_gui(self.mw.import_window.import_table.columns)
+        self.itable = link_gui(self.mw.import_window.import_table)
+        self.iwin = link_gui(self.mw.import_window)
         self.alookup = link_gui(self.mw.account_lookup)
         self.clookup = link_gui(self.mw.completion_lookup)
         self.doc.connect()
@@ -419,7 +418,7 @@ class TestApp(TestAppBase):
         self.doc.loader = DictLoader(self.doc.default_currency, account_name, transactions,
             default_date_format=default_date_format)
         self.doc.loader.load()
-        self.doc.notify('file_loaded_for_import')
+        self.iwin.show()
     
     def graph_data(self):
         xoffset = self.balgraph._xoffset

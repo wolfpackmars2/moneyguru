@@ -13,7 +13,7 @@ from hscommon.trans import tr
 
 from ..exception import FileLoadError
 from ..loader.csv import CsvField, MERGABLE_FIELDS
-from .base import DocumentGUIObject
+from .base import MainWindowGUIObject
 
 LAYOUT_PREFERENCE_NAME = 'CSVLayouts'
 FIELD_NAMES = {
@@ -85,8 +85,8 @@ class Layout:
             last_index -= 1
     
 
-class CSVOptions(DocumentGUIObject):
-    def __init__(self, document):
+class CSVOptions(MainWindowGUIObject):
+    def __init__(self, mainwindow):
         def preference2layout(pref):
             layout = Layout(pref['name'])
             columns = pref['columns']
@@ -95,7 +95,7 @@ class CSVOptions(DocumentGUIObject):
             layout.target_account_name = pref.get('target_account')
             return layout
         
-        DocumentGUIObject.__init__(self, document)
+        MainWindowGUIObject.__init__(self, mainwindow)
         self.lines = []
         self._colcount = 0
         self._target_accounts = []
@@ -133,7 +133,7 @@ class CSVOptions(DocumentGUIObject):
         target_name = self.layout.target_account_name
         loader.target_account = first(t for t in self._target_accounts if t.name == target_name)
         try:
-            self.document.load_parsed_file_for_import()
+            self.mainwindow.load_parsed_file_for_import()
         except FileLoadError as e:
             self.view.show_message(str(e))
         else:

@@ -33,6 +33,7 @@ from .schedule_panel import SchedulePanel
 from .custom_date_range_panel import CustomDateRangePanel
 from .account_reassign_panel import AccountReassignPanel
 from .export_panel import ExportPanel
+from .import_window import ImportWindow
 from .csv_options import CSVOptions
 from .networth_view import NetWorthView
 from .profit_view import ProfitView
@@ -118,7 +119,8 @@ class MainWindow(Repeater, GUIObject):
         self.account_reassign_panel = AccountReassignPanel(self)
         self.export_panel = ExportPanel(self)
 
-        self.csv_options = CSVOptions(self.document)
+        self.csv_options = CSVOptions(self)
+        self.import_window = ImportWindow(self.document)
         
         msgs = MESSAGES_DOCUMENT_CHANGED | {'filter_applied', 'date_range_changed'}
         self.bind_messages(msgs, self._invalidate_visible_entries)
@@ -371,6 +373,19 @@ class MainWindow(Repeater, GUIObject):
     def jump_to_account(self):
         self.account_lookup.show()
     
+    def load_parsed_file_for_import(self):
+        """Load a parsed file for import and trigger the opening of the Import window.
+        
+        When the document's ``loader`` has finished parsing (either after having done CSV
+        configuration or directly after :meth:`parse_file_for_import`), call this method to load the
+        parsed data into model instances, ready to be shown in the Import window.
+        """
+        self.document.loader.load()
+        if self.document.loader.accounts and self.document.loader.transactions:
+            self.import_window.show()
+        else:
+            raise FileFormatError('This file does not contain any account to import.')
+
     def make_schedule_from_selected(self):
         current_view = self._current_pane.view
         if current_view.VIEW_TYPE in {PaneType.Transaction, PaneType.Account}:
@@ -464,7 +479,7 @@ class MainWindow(Repeater, GUIObject):
         if isinstance(self.document.loader, csv.Loader):
             self.csv_options.show()
         else:
-            self.document.load_parsed_file_for_import()
+            self.load_parsed_file_for_import()
 
     def select_pane_of_type(self, pane_type, clear_filter=True):
         if clear_filter:

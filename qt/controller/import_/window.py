@@ -13,18 +13,17 @@ from PyQt4.QtGui import QWidget, QTabBar, QComboBox, QGroupBox, QPushButton
 from hscommon.trans import trget
 from qtlib.selectable_list import ComboboxModel
 
-from core.gui.import_window import ImportWindow as ImportWindowModel
 from ...support.item_view import TableView
 from .table import ImportTable
 
 tr = trget('ui')
 
 class ImportWindow(QWidget):
-    def __init__(self, parent, doc):
-        QWidget.__init__(self, parent, Qt.Window)
+    def __init__(self, mainwindow):
+        QWidget.__init__(self, mainwindow, Qt.Window)
         self._setupUi()
-        self.doc = doc
-        self.model = ImportWindowModel(document=doc.model)
+        self.doc = mainwindow.doc
+        self.model = mainwindow.model.import_window
         self.swapOptionsComboBox = ComboboxModel(model=self.model.swap_type_list, view=self.swapOptionsComboBoxView)
         self.table = ImportTable(model=self.model.import_table, view=self.tableView)
         self.model.view = self
