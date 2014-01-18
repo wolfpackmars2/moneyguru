@@ -30,9 +30,6 @@ class DocumentNotificationsMixin:
     def budget_deleted(self):
         """Budget(s) were deleted from the document."""
     
-    def csv_options_needed(self):
-        """For the ongoing import operation, we need to open the CSV option dialog."""
-    
     def custom_date_range_selected(self):
         """We need to open the custom date range dialog."""
     

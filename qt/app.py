@@ -22,7 +22,6 @@ from core.app import Application as MoneyGuruModel
 from .controller.document import Document
 from .controller.main_window import MainWindow
 from .controller.import_.window import ImportWindow
-from .controller.import_.csv_options import CSVOptionsWindow
 from .controller.preferences_panel import PreferencesPanel
 from .support.date_edit import DateEdit
 from .preferences import Preferences
@@ -54,7 +53,6 @@ class MoneyGuru(ApplicationBase):
         self.doc.model.connect()
         self.mainWindow = MainWindow(doc=self.doc)
         self.importWindow = ImportWindow(self.mainWindow, doc=self.doc)
-        self.csvOptionsWindow = CSVOptionsWindow(self.mainWindow, doc=self.doc)
         self.preferencesPanel = PreferencesPanel(self.mainWindow, app=self)
         self.aboutBox = AboutBox(self.mainWindow, self, withreg=False)
         if sys.argv[1:] and op.exists(sys.argv[1]):

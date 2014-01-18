@@ -21,7 +21,7 @@ from ..model.date import MonthRange, YearRange
 PLN = Currency(code='PLN')
 
 def importall(app, filename):
-    app.doc.parse_file_for_import(filename)
+    app.mw.parse_file_for_import(filename)
     while app.iwin.panes:
         app.iwin.import_selected_pane()
 
@@ -36,14 +36,14 @@ def test_import_empty(app):
     # Trying to import an empty file results in a FileFormatError
     filename = testdata.filepath('zerofile')
     with raises(FileFormatError):
-        app.doc.parse_file_for_import(filename)
+        app.mw.parse_file_for_import(filename)
 
 @with_app(TestApp)
 def test_import_inexistant(app, tmpdir):
     # Raises a FileFormatError when importing a file that doesn't exist.
     filename = str(tmpdir.join('does_not_exist.qif'))
     with raises(FileFormatError):
-        app.doc.parse_file_for_import(filename)
+        app.mw.parse_file_for_import(filename)
 
 @with_app(TestApp)
 def test_import_invalid_qif(app):
@@ -51,7 +51,7 @@ def test_import_invalid_qif(app):
     # file is a file that starts with a '!Account' line)
     filename = testdata.filepath('qif', 'invalid.qif')
     with raises(FileFormatError):
-        app.doc.parse_file_for_import(filename)
+        app.mw.parse_file_for_import(filename)
 
 @with_app(TestApp)
 def test_import_moneyguru_file(app):
@@ -79,7 +79,7 @@ def test_account_only_qif_is_invalid(app):
 def test_csv_import_tries_default_dateformat_first():
     # When guessing date format in a CSV file, try the default date format first.
     app = TestApp(app=Application(ApplicationGUI(), date_format='yy/dd/MM'))
-    app.doc.parse_file_for_import(testdata.filepath('csv/ambiguous_date.csv'))
+    app.mw.parse_file_for_import(testdata.filepath('csv/ambiguous_date.csv'))
     app.csvopt.set_column_field(0, CsvField.Date)
     app.csvopt.set_column_field(1, CsvField.Amount)
     app.csvopt.continue_import()
@@ -91,7 +91,7 @@ def test_qif_import_tries_native_dateformat_first():
     # When guessing date format in a QIF file, try the *native* date format first, that is,
     # mm/dd/yy.
     app = TestApp(app=Application(ApplicationGUI(), date_format='dd/MM/yy'))
-    app.doc.parse_file_for_import(testdata.filepath('qif/ambiguous_date.qif'))
+    app.mw.parse_file_for_import(testdata.filepath('qif/ambiguous_date.qif'))
     # We parsed "01/02/03" with mm/dd/yy
     eq_(app.itable[0].date_import, '02/01/03')
 
@@ -368,7 +368,7 @@ def app_transfer_between_two_referenced_accounts():
     # test that bound amount modification works correctly.
     row.debit = '43'
     app.etable.save_edits()
-    app.doc.parse_file_for_import(testdata.filepath('moneyguru', 'with_references3.moneyguru')) # Contains Account 4
+    app.mw.parse_file_for_import(testdata.filepath('moneyguru', 'with_references3.moneyguru')) # Contains Account 4
     # The entry from Account 4 doesn't match yet because they don't have the same reference, but
     # it will be fixed after the import
     app.iwin.selected_target_account_index = 3 # Account 4
@@ -380,14 +380,14 @@ def app_transfer_between_two_referenced_accounts():
 @with_app(app_transfer_between_two_referenced_accounts)
 def test_first_side_matches(app):
     # When importing entries from Account 1, these entries are matched correctly
-    app.doc.parse_file_for_import(testdata.filepath('moneyguru', 'with_references1.moneyguru'))
+    app.mw.parse_file_for_import(testdata.filepath('moneyguru', 'with_references1.moneyguru'))
     # All entries should be matched
     eq_(len(app.itable), 2) # 2 entries means they all match
 
 @with_app(app_transfer_between_two_referenced_accounts)
 def test_second_side_matches(app):
     # When importing entries from Account 3, these entries are matched correctly
-    app.doc.parse_file_for_import(testdata.filepath('moneyguru', 'with_references3.moneyguru'))
+    app.mw.parse_file_for_import(testdata.filepath('moneyguru', 'with_references3.moneyguru'))
     # target account should be correct, and all entries should be matched
     eq_(app.iwin.selected_target_account_index, 3) # Account 4
     eq_(len(app.itable), 1) # 1 entry means they all match
@@ -426,7 +426,7 @@ def test_date_format_guessing(tmpdir):
         app = TestApp()
         contents = "!Type:Bank\nD{str_date}\nT42.32\n^".format(str_date=str_date)
         open(filepath, 'wt', encoding='utf-8').write(contents)
-        app.doc.parse_file_for_import(filepath)
+        app.mw.parse_file_for_import(filepath)
         eq_(app.itable[0].date_import, expected_date)
     
     check('12/20/2010', '20/12/2010')

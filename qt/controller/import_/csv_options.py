@@ -11,8 +11,7 @@ from PyQt4.QtCore import Qt, QAbstractTableModel
 from PyQt4.QtGui import QWidget, QMenu, QCursor, QPixmap, QInputDialog, QMessageBox
 
 from hscommon.trans import trget
-from core.gui.csv_options import CSVOptions as CSVOptionsModel, FIELD_NAMES, FIELD_ORDER, \
-    SUPPORTED_ENCODINGS
+from core.gui.csv_options import FIELD_NAMES, FIELD_ORDER, SUPPORTED_ENCODINGS
 
 tr = trget('ui')
 
@@ -21,11 +20,11 @@ RENAME_LAYOUT = 'rename_layout'
 DELETE_LAYOUT = 'delete_layout'
 
 class CSVOptionsWindow(QWidget):
-    def __init__(self, parent, doc):
-        QWidget.__init__(self, parent, Qt.Window)
+    def __init__(self, mainwindow):
+        QWidget.__init__(self, mainwindow, Qt.Window)
         self._setupUi()
-        self.doc = doc
-        self.model = CSVOptionsModel(document=doc.model)
+        self.doc = mainwindow.doc
+        self.model = mainwindow.model.csv_options
         self.tableModel = CSVOptionsTableModel(self.model, self.tableView)
         self.model.view = self
         self.encodingComboBox.addItems(SUPPORTED_ENCODINGS)

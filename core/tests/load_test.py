@@ -237,7 +237,7 @@ class TestLoadImportWithTransactionInTheFuture:
     def do_setup(self, monkeypatch):
         monkeypatch.patch_today(2008, 2, 1) # before any txn date
         app = TestApp()
-        app.doc.parse_file_for_import(testdata.filepath('moneyguru', 'simple.moneyguru'))
+        app.mw.parse_file_for_import(testdata.filepath('moneyguru', 'simple.moneyguru'))
         return app
     
     @with_app(do_setup)
@@ -485,7 +485,7 @@ def test_save_load_qif(tmpdir):
         app.expanel.save()
         app.doc.close()
         newapp = TestApp()
-        newapp.doc.parse_file_for_import(filepath)
+        newapp.mw.parse_file_for_import(filepath)
         while newapp.iwin.panes:
             newapp.iwin.import_selected_pane()
         newapp.doc.date_range = app.doc.date_range

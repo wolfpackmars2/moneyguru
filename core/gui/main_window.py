@@ -15,10 +15,11 @@ from hscommon.gui.base import GUIObject
 
 from ..const import PaneType
 from ..document import FilterType
-from ..exception import OperationAborted
+from ..exception import OperationAborted, FileFormatError
 from ..model.budget import BudgetSpawn
-from ..model.date import inc_month
+from ..model.date import inc_month, DateFormat
 from ..model.recurrence import Recurrence, RepeatType
+from ..loader import csv, qif, ofx, native
 from .base import MESSAGES_DOCUMENT_CHANGED
 from .search_field import SearchField
 from .date_range_selector import DateRangeSelector
@@ -32,6 +33,7 @@ from .schedule_panel import SchedulePanel
 from .custom_date_range_panel import CustomDateRangePanel
 from .account_reassign_panel import AccountReassignPanel
 from .export_panel import ExportPanel
+from .csv_options import CSVOptions
 from .networth_view import NetWorthView
 from .profit_view import ProfitView
 from .transaction_view import TransactionView
@@ -115,7 +117,9 @@ class MainWindow(Repeater, GUIObject):
         self.custom_daterange_panel = CustomDateRangePanel(self)
         self.account_reassign_panel = AccountReassignPanel(self)
         self.export_panel = ExportPanel(self)
-                
+
+        self.csv_options = CSVOptions(self.document)
+        
         msgs = MESSAGES_DOCUMENT_CHANGED | {'filter_applied', 'date_range_changed'}
         self.bind_messages(msgs, self._invalidate_visible_entries)
     
@@ -435,6 +439,33 @@ class MainWindow(Repeater, GUIObject):
     def pane_view(self, index):
         return self.panes[index].view
     
+    def parse_file_for_import(self, filename):
+        """Parses ``filename`` in preparation for importing.
+        
+        Opens and parses ``filename`` and try to determine its format by successively trying to read
+        is as a moneyGuru file, an OFX, a QIF and finally a CSV. Once parsed, take the appropriate
+        action for the file which is either to show the CSV options window or to call
+        :meth:`load_parsed_file_for_import`.
+        """
+        default_date_format = DateFormat(self.app.date_format).sys_format
+        for loaderclass in (native.Loader, ofx.Loader, qif.Loader, csv.Loader):
+            try:
+                loader = loaderclass(
+                    self.document.default_currency, default_date_format=default_date_format
+                )
+                loader.parse(filename)
+                break
+            except FileFormatError:
+                pass
+        else:
+            # No file fitted
+            raise FileFormatError(tr('%s is of an unknown format.') % filename)
+        self.document.loader = loader
+        if isinstance(self.document.loader, csv.Loader):
+            self.csv_options.show()
+        else:
+            self.document.load_parsed_file_for_import()
+
     def select_pane_of_type(self, pane_type, clear_filter=True):
         if clear_filter:
             self.document.filter_string = ''

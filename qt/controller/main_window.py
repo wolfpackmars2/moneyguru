@@ -12,7 +12,7 @@ from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QProcess, QUrl, QRect, QSize
 from PyQt4.QtGui import (QMainWindow, QPrintDialog, QMessageBox, QIcon, QPixmap,
     QDesktopServices, QTabBar, QSizePolicy, QHBoxLayout, QPushButton, QMenu, QAction, QMenuBar,
-    QShortcut, QKeySequence)
+    QShortcut, QKeySequence, QFileDialog, QApplication)
 
 from qtlib.recent import Recent
 from qtlib.search_edit import SearchEdit
@@ -21,6 +21,7 @@ from hscommon.trans import trget
 from hscommon.plat import ISLINUX
 from core.const import PaneType, PaneArea
 from core.gui.main_window import MainWindow as MainWindowModel
+from core.exception import FileFormatError
 
 from ..support.date_range_selector_view import DateRangeSelectorView
 from ..print_ import ViewPrinter
@@ -45,6 +46,7 @@ from .export_panel import ExportPanel
 from .custom_date_range_panel import CustomDateRangePanel
 from .search_field import SearchField
 from .date_range_selector import DateRangeSelector
+from .import_.csv_options import CSVOptionsWindow
 
 tr = trget('ui')
 
@@ -98,6 +100,7 @@ class MainWindow(QMainWindow):
         self.clookup = Lookup(self, model=self.model.completion_lookup)
         self.drsel = DateRangeSelector(mainwindow=self, view=self.dateRangeSelectorView)
         self.sfield = SearchField(model=self.model.search_field, view=self.searchLineEdit)
+        self.csvOptionsWindow = CSVOptionsWindow(self)
         self.recentDocuments = Recent(self.app, 'recentDocuments')
         self.recentDocuments.addMenu(self.menuOpenRecent)
         
@@ -375,7 +378,7 @@ class MainWindow(QMainWindow):
         self.actionOpenDocument.triggered.connect(self.doc.openDocument)
         self.actionOpenExampleDocument.triggered.connect(self.doc.openExampleDocument)
         self.actionOpenPluginFolder.triggered.connect(self.model.app.open_plugin_folder)
-        self.actionImport.triggered.connect(self.doc.importDocument)
+        self.actionImport.triggered.connect(self.importDocument)
         self.actionSave.triggered.connect(self.doc.save)
         self.actionSaveAs.triggered.connect(self.doc.saveAs)
         self.actionExport.triggered.connect(self.model.export)
@@ -598,6 +601,25 @@ class MainWindow(QMainWindow):
         url = QUrl.fromLocalFile(debugLogPath)
         QDesktopServices.openUrl(url)
     
+    def importDocument(self):
+        title = tr("Select a document to import")
+        filters = tr("Supported files (*.moneyguru *.ofx *.qfx *.qif *.csv *.txt)")
+        docpath = str(QFileDialog.getOpenFileName(self.app.mainWindow, title, '', filters))
+        # There's a strange glitch under GNOME where, right after the dialog is gone, the main
+        # window isn't the active window, but it will become active if we give it enough time. If we
+        # start showing the import window before that happens, we'll end up with an import window
+        # under the main window, which is bad. Therefore, we process events until this happens. We
+        # do this in a big forloop instead of a while to avoid a possible infinite loop.
+        for i in range(10000):
+            if self.app.mainWindow.isActiveWindow():
+                break
+            QApplication.processEvents()
+        if docpath:
+            try:
+                self.model.parse_file_for_import(docpath)
+            except FileFormatError as e:
+                QMessageBox.warning(self.app.mainWindow, tr("Cannot import file"), str(e))
+
     #--- Other Signals
     def currentTabChanged(self, index):
         self.model.current_pane_index = index

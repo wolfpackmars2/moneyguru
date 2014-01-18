@@ -1030,32 +1030,6 @@ class Document(Repeater, GUIObject):
             self._undoer.set_save_point()
             self._dirty_flag = False
     
-    def parse_file_for_import(self, filename):
-        """Parses ``filename`` in preparation for importing.
-        
-        Opens and parses ``filename`` and try to determine its format by successively trying to read
-        is as a moneyGuru file, an OFX, a QIF and finally a CSV. Once parsed, take the appropriate
-        action for the file which is either to show the CSV options window or to call
-        :meth:`load_parsed_file_for_import`.
-        """
-        default_date_format = DateFormat(self.app.date_format).sys_format
-        for loaderclass in (native.Loader, ofx.Loader, qif.Loader, csv.Loader):
-            try:
-                loader = loaderclass(self.default_currency, default_date_format=default_date_format)
-                loader.parse(filename)
-                break
-            except FileFormatError:
-                pass
-        else:
-            # No file fitted
-            raise FileFormatError(tr('%s is of an unknown format.') % filename)
-        self.loader = loader
-        if isinstance(self.loader, csv.Loader):
-            self.notify('csv_options_needed')
-        else:
-            self.load_parsed_file_for_import()
-        
-    
     def load_parsed_file_for_import(self):
         """Load a parsed file for import and trigger the opening of the Import window.
         

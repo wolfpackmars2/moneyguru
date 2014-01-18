@@ -203,6 +203,15 @@ class CSVOptions(DocumentGUIObject):
     def set_line_excluded(self, index, value):
         self.layout.set_line_excluded(index, value, len(self.lines))
     
+    def show(self):
+        self._default_layout = Layout(tr('Default'))
+        self.layout = self._default_layout
+        self._refresh_columns()
+        self._refresh_lines()
+        self._refresh_targets()
+        self.view.refresh_layout_menu()
+        self.view.show()
+
     #--- Properties
     @property
     def columns(self):
@@ -248,15 +257,6 @@ class CSVOptions(DocumentGUIObject):
         return [tr('< New Account >')] + [a.name for a in self._target_accounts]
     
     #--- Events
-    def csv_options_needed(self):
-        self._default_layout = Layout(tr('Default'))
-        self.layout = self._default_layout
-        self._refresh_columns()
-        self._refresh_lines()
-        self._refresh_targets()
-        self.view.refresh_layout_menu()
-        self.view.show()
-    
     def document_will_close(self):
         def layout2preference(layout):
             result = {}

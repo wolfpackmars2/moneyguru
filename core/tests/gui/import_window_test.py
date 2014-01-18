@@ -31,7 +31,7 @@ def app_import_checkbook_qif():
     app = TestApp()
     app.clear_gui_calls()
     app.doc.date_range = YearRange(date(2007, 1, 1))
-    app.doc.parse_file_for_import(testdata.filepath('qif/checkbook.qif'))
+    app.mw.parse_file_for_import(testdata.filepath('qif/checkbook.qif'))
     app.check_gui_calls(app.iwin.view, ['refresh_tabs', 'refresh_target_accounts', 'show'])
     return app
 
@@ -197,8 +197,8 @@ def test_swap_date_texts_after_swap(app):
 def app_import_checkbook_qif_twice():
     app = TestApp()
     app.doc.date_range = YearRange(date(2007, 1, 1))
-    app.doc.parse_file_for_import(testdata.filepath('qif/checkbook.qif'))
-    app.doc.parse_file_for_import(testdata.filepath('qif/checkbook.qif'))
+    app.mw.parse_file_for_import(testdata.filepath('qif/checkbook.qif'))
+    app.mw.parse_file_for_import(testdata.filepath('qif/checkbook.qif'))
     return app
 
 @with_app(app_import_checkbook_qif_twice)
@@ -227,7 +227,7 @@ def app_import_checkbook_qif_with_existing_txns():
     app.aview.toggle_reconciliation_mode() # commit
     app.add_entry(date='02/01/2007', description='second entry', increase='2')
     app.doc.date_range = YearRange(date(2007, 1, 1))
-    app.doc.parse_file_for_import(testdata.filepath('qif/checkbook.qif'))
+    app.mw.parse_file_for_import(testdata.filepath('qif/checkbook.qif'))
     app.clear_gui_calls()
     app.iwin.selected_target_account_index = 1 # foo
     app.itable.view.check_gui_calls(['refresh'])
@@ -278,7 +278,7 @@ def app_load_then_import_with_ref(monkeypatch):
     monkeypatch.patch_today(2008, 1, 1)
     app = TestApp()
     app.doc.load_from_xml(testdata.filepath('moneyguru/with_references1.moneyguru'))
-    app.doc.parse_file_for_import(testdata.filepath('moneyguru/with_references2.moneyguru'))
+    app.mw.parse_file_for_import(testdata.filepath('moneyguru/with_references2.moneyguru'))
     return app
 
 @with_app(app_load_then_import_with_ref)
@@ -291,7 +291,7 @@ def test_selected_target_account(app):
 def app_import_moneyguru_file_with_expense_account():
     app = TestApp()
     app.doc.date_range = YearRange(date(2008, 1, 1))
-    app.doc.parse_file_for_import(testdata.filepath('moneyguru', 'simple.moneyguru'))
+    app.mw.parse_file_for_import(testdata.filepath('moneyguru', 'simple.moneyguru'))
     return app
 
 @with_app(app_import_moneyguru_file_with_expense_account)
@@ -306,7 +306,7 @@ def test_account_panes(app):
 def app_import_accountless_qif():
     app = TestApp()
     app.doc.date_range = YearRange(date(2007, 1, 1))
-    app.doc.parse_file_for_import(testdata.filepath('qif/accountless.qif'))
+    app.mw.parse_file_for_import(testdata.filepath('qif/accountless.qif'))
     return app
 
 @with_app(app_import_accountless_qif)
@@ -321,7 +321,7 @@ def test_account_tabs_has_default_account_name(app):
 def app_import_accountless_qif_with_splits():
     app = TestApp()
     app.doc.date_range = YearRange(date(2008, 1, 1))
-    app.doc.parse_file_for_import(testdata.filepath('qif/accountless_with_splits.qif'))
+    app.mw.parse_file_for_import(testdata.filepath('qif/accountless_with_splits.qif'))
     return app
 
 @with_app(app_import_accountless_qif_with_splits)
@@ -345,7 +345,7 @@ def app_import_qif_with_empty_accounts():
     # like checkbook.qif, but with 2 extra empty accounts
     app = TestApp()
     app.doc.date_range = YearRange(date(2007, 1, 1))
-    app.doc.parse_file_for_import(testdata.filepath('qif/empty_accounts.qif'))
+    app.mw.parse_file_for_import(testdata.filepath('qif/empty_accounts.qif'))
     return app
 
 @with_app(app_import_qif_with_empty_accounts)

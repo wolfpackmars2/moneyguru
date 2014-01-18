@@ -21,7 +21,6 @@ from ..document import Document, ScheduleScope
 from ..exception import FileFormatError
 from ..const import PaneType
 from ..gui.completable_edit import CompletableEdit
-from ..gui.csv_options import CSVOptions
 from ..gui.import_window import ImportWindow
 from ..gui.main_window import MainWindow
 from ..loader import base
@@ -104,7 +103,6 @@ class DictLoader(base.Loader):
 class TestApp(TestAppBase):
     def __init__(self, app=None, doc=None, tmppath=None):
         TestAppBase.__init__(self)
-        make_gui = self.make_gui
         link_gui = self.link_gui
         self._tmppath = tmppath
         if app is None:
@@ -139,7 +137,7 @@ class TestApp(TestAppBase):
         self.expanel = link_gui(self.mw.export_panel)
         self.sfield = link_gui(self.mw.search_field)
         self.drsel = link_gui(self.mw.daterange_selector)
-        make_gui('csvopt', CSVOptions, parent=self.doc)
+        self.csvopt = link_gui(self.mw.csv_options)
         iwin = ImportWindow(self.doc) # We have to link the import table's gui before we link iwin's
         # The order in which the gui is linked in linked_gui causes a crash in pref_test.
         # import_table.columns has to be linked first.
@@ -395,18 +393,14 @@ class TestApp(TestAppBase):
         self.expanel.export_path = filepath
         self.expanel.save()
         newapp = Application(ApplicationGUI(), default_currency=self.doc.default_currency)
-        newdoc = Document(newapp)
-        newdoc.view = self.make_logger(DocumentGUI)
-        iwin = ImportWindow(newdoc)
-        self.link_gui(iwin)
-        iwin.connect()
+        app = TestApp(app=newapp)
         try:
-            newdoc.parse_file_for_import(filepath)
-            while iwin.panes:
-                iwin.import_selected_pane()
+            app.mw.parse_file_for_import(filepath)
+            while app.iwin.panes:
+                app.iwin.import_selected_pane()
         except FileFormatError:
             pass
-        compare_apps(self.doc, newdoc, qif_mode=True)
+        compare_apps(self.doc, app.doc, qif_mode=True)
     
     def entry_descriptions(self):
         return [self.etable[i].description for i in range(len(self.etable))]
