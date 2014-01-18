@@ -11,93 +11,93 @@ from hscommon.gui.selectable_list import GUISelectableList
 from .print_view import PrintView
 
 class DocumentNotificationsMixin:
+    """Mixin for listeners of :class:`.Document` notifications."""
     def account_added(self):
-        pass
+        """Account(s) were added to the document."""
     
     def account_changed(self):
-        pass
+        """Account(s) had some of their properties changed."""
 
     def account_deleted(self):
-        pass
+        """Account(s) were deleted from the document."""
     
     def accounts_excluded(self):
-        pass
+        """Account(s) had their exclusion status changed."""
     
     def budget_changed(self):
-        pass
+        """Budget(s) had some of their properties changed."""
     
     def budget_deleted(self):
-        pass
+        """Budget(s) were deleted from the document."""
     
     def csv_options_needed(self):
-        pass
+        """For the ongoing import operation, we need to open the CSV option dialog."""
     
     def custom_date_range_selected(self):
-        pass
+        """We need to open the custom date range dialog."""
     
     def date_range_changed(self):
-        pass
+        """The current date range was changed."""
 
     def date_range_will_change(self):
-        pass
+        """The current date range is just about to change."""
     
     def document_restoring_preferences(self):
-        pass
+        """Our document is restoring its state from preferences."""
     
-    # When the whole document changed
     def document_changed(self): 
-        pass
+        """The whole doucment has changed (for example, when loading document)."""
     
     def document_will_close(self):
-        pass
+        """The document is about to be closed."""
     
     def edition_must_stop(self):
-        pass
+        """If any GUI is currently in editing mode, this has to stop now."""
     
-    # A file has been parsed and is ready to be shown to the user in the import window
     def file_loaded_for_import(self):
-        pass
+        """A file has been parsed and is ready to be shown to the user in the import window."""
     
     def filter_applied(self):
-        pass
+        """A filter has just been applied to our transactions."""
     
-    # The First Weekday preferences has been changed
-    def first_weekday_changed(self): 
-        pass
+    def first_weekday_changed(self):
+        """The First Weekday preferences has been changed."""
     
     def performed_undo_or_redo(self):
-        pass
+        """An undo or redo operation was just performed."""
     
     def saved_custom_ranges_changed(self):
-        pass
+        """A custom date range was just saved into one of the slots."""
     
     def schedule_changed(self):
-        pass
+        """Schedule(s) had some of their properties changed."""
     
     def schedule_deleted(self):
-        pass
+        """Schedule(s) were deleted from the document."""
     
     def transaction_changed(self):
-        pass
+        """Transaction(s) had some of their properties changed."""
     
     def transaction_deleted(self):
-        pass
+        """Transaction(s) were deleted from the document."""
     
     def transactions_imported(self):
-        pass
+        """Transactions have just been imported into the document."""
     
 
 class MainWindowNotificationsMixin:
+    """Mixin for listeners of :class:`.MainWindow` notifications."""
     def transactions_selected(self):
-        pass
+        """Transactions were just selected."""
     
     def area_visibility_changed(self):
-        pass
+        """One of the main window's main part had its visibility toggled."""
     
 
 class SheetViewNotificationsMixin:
+    """Mixin for listeners of :class:`.AccountSheetView` notifications."""
     def group_expanded_state_changed(self):
-        pass
+        """A group had its expand status toggled."""
     
 
 MESSAGES_EVERYTHING_CHANGED = {'document_changed', 'performed_undo_or_redo'}

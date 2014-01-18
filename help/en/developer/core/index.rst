@@ -18,3 +18,4 @@ out, from the code, what everything is about.
     document
     plugin
     model/*
+    gui/*
