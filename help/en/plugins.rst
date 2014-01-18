@@ -29,10 +29,10 @@ Excel/Numbers) work with those tables.
 Creating a plugin
 -----------------
 
-Other than `a small convenience API <https://github.com/hsoft/moneyguru/blob/master/core/plugin.py>`__,
-there's no "plugin" API, you're coding straight on top of moneyGuru's code. Developer documention
-for moneyGuru's code is unfortunately not very extensive, but I've created a few well commented
-plugin examples and I think that they're your best starting point.
+Other than :mod:`a small convenience API <core.plugin>`, there's no "plugin" API, you're coding
+straight on top of moneyGuru's code. Developer documention for moneyGuru's code is unfortunately not
+very extensive, but I've created a few well commented plugin examples and I think that they're your
+best starting point.
 
 So, to create a plugin, I'd suggest that you take one of the examples (they're automatically copied
 in your plugin folder. You can also find the latest version of these examples
