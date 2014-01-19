@@ -112,7 +112,7 @@ def build_cocoa(dev):
     print("Building localizations")
     build_localizations('cocoa')
     print("Building xibless UIs")
-    build_cocoalib_xibless(withfairware=False)
+    build_cocoalib_xibless()
     build_xibless()
     print("Building Python extensions")
     build_cocoa_proxy_module()
