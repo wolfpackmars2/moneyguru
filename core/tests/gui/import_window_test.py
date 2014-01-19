@@ -490,7 +490,7 @@ def app_two_accounts_with_common_txn():
     loader.account_info.name = 'second'
     loader.flush_account()
     loader.load()
-    app.doc.loader = loader
+    app.mw.loader = loader
     app.iwin.show()
     return app
 

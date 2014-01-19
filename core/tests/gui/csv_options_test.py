@@ -112,7 +112,7 @@ def app_import_fortis_exclude_first_line_and_set_fields():
 
 @with_app(app_import_fortis_exclude_first_line_and_set_fields)
 def test_continue_import_with_fields_set(app):
-    # sets the columns in app.doc.loader and continues importing
+    # sets the columns in app.mw.loader and continues importing
     app.csvopt.continue_import()
     app.csvopt.view.check_gui_calls(['hide'])
     app.iwin.view.check_gui_calls(['refresh_tabs', 'refresh_target_accounts', 'show'])

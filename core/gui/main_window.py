@@ -120,7 +120,7 @@ class MainWindow(Repeater, GUIObject):
         self.export_panel = ExportPanel(self)
 
         self.csv_options = CSVOptions(self)
-        self.import_window = ImportWindow(self.document)
+        self.import_window = ImportWindow(self)
         
         msgs = MESSAGES_DOCUMENT_CHANGED | {'filter_applied', 'date_range_changed'}
         self.bind_messages(msgs, self._invalidate_visible_entries)
@@ -380,8 +380,8 @@ class MainWindow(Repeater, GUIObject):
         configuration or directly after :meth:`parse_file_for_import`), call this method to load the
         parsed data into model instances, ready to be shown in the Import window.
         """
-        self.document.loader.load()
-        if self.document.loader.accounts and self.document.loader.transactions:
+        self.loader.load()
+        if self.loader.accounts and self.loader.transactions:
             self.import_window.show()
         else:
             raise FileFormatError('This file does not contain any account to import.')
@@ -475,8 +475,8 @@ class MainWindow(Repeater, GUIObject):
         else:
             # No file fitted
             raise FileFormatError(tr('%s is of an unknown format.') % filename)
-        self.document.loader = loader
-        if isinstance(self.document.loader, csv.Loader):
+        self.loader = loader
+        if isinstance(self.loader, csv.Loader):
             self.csv_options.show()
         else:
             self.load_parsed_file_for_import()

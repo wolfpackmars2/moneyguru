@@ -415,9 +415,9 @@ class TestApp(TestAppBase):
         # use this methods. 'transactions' is a list of dicts, the dicts being attribute values.
         # dates are strings in the app's default date format.
         default_date_format = DateFormat(self.app.date_format).sys_format
-        self.doc.loader = DictLoader(self.doc.default_currency, account_name, transactions,
+        self.mw.loader = DictLoader(self.doc.default_currency, account_name, transactions,
             default_date_format=default_date_format)
-        self.doc.loader.load()
+        self.mw.loader.load()
         self.iwin.show()
     
     def graph_data(self):

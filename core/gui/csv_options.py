@@ -111,12 +111,12 @@ class CSVOptions(MainWindowGUIObject):
     
     #--- Private
     def _refresh_columns(self):
-        self._colcount = len(self.document.loader.lines[0])
+        self._colcount = len(self.mainwindow.loader.lines[0])
         self.layout.adjust_columns(self._colcount)
         self.view.refresh_columns()
     
     def _refresh_lines(self):
-        self.lines = self.document.loader.lines
+        self.lines = self.mainwindow.loader.lines
         self.view.refresh_lines()
     
     def _refresh_targets(self):
@@ -126,7 +126,7 @@ class CSVOptions(MainWindowGUIObject):
     
     #--- Public
     def continue_import(self):
-        loader = self.document.loader
+        loader = self.mainwindow.loader
         loader.columns = self.layout.columns
         lines = [line for index, line in enumerate(self.lines) if not self.line_is_excluded(index)]
         loader.lines = lines
@@ -179,7 +179,7 @@ class CSVOptions(MainWindowGUIObject):
             encoding = SUPPORTED_ENCODINGS[self.encoding_index]
         except IndexError:
             encoding = None
-        self.document.loader.rescan(encoding=encoding)
+        self.mainwindow.loader.rescan(encoding=encoding)
         self._refresh_columns()
         self._refresh_lines()
     
@@ -226,13 +226,13 @@ class CSVOptions(MainWindowGUIObject):
     
     @property
     def field_separator(self):
-        return self.document.loader.dialect.delimiter
+        return self.mainwindow.loader.dialect.delimiter
     
     @field_separator.setter
     def field_separator(self, value):
         try:
             delimiter = value[0]
-            self.document.loader.dialect.delimiter = delimiter
+            self.mainwindow.loader.dialect.delimiter = delimiter
         except (UnicodeEncodeError, IndexError):
             pass
     

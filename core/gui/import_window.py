@@ -11,7 +11,7 @@ from hscommon.trans import tr
 
 from ..exception import OperationAborted
 from ..model.date import DateFormat
-from .base import DocumentGUIObject, LinkedSelectableList
+from .base import MainWindowGUIObject, LinkedSelectableList
 from .import_table import ImportTable
 
 DAY = 'day'
@@ -126,7 +126,7 @@ class AccountPane:
         self._match_entries()
     
 
-class ImportWindow(DocumentGUIObject):
+class ImportWindow(MainWindowGUIObject):
     #--- View interface
     # close()
     # close_selected_tab()
@@ -137,8 +137,8 @@ class ImportWindow(DocumentGUIObject):
     # update_selected_pane()
     #
     
-    def __init__(self, document):
-        DocumentGUIObject.__init__(self, document)
+    def __init__(self, mainwindow):
+        MainWindowGUIObject.__init__(self, mainwindow)
         self._selected_pane_index = 0
         self._selected_target_index = 0
         def setfunc(index):
@@ -304,15 +304,15 @@ class ImportWindow(DocumentGUIObject):
         self.target_accounts.sort(key=lambda a: a.name.lower())
     
     def refresh_panes(self):
-        if not hasattr(self.document, 'loader'):
+        if not hasattr(self.mainwindow, 'loader'):
             return
         self.refresh_targets()
-        accounts = [a for a in self.document.loader.accounts if a.is_balance_sheet_account() and a.entries]
-        parsing_date_format = DateFormat.from_sysformat(self.document.loader.parsing_date_format)
+        accounts = [a for a in self.mainwindow.loader.accounts if a.is_balance_sheet_account() and a.entries]
+        parsing_date_format = DateFormat.from_sysformat(self.mainwindow.loader.parsing_date_format)
         for account in accounts:
             target_account = None
-            if self.document.loader.target_account is not None:
-                target_account = self.document.loader.target_account
+            if self.mainwindow.loader.target_account is not None:
+                target_account = self.mainwindow.loader.target_account
             elif account.reference:
                 target_account = first(t for t in self.target_accounts if t.reference == account.reference)
             self.panes.append(AccountPane(account, target_account, parsing_date_format))
