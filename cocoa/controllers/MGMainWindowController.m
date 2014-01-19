@@ -21,6 +21,7 @@ http://www.hardcoded.net/licenses/bsd_license
 #import "MGReadOnlyPluginView.h"
 #import "HSPyUtil.h"
 #import "Utils.h"
+#import "Dialogs.h"
 
 @implementation MGMainWindowController
 
@@ -50,8 +51,8 @@ http://www.hardcoded.net/licenses/bsd_license
     budgetPanel = [[MGBudgetPanel alloc] initWithParent:self];
     exportPanel = [[MGExportPanel alloc] initWithParent:self];
     searchField = [[MGSearchField alloc] initWithPyRef:[[self model] searchField]];
-    importWindow = [[MGImportWindow alloc] initWithDocument:document];
-    csvOptionsWindow = [[MGCSVImportOptions alloc] initWithDocument:document];
+    importWindow = [[MGImportWindow alloc] initWithPyRef:[[self model] importWindow]];
+    csvOptionsWindow = [[MGCSVImportOptions alloc] initWithPyRef:[[self model] csvOptions]];
     customDateRangePanel = [[MGCustomDateRangePanel alloc] initWithParent:self];
     accountReassignPanel = [[MGAccountReassignPanel alloc] initWithParent:self];
     accountLookup = [[MGAccountLookup alloc] initWithPyRef:[[self model] accountLookup]];
@@ -420,6 +421,22 @@ http://www.hardcoded.net/licenses/bsd_license
 - (void)export
 {
     [[self model] export];
+}
+
+- (void)import
+{
+    NSOpenPanel *op = [NSOpenPanel openPanel];
+    [op setCanChooseFiles:YES];
+    [op setCanChooseDirectories:NO];
+    [op setAllowsMultipleSelection:NO];
+    [op setTitle:NSLocalizedString(@"Select a file to import", @"")];
+    if ([op runModal] == NSOKButton) {
+        NSString *filename = [[[op URLs] objectAtIndex:0] path];
+        NSString *error = [model import:filename];
+        if (error != nil) {
+            [Dialogs showMessage:error];
+        }
+    }
 }
 
 /* Public */

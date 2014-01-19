@@ -21,10 +21,10 @@ http://www.hardcoded.net/licenses/bsd_license
 @synthesize targetSelector;
 @synthesize delimiterTextField;
 
-- (id)initWithDocument:(PyDocument *)aDocument
+- (id)initWithPyRef:(PyObject *)aPyRef
 {
     self = [super initWithWindow:nil];
-    model = [[PyCSVImportOptions alloc] initWithDocument:[aDocument pyRef]];
+    model = [[PyCSVImportOptions alloc] initWithModel:aPyRef];
     [model bindCallback:createCallback(@"CSVImportOptionsView", self)];
     [self setWindow:createMGCSVImportOptions_UI(self)];
     [encodingSelector addItemsWithTitles:[model supportedEncodings]];

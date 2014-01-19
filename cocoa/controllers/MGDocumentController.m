@@ -8,6 +8,7 @@ http://www.hardcoded.net/licenses/bsd_license
 
 #import "MGDocumentController.h"
 #import "MGDocument.h"
+#import "MGMainWindowController.h"
 
 @implementation MGDocumentController
 - (id)openDocumentWithContentsOfURL:(NSURL *)absoluteURL display:(BOOL)displayDocument error:(NSError **)outError
@@ -30,7 +31,8 @@ http://www.hardcoded.net/licenses/bsd_license
                 doc = [self openFirstDocument];
             }
         }
-        [[doc model] import:[absoluteURL path]];
+        MGMainWindowController *mw = [[doc windowControllers] objectAtIndex:0];
+        [[mw model] import:[absoluteURL path]];
         return doc;
     }
     return [super openDocumentWithContentsOfURL:absoluteURL display:displayDocument error:outError];

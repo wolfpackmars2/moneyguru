@@ -22,11 +22,11 @@ http://www.hardcoded.net/licenses/bsd_license
 @synthesize swapButton;
 @synthesize importTableView;
 
-- (id)initWithDocument:(PyDocument *)aDocument
+- (id)initWithPyRef:(PyObject *)aPyRef
 {
     self = [super initWithWindow:nil];
     [self setWindow:createMGImportWindow_UI(self)];
-    model = [[PyImportWindow alloc] initWithDocument:[aDocument pyRef]];
+    model = [[PyImportWindow alloc] initWithModel:aPyRef];
     importTable = [[MGImportTable alloc] initWithPyRef:[model importTable] view:importTableView];
     swapTypePopUp = [[HSPopUpList alloc] initWithPyRef:[model swapTypeList] popupView:switchDateFieldsPopup];
     [model bindCallback:createCallback(@"ImportWindowView", self)];

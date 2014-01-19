@@ -8,7 +8,6 @@ http://www.hardcoded.net/licenses/bsd_license
 
 #import <Cocoa/Cocoa.h>
 #import <PSMTabBarControl/PSMTabBarControl.h>
-#import "PyDocument.h"
 #import "MGTableView.h"
 #import "MGImportTable.h"
 #import "HSPopUpList.h"
@@ -40,7 +39,7 @@ http://www.hardcoded.net/licenses/bsd_license
 @property (readwrite, retain) NSButton *swapButton;
 @property (readwrite, retain) MGTableView *importTableView;
 
-- (id)initWithDocument:(PyDocument *)aDocument;
+- (id)initWithPyRef:(PyObject *)aPyRef;
 
 /* Actions */
 - (void)changeTargetAccount;

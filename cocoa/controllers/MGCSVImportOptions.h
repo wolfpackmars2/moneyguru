@@ -7,7 +7,6 @@ http://www.hardcoded.net/licenses/bsd_license
 */
 
 #import <Cocoa/Cocoa.h>
-#import "PyDocument.h"
 #import "PyCSVImportOptions.h"
 
 @interface MGCSVImportOptions : NSWindowController <NSTableViewDelegate, NSTableViewDataSource>
@@ -30,7 +29,7 @@ http://www.hardcoded.net/licenses/bsd_license
 @property (readwrite, retain) NSPopUpButton *targetSelector;
 @property (readwrite, retain) NSTextField *delimiterTextField;
 
-- (id)initWithDocument:(PyDocument *)aDocument;
+- (id)initWithPyRef:(PyObject *)aPyRef;
 
 /* Actions */
 - (void)cancel;

@@ -104,6 +104,7 @@ http://www.hardcoded.net/licenses/bsd_license
 - (void)toggleGraph;
 - (void)togglePieChart;
 - (void)export;
+- (void)import;
 
 /* Public */
 

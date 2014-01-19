@@ -8,7 +8,6 @@ http://www.hardcoded.net/licenses/bsd_license
 
 #import "MGDocument.h"
 #import "MGMainWindowController.h"
-#import "Dialogs.h"
 #import "MGUndoManager.h"
 #import "MGRecurrenceScopeDialog.h"
 #import "MGAppDelegate.h"
@@ -98,24 +97,6 @@ http://www.hardcoded.net/licenses/bsd_license
         return YES;
     }
     return NO;
-}
-
-/* Actions */
-
-- (void)import
-{
-    NSOpenPanel *op = [NSOpenPanel openPanel];
-    [op setCanChooseFiles:YES];
-    [op setCanChooseDirectories:NO];
-    [op setAllowsMultipleSelection:NO];
-    [op setTitle:NSLocalizedString(@"Select a file to import", @"")];
-    if ([op runModal] == NSOKButton) {
-        NSString *filename = [[[op URLs] objectAtIndex:0] path];
-        NSString *error = [model import:filename];
-        if (error != nil) {
-            [Dialogs showMessage:error];
-        }
-    }
 }
 
 /* Misc */

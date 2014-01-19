@@ -138,12 +138,6 @@ class PyDocument(PyGUIObject):
     def saveToFile_(self, filename: str):
         self.model.save_to_xml(filename)
     
-    def import_(self, filename: str) -> str:
-        try:
-            self.model.parse_file_for_import(filename)
-        except FileFormatError as e:
-            return str(e)
-    
     def isDirty(self) -> bool:
         return self.model.is_dirty()
     
@@ -1033,6 +1027,12 @@ class PyMainWindow(PyGUIObject):
     def exportPanel(self) -> pyref:
         return self.model.export_panel
     
+    def importWindow(self) -> pyref:
+        return self.model.import_window
+
+    def csvOptions(self) -> pyref:
+        return self.model.csv_options
+
     def selectNextView(self):
         self.model.select_next_view()
     
@@ -1107,6 +1107,12 @@ class PyMainWindow(PyGUIObject):
         self.model.new_group()
     
     #--- Other
+    def import_(self, filename: str) -> str:
+        try:
+            self.model.parse_file_for_import(filename)
+        except FileFormatError as e:
+            return str(e)
+    
     def export(self):
         self.model.export()
     
@@ -1191,10 +1197,6 @@ class ImportWindowView(GUIObjectView):
     def updateSelectedPane(self): pass
 
 class PyImportWindow(PyGUIObject):
-    def __init__(self, document: pyref):
-        model = ImportWindow(document.model)
-        PyGUIObject.__init__(self, model)
-    
     def importTable(self) -> pyref:
         return self.model.import_table
     
@@ -1272,10 +1274,6 @@ class CSVImportOptionsView(GUIObjectView):
     def showMessage_(self, msg: str): pass
 
 class PyCSVImportOptions(PyGUIObject):
-    def __init__(self, document: pyref):
-        model = CSVOptions(document.model)
-        PyGUIObject.__init__(self, model)
-    
     def columnNameAtIndex_(self, index: int) -> str:
         return self.model.get_column_name(index)
     
