@@ -21,10 +21,9 @@ hscommon.trans.install_gettext_trans_under_cocoa()
 from core.app import Application
 from core.document import Document, FilterType
 from core.exception import FileFormatError
-from core.gui.csv_options import CSVOptions, FIELD_ORDER as CSV_FIELD_ORDER, \
+from core.gui.csv_options import FIELD_ORDER as CSV_FIELD_ORDER, \
     SUPPORTED_ENCODINGS as CSV_SUPPORTED_ENCODINGS
 from core.gui.date_widget import DateWidget
-from core.gui.import_window import ImportWindow
 from core.gui.main_window import MainWindow
 from core.gui.print_view import PrintView
 from core.gui.transaction_print import TransactionPrint, EntryPrint
