@@ -373,6 +373,23 @@ class DateFormat:
         return DateFormat(self.iso_format)
     
     def parse_date(self, string):
+
+
+        # From ticket #381, in some cases the user may input a date field
+        # which is in an intermediate editing state such as '1 /12/2012'.
+        # They may either accept that or continue to edit to another
+        # valid date such as '12/12/2012'. Instead of trying to make the
+        # system communicate the end of editing back to the UI level, we
+        # simply remove the spurious space characters in the model.
+
+        if self.separator == ' ':
+            # In instances where the separator is a space, we can not remove
+            # all space characters.  Instead, we replace double spaces with
+            # a single space.
+            string = string.replace('  ', ' ')
+        else:
+            string = string.replace(' ', '')
+
         return datetime.strptime(string, self.sys_format).date()
     
     def make_numerical(self):
