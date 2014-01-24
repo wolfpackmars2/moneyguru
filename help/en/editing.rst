@@ -79,8 +79,17 @@ Amount Editing
 Fields allowing you to enter amounts have a few hidden features. 
 
 * You can enter simple expressions like "2+4.35/2" and they will be automatically calculated.
-* If you enabled the "Automatically place decimals when typing" option, typing numbers without decimal point will result in it being automatically placed. For example, if your default currency is USD, typing "1234" will result in the amount "12.34".
-* You can always explicitly specify the currency of an amount by prepending or appending the 3-letters ISO code of that currency to that amount (see the :doc:`currencies help page <currencies>`).
+* If you enabled the "Automatically place decimals when typing" option, typing numbers without
+  decimal point will result in it being automatically placed. For example, if your default currency
+  is USD, typing "1234" will result in the amount "12.34".
+* You can always explicitly specify the currency of an amount by prepending or appending the
+  3-letters ISO code of that currency to that amount (see the
+  :doc:`currencies help page <currencies>`).
+* When you enter an expression from the amount that was already there (example ``USD 12.34/1.055``),
+  try to keep the original amount as the first operand. There's an ambiguity with the ``.``
+  character where it's hard to tell when it's a decimal separator or a thousand separator, which has
+  been put there during formatting. We consider the first operand to be an amount, and the other
+  operands as simple decimals.
 
 Auto-completion, Autofill and Lookups
 -------------------------------------
