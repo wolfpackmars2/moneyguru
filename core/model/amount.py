@@ -70,14 +70,25 @@ def format_amount(amount, default_currency=None, blank_zero=False, zero_currency
 def parse_amount_expression(string, exponent):
     # Parse an expression. Before we can do that, we need to replace all amounts with their parsed
     # and then reformatted counterparts.
+    # FIRST OPERAND RULE: There's an ambiguity with the '.' character. In an amount, it can be a
+    # thousands separator. See #379 for details, but our solution is to only consider the first
+    # operand as an amount. The other operands are considered as "decimals", which means that they
+    # can't possibly have a thousands separator.
     def repl(match):
         s = match.group(0).strip()
         if not s:
             return None
-        parsed = parse_amount_single(s, exponent, auto_decimal_place=False)
-        fmt = '{{:1.{}f}}'.format(exponent)
+        nonlocal hadfirstmatch
+        if hadfirstmatch:
+            repl_exponent = 10 # meaning: many decimals
+        else:
+            repl_exponent = exponent
+            hadfirstmatch = True
+        parsed = parse_amount_single(s, repl_exponent, auto_decimal_place=False)
+        fmt = '{{:1.{}f}}'.format(repl_exponent)
         return fmt.format(parsed)
     
+    hadfirstmatch = False
     result = re_not_arithmetic_operators.sub(repl, string)
     return result
 
