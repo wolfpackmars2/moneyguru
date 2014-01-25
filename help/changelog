@@ -1,3 +1,10 @@
+=== 2.7.2 (2014-01-25)
+
+* Fixed amount parsing issue. (#379)
+* Don't repeatedly fetch currency rates we can never get. (#374)
+* Fixed date parsing issue. [Windows, Linux] (#381)
+* Fixed view plugins which were broken.
+
 === 2.7.1 (2013-09-07)
 
 * Improved OFX parsing. (#369)
