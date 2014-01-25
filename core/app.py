@@ -1,6 +1,6 @@
 # Created By: Virgil Dupras
 # Created On: 2009-02-12
-# Copyright 2013 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
 # 
 # This software is licensed under the "BSD" License as described in the "LICENSE" file, 
 # which should be included with this package. The terms are also available at 
@@ -140,7 +140,7 @@ class Application(Broadcaster):
     APP_NAME = "moneyGuru"
     PROMPT_NAME = APP_NAME
     NAME = APP_NAME
-    VERSION = '2.7.1'
+    VERSION = '2.7.2'
     
     def __init__(self, view, date_format='dd/MM/yyyy', decimal_sep='.', grouping_sep='', 
         default_currency=USD, cache_path=None, appdata_path=None, plugin_model_path=None):

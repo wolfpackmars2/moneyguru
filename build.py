@@ -1,6 +1,6 @@
 # Created By: Virgil Dupras
 # Created On: 2009-12-30
-# Copyright 2013 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
 # 
 # This software is licensed under the "BSD" License as described in the "LICENSE" file, 
 # which should be included with this package. The terms are also available at 
@@ -174,6 +174,10 @@ def build_help():
     help_basepath = op.join(current_path, 'help', 'en')
     help_destpath = op.join(current_path, 'build', 'help')
     changelog_path = op.join(current_path, 'help', 'changelog')
+    credits_path = op.join(current_path, 'help', 'credits.rst')
+    credits_tmpl = op.join(help_basepath, 'credits.tmpl')
+    credits_out = op.join(help_basepath, 'credits.rst')
+    filereplace(credits_tmpl, credits_out, credits=open(credits_path, 'rt', encoding='utf-8').read())
     image_src = op.join(current_path, 'help', 'image_{}'.format(current_platform))
     image_dst = op.join(current_path, 'help', 'en', 'image')
     if not op.exists(image_dst):
