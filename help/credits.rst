@@ -2,6 +2,8 @@
 
 | **Eric Mc Sween, Developer**
 
+| **Nelson Brown, Developer** (`Github profile <https://github.com/brownnrl>`__)
+
 | **Mike Rohde, Main icon design** (`Website <http://www.rohdesign.com>`__)
 
 | **Mariann Landsberger, German localization**
@@ -16,9 +18,6 @@
 
 | **Python, Programming language** (`Website <http://www.python.org>`__)
 | The bestest of the bests
-
-| **PyObjC, Python-to-Cocoa bridge** (`Website <http://pyobjc.sourceforge.net>`__)
-| Used for the Mac OS X version
 
 | **Sparkle, Auto-update library** (`Website <http://andymatuschak.org/pages/sparkle>`__)
 | Used for the Mac OS X version
