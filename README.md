@@ -55,11 +55,6 @@ Then, you can install pip requirements in your virtualenv:
     
 ([osx|win] depends, of course, on your platform. On other platforms, just use requirements.txt).
 
-**Temporary problem:** The author of polib, which is a dependency here,
-[hasn't yet uploaded packages to PyPI][polib], which will make the command fail if you use
-pip >= 1.5. You'll have to add `--allow-external polib --allow-unverified polib` to your command.
-This is, hopefully, a temporary situation.
-
 ## Alternative: pyvenv
 
 If you're on Python 3.3+, you can use the built-in `pyvenv` instead of `virtualenv`. `pyvenv` is
