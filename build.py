@@ -177,7 +177,7 @@ def build_help():
     credits_path = op.join(current_path, 'help', 'credits.rst')
     credits_tmpl = op.join(help_basepath, 'credits.tmpl')
     credits_out = op.join(help_basepath, 'credits.rst')
-    filereplace(credits_tmpl, credits_out, credits=open(credits_path, 'rt').read())
+    filereplace(credits_tmpl, credits_out, credits=open(credits_path, 'rt', encoding='utf-8').read())
     image_src = op.join(current_path, 'help', 'image_{}'.format(current_platform))
     image_dst = op.join(current_path, 'help', 'en', 'image')
     if not op.exists(image_dst):
