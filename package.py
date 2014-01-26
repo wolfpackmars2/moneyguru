@@ -104,10 +104,17 @@ def package_arch():
     copy_files_to_package(srcpath, packages, with_so=True)
 
 def package_source_tgz():
+    if not op.exists('deps'):
+        print("Downloading PyPI dependencies")
+        os.mkdir('deps')
+        print_and_do('pip install --download=deps -r requirements.txt setuptools pip')
     app_version = MoneyGuru.VERSION
-    name = 'moneyguru-src-{}.tar.gz'.format(app_version)
+    name = 'moneyguru-src-{}.tar'.format(app_version)
     dest = op.join('build', name)
     print_and_do('git archive -o {} HEAD'.format(dest))
+    print("Adding dependencies and wrapping up")
+    print_and_do('tar -rf {} deps'.format(dest))
+    print_and_do('gzip {}'.format(dest))
 
 def main():
     args = parse_args()

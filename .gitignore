@@ -22,7 +22,7 @@ build
 dist
 install
 installer_tmp-cache
-/devdoc_html
+deps
 /run.py
 /help/*/conf.py
 /help/*/changelog.rst
