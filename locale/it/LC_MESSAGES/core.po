@@ -4,99 +4,95 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: utf-8\n"
 
-#: core/app.py:51
-msgid "will show this dialog on startup"
-msgstr ""
-
-#: core/document.py:178
+#: core/document.py:212
 msgid "Add transaction"
 msgstr "Crea Transazione"
 
-#: core/document.py:181 core/document.py:406
+#: core/document.py:215 core/document.py:533
 msgid "Change transaction"
 msgstr "Modifica Transazione"
 
-#: core/document.py:288
+#: core/document.py:335
 msgid "Change account"
 msgstr "Modifica Conto"
 
-#: core/document.py:310
+#: core/document.py:365
 msgid "Remove account"
 msgstr "Elimina Conto"
 
-#: core/document.py:341
+#: core/document.py:407
 msgid "New account"
 msgstr "Nuovo Conto"
 
-#: core/document.py:344
+#: core/document.py:410
 msgid "Add account"
 msgstr "Crea Conto"
 
-#: core/document.py:361
+#: core/document.py:443
 msgid "Change group"
 msgstr "Modifica Gruppo"
 
-#: core/document.py:371
+#: core/document.py:460
 msgid "Remove group"
 msgstr "Elimina Gruppo"
 
-#: core/document.py:382
+#: core/document.py:480
 msgid "New group"
 msgstr "Nuovo Gruppo"
 
-#: core/document.py:384
+#: core/document.py:482
 msgid "Add group"
 msgstr "Crea Gruppo"
 
-#: core/document.py:456
+#: core/document.py:621
 msgid "Remove transaction"
 msgstr "Elimina Transazione"
 
-#: core/document.py:483
+#: core/document.py:657
 msgid "Duplicate transactions"
 msgstr "Duplica Transazione"
 
-#: core/document.py:498
+#: core/document.py:684
 msgid "Move transaction"
 msgstr "Sposta Transazione"
 
-#: core/document.py:556
+#: core/document.py:769
 msgid "Change reconciliation"
 msgstr "Modifica Riconciliazione"
 
-#: core/document.py:603
+#: core/document.py:836
 msgid "Change Budget"
 msgstr "Modifica Previsione"
 
-#: core/document.py:606
+#: core/document.py:839
 msgid "Add Budget"
 msgstr "Crea Previsione"
 
-#: core/document.py:627
+#: core/document.py:864
 msgid "Remove Budget"
 msgstr "Elimina Previsione"
 
-#: core/document.py:643
+#: core/document.py:889
 msgid "Change Schedule"
 msgstr "Modifica Pianificazione"
 
-#: core/document.py:646
+#: core/document.py:892
 msgid "Add Schedule"
 msgstr "Crea Pianificazione"
 
-#: core/document.py:667
+#: core/document.py:917
 msgid "Remove Schedule"
 msgstr "Elimina Pianificazione"
 
-#: core/document.py:724
+#: core/document.py:985
 msgid "\"%s\" is not a moneyGuru file"
 msgstr "\"%s\" non è un file moneyGuru"
 
-#: core/document.py:772
+#: core/gui/main_window.py:472
 msgid "%s is of an unknown format."
 msgstr "%s ha un formato sconosciuto."
 
-#: core/document.py:816
+#: core/document.py:1073
 msgid "Import"
 msgstr "Importa"
 
@@ -157,18 +153,6 @@ msgstr ""
 msgid "Budgets from {start_date} to {end_date}"
 msgstr "Previsioni dal {start_date} al {end_date}"
 
-#: core/gui/cashculator_view.py:30
-msgid "Exported database not present. Click on Export Accounts first."
-msgstr "Exported database not present. Click on Export Accounts first."
-
-#: core/gui/cashculator_view.py:31
-msgid ""
-"Base Cashculator database not present. You must run and quit Cashculator at "
-"least once before using the export feature."
-msgstr ""
-"Base Cashculator database not present. You must run and quit Cashculator at "
-"least once before using the export feature."
-
 #: core/gui/csv_options.py:21
 msgid "Date"
 msgstr "Data"
@@ -209,12 +193,12 @@ msgstr "Valuta"
 msgid "Transaction ID"
 msgstr "ID Transazione"
 
-#: core/gui/csv_options.py:102 core/gui/csv_options.py:232
-#: core/gui/csv_options.py:252
+#: core/gui/csv_options.py:102 core/gui/csv_options.py:207
+#: core/gui/csv_options.py:241
 msgid "Default"
 msgstr "Default"
 
-#: core/gui/csv_options.py:248 core/gui/import_window.py:358
+#: core/gui/csv_options.py:257 core/gui/import_window.py:364
 msgid "< New Account >"
 msgstr "< Crea Conto >"
 
@@ -326,39 +310,35 @@ msgstr "USCITE"
 msgid "NET INCOME"
 msgstr "ENTRATE NETTE"
 
-#: core/gui/main_window.py:46 core/gui/net_worth_graph.py:40
+#: core/gui/main_window.py:49 core/gui/net_worth_graph.py:40
 msgid "Net Worth"
 msgstr "Patrimonio"
 
-#: core/gui/main_window.py:47 core/gui/profit_graph.py:42
+#: core/gui/main_window.py:50 core/gui/profit_graph.py:42
 msgid "Profit & Loss"
 msgstr "Guadagno e Perdita"
 
-#: core/gui/main_window.py:48
+#: core/gui/main_window.py:51
 msgid "Transactions"
 msgstr "Transazioni"
 
-#: core/gui/main_window.py:49
+#: core/gui/main_window.py:52
 msgid "Schedules"
 msgstr "Pianificazioni"
 
-#: core/gui/main_window.py:50
+#: core/gui/main_window.py:53
 msgid "Budgets"
 msgstr "Previsioni"
 
-#: core/gui/main_window.py:51
-msgid "Cashculator"
-msgstr ""
-
-#: core/gui/main_window.py:52
+#: core/gui/main_window.py:54
 msgid "General Ledger"
 msgstr "Libro Mastro"
 
-#: core/gui/main_window.py:53
+#: core/gui/main_window.py:55
 msgid "Document Properties"
 msgstr ""
 
-#: core/gui/main_window.py:54
+#: core/gui/main_window.py:56
 msgid "New Tab"
 msgstr "Nuova Scheda"
 
@@ -454,63 +434,63 @@ msgstr ""
 msgid "The Date and Amount columns must be set."
 msgstr "Impostare le colonne Data e Ammontare."
 
-#: core/model/date.py:154
+#: core/model/date.py:250
 msgid "Q{0} {1}"
 msgstr "Q{0} {1}"
 
-#: core/model/date.py:199
+#: core/model/date.py:318
 msgid "{0} - Now"
 msgstr "{0} - Ora"
 
-#: core/model/date.py:227
+#: core/model/date.py:361
 msgid "Running year ({0} - {1})"
 msgstr "Anno Corrente ({0} - {1})"
 
-#: core/model/date.py:252
+#: core/model/date.py:393
 msgid "All Transactions"
 msgstr "Tutte le Transazioni"
 
-#: core/model/recurrence.py:92
+#: core/model/recurrence.py:191
 msgid "Daily"
 msgstr "Giornaliero"
 
-#: core/model/recurrence.py:93
+#: core/model/recurrence.py:192
 msgid "Weekly"
 msgstr "Settimanale"
 
-#: core/model/recurrence.py:94
+#: core/model/recurrence.py:193
 msgid "Monthly"
 msgstr "Mensile"
 
-#: core/model/recurrence.py:95
+#: core/model/recurrence.py:194
 msgid "Yearly"
 msgstr "Annuale"
 
-#: core/model/recurrence.py:134
+#: core/model/recurrence.py:233
 msgid "fifth"
 msgstr "quinto"
 
-#: core/model/recurrence.py:134
+#: core/model/recurrence.py:233
 msgid "first"
 msgstr "primo"
 
-#: core/model/recurrence.py:134
+#: core/model/recurrence.py:233
 msgid "fourth"
 msgstr "quarto"
 
-#: core/model/recurrence.py:134
+#: core/model/recurrence.py:233
 msgid "second"
 msgstr "secondo"
 
-#: core/model/recurrence.py:134
+#: core/model/recurrence.py:233
 msgid "third"
 msgstr "terzo"
 
-#: core/model/recurrence.py:135
+#: core/model/recurrence.py:234
 msgid "Every %s %s of the month"
 msgstr "Ogni %s %s del mese"
 
-#: core/model/recurrence.py:138
+#: core/model/recurrence.py:237
 msgid "Every last %s of the month"
 msgstr "Ogni ultimo %s del mese"
 
@@ -529,12 +509,3 @@ msgstr ""
 #: core/gui/account_pie_chart.py:85
 msgid "Income & Expenses"
 msgstr ""
-
-#~ msgid "Assets"
-#~ msgstr "Attivo"
-
-#~ msgid "Liabilities"
-#~ msgstr "Passivo"
-
-#~ msgid "Expenses"
-#~ msgstr "Uscite"

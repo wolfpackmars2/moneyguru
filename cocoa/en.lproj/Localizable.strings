@@ -19,7 +19,6 @@
 "Budget Info" = "Budget Info";
 "Budgets" = "Budgets";
 "Cancel" = "Cancel";
-"Cashculator" = "Cashculator";
 "Check #" = "Check #";
 "Check for update..." = "Check for update...";
 "Choose a view for this tab" = "Choose a view for this tab";
@@ -58,8 +57,6 @@
 "Every" = "Every";
 "Expenses" = "Expenses";
 "Export" = "Export";
-"Export Accounts" = "Export Accounts";
-"Export accounts to Cashculator" = "Export accounts to Cashculator";
 "Export format:" = "Export format:";
 "Export Options" = "Export Options";
 "Export scope:" = "Export scope:";
@@ -83,7 +80,6 @@
 "Info" = "Info";
 "Jump to Account..." = "Jump to Account...";
 "Just this one" = "Just this one";
-"Launch Cashculator" = "Launch Cashculator";
 "Layout Name" = "Layout Name";
 "Layout Name:" = "Layout Name:";
 "Layout:" = "Layout:";
@@ -129,7 +125,6 @@
 "Paste" = "Paste";
 "Payee" = "Payee";
 "Placeholder for the date range menu" = "Placeholder for the date range menu";
-"Please read instructions in the Forecast section of the help file." = "Please read instructions in the Forecast section of the help file.";
 "Plugins (double-click to open)" = "Plugins (double-click to open)";
 "Preferences..." = "Preferences...";
 "Previous Date Range" = "Previous Date Range";
