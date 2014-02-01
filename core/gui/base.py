@@ -100,6 +100,21 @@ MESSAGES_DOCUMENT_CHANGED = MESSAGES_EVERYTHING_CHANGED | {'account_added', 'acc
     'budget_changed', 'budget_deleted', 'schedule_changed', 'schedule_deleted'}
 
 class HideableObject:
+    """An object receiving notifications, but that is disabled when hidden.
+
+    Notifications can trigger a lot of refreshes all around, and moneyGuru has a lot of GUI elements
+    that are hidden most of the time. What we want to achieve here is to delay refreshes triggered
+    by notifications until our GUI element is shown again.
+
+    A subclass of this class can define two class-level constants:
+
+    ``INVALIDATING_MESSAGES``: a set of all notifications that invalidate our content.
+
+    ``ALWAYSON_MESSAGES``: A set of all notifications that should be processed even when our element
+    is hidden. By default, it contains ``document_restoring_preferences`` because this message isn't
+    really about invalidating content, but rather restoring preferences on document load, which is
+    very important to do, hidden or not.
+    """
     # Messages that invalidates the view if received while it's hidden (its cache will be
     # revalidated upon show)
     INVALIDATING_MESSAGES = set()
@@ -112,47 +127,102 @@ class HideableObject:
     
     #--- Protected
     def _process_message(self, msg):
-        # Returns True if the message must be dispatched, False if not.
+        """*Protected*. Process notification ``msg``.
+
+        Whenever your subclasses receives a notification, call this. It checks whether the
+        notification should be processed and invalidates our element if needed.
+
+        Returns ``True`` if our notification should be further processed. ``False`` if not.
+        """
         if self._hidden and (msg in self.INVALIDATING_MESSAGES):
             self._invalidated = True
         return (not self._hidden) or (msg in self.ALWAYSON_MESSAGES)
     
     def _revalidate(self):
-        pass
+        """*Virtual*. Refresh the GUI element's content.
+
+        Override this when you subclass with code that refreshes the content of the element. This is
+        called when we show the element back and that we had received a notification invalidating
+        our content.
+        """
     
     #--- Public
     def show(self):
+        """Show the object and revalidate if necessary.
+
+        If an invalidating notification was received while we were hidden, we'll trigger a full
+        refresh with :meth:`_revalidate`.
+        """
         self._hidden = False
         if self._invalidated:
             self._revalidate()
             self._invalidated = False
     
     def hide(self):
+        """Hide the object.
+
+        We will no longer process notifications. We'll refresh when we show up again, if needed.
+        """
         self._hidden = True
     
 
 class DocumentGUIObject(Listener, GUIObject, DocumentNotificationsMixin):
+    """Base class for listeners of :class:`.Document`.
+
+    This base class is not much more than a convenience layer, centralizing multiple subclassing
+    and common properties (:attr:`app` and :attr:`document`). It's a base class for every GUI
+    elements that listen to some notifications from :class:`.Document`.
+
+    Subclasses :class:`.Listener`, :class:`.GUIObject` and :class:`DocumentNotificationsMixin`.
+
+    :param document: Reference document.
+    :type document: :class:`.Document`
+    :param listento: The object to listen our notifications from. Defaults to ``document``.
+    :type listento: :class:`.Broadcaster`
+    """
     def __init__(self, document, listento=None):
         if listento is None:
             listento = document
         Listener.__init__(self, listento)
         GUIObject.__init__(self)
+        #: Parent :class:`document <.Document>`.
         self.document = document
+        #: Parent :class:`app <.Application>`.
         self.app = document.app
     
 
 class MainWindowGUIObject(DocumentGUIObject, MainWindowNotificationsMixin):
+    """Base class for listeners of :class:`.MainWindow`.
+
+    This base class is not much more than a convenience layer, centralizing multiple subclassing
+    and common properties (:attr:`mainwindow`). It's a base class for every GUI elements that listen
+    to some notifications from :class:`.MainWindow`.
+
+    Subclasses :class:`DocumentGUIObject` and :class:`MainWindowNotificationsMixin`.
+
+    :param mainwindow: Reference mainwindow.
+    :type mainwindow: :class:`.MainWindow`
+    :param listento: The object to listen our notifications from. Defaults to ``mainwindow``.
+    :type listento: :class:`.Broadcaster`
+    """
     def __init__(self, mainwindow, listento=None):
         if listento is None:
             listento = mainwindow
         DocumentGUIObject.__init__(self, mainwindow.document, listento=listento)
+        #: Parent :class:`main window <.MainWindow>`.
         self.mainwindow = mainwindow
 
 
 class ViewChild(MainWindowGUIObject, HideableObject):
+    """Visible GUI element listening to notifications from its parent view.
+
+    :param parent_view: View we listen our notifications from.
+    :type parent_view: :class:`BaseView`
+    """
     def __init__(self, parent_view):
         MainWindowGUIObject.__init__(self, parent_view.mainwindow, listento=parent_view)
         HideableObject.__init__(self)
+        #: Parent :class:`base view <BaseView>`.
         self.parent_view = parent_view
     
     def _process_message(self, msg):
@@ -168,6 +238,7 @@ class ViewChild(MainWindowGUIObject, HideableObject):
             Listener.dispatch(self, msg)
     
 
+# XXX There's only core.gui.report.Report using this. No need for a base class. Push this back up.
 class RestorableChild(ViewChild):
     def __init__(self, parent_view):
         ViewChild.__init__(self, parent_view)
@@ -186,36 +257,76 @@ class RestorableChild(ViewChild):
     
 
 class GUIPanel(GUIObject):
+    """GUI Modal dialog.
+
+    Unlike :class:`DocumentGUIObject`, dialogs don't listen to notifications. They're called upon
+    explicitly. They do, however, hold references to :attr:`app` and :attr:`document`.
+
+    Subclasses :class:`.GUIObject`.
+    """
     def __init__(self, document):
         GUIObject.__init__(self)
+        #: Parent :class:`document <.Document>`.
         self.document = document
+        #: Parent :class:`app <.Application>`.
         self.app = document.app
     
     #--- Virtual
     def _load(self):
+        """*Virtual*. Load the panel's content.
+
+        The subclass is supposed to know what it has to load from the document (selected
+        transaction, selected account, etc.). That's where it does this.
+        """
         raise NotImplementedError()
     
     def _new(self):
+        """*Virtual*. Load the panel's content with default values for creation.
+
+        We're creating a new element with our panel. Load it with appropriate initialization values.
+        """
         raise NotImplementedError()
     
     def _save(self):
+        """*Virtual*. Save the panel's value into the document.
+
+        Our user confirmed the dialog, thus triggering a save operation. Commit our panel's content
+        into our document.
+        """
         raise NotImplementedError()
     
     #--- Overrides
     def load(self, *args, **kwargs):
-        # If the panel can't load, OperationAborted will be raised. If a message to the user is
-        # required, the OperationAborted exception will have a non-empty message
+        """Load the panel's content.
+
+        This :meth:`load operation <_load>` is wrapped in between ``pre_load()`` and ``post_load()``
+        calls to the panel's view.
+
+        If you pass arguments to this method, they will be directly passed to :meth:`_load`, thus
+        allowing your panel subclasses to take arbitrary arguments.
+
+        If the panel can't load, :exc:`.OperationAborted` will be raised. If a message to the user
+        is required, the :exc:`.OperationAborted` exception will have a non-empty message.
+        """
         self.view.pre_load()
         self._load(*args, **kwargs)
         self.view.post_load()
     
     def new(self):
-        # Same as in load()
+        """Load the panel's content with default values for creation.
+
+        Same as :meth:`load` but with new values.
+        """
         self.view.pre_load()
         self._new()
         self.view.post_load()
     
     def save(self):
+        """Save the panel's value into the document.
+
+        This :meth:`save operation <_save>` is preceded by a ``pre_save()`` call to the panel's
+        view.
+        """
         self.view.pre_save()
         self._save()
     
