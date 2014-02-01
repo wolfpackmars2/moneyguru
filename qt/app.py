@@ -14,7 +14,6 @@ from PyQt4.QtGui import QDialog, QDesktopServices, QApplication, QMessageBox
 
 from qtlib.about_box import AboutBox
 from qtlib.app import Application as ApplicationBase
-from qtlib.reg import Registration
 from qtlib.util import getAppData
 
 from core.app import Application as MoneyGuruModel
@@ -52,7 +51,7 @@ class MoneyGuru(ApplicationBase):
         self.doc.model.connect()
         self.mainWindow = MainWindow(doc=self.doc)
         self.preferencesPanel = PreferencesPanel(self.mainWindow, app=self)
-        self.aboutBox = AboutBox(self.mainWindow, self, withreg=False)
+        self.aboutBox = AboutBox(self.mainWindow, self)
         if sys.argv[1:] and op.exists(sys.argv[1]):
             self.doc.open(sys.argv[1])
         elif self.prefs.recentDocuments:
@@ -101,14 +100,6 @@ class MoneyGuru(ApplicationBase):
     
     def set_default(self, key, value):
         self.prefs.set_value(key, value)
-    
-    def show_fairware_nag(self, prompt):
-        reg = Registration(self.model)
-        reg.show_fairware_nag(prompt)
-    
-    def show_demo_nag(self, prompt):
-        reg = Registration(self.model)
-        reg.show_demo_nag(prompt)
     
     def show_message(self, msg):
         window = QApplication.activeWindow()
