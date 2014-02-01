@@ -58,11 +58,6 @@ http://www.hardcoded.net/licenses/bsd_license
     [[self model] selectPaneType:MGPaneTypeBudget];
 }
 
-- (void)selectCashculatorView
-{
-    [[self model] selectPaneType:MGPaneTypeCashculator];
-}
-
 - (void)selectGeneralLedgerView
 {
     [[self model] selectPaneType:MGPaneTypeGeneralLedger];

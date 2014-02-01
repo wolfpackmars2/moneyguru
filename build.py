@@ -85,7 +85,6 @@ def build_xibless(dest='cocoa/autogen'):
         ('account_panel.py', 'MGAccountProperties_UI'),
         ('newtab_view.py', 'MGEmptyView_UI'),
         ('docprops_view.py', 'MGDocPropsView_UI'),
-        ('cashculator_view.py', 'MGCashculatorView_UI'),
         ('transaction_view.py', 'MGTransactionView_UI'),
         ('account_view.py', 'MGAccountView_UI'),
         ('account_sheet_view.py', 'MGAccountSheetView_UI'),
@@ -310,7 +309,7 @@ def build_cocoa_bridging_interfaces():
         PyAccountReassignPanel, PyExportPanel, ExportPanelView, PyPanelWithTransaction,
         PanelWithTransactionView, PyTransactionPanel, PySchedulePanel, SchedulePanelView,
         BaseViewView, PyAccountSheetView, PyTransactionView,
-        PyAccountView, AccountViewView, PyScheduleView, PyBudgetView, PyCashculatorView,
+        PyAccountView, AccountViewView, PyScheduleView, PyBudgetView,
         PyGeneralLedgerView, PyDocPropsView, PyEmptyView, PyReadOnlyPluginView, PyMainWindow,
         MainWindowView, PyDocument, DocumentView, PyMoneyGuruApp)
     from mg_cocoa import PyPrintView, PySplitPrint, PyTransactionPrint, PyEntryPrint
@@ -322,7 +321,7 @@ def build_cocoa_bridging_interfaces():
         PyMassEditionPanel, PyBudgetPanel, PyCustomDateRangePanel, PyAccountReassignPanel,
         PyExportPanel, PyPanelWithTransaction, PyTransactionPanel, PySchedulePanel,
         PyAccountSheetView, PyTransactionView, PyAccountView, PyScheduleView, PyBudgetView,
-        PyCashculatorView, PyGeneralLedgerView, PyDocPropsView, PyEmptyView, PyReadOnlyPluginView,
+        PyGeneralLedgerView, PyDocPropsView, PyEmptyView, PyReadOnlyPluginView,
         PyMainWindow, PyDocument, PyMoneyGuruApp]
     proxy.destroyPool()
     allclasses += [PyPrintView, PySplitPrint, PyTransactionPrint, PyEntryPrint]

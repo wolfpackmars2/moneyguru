@@ -25,7 +25,6 @@ class PaneType:
     Account = 3
     Schedule = 4
     Budget = 5
-    Cashculator = 6
     GeneralLedger = 7
     DocProps = 8
     Empty = 100

@@ -920,20 +920,6 @@ class PyScheduleView(PyBaseView):
         return self.model.table
     
 
-class PyCashculatorView(PyBaseView):
-    def table(self) -> pyref:
-        return self.model.atable
-    
-    def exportDB(self):
-        self.model.export_db()
-    
-    def launchCC(self):
-        self.model.launch_cc()
-    
-    def resetCCDB(self):
-        self.model.reset_ccdb()
-    
-
 class PyGeneralLedgerView(PyBaseView):
     def table(self) -> pyref:
         return self.model.gltable

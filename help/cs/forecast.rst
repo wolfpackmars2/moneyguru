@@ -48,24 +48,4 @@ Je důležité si uvědomit, že nastavení účtu Cíl **neomezuje** váš rozp
 
 Obvykle je nejlepší jako cíl pro rozpočet použít váš běžný účet, protože odtud peníze stejně většinou pocházejí a tam většinou přicházejí. Účelem cíle v rozpočtu je umožnit rozpočtu ovlivňovat váš budoucí zůstatek. Pokud například jako cíl vyberete účet svojí kreditní karty, pak pokud nenaplánujete transakce, které na ní budou pravidelně splácet dluh, bude budoucí zůstatek na kartě do nekonečna klesat.
 
-Integrace s aplikací Cashculator
---------------------------------
-
-**Tato funkce vyžaduje Cashculator v. 1.2.2 a pozdější.**
-
-Pokud už víte jaké rozpočty chcete mít, jsou funkce pro tvorbu rozpočtu a plánů v moneyGuru dostatečné. Ale moneyGuru vám neumožní vymýšlet hypotetické rozpočty, abyste si navrhli takový, který budete dodržovat. Existuje hezká aplikace, `Cashculator <http://www.apparentsoft.com/cashculator>`__ , od jiného tvůrce, která se přesně na toto specializuje.
-
-moneyGuru umí s Cashculatorem spolupracovat a usnadnit vám tak export "reálných" (v terminologii Cashculatoru) dat do této aplikace, návrh rozpočtů a jejich import do moneyGuru. Chcete-li tuto integraci využít, postupujte následovně:
-
-1. Stáhněte si Cashculator, spusťte ho (aby se vytvořila kostra databáze, kterou moneyGuru potřebuje) a ukončete ho.
-2. Otevřete si svá data v moneyGuru, otevřete novou záložku a klepněte na tlačítko "Cashculator".
-3. Zobrazí se záložka se seznamem vašich příjmových a výdajových účtů. V tomto seznamu musíte vybrat, které účty jsou Cyklické a které jsou Necyklické (to je pro Cashculator důležitý rozdíl).
-4. Klepněte na tlačítko "Exportovat účty". Vyexportují se všechny vaše příjmové a výdajové účty a pohyby peněz za poslední 4 měsíce. Nemějte obavy o svá data z Cashculatoru. moneyGuru vytváří vlastní kopii databáze Cashculatoru a data exportuje do ní.
-5. Ujistěte se, že Cashculator není spuštěný a klepněte na tlačítko "Spustit Cashculator". Cashculator musíte tímto způsobem, protože tak Cashculator použije databázi připravenou moneyGuru, namísto své vlastní.
-6. V Cashculatoru najdete scénář nazvaný "moneyGuru", kde budou všechny vaše účty a reálná data za poslední 4 měsíce. Použijte tyto údaje pro návrh rozpočtu (konzultujte dokumentaci Cashculatoru pro postup).
-7. Jakmile máte hotovo, můžete podle svého návrhu vytvořil rozpočty a plány v moneyGuru. To musíte provést ručně, ale jedná se pouze o dočasné omezení této funkce (viz níže).
-8. Po ukončení moneyGuru se Cashculator vrátí do normálního režimu (ke své standardní databázi).
-
-**Integrace s Cashculatorem prozatím funguje pouze jednosměrně (export).** Caschulator funguje jinak než moneyGuru. Export dat do něj není nijak složitý, ale když se z něj mají importovat rozpočty zpátky do moneyGuru, není to tak lehké. V Cashculatoru lze vyplnit pole "Plán" mnoha různými způsoby. Není žádný jednoznačný postup, jak je automaticky konvertovat do rozpočtů a plánů.
-
 .. |clock| image:: image/clock.png

@@ -29,7 +29,6 @@ http://www.hardcoded.net/licenses/bsd_license
 - (void)selectTransactionView;
 - (void)selectScheduleView;
 - (void)selectBudgetView;
-- (void)selectCashculatorView;
 - (void)selectGeneralLedgerView;
 - (void)selectDocPropsView;
 - (void)selectPluginView;

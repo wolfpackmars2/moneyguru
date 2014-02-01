@@ -51,7 +51,6 @@ PANETYPE2LABEL = {
     PaneType.Transaction: tr("Transactions"),
     PaneType.Schedule: tr("Schedules"),
     PaneType.Budget: tr("Budgets"),
-    PaneType.Cashculator: tr("Cashculator"),
     PaneType.GeneralLedger: tr("General Ledger"),
     PaneType.DocProps: tr("Document Properties"),
     PaneType.Empty: tr("New Tab"),
@@ -181,10 +180,6 @@ class MainWindow(Repeater, GUIObject):
             result = ScheduleView(self)
         elif pane_type == PaneType.Budget:
             result = BudgetView(self)
-        elif pane_type == PaneType.Cashculator:
-            # OS X only, so we import he instead of at the top of the module
-            from .cashculator_view import CashculatorView
-            result = CashculatorView(self)
         elif pane_type == PaneType.GeneralLedger:
             result = GeneralLedgerView(self)
         elif pane_type == PaneType.DocProps:

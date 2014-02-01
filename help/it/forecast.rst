@@ -50,26 +50,4 @@ Attenzione però a non dimenticare che impostando un conto Destinazione **non** 
 
 Normalmente il conto più adatto ad essere usato come conto destinazione è il conto corrente principale, dato che è definitiva il posto da cui viene e verso cui va il denaro alla fine. Lo scopo della destinazione di una previsione è solo di riflettersi nei bilanci futuri; quindi  se ad esempio si sceglie come destinazione il conto passività Carta di Credito, a meno che non ci sia una transazione pianificata che regolarmente paga la società della carta, il bilancio futuro di quella carta crescerà indefinitamente.
 
-
-Integrazione con Cashculator
-----------------------------
-
-**Questa caratteristica richiede Cashculator v1.2.2 o successivo.**
-
-Le funzionalità di previsione e pianificazione in moneyGuru sono ottime se si sa già a quali tipi di previsioni ci si vuole limitare. Infatti moneyGuru non consente di giocare con delle Ipotesi, ovvero delle previsioni ipotetiche che hanno lo scopo di progettare la previsione che si andrà ad utilizzare. Esiste un'altra applicazione di un altro sviluppatore che è specializzata in esattamente questo: `Cashculator <http://www.apparentsoft.com/cashculator>`__.
-
-moneyGuru si integra con Cashculator per consentire di esportare facilmente i dati "Reali" (è così che li chiamano) verso Cashculator, progettare le proprie previsioni, e infine reintegrarle in moneyGuru. Per utilizzare questa funzionalità integrata, bisogna seguire i passi:
-
-1. Scaricare Cashculator, eseguirlo una volta (moneyGuru necessita della struttura del database di Cashculator) e chiuderlo.
-2. Aprire il proprio documento moneyGuru, aprire una nuova scheda e fare click sul pulsante "Cashculator".
-3. La scheda mostrerà una lista dei propri conti Entrate e Uscite. Attraverso questa lista si deve scegliere quali conti sono Ricorrenti e quali Non Ricorrenti (è una differenza importante in Cashculator).
-4. Fare click su "Esporta Conti". Questo esporterà tutti i conti Entrate e Uscite, così come il loro flusso di cassa degli ultimi 4 mesi. Non preoccupatevi se avete dei dati originali in Cashculator: moneyGuru crea la sua copia del database di Cashculator e inserisce là i dati.
-5. Assicuratevi che Cashculator sia chiuso, quindi fate click su "Avvia Cashculator". Si deve utilizzare questo pulsante per lanciare, poiché moneyGuru gli deve dire di utilizzare il proprio database invece di quello originale.
-6. In Cashculator comparirà uno scenario ipotetico chiamato "moneyGuru", che conterrà tutti i conti oltre ai loro dati "Reali" degli ultimi 4 mesi. Si può quindi procedere ad utilizzare questi dati per progettare la propria previsione, o Budget (fare riferimento al manuale di Cashculator per i dettagli).
-7. Una volta finito si possono creare le pianificazioni e le previsioni in moneyGuru. Bisognerà farlo manualmente, ma questo è un limite temporanea di questa funzionalità (vedi sotto).
-8. Cashculator sarà ripristinato alla sua modalità normale (il suo database) quando si esce da moneyGuru.
-
-
-**Per il momento, l'integrazione con Cashculator funziona in una sola direzione (esportazione).** Il modo in cui Cashculator funziona è molto diverso da quello di moneyGuru. Esportare i dati non è molto complicato, ma quando si tratta di reimportare le previsioni in moneyGuru le cose si fanno più complicate. Ci sono molti modi in cui si possono riempire le celle "Piano" in Cashculator e non c'è un modo ovvio di convertirli automaticamente in previsioni e pianificazioni.
-
 .. |clock| image:: image/clock.png
