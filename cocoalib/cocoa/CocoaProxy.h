@@ -20,6 +20,7 @@
 - (NSString *)bundleIdentifier;
 - (NSString *)appVersion;
 - (NSString *)osxVersion;
+- (NSString *)bundleInfo:(NSString *)key;
 - (void)postNotification:(NSString *)name userInfo:(NSDictionary *)userInfo;
 - (id)prefValue:(NSString *)prefname;
 - (void)setPrefValue:(NSString *)prefname value:(id)value;
@@ -27,6 +28,7 @@
 - (NSString *)url2path:(NSString *)url;
 - (void)createPool;
 - (void)destroyPool;
-- (void)reportCrash:(NSString *)crashReport;
+- (BOOL)reportCrash:(NSString *)crashReport;
 - (void)log:(NSString *)s;
+- (NSDictionary *)readExifData:(NSString *)imagePath;
 @end
