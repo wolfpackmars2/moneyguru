@@ -15,3 +15,6 @@ core.gui.base
         MainWindowGUIObject
         ViewChild
         GUIPanel
+        MainWindowPanel
+        BaseView
+        LinkedSelectableList

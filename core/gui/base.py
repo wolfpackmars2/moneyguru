@@ -332,20 +332,39 @@ class GUIPanel(GUIObject):
     
 
 class MainWindowPanel(GUIPanel):
+    """A :class:`GUIPanel` with :class:`.MainWindow` as a parent.
+
+    The vast, vast majority of panels in moneyGuru.
+
+    Subclasses :class:`GUIPanel`
+    """
     def __init__(self, mainwindow):
         GUIPanel.__init__(self, mainwindow.document)
         self.mainwindow = mainwindow
     
 
-def _raise_notimplemented(self):
-    raise NotImplementedError()
-    
 class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, MainWindowNotificationsMixin):
+    """Superclass for main "tabs" controllers.
+
+    You know, the tabs you open in moneyGuru (Net Worth, Transactions, General Ledger)? Their main
+    controller is a subclass of this. They're a GUI object, but they don't have much of an existence
+    as a UI view, their only purpose being to hold the child views together.
+
+    Views subclasses are uniquely identified by their :attr:`VIEW_TYPE` attribute which is an
+    ``int`` constant that is kept in sync in the UI layer. This way, when we tell the UI to load up
+    the view ``2``, then it knows that we mean the Transactions tab.
+
+    All views respond to a common subset of methods (our virtual methods below), each in their own
+    ways. There's many buttons and menu items (new, edit, delete, etc.) that have a name that is
+    generic enough to be applied to multiple situations depending on the active tab.
+    """
     #--- model -> view calls:
     # restore_subviews_size()
     #
     
+    #: A :class:`.PaneType` constant uniquely identifying our subclass.
     VIEW_TYPE = -1
+    #: The class to use as a model when printing a tab. Defaults to :class:`.PrintView`.
     PRINT_VIEW_CLASS = PrintView
     
     def __init__(self, mainwindow):
@@ -353,20 +372,50 @@ class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, 
         GUIObject.__init__(self)
         HideableObject.__init__(self)
         self._children = []
+        #: :class:`.MainWindow`
         self.mainwindow = mainwindow
+        #: :class:`.Document`
         self.document = mainwindow.document
+        #: :class:`.Application`
         self.app = mainwindow.document.app
         self._status_line = ""
     
     #--- Virtual
-    new_item = _raise_notimplemented
-    edit_item = _raise_notimplemented
-    delete_item = _raise_notimplemented
-    duplicate_item = _raise_notimplemented
-    new_group = _raise_notimplemented
-    navigate_back = _raise_notimplemented
-    move_up = _raise_notimplemented
-    move_down = _raise_notimplemented
+    def new_item(self):
+        """*Virtual*. Create a new item."""
+        raise NotImplementedError()
+
+    def edit_item(self):
+        """*Virtual*. Edit the selected item(s)."""
+        raise NotImplementedError()
+
+    def delete_item(self):
+        """*Virtual*. Delete the selected item(s)."""
+        raise NotImplementedError()
+
+    def duplicate_item(self):
+        """*Virtual*. Duplicate the selected item(s)."""
+        raise NotImplementedError()
+
+    def new_group(self):
+        """*Virtual*. Create a new group."""
+        raise NotImplementedError()
+
+    def navigate_back(self):
+        """*Virtual*. Navigate back from wherever the user is coming.
+
+        This may (will) result in the active tab changing.
+        """
+        raise NotImplementedError()
+
+    def move_up(self):
+        """*Virtual*. Move select item(s) up in the list, if possible."""
+        raise NotImplementedError()
+
+    def move_down(self):
+        """*Virtual*. Move select item(s) down in the list, if possible."""
+        raise NotImplementedError()
+
     
     #--- Overrides
     def dispatch(self, msg):
@@ -396,25 +445,32 @@ class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, 
     #--- Public
     @classmethod
     def can_perform(cls, action_name):
-        # Base views have a specific set of actions they can perform, and the way they perform these
-        # actions is defined by the subclasses. However, not all views can perform all actions.
-        # You can use this method to determine whether a view can perform an action. It does so by
-        # comparing the method of the view with our base method which we know is abstract and if
-        # it's not the same, we know that the method was overridden and that we can perform the
-        # action.
+        """Returns whether our view subclass can perform ``action_name``.
+        
+        Base views have a specific set of actions they can perform, and the way they perform these
+        actions is defined by the subclasses. However, not all views can perform all actions.
+        You can use this method to determine whether a view can perform an action. It does so by
+        comparing the method of the view with our base method which we know is abstract and if
+        it's not the same, we know that the method was overridden and that we can perform the
+        action.
+        """
         mymethod = getattr(cls, action_name, None)
         assert mymethod is not None
         return mymethod is not getattr(BaseView, action_name, None)
     
     def restore_subviews_size(self):
-        pass # Virtual
+        """*Virtual*. Restore subviews size from preferences."""
     
     def save_preferences(self):
-        pass # Virtual
+        """*Virtual*. Save subviews size to preferences."""
     
     #--- Properties
     @property
     def status_line(self):
+        """*get/set*. A short textual description of the global status of the tab.
+
+        This is displayed at the bottom of the main window in the UI.
+        """
         return self._status_line
     
     @status_line.setter
@@ -431,6 +487,12 @@ class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, 
     
 
 class LinkedSelectableList(GUISelectableList):
+    """Selectable list performing an action whenever the selection changes.
+
+    It's a very simple :class:`.GUISelectableList` subclass that takes a ``setfunc`` argument, which
+    is a function taking a single ``index`` argument. This function is called whenever our list's
+    selection changes, and that newly selected index is passed to our ``setfunc``.
+    """
     def __init__(self,  items=None, setfunc=None):
         # setfunc(newindex)
         GUISelectableList.__init__(self, items=items)
