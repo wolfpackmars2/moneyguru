@@ -23,6 +23,8 @@ relevant information from that :class:`.Account` instance into its ready-to-be-f
 This method of having multiple GUI codebases is a little unusual. I call this "Cross-Toolkit
 Software" and I've written `an article about it`_.
 
+.. _writetoamodel:
+
 core.document vs core.model
 ===========================
 

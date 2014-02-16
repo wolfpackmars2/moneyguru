@@ -22,6 +22,14 @@ ACCOUNT_TYPE_DESC = {
 }
 
 class AccountTypeList(GUISelectableList):
+    """A selectable list of all possible :class:`account types <.AccountType>`.
+
+    :param panel: Parent account panel. Has its :attr:`AccountPanel.type` updated when the list
+                  selection changes.
+    :type panel: :class:`AccountPanel`
+
+    Subclasses :class:`.GUISelectableList`.
+    """
     def __init__(self, panel):
         self.panel = panel
         account_types_desc = [ACCOUNT_TYPE_DESC[at] for at in AccountType.InOrder]
@@ -33,6 +41,12 @@ class AccountTypeList(GUISelectableList):
         self.panel.type = selected_type
 
 class AccountPanel(MainWindowPanel):
+    """Modal dialog letting the user edit the properties of an account.
+
+    Our dialog is loaded up with an :class:`.Account`, which is then written to upon saving.
+
+    Subclasses :class:`.MainWindowPanel`.
+    """
     def __init__(self, mainwindow):
         MainWindowPanel.__init__(self, mainwindow)
         self._init_fields()

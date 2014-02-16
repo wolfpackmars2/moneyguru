@@ -259,6 +259,14 @@ class RestorableChild(ViewChild):
 class GUIPanel(GUIObject):
     """GUI Modal dialog.
 
+    All panels work pretty much the same way: They load up an object's properties, let the user
+    fiddle with them, and then save those properties back in the object.
+
+    As :ref:`described in the devdoc overview <writetoamodel>`, saving to an object doesn't mean
+    directly doing so. We need to go through the :class:`.Document` to do that. Therefore,
+    :meth:`save` doesn't actually do that job, but merely calls the proper document method, with
+    the proper arguments.
+
     Unlike :class:`DocumentGUIObject`, dialogs don't listen to notifications. They're called upon
     explicitly. They do, however, hold references to :attr:`app` and :attr:`document`.
 
