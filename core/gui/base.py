@@ -216,6 +216,8 @@ class MainWindowGUIObject(DocumentGUIObject, MainWindowNotificationsMixin):
 class ViewChild(MainWindowGUIObject, HideableObject):
     """Visible GUI element listening to notifications from its parent view.
 
+    Subclasses :class:`.MainWindowGUIObject` and :class:`.HideableObject`.
+
     :param parent_view: View we listen our notifications from.
     :type parent_view: :class:`BaseView`
     """
