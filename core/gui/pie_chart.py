@@ -14,9 +14,6 @@ from hscommon.geometry import Rect, Point
 from hscommon.util import extract
 from .chart import Chart
 
-# A pie chart's data is a list of (name, (float)amount). The name part is ready for display. It
-# is exactly what should be in the legend of the pie chat (it has amount and %)
-
 # Regardless of the view size, we always display this number of slices. If we have more, we group
 # them under "Others"
 MIN_SLICE_COUNT = 6
@@ -125,6 +122,25 @@ class Legend:
     
 
 class PieChart(Chart):
+    """A chart that draws a circle with slices of different colors.
+
+    A pie chart shows the relative weight of items in a group by showing a sliced up circle. The
+    whole circle represents the sum of the values in the group and each slice has a size that is
+    relative to the amount of the item it represents.
+
+    The number of slices in the circle depends on the view size. The bigger it is, the more slices
+    we show. If we have more items than the number of slices we want to show, we group the smallest
+    items in the "Others" slice.
+
+    Each slice has a legend label which is placed on the edge of the circle, at the middle point
+    of the slice. Sometimes, legend labels clash and the draw algorithm does its best to avoid that,
+    so it moves the ledgend labels around.
+
+    A pie chart's :attr:`.Chart.data` is a list of ``(name, (float)amount)``. The name part is ready
+    for display. It is exactly what should be in the legend of the pie chat (it has amount and %).
+
+    Subclasses :class:`.Chart`
+    """
     PADDING = 6
     
     def __init__(self, parent_view):
