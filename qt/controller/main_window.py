@@ -664,17 +664,19 @@ class MainWindow(QMainWindow):
         # previously opened, all views' model are uninitalized and don't have their "view" attribute
         # set yet. If we proceed with the setCurrentIndex() call below before _getViewforPane()
         # could be called above, we get a crash.
-        if self.tabBar.currentIndex() < self.model.pane_count:
+        if self.tabBar.currentIndex() >= self.model.pane_count:
             # Normally, we don't touch the tabBar index here and wait for change_current_pane,
             # but when we remove tabs, it's possible that currentTabChanged end up being called and
             # then the tab selection is bugged. I tried disconnecting/reconnecting the signal, but
-            # this is buggy. So when a selected tab is about to be removed, we change the selection
-            # to the model's one immediately.
-            self.tabBar.setCurrentIndex(self.model.current_pane_index)
+            # this is buggy. So when a selected tab is about to be removed and is out of bounds,
+            # we change the selection to the last index in the model. We don't use
+            # self.model.current_pane_index because in some cases, it's -1 and prevents this crash
+            # preventer from preventing its crash.
+            self.tabBar.setCurrentIndex(self.model.pane_count - 1)
         while self.tabBar.count() > self.model.pane_count:
             self.tabBar.removeTab(self.tabBar.count()-1)
         self.tabBar.setTabsClosable(self.model.pane_count > 1)
-    
+
     def refresh_status_line(self):
         self.statusLabel.setText(self.model.status_line)
     
