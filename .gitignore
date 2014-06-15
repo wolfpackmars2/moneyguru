@@ -1,7 +1,5 @@
 .DS_Store
-*.pyc
 *.so
-*.pyd
 *.mo
 *.dmg
 *.back.aip
@@ -9,6 +7,7 @@ __pycache__
 build
 env
 _build
+.tox
 /conf.json
 /cocoa/Info.plist
 /cocoa/build

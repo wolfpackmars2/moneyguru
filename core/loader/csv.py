@@ -114,6 +114,7 @@ class Loader(base.Loader):
             else:
                 line[date_index] = cleaned_str_date
                 lines_to_load.append(line)
+        del line
         str_dates = [line[date_index] for line in lines_to_load]
         date_format = self.guess_date_format(str_dates)
         if date_format is None:

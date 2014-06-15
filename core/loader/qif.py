@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-02-11
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 import logging
@@ -52,15 +52,15 @@ class Block:
     def __init__(self):
         self.type = BlockType.Other
         self.lines = []
-    
+
     def get_line(self, line_header):
         return first(line for line in self.lines if line.header == line_header)
-    
+
 
 class Loader(base.Loader):
     NATIVE_DATE_FORMAT = '%m/%d/%y'
     EXTRA_DATE_FORMATS = ['%m/%d/%Y'] # Also try the YYYY version of the date format in priority
-    
+
     def _parse(self, infile):
         content = infile.read()
         lines = stripfalse(content.split('\n'))
@@ -106,6 +106,7 @@ class Loader(base.Loader):
                     current_block_type = BlockType.Entry
             if header != '^':
                 block.lines.append(Line(header, data))
+        del block
         if not blocks:
             raise FileFormatError()
         logging.debug('This is a QIF file. {0} blocks'.format(len(blocks)))
@@ -117,20 +118,20 @@ class Loader(base.Loader):
             raise FileFormatError()
         self.blocks = blocks
         self.autoswitch_blocks = autoswitch_blocks
-    
+
     def _load(self):
         def remove_brackets(name):
             if name.startswith('[') and name.endswith(']'):
                 return name[1:-1].strip()
             else:
                 return name
-        
+
         def parse_account_line(header, data):
             if header == 'N':
                 self.account_info.name = data.strip()
             if header == 'T' and data in ('Oth L', 'CCard'):
                 self.account_info.type = AccountType.Liability
-        
+
         def parse_split_line(header, data):
             if header == 'S':
                 data = remove_brackets(data)
@@ -140,7 +141,7 @@ class Loader(base.Loader):
             elif header == '$':
                 self.split_info.amount = re_not_amount.sub('', data)
                 self.split_info.amount_reversed = True # Split amounts in QIF are REVERSED
-        
+
         def parse_entry_line(header, data):
             if header == 'D':
                 try:
@@ -161,7 +162,7 @@ class Loader(base.Loader):
             elif header == '!': # yeah, this thing is in the entry data...
                 if data in ('Type:CCard', 'Type:Oth L'):
                     self.account_info.type = AccountType.Liability
-        
+
         self.seen_account_names = set()
         # Send "empty" accounts to the autoswitch_blocks list
         for block, nextblock in zip(self.blocks[:], self.blocks[1:]+[None]):
@@ -207,7 +208,7 @@ class Loader(base.Loader):
                 else:
                     self.seen_account_names.add(self.account_info.name)
                     self.flush_account()
-    
+
     def _post_load(self):
         # The reader of this piece of code has to understand that QIF duplicate transaction matching
         # is more complex than it appears. The main challenge here is to match transactions with
@@ -226,7 +227,7 @@ class Loader(base.Loader):
             # only Income/Expense, but still... It feels better that way.
             transfer_splits = [s for s in txn.splits if s.account_name in self.seen_account_names]
             return len(transfer_splits) >= 2
-        
+
         txn2matches = defaultdict(list)
         # Only process txns which are transfer txns. Others are irrelevant to duplicate matching.
         transfer_txns = [txn for txn in self.transactions if is_transfer_transaction(txn)]
@@ -255,4 +256,4 @@ class Loader(base.Loader):
             toremove |= set(matches[:len(txn.splits)-1])
         for txn in toremove:
             self.transactions.remove(txn)
-    
+
