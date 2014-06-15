@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2010-03-15
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4.QtCore import QObject
@@ -21,7 +21,7 @@ class DateRangeSelector(QObject):
         self.model = mainwindow.model.daterange_selector
         self.model.view = self
         self._setupUi()
-    
+
     def _setupUi(self):
         # Create actions
         self.actionNext = QAction(tr("Next"), self)
@@ -66,7 +66,7 @@ class DateRangeSelector(QObject):
         self.actionChangeToCustom3.setShortcut("Ctrl+Alt+0")
         self.actionChangeToCustom3.setVisible(False)
         self.actionChangeToCustom3.triggered.connect(self.custom3Triggered)
-        
+
         # set typeButton menu
         menu = QMenu(self.view.typeButton)
         menu.addAction(self.actionChangeToMonth)
@@ -80,7 +80,7 @@ class DateRangeSelector(QObject):
         menu.addAction(self.actionChangeToCustom2)
         menu.addAction(self.actionChangeToCustom3)
         self.view.typeButton.setMenu(menu)
-        
+
         # set mainwindow's date range menu
         m = self.mainwindow.menuDateRange
         m.addAction(self.actionChangeToMonth)
@@ -96,21 +96,21 @@ class DateRangeSelector(QObject):
         m.addAction(self.actionPrevious)
         m.addAction(self.actionNext)
         m.addAction(self.actionToday)
-        
+
         # bind prev/next button
         self.view.prevButton.clicked.connect(self.model.select_prev_date_range)
         self.view.nextButton.clicked.connect(self.model.select_next_date_range)
-    
+
     #--- Event Handlers
     def custom1Triggered(self):
         self.model.select_saved_range(0)
-    
+
     def custom2Triggered(self):
         self.model.select_saved_range(1)
-    
+
     def custom3Triggered(self):
         self.model.select_saved_range(2)
-    
+
     #--- model --> view
     def animate_backward(self):
         # I didn't find a way to have a nice fading effect like we do on the Cocoa side in Qt.
@@ -119,10 +119,10 @@ class DateRangeSelector(QObject):
         # widget now displays the dates of the current range, this animation is less important than
         # it used to be.
         pass
-    
+
     def animate_forward(self):
         pass
-    
+
     def refresh(self):
         self.view.typeButton.setText(self.model.display)
         canNavigateDateRange = self.model.can_navigate
@@ -131,10 +131,13 @@ class DateRangeSelector(QObject):
         self.actionToday.setEnabled(canNavigateDateRange)
         self.view.prevButton.setEnabled(canNavigateDateRange)
         self.view.nextButton.setEnabled(canNavigateDateRange)
-    
+
     def refresh_custom_ranges(self):
-        customActions = [self.actionChangeToCustom1, self.actionChangeToCustom2,
-            self.actionChangeToCustom3]
+        customActions = [
+            self.actionChangeToCustom1,
+            self.actionChangeToCustom2,
+            self.actionChangeToCustom3
+        ]
         for i, name in enumerate(self.model.custom_range_names):
             action = customActions[i]
             if name is not None:
@@ -142,4 +145,4 @@ class DateRangeSelector(QObject):
                 action.setVisible(True)
             else:
                 action.setVisible(False)
-    
+

@@ -1,14 +1,13 @@
 # Created By: Virgil Dupras
 # Created On: 2009-11-21
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4 import QtCore, QtGui
 
-from hscommon.currency import Currency
 from hscommon.trans import trget
 from qtlib.selectable_list import ComboboxModel
 from qtlib.text_field import TextField
@@ -30,7 +29,7 @@ class MassEditionPanel(Panel):
         ('amountCheckBox', 'amount_enabled'),
         ('currencyCheckBox', 'currency_enabled'),
     ]
-    
+
     def __init__(self, mainwindow):
         Panel.__init__(self, mainwindow)
         self.mainwindow = mainwindow
@@ -45,10 +44,10 @@ class MassEditionPanel(Panel):
         self.toEdit = TextField(model=self.model.to_field, view=self.toEditView)
         self.amountEdit = TextField(model=self.model.amount_field, view=self.amountEditView)
         self.currencyComboBox = ComboboxModel(model=self.model.currency_list, view=self.currencyComboBoxView)
-        
+
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
-    
+
     def _setupUi(self):
         self.resize(314, 267)
         self.setModal(True)
@@ -133,7 +132,7 @@ class MassEditionPanel(Panel):
         self.label_6.setBuddy(self.toEditView)
         self.label_7.setBuddy(self.amountEditView)
         self.label_8.setBuddy(self.currencyComboBoxView)
-    
+
     def _loadFields(self):
         Panel._loadFields(self)
         disableableWidgets = [self.fromCheckBox, self.fromEdit, self.toCheckBox, self.toEdit]
@@ -142,9 +141,9 @@ class MassEditionPanel(Panel):
         disableableWidgets = [self.amountCheckBox, self.amountEdit]
         for widget in disableableWidgets:
             self.fromCheckBox.setEnabled(self.model.can_change_amount)
-    
+
     #--- model --> view
     def refresh(self):
         # We have to refresh the checkboxes' state.
         self._loadFields()
-    
+

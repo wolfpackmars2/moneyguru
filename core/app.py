@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-02-12
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 import sys
@@ -20,7 +20,6 @@ import importlib
 from hscommon.currency import Currency, USD
 from hscommon.notify import Broadcaster
 from hscommon.util import nonone
-from hscommon.trans import tr
 
 from .const import DATE_FORMAT_FOR_PREFERENCES
 from .model import currency
@@ -65,9 +64,9 @@ class SavedCustomRange(namedtuple('SavedCustomRange', 'name start end')):
 
 class ApplicationView:
     """Expected interface for :class:`Application`'s view.
-    
+
     *Not actually used in the code. For documentation purposes only.*
-    
+
     Our view here isn't materialize visually, but rather is a entry point to calls that are
     OS-specific, like preferences access and opening URLs and paths.
     """
@@ -136,18 +135,19 @@ class Application(Broadcaster):
                              the plugins. If ``None``, plugins are disabled.
     :param str plugin_model_path: The path where moneyGuru's builtin plugins are located.
     """
-    
+
     APP_NAME = "moneyGuru"
     PROMPT_NAME = APP_NAME
     NAME = APP_NAME
     VERSION = '2.7.2'
-    
-    def __init__(self, view, date_format='dd/MM/yyyy', decimal_sep='.', grouping_sep='', 
-        default_currency=USD, cache_path=None, appdata_path=None, plugin_model_path=None):
+
+    def __init__(
+            self, view, date_format='dd/MM/yyyy', decimal_sep='.', grouping_sep='',
+            default_currency=USD, cache_path=None, appdata_path=None, plugin_model_path=None):
         Broadcaster.__init__(self)
         self.view = view
         self.cache_path = cache_path
-        # cache_path is required, but for tests, we don't want to bother specifying it. When 
+        # cache_path is required, but for tests, we don't want to bother specifying it. When
         # cache_path is kept as None, the path of the currency db will be ':memory:'
         if cache_path:
             if not op.exists(cache_path):
@@ -173,12 +173,12 @@ class Application(Broadcaster):
         self._load_plugins(plugin_model_path)
         self._hook_currency_plugins()
         self._update_autosave_timer()
-    
+
     #--- Private
     def _autosave_all_documents(self):
         self.notify('must_autosave')
         self._update_autosave_timer()
-    
+
     def _update_autosave_timer(self):
         if self._autosave_timer is not None:
             self._autosave_timer.cancel()
@@ -189,7 +189,7 @@ class Application(Broadcaster):
             self._autosave_timer.start()
         else:
             self._autosave_timer = None
-    
+
     def _load_custom_ranges(self):
         custom_ranges = self.get_default(PreferenceNames.CustomRanges)
         if not custom_ranges:
@@ -202,7 +202,7 @@ class Application(Broadcaster):
                 self.saved_custom_ranges[index] = SavedCustomRange(name, start, end)
             else:
                 self.saved_custom_ranges[index] = None
-    
+
     def _load_plugins(self, plugin_model_path):
         self.plugins = []
         if not self.appdata_path:
@@ -224,12 +224,12 @@ class Application(Broadcaster):
                 except TypeError: # not a class, we don't care and ignore
                     pass
         del sys.path[0]
-    
+
     def _hook_currency_plugins(self):
         currency_plugins = [p for p in self.plugins if issubclass(p, CurrencyProviderPlugin)]
         for p in currency_plugins:
             Currency.get_rates_db().register_rate_provider(p().wrapped_get_currency_rates)
-    
+
     def _save_custom_ranges(self):
         custom_ranges = []
         for custom_range in self.saved_custom_ranges:
@@ -241,7 +241,7 @@ class Application(Broadcaster):
                 # We can't insert None in arrays for preferences
                 custom_ranges.append([])
         self.set_default(PreferenceNames.CustomRanges, custom_ranges)
-    
+
     #--- Public
     def format_amount(self, amount, **kw):
         """Returns a formatted amount using app-wide preferences.
@@ -250,14 +250,14 @@ class Application(Broadcaster):
         """
         return format_amount(amount, self._default_currency, decimal_sep=self._decimal_sep,
                              grouping_sep=self._grouping_sep, **kw)
-    
+
     def format_date(self, date):
         """Returns a formatted date using app-wide preferences.
 
         This simply wraps :func:`core.model.date.format_date` and adds default values.
         """
         return format_date(date, self._date_format)
-    
+
     def parse_amount(self, amount, default_currency=None):
         """Returns a parsed amount using app-wide preferences.
 
@@ -266,14 +266,14 @@ class Application(Broadcaster):
         if default_currency is None:
             default_currency = self._default_currency
         return parse_amount(amount, default_currency, auto_decimal_place=self._auto_decimal_place)
-    
+
     def parse_date(self, date):
         """Returns a parsed date using app-wide preferences.
 
         This simply wraps :func:`core.model.date.parse_date` and adds default values.
         """
         return parse_date(date, self._date_format)
-    
+
     def parse_search_query(self, query_string):
         """Parses ``query_string`` into something that can be used to filter transactions.
 
@@ -306,7 +306,7 @@ class Application(Broadcaster):
             else:
                 query[qtype] = qargs
         return query
-    
+
     def save_custom_range(self, slot, name, start, end):
         """Save a custom date range into our preferences.
 
@@ -320,12 +320,12 @@ class Application(Broadcaster):
         self.saved_custom_ranges[slot] = SavedCustomRange(name, start, end)
         self._save_custom_ranges()
         self.notify('saved_custom_ranges_changed')
-    
+
     def open_plugin_folder(self):
         """Open the plugin folder in the user's file explorer."""
         plpath = op.join(self.appdata_path, 'moneyguru_plugins')
         self.view.reveal_path(plpath)
-    
+
     def shutdown(self):
         """Shutdown the app before closing.
 
@@ -334,7 +334,7 @@ class Application(Broadcaster):
         """
         self._autosave_interval = 0
         self._update_autosave_timer()
-    
+
     def get_default(self, key, fallback_value=None):
         """Returns moneyGuru user pref for ``key``.
 
@@ -353,7 +353,7 @@ class Application(Broadcaster):
             except Exception:
                 result = fallback_value
         return result
-    
+
     def set_default(self, key, value):
         """Sets moneyGuru user pref to ``value`` for ``key``.
 
@@ -363,18 +363,18 @@ class Application(Broadcaster):
         :param value: The value to set the pref to.
         """
         self.view.set_default(key, value)
-    
+
     @property
     def date_format(self):
         """Default, app-wide date format."""
         return self._date_format
-    
+
     #--- Preferences
     @property
     def autosave_interval(self):
         """*get/set int*. Interval (in minutes) at which we perform autosave."""
         return self._autosave_interval
-        
+
     @autosave_interval.setter
     def autosave_interval(self, value):
         if value == self._autosave_interval:
@@ -382,7 +382,7 @@ class Application(Broadcaster):
         self._autosave_interval = value
         self.set_default(PreferenceNames.AutoSaveInterval, value)
         self._update_autosave_timer()
-    
+
     @property
     def auto_decimal_place(self):
         """*get/set bool*. Whether we automatically place decimal sep when parsing amounts.
@@ -390,14 +390,14 @@ class Application(Broadcaster):
         .. seealso:: :func:`core.model.amount.parse_amount`
         """
         return self._auto_decimal_place
-    
+
     @auto_decimal_place.setter
     def auto_decimal_place(self, value):
         if value == self._auto_decimal_place:
             return
         self._auto_decimal_place = value
         self.set_default(PreferenceNames.AutoDecimalPlace, value)
-    
+
     @property
     def show_schedule_scope_dialog(self):
         """*get/set bool*. Whether we prompt the user for schedule editing scope.
@@ -409,11 +409,11 @@ class Application(Broadcaster):
         .. seealso:: :class:`core.model.recurrence.Recurrence`
         """
         return self._show_schedule_scope_dialog
-    
+
     @show_schedule_scope_dialog.setter
     def show_schedule_scope_dialog(self, value):
         if value == self._show_schedule_scope_dialog:
             return
         self._show_schedule_scope_dialog = value
         self.set_default(PreferenceNames.ShowScheduleScopeDialog, value)
-    
+

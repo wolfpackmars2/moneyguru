@@ -1,33 +1,34 @@
 # Created By: Virgil Dupras
 # Created On: 2009-11-01
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4.QtCore import Qt, QMimeData, QByteArray
-from PyQt4.QtGui import QPixmap, QPalette, QFont, QItemSelection, QFontMetrics
+from PyQt4.QtGui import QPixmap, QPalette, QFont, QItemSelection
 
 from hscommon.util import nonone
 from qtlib.column import Columns
 from qtlib.tree_model import TreeNode, TreeModel
 
-from ..const import (MIME_NODEPATHS, INDENTATION_OFFSET_ROLE, EXTRA_ROLE, EXTRA_UNDERLINED,
-    EXTRA_UNDERLINED_DOUBLE)
+from ..const import (
+    MIME_NODEPATHS, INDENTATION_OFFSET_ROLE, EXTRA_ROLE, EXTRA_UNDERLINED, EXTRA_UNDERLINED_DOUBLE
+)
 from ..support.item_delegate import ItemDelegate, ItemDecoration
 
 class Node(TreeNode):
     def __init__(self, model, parent, ref, row):
         TreeNode.__init__(self, model, parent, row)
         self.ref = ref
-    
+
     def _createNode(self, ref, row):
         return Node(self.model, self, ref, row)
-    
+
     def _getChildren(self):
         return self.ref[:]
-    
+
 
 class AccountSheetDelegate(ItemDelegate):
     def __init__(self, model):
@@ -41,7 +42,7 @@ class AccountSheetDelegate(ItemDelegate):
         self._decoArrowSelected = ItemDecoration(arrowSelected, self._model.model.show_selected_account)
         self._decoAccountOut = ItemDecoration(accountOut, self._model.model.toggle_excluded)
         self._decoAccountIn = ItemDecoration(accountIn, self._model.model.toggle_excluded)
-    
+
     def _get_decorations(self, index, isSelected):
         column = self._model.model.columns.column_by_index(index.column())
         if column.name != 'name':
@@ -56,9 +57,8 @@ class AccountSheetDelegate(ItemDelegate):
             deco = self._decoAccountIn if ref.is_excluded else self._decoAccountOut
             result.append(deco)
         return result
-    
+
     def _prepare_paint_options(self, option, index):
-        column = self._model.model.columns.column_by_index(index.column())
         node = index.internalPointer()
         ref = node.ref
         if ref.is_excluded:
@@ -66,7 +66,7 @@ class AccountSheetDelegate(ItemDelegate):
         indentationOffset = self._model.data(index, INDENTATION_OFFSET_ROLE)
         if indentationOffset:
             option.rect.setLeft(option.rect.left()+indentationOffset)
-    
+
     def paint(self, painter, option, index):
         ItemDelegate.paint(self, painter, option, index)
         extraFlags = nonone(self._model.data(index, EXTRA_ROLE), 0)
@@ -83,12 +83,12 @@ class AccountSheetDelegate(ItemDelegate):
                 p1.setY(p1.y()+2)
                 p2.setY(p2.y()+2)
                 painter.drawLine(p1, p2)
-    
+
 
 class AccountSheet(TreeModel):
     AMOUNT_ATTRS = set()
     BOLD_ATTRS = set()
-    
+
     def __init__(self, model, view):
         TreeModel.__init__(self)
         self.view = view
@@ -99,7 +99,7 @@ class AccountSheet(TreeModel):
         self.accountSheetDelegate = AccountSheetDelegate(self)
         self.view.setItemDelegate(self.accountSheetDelegate)
         self._updateFontSize()
-        
+
         self.view.selectionModel().selectionChanged[(QItemSelection, QItemSelection)].connect(self.selectionChanged)
         self.view.collapsed.connect(self.nodeCollapsed)
         self.view.expanded.connect(self.nodeExpanded)
@@ -107,14 +107,14 @@ class AccountSheet(TreeModel):
         self.view.doubleClicked.connect(self.model.show_selected_account)
         from ..app import APP_INSTANCE
         APP_INSTANCE.prefsChanged.connect(self.appPrefsChanged)
-    
+
     #--- TreeModel overrides
     def _createNode(self, ref, row):
         return Node(self, None, ref, row)
-    
+
     def _getChildren(self):
         return self.model[:]
-    
+
     #--- Private
     def _updateViewSelection(self):
         # Takes the selection on the model's side and update the view with it.
@@ -124,7 +124,7 @@ class AccountSheet(TreeModel):
         modelIndex = self.findIndex(selectedPath)
         self.view.clearSelection()
         self.view.setCurrentIndex(modelIndex)
-    
+
     def _updateFontSize(self):
         from ..app import APP_INSTANCE
         font = self.view.font()
@@ -134,7 +134,7 @@ class AccountSheet(TreeModel):
     #--- Data Model methods
     def columnCount(self, parent):
         return self.model.columns.columns_count()
-    
+
     def data(self, index, role):
         if not index.isValid():
             return None
@@ -172,7 +172,7 @@ class AccountSheet(TreeModel):
                     flags |= EXTRA_UNDERLINED_DOUBLE
             return flags
         return None
-    
+
     def flags(self, index):
         if not index.isValid():
             return Qt.ItemIsEnabled
@@ -187,7 +187,7 @@ class AccountSheet(TreeModel):
         if node.ref.is_account:
             flags |= Qt.ItemIsDragEnabled
         return flags
-    
+
     def headerData(self, section, orientation, role):
         if orientation != Qt.Horizontal:
             return None
@@ -200,10 +200,10 @@ class AccountSheet(TreeModel):
             return column.alignment
         else:
             return None
-    
+
     def revert(self):
         self.model.cancel_edits()
-    
+
     def setData(self, index, value, role):
         if not index.isValid():
             return False
@@ -214,11 +214,11 @@ class AccountSheet(TreeModel):
             setattr(node.ref, rowattr, value)
             return True
         return False
-    
+
     def submit(self):
         self.model.save_edits()
         return True
-    
+
     #--- Drag & Drop
     def dropMimeData(self, mimeData, action, row, column, parentIndex):
         if not mimeData.hasFormat(MIME_NODEPATHS):
@@ -233,7 +233,7 @@ class AccountSheet(TreeModel):
             return False
         self.model.move(paths, destPath)
         return True
-    
+
     def mimeData(self, indexes):
         dataList = []
         index = indexes[0]
@@ -245,13 +245,13 @@ class AccountSheet(TreeModel):
         mimeData = QMimeData()
         mimeData.setData(MIME_NODEPATHS, QByteArray(data.encode()))
         return mimeData
-    
+
     def mimeTypes(self):
         return [MIME_NODEPATHS]
-    
+
     def supportedDropActions(self):
         return Qt.MoveAction
-    
+
     #--- Events
     def appPrefsChanged(self):
         self._updateFontSize()
@@ -259,32 +259,32 @@ class AccountSheet(TreeModel):
     def selectionChanged(self, selected, deselected):
         newNodes = [modelIndex.internalPointer().ref for modelIndex in self.view.selectionModel().selectedRows()]
         self.model.selected_nodes = newNodes
-    
+
     def nodeCollapsed(self, index):
         node = index.internalPointer()
         self.model.collapse_node(node.ref)
-    
+
     def nodeExpanded(self, index):
         node = index.internalPointer()
         self.model.expand_node(node.ref)
-    
+
     #--- model --> view
     def refresh(self):
         self.reset()
         self.refresh_expanded_paths()
         self._updateViewSelection()
-    
+
     def refresh_expanded_paths(self):
         for path in self.model.expanded_paths:
             index = self.findIndex(path)
             self.view.expand(index)
-    
+
     def start_editing(self):
         self.view.editSelected()
-    
+
     def stop_editing(self):
         self.view.setFocus() # enough to stop editing
-    
+
     def update_selection(self):
         self._updateViewSelection()
-    
+

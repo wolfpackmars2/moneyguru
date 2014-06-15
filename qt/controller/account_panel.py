@@ -1,14 +1,16 @@
 # Created By: Virgil Dupras
 # Created On: 2009-11-10
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4.QtCore import Qt, QSize
-from PyQt4.QtGui import (QVBoxLayout, QFormLayout, QLabel, QLineEdit, QComboBox, QSizePolicy,
-    QPlainTextEdit, QDialogButtonBox)
+from PyQt4.QtGui import (
+    QVBoxLayout, QFormLayout, QLabel, QLineEdit, QComboBox, QSizePolicy, QPlainTextEdit,
+    QDialogButtonBox
+)
 
 from hscommon.trans import trget
 from qtlib.selectable_list import ComboboxModel
@@ -23,7 +25,7 @@ class AccountPanel(Panel):
         ('accountNumberEdit', 'account_number'),
         ('notesEdit', 'notes'),
     ]
-    
+
     def __init__(self, mainwindow):
         Panel.__init__(self, mainwindow)
         self._setupUi()
@@ -31,10 +33,10 @@ class AccountPanel(Panel):
         self.model.view = self
         self.typeComboBox = ComboboxModel(model=self.model.type_list, view=self.typeComboBoxView)
         self.currencyComboBox = ComboboxModel(model=self.model.currency_list, view=self.currencyComboBoxView)
-        
+
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
-    
+
     def _setupUi(self):
         self.setWindowTitle(tr("Account Info"))
         self.resize(274, 121)
@@ -78,8 +80,8 @@ class AccountPanel(Panel):
         self.label.setBuddy(self.nameEdit)
         self.label_2.setBuddy(self.typeComboBoxView)
         self.label_3.setBuddy(self.currencyComboBoxView)
-    
+
     def _loadFields(self):
         Panel._loadFields(self)
         self.currencyComboBoxView.setEnabled(self.model.can_change_currency)
-    
+

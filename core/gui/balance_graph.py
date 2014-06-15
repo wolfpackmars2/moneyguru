@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-07-06
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from datetime import date
@@ -26,14 +26,14 @@ class BalanceGraph(Graph):
     #--- Virtual
     def _balance_for_date(self, date):
         return 0
-    
+
     def _budget_for_date(self, date):
         return 0
-    
+
     #--- Override
     # Computation Notes: When the balance in the graph changes, we have to create a flat line until
     # one day prior to the change. However, when budgets are involved, the line is *not* flattened.
-    # To save some calculations (in a year range, those take a lot of time if they're made every day), 
+    # To save some calculations (in a year range, those take a lot of time if they're made every day),
     # rather than calculating the budget every day, they are only calculated when the balance without
     # budget changes. this is what the algorithm below reflects.
     def compute_data(self):
@@ -66,7 +66,7 @@ class BalanceGraph(Graph):
             for date_point, value in sorted(date2value.items()):
                 pos = self._offset_xpos(date_point.toordinal())
                 self._data.append((pos, float(value)))
-    
+
     def yrange(self):
         if self._data:
             ymin = min(point[1] for point in self._data)
@@ -74,13 +74,13 @@ class BalanceGraph(Graph):
             return (ymin, ymax)
         else:
             return (0, 1)
-    
+
     def draw_graph(self, context):
         if len(self.data) < 2:
             return
-        
+
         points = [Point(x*context.xfactor, y*context.yfactor) for x, y in self.data]
-        
+
         # close the polygons and fill them.
         # The closing point depends if we have a positive graph, a negative one or a mixed up
         if self.ymin >= 0: # positive
@@ -90,7 +90,7 @@ class BalanceGraph(Graph):
         else: # mixed up
             yClose = 0
         # painter.setPen(QPen(Qt.NoPen))
-        xTodayfactored = self._offset_xpos(date.today().toordinal() + 1) * context.xfactor;
+        xTodayfactored = self._offset_xpos(date.today().toordinal() + 1) * context.xfactor
         pastPoints = [p for p in points if p.x <= xTodayfactored]
         futurePoints = [p for p in points if p.x > xTodayfactored]
         if pastPoints and futurePoints:
@@ -116,14 +116,14 @@ class BalanceGraph(Graph):
             p1 = context.trpoint(Point(xTodayfactored, yClose))
             p2 = context.trpoint(meetingPoint)
             self.view.draw_line(p1, p2, PenID.TodayLine)
-        
+
         self.draw_axis_overlay_y(context)
         self.draw_axis_overlay_x(context)
-        
+
         # draw the main graph line. It looks better when that line is drawn after the overlay.
         self.view.draw_polygon(context.trpoints(points), PenID.Graph, None)
-    
+
     @property
     def currency(self):
         return None
-    
+

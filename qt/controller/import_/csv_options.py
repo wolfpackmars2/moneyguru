@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-11-29
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4 import QtGui, QtCore
@@ -28,20 +28,22 @@ class CSVOptionsWindow(QWidget):
         self.tableModel = CSVOptionsTableModel(self.model, self.tableView)
         self.model.view = self
         self.encodingComboBox.addItems(SUPPORTED_ENCODINGS)
-        
+
         self.cancelButton.clicked.connect(self.hide)
         self.continueButton.clicked.connect(self.model.continue_import)
         self.targetComboBox.currentIndexChanged.connect(self.targetIndexChanged)
         self.layoutComboBox.currentIndexChanged.connect(self.layoutIndexChanged)
         self.rescanButton.clicked.connect(self.rescanClicked)
-    
+
     def _setupUi(self):
         self.setWindowTitle(tr("CSV Options"))
         self.resize(526, 369)
         self.verticalLayout = QtGui.QVBoxLayout(self)
-        msg = tr("Specify which CSV columns correspond to which transaction fields. You must also "
+        msg = tr(
+            "Specify which CSV columns correspond to which transaction fields. You must also "
             "uncheck the \"Import\" column for lines that don\'t represent a transaction "
-            "(header, footer, comments).")
+            "(header, footer, comments)."
+        )
         self.label = QtGui.QLabel(msg)
         self.label.setWordWrap(True)
         self.verticalLayout.addWidget(self.label)
@@ -97,7 +99,7 @@ class CSVOptionsWindow(QWidget):
         self.continueButton.setDefault(True)
         self.horizontalLayout.addWidget(self.continueButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
-    
+
     #--- Private
     def _newLayout(self):
         title = tr("New Layout")
@@ -105,17 +107,17 @@ class CSVOptionsWindow(QWidget):
         name, ok = QInputDialog.getText(self, title, msg)
         if ok and name:
             self.model.new_layout(name)
-    
+
     def _renameLayout(self):
         title = tr("Rename Layout")
         msg = tr("Choose a name for your layout:")
         name, ok = QInputDialog.getText(self, title, msg)
         if ok and name:
             self.model.rename_selected_layout(name)
-    
+
     #--- Event Handling
     def layoutIndexChanged(self, index):
-        # This one is a little complicated. We want to only be able to select the layouts. If 
+        # This one is a little complicated. We want to only be able to select the layouts. If
         # anything else is clicked, we revert back to the old index. If the item has user data,
         # it means that an action has to be performed.
         if index < 0:
@@ -132,23 +134,23 @@ class CSVOptionsWindow(QWidget):
                 self._renameLayout()
             elif data == DELETE_LAYOUT:
                 self.model.delete_selected_layout()
-    
+
     def rescanClicked(self):
         self.model.encoding_index = self.encodingComboBox.currentIndex()
         self.model.field_separator = str(self.fieldSeparatorEdit.text())
         self.model.rescan()
-    
+
     def targetIndexChanged(self, index):
         self.model.selected_target_index = index
-    
+
     #--- model --> view
     # hide() is called from the model, but is already covered by QWidget
     def refresh_columns(self):
         self.tableModel.reset()
-    
+
     def refresh_columns_name(self):
         self.tableModel.refreshColumnsName()
-    
+
     def refresh_layout_menu(self):
         self.layoutComboBox.currentIndexChanged.disconnect(self.layoutIndexChanged)
         self.layoutComboBox.clear()
@@ -159,27 +161,27 @@ class CSVOptionsWindow(QWidget):
         self.layoutComboBox.addItem(tr("Delete Selected Layout"), DELETE_LAYOUT)
         self.layoutComboBox.setCurrentIndex(self.layoutComboBox.findText(self.model.layout.name))
         self.layoutComboBox.currentIndexChanged.connect(self.layoutIndexChanged)
-    
+
     def refresh_lines(self):
         self.tableModel.reset()
         self.fieldSeparatorEdit.setText(self.model.field_separator)
-    
+
     def refresh_targets(self):
         self.targetComboBox.currentIndexChanged.disconnect(self.targetIndexChanged)
         self.targetComboBox.clear()
         self.targetComboBox.addItems(self.model.target_account_names)
         self.targetComboBox.currentIndexChanged.connect(self.targetIndexChanged)
-    
+
     def show(self):
         # For non-modal dialogs, show() is not enough to bring the window at the forefront, we have
         # to call raise() as well
         QWidget.show(self)
         self.raise_()
-    
+
     def show_message(self, msg):
         title = "Warning"
         QMessageBox.warning(self, title, msg)
-    
+
 
 class CSVOptionsTableModel(QAbstractTableModel):
     def __init__(self, model, view):
@@ -195,12 +197,12 @@ class CSVOptionsTableModel(QAbstractTableModel):
             action.setData(index)
             action.triggered.connect(self.columnMenuItemClicked)
         self.view.horizontalHeader().sectionClicked.connect(self.tableSectionClicked)
-    
+
     #--- QAbstractTableModel overrides
     # We add an additional "Import" column to the csv columns
     def columnCount(self, index):
         return len(self.model.columns) + 1
-    
+
     def data(self, index, role):
         if not index.isValid():
             return None
@@ -213,7 +215,7 @@ class CSVOptionsTableModel(QAbstractTableModel):
             return Qt.Unchecked if self.model.line_is_excluded(index.row()) else Qt.Checked
         else:
             return None
-    
+
     def flags(self, index):
         if not index.isValid():
             return Qt.ItemIsEnabled
@@ -221,7 +223,7 @@ class CSVOptionsTableModel(QAbstractTableModel):
         if index.column() == 0:
             flags |= Qt.ItemIsUserCheckable
         return flags
-    
+
     def headerData(self, section, orientation, role):
         if orientation != Qt.Horizontal:
             return None
@@ -236,12 +238,12 @@ class CSVOptionsTableModel(QAbstractTableModel):
             return QPixmap(':/popup_arrows')
         else:
             return None
-    
+
     def rowCount(self, index):
         if index.isValid():
             return 0
         return len(self.model.lines)
-    
+
     def setData(self, index, value, role):
         if not index.isValid():
             return False
@@ -249,18 +251,18 @@ class CSVOptionsTableModel(QAbstractTableModel):
             self.model.set_line_excluded(index.row(), value == Qt.Unchecked)
             return True
         return False
-    
+
     #--- Public
     def refreshColumnsName(self):
         self.headerDataChanged.emit(Qt.Horizontal, 0, len(self.model.columns))
-    
+
     #--- Event Handling
     def columnMenuItemClicked(self):
         action = self.sender()
         index = action.data()
         fieldId = FIELD_ORDER[index]
         self.model.set_column_field(self._lastClickedColumn-1, fieldId)
-    
+
     def tableSectionClicked(self, index):
         self._lastClickedColumn = index
         if index > 0:

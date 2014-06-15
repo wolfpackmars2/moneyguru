@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-09-04
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from math import radians, sin
@@ -102,7 +102,7 @@ class BrushID:
 
 class Legend:
     PADDING = 2 # the padding between legend text and the rectangle behind it
-    
+
     def __init__(self, text, color, angle):
         self.text = text
         self.color = color
@@ -110,16 +110,16 @@ class Legend:
         self.base_point = None
         self.text_rect = None
         self.label_rect = None
-    
+
     def compute_label_rect(self):
         self.label_rect = self.text_rect.scaled_rect(self.PADDING, self.PADDING)
-    
+
     def compute_text_rect(self):
         self.text_rect = self.label_rect.scaled_rect(-self.PADDING, -self.PADDING)
-    
+
     def should_draw_line(self):
         return not self.label_rect.contains_point(self.base_point)
-    
+
 
 class PieChart(Chart):
     """A chart that draws a circle with slices of different colors.
@@ -142,16 +142,16 @@ class PieChart(Chart):
     Subclasses :class:`.Chart`
     """
     PADDING = 6
-    
+
     def __init__(self, parent_view):
         Chart.__init__(self, parent_view)
         self.slice_count = MIN_SLICE_COUNT
-    
+
     #--- Virtual
     def _get_data(self):
         # Returns a 2-sized tuple of list of {name: amount}
         raise NotImplementedError()
-    
+
     #--- Override
     def set_view_size(self, width, height):
         Chart.set_view_size(self, width, height)
@@ -162,7 +162,7 @@ class PieChart(Chart):
         if slice_count != self.slice_count:
             self.slice_count = slice_count
             self._revalidate()
-    
+
     def compute_pie_data(self, data):
         data = [(name, float(amount)) for name, amount in data.items() if amount > 0]
         data.sort(key=lambda t: t[1], reverse=True)
@@ -177,19 +177,19 @@ class PieChart(Chart):
             return None
         fmt = lambda name, amount: '%s %1.1f%%' % (name, amount / total * 100)
         return [(fmt(name, amount), amount, color) for name, amount, color in data]
-    
+
     def compute(self):
         pie1, pie2 = self._get_data()
         self.pie1 = self.compute_pie_data(pie1)
         self.pie2 = self.compute_pie_data(pie2)
-    
+
     def draw_pie(self, data, circle_bounds):
         if not data:
             return
         circle_size = min(circle_bounds.w, circle_bounds.h)
         radius = circle_size / 2
         center = circle_bounds.center()
-        
+
         # draw pie
         total_amount = sum(amount for _, amount, _ in data)
         start_angle = 0
@@ -202,7 +202,7 @@ class PieChart(Chart):
             legend = Legend(text=legend_text, color=color_index, angle=legend_angle)
             legends.append(legend)
             start_angle += angle
-        
+
         # compute legend rects
         _, legend_height = self.view.text_size('', FontID.Legend)
         for legend in legends:
@@ -210,11 +210,11 @@ class PieChart(Chart):
             legend_width, _ = self.view.text_size(legend.text, FontID.Legend)
             legend.text_rect = rect_from_center(legend.base_point, (legend_width, legend_height))
             legend.compute_label_rect()
-        
+
         # make sure they're inside circle_bounds
         for legend in legends:
             pull_rect_in(legend.label_rect, circle_bounds)
-        
+
         left, right = extract(lambda l: l.base_point.x < center.x, legends)
         # If any legend intersect, we start by sending everyone to their horizontal circle bounds.
         # Then, on each side, if anyone intersect, we go in "Spread mode", spreading all legends
@@ -227,7 +227,7 @@ class PieChart(Chart):
         for side in (left, right):
             if legends_intersect(side):
                 spread_vertically(side, circle_bounds)
-        
+
         # draw legends
         # draw lines before legends because we don't want them being drawn over other legends
         if len(legends) > 1:
@@ -239,7 +239,7 @@ class PieChart(Chart):
             self.view.draw_rect(legend.label_rect, legend.color, BrushID.Legend)
             legend.compute_text_rect()
             self.view.draw_text(legend.text, legend.text_rect, FontID.Legend)
-    
+
     def draw_chart(self):
         view_rect = Rect(0, 0, *self.view_size)
         title = self.title
@@ -247,28 +247,31 @@ class PieChart(Chart):
         titley = view_rect.h - title_height - self.PADDING
         title_rect = (0, titley, view_rect.w, title_height)
         self.view.draw_text(title, title_rect, FontID.Title)
-        
+
         if not hasattr(self, 'pie1'):
             return
-        
+
         # circle coords
         # circle_bounds is the area in which the circle is allowed to be drawn (important for legend text)
         circle_bounds = view_rect.scaled_rect(-self.PADDING, -self.PADDING)
         circle_bounds.h -= title_height
-        
+
         if circle_bounds.w > circle_bounds.h:
             circle_bounds.w = (circle_bounds.w - self.PADDING) / 2
-            circle_bounds2 = Rect(circle_bounds.right + self.PADDING, circle_bounds.y,
-                circle_bounds.w, circle_bounds.h)
+            circle_bounds2 = Rect(
+                circle_bounds.right + self.PADDING, circle_bounds.y,
+                circle_bounds.w, circle_bounds.h
+            )
         else:
             circle_bounds.h = (circle_bounds.h - self.PADDING) / 2
             # We want the first circle to be on top
             circle_bounds.y += circle_bounds.h + self.PADDING
             # hscommon.geometry has a top-left origin, we use "top" when we mean "bottom".
-            circle_bounds2 = Rect(circle_bounds.x,
-                circle_bounds.top - circle_bounds.h - self.PADDING, circle_bounds.w,
-                circle_bounds.h)
-        
+            circle_bounds2 = Rect(
+                circle_bounds.x, circle_bounds.top - circle_bounds.h - self.PADDING,
+                circle_bounds.w, circle_bounds.h
+            )
+
         self.draw_pie(self.pie1, circle_bounds)
         self.draw_pie(self.pie2, circle_bounds2)
-    
+

@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-09-13
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 import copy
@@ -14,8 +14,9 @@ from itertools import chain
 from hscommon.util import nonone
 from hscommon.trans import tr
 
-from .date import (inc_day, inc_week, inc_month, inc_year, inc_weekday_in_month,
-    inc_last_weekday_in_month)
+from .date import (
+    inc_day, inc_week, inc_month, inc_year, inc_weekday_in_month, inc_last_weekday_in_month
+)
 from .transaction import Transaction
 
 class RepeatType:
@@ -78,10 +79,10 @@ class DateCounter:
         self.incfunc = RTYPE2INCFUNC[repeat_type]
         self.incsize = repeat_every
         self.current_date = None
-    
+
     def __iter__(self):
         return self
-    
+
     def __next__(self):
         # It's possible for a DateCounter to be created with an end date smaller than its start
         # date. In this case, simply never yield any date.
@@ -98,7 +99,7 @@ class DateCounter:
             raise StopIteration()
         self.current_date = new_date
         return new_date
-    
+
 
 class Spawn(Transaction):
     """Instance of a recurrent transaction at a specific date.
@@ -132,7 +133,7 @@ class Spawn(Transaction):
         for split in self.splits:
             split.reconciliation_date = None
         self.balance()
-    
+
 
 class Recurrence:
     """A recurring transaction (called "Schedule" in the app).
@@ -196,18 +197,18 @@ class Recurrence:
             RepeatType.WeekdayLast: '', # dynamic
         }
         self._update_rtype_descs()
-    
+
     def __repr__(self):
         return '<Recurrence %s %d>' % (self.repeat_type, self.repeat_every)
-    
+
     #--- Private
     def _all_exceptions(self):
         exceptions = chain(self.date2exception.values(), self.date2globalchange.values())
         return (e for e in exceptions if e is not None)
-    
+
     def _create_spawn(self, ref, date):
         return Spawn(self, ref, date)
-    
+
     def _update_ref(self):
         # Go through our recurrence dates and see if we should either move our start date due to
         # deleted spawns or to update or ref transaction due to a global change that end up being
@@ -225,7 +226,7 @@ class Recurrence:
         self.date2globalchange = {d: ex for d, ex in self.date2globalchange.items() if d > self.start_date}
         self.reset_spawn_cache()
         self._update_rtype_descs()
-    
+
     def _update_rtype_descs(self):
         date = self.start_date
         weekday_name = date.strftime('%A')
@@ -237,7 +238,7 @@ class Recurrence:
             self.rtype2desc[RepeatType.WeekdayLast] = tr('Every last %s of the month') % weekday_name
         else:
             self.rtype2desc[RepeatType.WeekdayLast] = ''
-    
+
     #--- Public
     def affected_accounts(self):
         """Returns a set of all :class:`.Account` affected by the schedule.
@@ -251,7 +252,7 @@ class Recurrence:
         for exception in self._all_exceptions():
             result |= exception.affected_accounts()
         return result
-    
+
     def change_globally(self, spawn):
         """Add a user-modified spawn into the global exceptions list.
 
@@ -267,7 +268,7 @@ class Recurrence:
                 del self.date2exception[date]
         self.date2globalchange[spawn.recurrence_date] = spawn
         self._update_ref()
-    
+
     def delete(self, spawn):
         """Create an exception that prevents ``spawn`` from spawning again.
 
@@ -275,12 +276,12 @@ class Recurrence:
         :type spawn: :class:`Spawn`
         """
         self.delete_at(spawn.recurrence_date)
-    
+
     def delete_at(self, date):
         """Create an exception that prevents further spawn at ``date``."""
         self.date2exception[date] = None
         self._update_ref()
-    
+
     def get_spawns(self, end):
         """Returns the list of transactions spawned by our recurrence.
 
@@ -305,7 +306,7 @@ class Recurrence:
             if min_date_delta < datetime.timedelta(days=0):
                 end += -min_date_delta
         end = min(end, nonone(self.stop_date, datetime.date.max))
-        
+
         date_counter = DateCounter(self.start_date, self.repeat_type, self.repeat_every, end)
         result = []
         global_date_delta = datetime.timedelta(days=0)
@@ -328,7 +329,7 @@ class Recurrence:
                     self.date2instances[current_date] = spawn
                 result.append(self.date2instances[current_date])
         return result
-    
+
     def reassign_account(self, account, reassign_to=None):
         """Reassigns accounts for :attr:`ref` and all exceptions.
 
@@ -339,7 +340,7 @@ class Recurrence:
         for exception in self._all_exceptions():
             exception.reassign_account(account, reassign_to)
         self.reset_spawn_cache()
-    
+
     def replicate(self):
         """Returns a copy of ``self``."""
         result = copy.copy(self)
@@ -348,24 +349,24 @@ class Recurrence:
         result.date2instances = {}
         result.ref = self.ref.replicate()
         return result
-    
+
     def reset_exceptions(self):
         """Empties :attr:`date2exception` and :attr:`date2globalchange`."""
         self.date2exception = {}
         self.date2globalchange = {}
-    
+
     def reset_spawn_cache(self):
         """Empties :attr:`date2instances`."""
         self.date2instances = {}
-    
+
     def stop_at(self, spawn):
         """Stop further spawning at ``spawn`` (sets :attr:`stop_date`)."""
         self.stop_date = spawn.recurrence_date
-    
+
     def stop_before(self, spawn):
         """Stop further spawning just before ``spawn`` (sets :attr:`stop_date`)."""
         self.stop_date = spawn.recurrence_date - ONE_DAY
-    
+
     #--- Properties
     @property
     def is_alive(self):
@@ -373,31 +374,31 @@ class Recurrence:
         if self.stop_date is None:
             return True
         return bool(self.get_spawns(self.stop_date))
-    
+
     @property
     def repeat_every(self):
         """``int``. See :class:`DateCounter`."""
         return self._repeat_every
-    
+
     @repeat_every.setter
     def repeat_every(self, value):
         if value == self._repeat_every:
             return
         self._repeat_every = value
         self.reset_exceptions()
-    
+
     @property
     def repeat_type(self):
         """:class:`RepeatType`. See :class:`DateCounter`."""
         return self._repeat_type
-    
+
     @repeat_type.setter
     def repeat_type(self, value):
         if value == self._repeat_type:
             return
         self._repeat_type = value
         self.reset_exceptions()
-    
+
     @property
     def repeat_type_desc(self):
         """``str``. User-readable description of our :attr:`repeat_type`.
@@ -406,7 +407,7 @@ class Recurrence:
         (depending on :attr:`start_date`) and looks like "Every 2nd friday of the month".
         """
         return self.rtype2desc[self._repeat_type]
-    
+
     @property
     def start_date(self):
         """``datetime.date``. When our recurrence begins.
@@ -414,7 +415,7 @@ class Recurrence:
         Same as the :attr:`Transaction.date` attribute of :attr:`ref`.
         """
         return self.ref.date
-    
+
     @start_date.setter
     def start_date(self, value):
         if value == self.ref.date:
@@ -422,4 +423,4 @@ class Recurrence:
         self.ref.date = value
         self.reset_exceptions()
         self._update_rtype_descs()
-    
+

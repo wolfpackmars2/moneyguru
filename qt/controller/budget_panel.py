@@ -1,14 +1,16 @@
 # Created By: Virgil Dupras
 # Created On: 2009-11-21
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4.QtCore import Qt, QSize
-from PyQt4.QtGui import (QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QComboBox,
-    QPlainTextEdit, QDialogButtonBox, QSpinBox)
+from PyQt4.QtGui import (
+    QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QComboBox, QPlainTextEdit,
+    QDialogButtonBox, QSpinBox
+)
 
 from qtlib.selectable_list import ComboboxModel
 from hscommon.trans import trget
@@ -26,7 +28,7 @@ class BudgetPanel(Panel):
         ('amountEdit', 'amount'),
         ('notesEdit', 'notes'),
     ]
-    
+
     def __init__(self, mainwindow):
         Panel.__init__(self, mainwindow)
         self._setupUi()
@@ -35,10 +37,10 @@ class BudgetPanel(Panel):
         self.repeatTypeComboBox = ComboboxModel(model=self.model.repeat_type_list, view=self.repeatTypeComboBoxView)
         self.accountComboBox = ComboboxModel(model=self.model.account_list, view=self.accountComboBoxView)
         self.targetComboBox = ComboboxModel(model=self.model.target_list, view=self.targetComboBoxView)
-        
+
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
-    
+
     def _setupUi(self):
         self.setWindowTitle(tr("Budget Info"))
         self.resize(230, 369)
@@ -98,8 +100,8 @@ class BudgetPanel(Panel):
         self.label_3.setBuddy(self.accountComboBoxView)
         self.label_4.setBuddy(self.targetComboBoxView)
         self.label_5.setBuddy(self.amountEdit)
-    
+
     #--- model --> view
     def refresh_repeat_every(self):
         self.repeatEveryDescLabel.setText(self.model.repeat_every_desc)
-    
+

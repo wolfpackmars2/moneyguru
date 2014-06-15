@@ -1,15 +1,17 @@
 # Created By: Virgil Dupras
 # Created On: 2009-11-21
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4.QtCore import Qt, QSize
-from PyQt4.QtGui import (QWidget, QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QLineEdit,
-    QComboBox, QSizePolicy, QPlainTextEdit, QDialogButtonBox, QTabWidget, QSpinBox,
-    QAbstractItemView, QSpacerItem, QPushButton, QIcon, QPixmap)
+from PyQt4.QtGui import (
+    QWidget, QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QComboBox, QSizePolicy,
+    QPlainTextEdit, QDialogButtonBox, QTabWidget, QSpinBox, QAbstractItemView, QSpacerItem,
+    QPushButton, QIcon, QPixmap
+)
 
 from qtlib.selectable_list import ComboboxModel
 from hscommon.trans import trget
@@ -32,7 +34,7 @@ class SchedulePanel(Panel):
         ('checkNoEdit', 'checkno'),
         ('notesEdit', 'notes'),
     ]
-    
+
     def __init__(self, mainwindow):
         Panel.__init__(self, mainwindow)
         self.mainwindow = mainwindow
@@ -41,12 +43,12 @@ class SchedulePanel(Panel):
         self.model.view = self
         self.splitTable = SplitTable(model=self.model.split_table, view=self.splitTableView)
         self.repeatTypeComboBox = ComboboxModel(model=self.model.repeat_type_list, view=self.repeatTypeComboBoxView)
-        
+
         self.addSplitButton.clicked.connect(self.splitTable.model.add)
         self.removeSplitButton.clicked.connect(self.splitTable.model.delete)
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
-        
+
     def _setupUi(self):
         self.setWindowTitle(tr("Schedule Info"))
         self.resize(469, 416)
@@ -148,11 +150,11 @@ class SchedulePanel(Panel):
     def _loadFields(self):
         Panel._loadFields(self)
         self.tabWidget.setCurrentIndex(0)
-    
+
     #--- model --> view
     def refresh_for_multi_currency(self):
         pass
-    
+
     def refresh_repeat_every(self):
         self.repeatEveryDescLabel.setText(self.model.repeat_every_desc)
-    
+

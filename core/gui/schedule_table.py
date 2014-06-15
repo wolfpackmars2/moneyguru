@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-08-11
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 import datetime
@@ -29,31 +29,31 @@ class ScheduleTable(GUITable):
         Column('to', display=trcol('To')),
         Column('amount', display=trcol('Amount')),
     ]
-    
+
     def __init__(self, schedule_view):
         GUITable.__init__(self, document=schedule_view.document)
         self.mainwindow = schedule_view.mainwindow
-    
+
     #--- Override
     def _update_selection(self):
         self.mainwindow.selected_schedules = self.selected_schedules
-    
+
     def _fill(self):
         for schedule in self.document.schedules:
             self.append(ScheduleTableRow(self, schedule))
-    
+
     #--- Public
     def delete(self):
         self.document.delete_schedules(self.selected_schedules)
-    
+
     def edit(self):
         self.mainwindow.edit_item()
-    
+
     #--- Properties
     @property
     def selected_schedules(self):
         return [row.schedule for row in self.selected_rows]
-    
+
 class ScheduleTableRow(Row):
     def __init__(self, table, schedule):
         Row.__init__(self, table)
@@ -61,7 +61,7 @@ class ScheduleTableRow(Row):
         self.schedule = schedule
         self.transaction = schedule.ref
         self.load()
-    
+
     #--- Public
     def load(self):
         schedule = self.schedule
@@ -69,13 +69,15 @@ class ScheduleTableRow(Row):
         self._start_date = txn.date
         self._start_date_fmt = self.table.document.app.format_date(self._start_date)
         self._stop_date = schedule.stop_date
-        self._stop_date_fmt = self.table.document.app.format_date(self._stop_date) if self._stop_date is not None else ''
+        if self._stop_date is not None:
+            self._stop_date_fmt = self.table.document.app.format_date(self._stop_date)
+        else:
+            self._stop_date_fmt = ''
         self._repeat_type = schedule.repeat_type_desc
         self._interval = str(schedule.repeat_every)
         self._description = txn.description
         self._payee = txn.payee
         self._checkno = txn.checkno
-        splits = txn.splits
         froms, tos = txn.splitted_splits()
         self._from_count = len(froms)
         self._to_count = len(tos)
@@ -89,16 +91,16 @@ class ScheduleTableRow(Row):
             currency = self.document.default_currency
             self._amount = sum(convert_amount(s.amount, currency, s.transaction.date) for s in tos)
         self._amount_fmt = self.document.format_amount(self._amount)
-    
+
     def save(self):
         pass # read-only
-    
+
     def sort_key_for_column(self, column_name):
         if column_name == 'stop_date' and self._stop_date is None:
             return datetime.date.min
         else:
             return Row.sort_key_for_column(self, column_name)
-    
+
     #--- Properties
     start_date = rowattr('_start_date_fmt')
     stop_date = rowattr('_stop_date_fmt')

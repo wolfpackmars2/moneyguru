@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2010-09-11
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 import datetime
@@ -39,7 +39,7 @@ class BaseEntryTableRow(Row, RowWithDateMixIn, RowWithDebitAndCreditMixIn):
         self._recurrent = False
         self._is_budget = False
         self.is_bold = False
-    
+
     def _the_balance(self):
         reconciliation_mode = getattr(self.table, 'reconciliation_mode', False)
         if reconciliation_mode:
@@ -49,22 +49,22 @@ class BaseEntryTableRow(Row, RowWithDateMixIn, RowWithDebitAndCreditMixIn):
         if balance and self.account.is_credit_account():
             balance = -balance
         return balance
-    
+
     #--- Public
     def can_edit(self):
         return False
-    
+
     def can_reconcile(self):
         return False
-    
+
     def is_balance_negative(self):
         return nonone(self._the_balance(), 0) < 0
-    
+
     def sort_key_for_column(self, column_name):
         if column_name == 'date':
             return (self._date, self._position)
         elif column_name == 'reconciliation_date':
-            rdate =  self._reconciliation_date
+            rdate = self._reconciliation_date
             if rdate is None:
                 rdate = datetime.date.max
             return (rdate, self._date, self._position)
@@ -80,66 +80,66 @@ class BaseEntryTableRow(Row, RowWithDateMixIn, RowWithDebitAndCreditMixIn):
                 return 1
         else:
             return Row.sort_key_for_column(self, column_name)
-    
+
     #--- Properties
     @property
     def description(self):
         return self._description
-    
+
     @property
     def payee(self):
         return self._payee
-    
+
     @property
     def checkno(self):
         return self._checkno
-    
+
     @property
     def transfer(self):
         return self._transfer
-    
+
     @property
     def increase(self):
         return self.table.document.format_amount(self._increase, blank_zero=True)
-    
+
     @property
     def decrease(self):
         return self.table.document.format_amount(self._decrease, blank_zero=True)
-    
+
     @property
     def debit(self):
         return self.table.document.format_amount(self._debit, blank_zero=True)
-    
+
     @property
     def credit(self):
         return self.table.document.format_amount(self._credit, blank_zero=True)
-    
+
     @property
     def balance(self):
         account_currency = self.account.currency
         return self.table.document.format_amount(self._the_balance(), zero_currency=account_currency)
     can_edit_balance = False
-    
+
     @property
     def reconciled(self):
         return self._reconciled
-    
+
     @property
     def reconciliation_date(self):
         if self._reconciliation_date is not None:
             return self.table.document.app.format_date(self._reconciliation_date)
         else:
             return ''
-    
+
     @property
     def recurrent(self):
         return self._recurrent
-    
+
     @property
     def is_budget(self):
         return self._is_budget
-    
-    
+
+
 AUTOFILL_ATTRS = {'description', 'payee', 'transfer', 'increase', 'decrease'}
 AMOUNT_AUTOFILL_ATTRS = {'increase', 'decrease'}
 
@@ -152,28 +152,29 @@ class EntryTableRow(BaseEntryTableRow):
         ('_amount', 'amount'),
         ('_reconciliation_date', 'reconciliation_date'),
     ]
+
     def __init__(self, table, entry, account):
         BaseEntryTableRow.__init__(self, table, account)
         self.entry = entry
         # makes possible to move more code down to TransactionTableBase
         self.transaction = entry.transaction
         self.load()
-    
+
     def _autofill_row(self, ref_row, dest_attrs):
         if len(ref_row.entry.transfer) > 1:
             dest_attrs.discard('_transfer')
         BaseEntryTableRow._autofill_row(self, ref_row, dest_attrs)
-    
+
     def _get_autofill_attrs(self):
         return AUTOFILL_ATTRS
-    
+
     def _get_autofill_dest_attrs(self, key_attr, all_attrs):
         dest_attrs = BaseEntryTableRow._get_autofill_dest_attrs(self, key_attr, AUTOFILL_ATTRS)
         if dest_attrs & AMOUNT_AUTOFILL_ATTRS:
             dest_attrs -= AMOUNT_AUTOFILL_ATTRS
             dest_attrs.add('amount')
         return dest_attrs
-    
+
     def _get_autofill_rows(self):
         original = self.entry
         entries = sorted(self.account.entries, key=attrgetter('mtime'), reverse=True)
@@ -181,7 +182,7 @@ class EntryTableRow(BaseEntryTableRow):
             if entry is original:
                 continue
             yield EntryTableRow(self.table, entry, self.account)
-    
+
     def _set_amount_property(self, propname, stramount):
         try:
             currency = self.entry.account.currency
@@ -190,10 +191,10 @@ class EntryTableRow(BaseEntryTableRow):
             return
         if parsed != getattr(self, propname):
             setattr(self, propname, parsed)
-    
+
     def can_edit(self):
         return not self.is_budget
-    
+
     def can_reconcile(self):
         inmode = self.table.reconciliation_mode
         canedit = self.can_edit()
@@ -201,7 +202,7 @@ class EntryTableRow(BaseEntryTableRow):
         foreign = self._amount != 0 and self._amount.currency != self.account.currency
         balance_sheet = self.account.is_balance_sheet_account()
         return inmode and canedit and not future and not foreign and balance_sheet
-    
+
     def load(self):
         entry = self.entry
         self._load_from_fields(entry, self.FIELDS)
@@ -212,7 +213,7 @@ class EntryTableRow(BaseEntryTableRow):
         self._reconciled = entry.reconciled
         self._recurrent = isinstance(entry.transaction, Spawn)
         self._is_budget = getattr(entry.transaction, 'is_budget', False)
-    
+
     def save(self):
         entry = self.entry
         changed_fields = self._get_changed_fields(entry, self.FIELDS)
@@ -222,13 +223,13 @@ class EntryTableRow(BaseEntryTableRow):
                 changed_fields['transfer'] = self._transfer
         self.table.document.change_entry(entry, **changed_fields)
         self.load()
-    
+
     def toggle_reconciled(self):
         assert self.table.reconciliation_mode
         self.table.selected_row = self
         self.table._update_selection()
         self.table.toggle_reconciled()
-    
+
     #--- Properties
     @BaseEntryTableRow.reconciliation_date.setter
     def reconciliation_date(self, value):
@@ -240,28 +241,28 @@ class EntryTableRow(BaseEntryTableRow):
             return
         self._edit()
         self._reconciliation_date = parsed
-    
+
     description = rowattr('_description', 'description')
     payee = rowattr('_payee', 'payee')
     checkno = rowattr('_checkno')
     transfer = rowattr('_transfer', 'transfer')
-    
+
     @BaseEntryTableRow.increase.setter
     def increase(self, value):
         self._set_amount_property('_increase', value)
-    
+
     @BaseEntryTableRow.decrease.setter
     def decrease(self, value):
         self._set_amount_property('_decrease', value)
-    
+
     @BaseEntryTableRow.debit.setter
     def debit(self, value):
         self._set_amount_property('_debit', value)
-    
+
     @BaseEntryTableRow.credit.setter
     def credit(self, value):
         self._set_amount_property('_credit', value)
-    
+
     @property
     def can_edit_transfer(self):
         return len(self.entry.splits) == 1
@@ -269,12 +270,12 @@ class EntryTableRow(BaseEntryTableRow):
     can_edit_decrease = can_edit_transfer
     can_edit_debit = can_edit_transfer
     can_edit_credit = can_edit_transfer
-    
+
     @property
     def can_edit_reconciliation_date(self):
         foreign = self._amount != 0 and self._amount.currency != self.account.currency
         return not foreign
-    
+
 
 class PreviousBalanceRow(BaseEntryTableRow):
     def __init__(self, table, date, balance, reconciled_balance, account):
@@ -285,13 +286,13 @@ class PreviousBalanceRow(BaseEntryTableRow):
         self._description = tr('Previous Balance')
         self._reconciled = False
         self.is_bold = True
-    
+
 
 class NewEntryTableRow(EntryTableRow):
     @property
     def balance(self):
         return ''
-    
+
 
 class TotalRow(BaseEntryTableRow):
     def __init__(self, table, account, date, total_debit, total_credit):
@@ -321,31 +322,31 @@ class TotalRow(BaseEntryTableRow):
         else:
             self._balance_fmt = ''
         self.is_bold = True
-    
+
     @property
     def increase(self):
         return self._credit_fmt if self.table.account.is_credit_account() else self._debit_fmt
-    
+
     @property
     def decrease(self):
         return self._debit_fmt if self.table.account.is_credit_account() else self._credit_fmt
-    
+
     @property
     def debit(self):
         return self._debit_fmt
-    
+
     @property
     def credit(self):
         return self._credit_fmt
-    
+
     @property
     def balance(self):
         return self._balance_fmt
-    
+
 
 class EntryTableBase(TransactionTableBase):
     ENTRY_ROWCLASS = EntryTableRow
-    
+
     #--- Overrides
     def _do_add(self):
         entry = self._new_entry()
@@ -364,23 +365,23 @@ class EntryTableBase(TransactionTableBase):
             insert_index = last_suitable_index + 1
         row = NewEntryTableRow(self, entry, entry.account)
         return row, insert_index
-    
+
     def _do_delete(self):
         entries = self.selected_entries
         if entries:
             self.document.delete_entries(entries)
-    
+
     def add(self):
         if self._get_current_account() is not None:
             TransactionTableBase.add(self)
-    
+
     #--- Virtual
     def _get_current_account(self):
         raise NotImplementedError()
-    
+
     def _get_totals_currency(self):
         raise NotImplementedError()
-    
+
     #--- Private
     def _get_account_rows(self, account):
         result = []
@@ -404,7 +405,7 @@ class EntryTableBase(TransactionTableBase):
             total_row = TotalRow(self, account, date_range.end, total_debit, total_credit)
             result.append(total_row)
         return result
-    
+
     def _new_entry(self):
         account = self._get_current_account()
         transactions = self.mainwindow.selected_transactions
@@ -412,7 +413,7 @@ class EntryTableBase(TransactionTableBase):
         transaction = Transaction(date, account=account, amount=0)
         split = transaction.splits[0]
         return Entry(split, 0, 0, 0, 0)
-    
+
     #--- Public
     def get_totals(self):
         # returns (selected_count, total_count, total_debit, total_credit)
@@ -424,13 +425,13 @@ class EntryTableBase(TransactionTableBase):
         total_debit = sum(a for a in amounts if a > 0)
         total_credit = abs(sum(a for a in amounts if a < 0))
         return (selected, total, total_debit, total_credit)
-    
+
     #--- Properties
     @property
     def selected_entries(self):
         return [row.entry for row in self.selected_rows if hasattr(row, 'entry')]
-    
+
     @property
     def selected_transactions(self):
         return [entry.transaction for entry in self.selected_entries]
-    
+

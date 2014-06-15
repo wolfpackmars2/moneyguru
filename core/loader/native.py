@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-02-15
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from datetime import datetime
@@ -19,7 +19,7 @@ from . import base
 class Loader(base.Loader):
     FILE_OPEN_MODE = 'rb'
     NATIVE_DATE_FORMAT = '%Y-%m-%d'
-    
+
     def _parse(self, infile):
         try:
             root = ET.parse(infile).getroot()
@@ -28,15 +28,16 @@ class Loader(base.Loader):
         if root.tag != 'moneyguru-file':
             raise FileFormatError()
         self.root = root
-    
+
     def _load(self):
         TODAY = datetime.now().date()
+
         def str2date(s, default=None):
             try:
                 return self.parse_date_str(s)
             except (ValueError, TypeError):
                 return default
-        
+
         def handle_newlines(s):
             # etree doesn't correctly save newlines. During save, we escape them. Now's the time to
             # restore them.
@@ -45,7 +46,7 @@ class Loader(base.Loader):
             if not s:
                 return s
             return s.replace('\\n', '\n')
-        
+
         def read_transaction_element(element, info):
             attrib = element.attrib
             info.account = attrib.get('account')
@@ -73,7 +74,7 @@ class Loader(base.Loader):
                     split_info.reconciliation_date = str2date(split_element.attrib['reconciliation_date'])
                 info.splits.append(split_info)
             return info
-        
+
         root = self.root
         self.document_id = root.attrib.get('document_id')
         props_element = root.find('properties')
@@ -145,4 +146,4 @@ class Loader(base.Loader):
             self.budget_info.start_date = str2date(attrib.get('start_date'))
             self.budget_info.stop_date = str2date(attrib.get('stop_date'))
             self.flush_budget()
-    
+

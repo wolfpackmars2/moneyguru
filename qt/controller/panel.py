@@ -1,24 +1,23 @@
 # Created By: Virgil Dupras
 # Created On: 2009-11-10
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4.QtCore import Qt, QSignalMapper
 from PyQt4.QtGui import QWidget, QDialog, QLineEdit, QSpinBox, QComboBox, QCheckBox, QPlainTextEdit
 
-from ..support.completable_edit import CompletableEdit
-
 class Panel(QDialog):
     # A list of two-sized tuples (QWidget's name, model field name).
     FIELDS = []
+
     def __init__(self, parent=None):
         # The flags we pass are that so we don't get the "What's this" button in the title bar
         QDialog.__init__(self, parent, Qt.WindowTitleHint | Qt.WindowSystemMenuHint)
         self._widget2ModelAttr = {}
-    
+
     def _changeComboBoxItems(self, comboBox, newItems):
         # When a combo box's items are changed, its currentIndex changed with a currentIndexChanged
         # signal, and if that signal results in the model being updated, it messes the model.
@@ -31,7 +30,7 @@ class Panel(QDialog):
         comboBox.setCurrentIndex(index)
         if comboBox in self._widget2ModelAttr:
             comboBox.currentIndexChanged.connect(self.comboBoxCurrentIndexChanged)
-    
+
     def _connectSignals(self):
         self._signalMapper = QSignalMapper()
         for widgetName, modelAttr in self.FIELDS:
@@ -49,7 +48,7 @@ class Panel(QDialog):
             elif isinstance(widget, QCheckBox):
                 widget.stateChanged.connect(self._signalMapper.map)
         self._signalMapper.mapped[QWidget].connect(self.widgetChanged)
-    
+
     def _loadFields(self):
         for widgetName, modelAttr in self.FIELDS:
             widget = getattr(self, widgetName)
@@ -64,10 +63,10 @@ class Panel(QDialog):
                 widget.setPlainText(value)
             elif isinstance(widget, QCheckBox):
                 widget.setChecked(value)
-    
+
     def _saveFields(self):
         pass
-    
+
     def accept(self):
         # The setFocus() call is to force the last edited field to "commit". When the save button
         # is clicked, accept() is called before the last field to have focus has a chance to emit
@@ -75,7 +74,7 @@ class Panel(QDialog):
         self.setFocus()
         self.model.save()
         QDialog.accept(self)
-    
+
     #--- Event Handlers
     def widgetChanged(self, sender):
         modelAttr = self._widget2ModelAttr[sender]
@@ -90,14 +89,14 @@ class Panel(QDialog):
         elif isinstance(sender, QCheckBox):
             newvalue = sender.isChecked()
         setattr(self.model, modelAttr, newvalue)
-        
+
     #--- model --> view
     def pre_load(self):
         pass
-    
+
     def pre_save(self):
         self._saveFields()
-    
+
     def post_load(self):
         if not self._widget2ModelAttr: # signal not connected yet
             self._connectSignals()
@@ -110,4 +109,4 @@ class Panel(QDialog):
         while focus.focusPolicy() == Qt.NoFocus:
             focus = focus.nextInFocusChain()
         focus.setFocus(Qt.TabFocusReason)
-    
+

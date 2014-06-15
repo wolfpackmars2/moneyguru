@@ -2,9 +2,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-10-31
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 import sys
@@ -20,12 +20,12 @@ from hscommon.plat import ISLINUX
 from qtlib.error_report_dialog import install_excepthook
 from qtlib.util import setupQtLogging
 from qtlib.preferences import adjust_after_deserialization
-import qt.mg_rc
+import qt.mg_rc # noqa
 from qt.plat import BASE_PATH
 
 # We import this module below to force cx_freeze to include it because the currency plugins
 # need it.
-import urllib.request
+import urllib.request # noqa
 
 def main(argv):
     app = QApplication(sys.argv)
@@ -52,7 +52,7 @@ def main(argv):
     # has been installed
     from qt.app import MoneyGuru
     app.setApplicationVersion(MoneyGuru.VERSION)
-    mgapp =  MoneyGuru()
+    mgapp = MoneyGuru()
     install_excepthook()
     exec_result = app.exec_()
     del mgapp

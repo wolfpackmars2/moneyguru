@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-01-18
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from itertools import dropwhile
@@ -30,9 +30,11 @@ FIELD_NAMES = {
     CsvField.Reference: tr('Transaction ID'),
 }
 
-FIELD_ORDER = [None, CsvField.Date, CsvField.Description, CsvField.Payee, CsvField.Checkno, 
+FIELD_ORDER = [
+    None, CsvField.Date, CsvField.Description, CsvField.Payee, CsvField.Checkno,
     CsvField.Transfer, CsvField.Amount, CsvField.Increase, CsvField.Decrease, CsvField.Currency,
-    CsvField.Reference]
+    CsvField.Reference
+]
 
 SUPPORTED_ENCODINGS = [
     'latin-1',
@@ -45,28 +47,28 @@ class Layout:
         self.columns = []
         self.excluded_lines = set()
         self.target_account_name = None
-    
+
     def __repr__(self):
         return '<Layout {0} {1} {2}>'.format(self.name, self.columns, self.excluded_lines)
-    
+
     def adjust_columns(self, colcount):
         diff = colcount - len(self.columns)
         if diff > 0:
             self.columns += [None] * diff
-    
+
     def duplicate(self, newname):
         layout = Layout(newname)
         layout.columns = self.columns[:]
         layout.excluded_lines = self.excluded_lines.copy()
         return layout
-    
+
     def set_column_field(self, index, field):
         assert field in FIELD_NAMES
         requires_unique = (field is not None) and (field not in MERGABLE_FIELDS)
         if requires_unique and field in self.columns:
             self.columns[self.columns.index(field)] = None
         self.columns[index] = field
-    
+
     def set_line_excluded(self, index, value, linecount):
         if value:
             self.excluded_lines.add(index)
@@ -83,7 +85,7 @@ class Layout:
             if last_index - linecount not in self.excluded_lines:
                 break
             last_index -= 1
-    
+
 
 class CSVOptions(MainWindowGUIObject):
     def __init__(self, mainwindow):
@@ -94,7 +96,7 @@ class CSVOptions(MainWindowGUIObject):
             layout.excluded_lines = set(pref['excluded_lines'])
             layout.target_account_name = pref.get('target_account')
             return layout
-        
+
         MainWindowGUIObject.__init__(self, mainwindow)
         self.lines = []
         self._colcount = 0
@@ -102,28 +104,28 @@ class CSVOptions(MainWindowGUIObject):
         self._default_layout = Layout(tr('Default'))
         self.encoding_index = 0
         preferences = self.app.get_default(LAYOUT_PREFERENCE_NAME)
-        try:    
+        try:
             self._layouts = [preference2layout(pref) for pref in preferences]
         except Exception: # probably because of corrupted prefs
             self._layouts = []
         self.layout = self._default_layout
         self.connect()
-    
+
     #--- Private
     def _refresh_columns(self):
         self._colcount = len(self.mainwindow.loader.lines[0])
         self.layout.adjust_columns(self._colcount)
         self.view.refresh_columns()
-    
+
     def _refresh_lines(self):
         self.lines = self.mainwindow.loader.lines
         self.view.refresh_lines()
-    
+
     def _refresh_targets(self):
         self._target_accounts = [a for a in self.document.accounts if a.is_balance_sheet_account()]
         self._target_accounts.sort(key=lambda a: a.name.lower())
         self.view.refresh_targets()
-    
+
     #--- Public
     def continue_import(self):
         loader = self.mainwindow.loader
@@ -138,7 +140,7 @@ class CSVOptions(MainWindowGUIObject):
             self.view.show_message(str(e))
         else:
             self.view.hide()
-    
+
     def delete_selected_layout(self):
         if self.layout is self._default_layout:
             return
@@ -148,10 +150,10 @@ class CSVOptions(MainWindowGUIObject):
         self.view.refresh_layout_menu()
         self.view.refresh_columns_name()
         self.view.refresh_lines()
-    
+
     def get_column_name(self, index):
         return FIELD_NAMES[self.columns[index]]
-    
+
     def line_is_excluded(self, index):
         if index in self.excluded_lines:
             return True
@@ -159,7 +161,7 @@ class CSVOptions(MainWindowGUIObject):
             return True
         else:
             return False
-    
+
     def new_layout(self, name):
         if not name:
             return
@@ -167,13 +169,13 @@ class CSVOptions(MainWindowGUIObject):
         self._layouts.append(new_layout)
         self.layout = new_layout
         self.view.refresh_layout_menu()
-    
+
     def rename_selected_layout(self, newname):
         if not newname:
             return
         self.layout.name = newname
         self.view.refresh_layout_menu()
-    
+
     def rescan(self):
         try:
             encoding = SUPPORTED_ENCODINGS[self.encoding_index]
@@ -182,7 +184,7 @@ class CSVOptions(MainWindowGUIObject):
         self.mainwindow.loader.rescan(encoding=encoding)
         self._refresh_columns()
         self._refresh_lines()
-    
+
     def select_layout(self, name):
         if not name:
             new_layout = self._default_layout
@@ -195,14 +197,14 @@ class CSVOptions(MainWindowGUIObject):
         self.view.refresh_columns_name()
         self.view.refresh_lines()
         self.view.refresh_targets()
-    
+
     def set_column_field(self, index, field):
         self.layout.set_column_field(index, field)
         self.view.refresh_columns_name()
-    
+
     def set_line_excluded(self, index, value):
         self.layout.set_line_excluded(index, value, len(self.lines))
-    
+
     def show(self):
         self._default_layout = Layout(tr('Default'))
         self.layout = self._default_layout
@@ -219,15 +221,15 @@ class CSVOptions(MainWindowGUIObject):
         if self._colcount < len(columns):
             columns = columns[:self._colcount]
         return columns
-    
+
     @property
     def excluded_lines(self):
         return self.layout.excluded_lines
-    
+
     @property
     def field_separator(self):
         return self.mainwindow.loader.dialect.delimiter
-    
+
     @field_separator.setter
     def field_separator(self, value):
         try:
@@ -235,11 +237,11 @@ class CSVOptions(MainWindowGUIObject):
             self.mainwindow.loader.dialect.delimiter = delimiter
         except (UnicodeEncodeError, IndexError):
             pass
-    
+
     @property
     def layout_names(self):
         return [tr('Default')] + [layout.name for layout in self._layouts]
-    
+
     @property
     def selected_target_index(self):
         target_name = self.layout.target_account_name
@@ -247,15 +249,15 @@ class CSVOptions(MainWindowGUIObject):
             return 0
         index = first(i for i, t in enumerate(self._target_accounts) if t.name == target_name)
         return index + 1 if index is not None else 0
-    
+
     @selected_target_index.setter
     def selected_target_index(self, value):
         self.layout.target_account_name = self._target_accounts[value - 1].name if value > 0 else None
-    
+
     @property
     def target_account_names(self):
         return [tr('< New Account >')] + [a.name for a in self._target_accounts]
-    
+
     #--- Events
     def document_will_close(self):
         def layout2preference(layout):
@@ -270,7 +272,7 @@ class CSVOptions(MainWindowGUIObject):
             if layout.target_account_name:
                 result['target_account'] = layout.target_account_name
             return result
-        
+
         layouts = list(map(layout2preference, self._layouts))
         self.app.set_default(LAYOUT_PREFERENCE_NAME, layouts)
-    
+

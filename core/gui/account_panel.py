@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-07-03
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from hscommon.currency import Currency
@@ -34,7 +34,7 @@ class AccountTypeList(GUISelectableList):
         self.panel = panel
         account_types_desc = [ACCOUNT_TYPE_DESC[at] for at in AccountType.InOrder]
         GUISelectableList.__init__(self, account_types_desc)
-    
+
     def _update_selection(self):
         GUISelectableList._update_selection(self)
         selected_type = AccountType.InOrder[self.selected_index]
@@ -52,13 +52,14 @@ class AccountPanel(MainWindowPanel):
         self._init_fields()
         self.type_list = AccountTypeList(self)
         currencies_display = ['%s - %s' % (currency.code, currency.name) for currency in Currency.all]
+
         def setfunc(index):
             try:
                 self.currency = Currency.all[index]
             except IndexError:
                 pass
         self.currency_list = LinkedSelectableList(items=currencies_display, setfunc=setfunc)
-    
+
     #--- Override
     def _load(self, account):
         self.document.stop_edition()
@@ -72,20 +73,21 @@ class AccountPanel(MainWindowPanel):
         self.currency_list.select(Currency.all.index(self.currency))
         self.can_change_currency = not any(e.reconciled for e in account.entries)
         self.account = account # for the save() assert
-    
+
     def _save(self):
-        kwargs = dict(name=self.name, type=self.type, account_number=self.account_number,
-            notes=self.notes)
+        kwargs = dict(
+            name=self.name, type=self.type, account_number=self.account_number, notes=self.notes
+        )
         if self.can_change_currency:
             kwargs['currency'] = self.currency
         try:
             self.document.change_accounts([self.account], **kwargs)
         except DuplicateAccountNameError:
             pass
-    
+
     #--- Private
     def _init_fields(self):
         self.type = AccountType.Asset
         self.currency = None
         self.account_number = ''
-    
+

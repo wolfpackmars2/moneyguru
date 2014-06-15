@@ -1,14 +1,16 @@
 # Created By: Virgil Dupras
 # Created On: 2009-11-01
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import (QVBoxLayout, QHBoxLayout, QSizePolicy, QPushButton, QAbstractItemView,
-    QStackedWidget, QSplitter)
+from PyQt4.QtGui import (
+    QVBoxLayout, QHBoxLayout, QSizePolicy, QPushButton, QAbstractItemView, QStackedWidget,
+    QSplitter
+)
 
 from core.const import PaneArea
 
@@ -34,9 +36,9 @@ class EntryView(BaseView):
         self.bgraph = Chart(self.model.bargraph, view=self.barGraphView)
         self.lgraph = Chart(self.model.balgraph, view=self.lineGraphView)
         self._setupColumns() # Can only be done after the model has been connected
-        
+
         self.reconciliationButton.clicked.connect(self.model.toggle_reconciliation_mode)
-    
+
     def _setupUi(self):
         self.resize(483, 423)
         self.verticalLayout = QVBoxLayout(self)
@@ -87,29 +89,29 @@ class EntryView(BaseView):
         self.splitterView.setStretchFactor(0, 1)
         self.splitterView.setStretchFactor(1, 0)
         self.verticalLayout.addWidget(self.splitterView)
-    
+
     def _setupColumns(self):
         h = self.tableView.horizontalHeader()
         h.setMovable(True) # column drag & drop reorder
-    
+
     #--- QWidget override
     def setFocus(self):
         self.etable.view.setFocus()
-    
+
     #--- Public
     def fitViewsForPrint(self, viewPrinter):
         hidden = self.model.mainwindow.hidden_areas
         viewPrinter.fitTable(self.etable)
         if PaneArea.BottomGraph not in hidden:
             viewPrinter.fit(self.graphView.currentWidget(), 300, 150, expandH=True, expandV=True)
-    
+
     def restoreSubviewsSize(self):
         graphHeight = self.model.graph_height_to_restore
         if graphHeight:
             splitterHeight = self.splitterView.height()
             sizes = [splitterHeight-graphHeight, graphHeight]
             self.splitterView.setSizes(sizes)
-    
+
     #--- model --> view
     def refresh_reconciliation_button(self):
         if self.model.can_toggle_reconciliation_mode:
@@ -118,14 +120,14 @@ class EntryView(BaseView):
         else:
             self.reconciliationButton.setEnabled(False)
             self.reconciliationButton.setChecked(False)
-    
+
     def show_bar_graph(self):
         self.graphView.setCurrentIndex(1)
-    
+
     def show_line_graph(self):
         self.graphView.setCurrentIndex(0)
-    
+
     def update_visibility(self):
         hidden = self.model.mainwindow.hidden_areas
         self.graphView.setHidden(PaneArea.BottomGraph in hidden)
-    
+

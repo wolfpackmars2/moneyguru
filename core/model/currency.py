@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-04-22
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 import logging
@@ -11,8 +11,10 @@ import socket
 import xmlrpc.client
 from datetime import date, datetime
 
-from hscommon.currency import (Currency, RatesDB, BUILTIN_CURRENCY_CODES,
-    CurrencyNotSupportedException, RateProviderUnavailable)
+from hscommon.currency import (
+    Currency, RatesDB, BUILTIN_CURRENCY_CODES, CurrencyNotSupportedException,
+    RateProviderUnavailable
+)
 
 CURRENCY_SERVER = 'http://currency.hardcoded.net/'
 
@@ -43,3 +45,4 @@ def initialize_db(path):
     ratesdb = RatesDB(str(path))
     ratesdb.register_rate_provider(default_currency_rate_provider)
     Currency.set_rates_db(ratesdb)
+

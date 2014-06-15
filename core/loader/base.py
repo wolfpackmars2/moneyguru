@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-02-15
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 import datetime
@@ -30,8 +30,9 @@ from ..model.transaction_list import TransactionList
 # possibility of errors. Most american users use the slash separator with month as a first field
 # and most european users have dot or hyphen seps with the first field being the day.
 
-BASE_DATE_FORMATS = ['%m/%d/%y', '%m/%d/%Y', '%d/%m/%Y', '%d/%m/%y', '%Y/%m/%d', '%d/%b/%Y',
-    '%d/%b/%y']
+BASE_DATE_FORMATS = [
+    '%m/%d/%y', '%m/%d/%Y', '%d/%m/%Y', '%d/%m/%y', '%Y/%m/%d', '%d/%b/%Y', '%d/%b/%y'
+]
 EXTRA_DATE_SEPS = ['.', '-', ' ']
 DATE_FORMATS = BASE_DATE_FORMATS[:]
 # Re-add all date formats with their separator replaced
@@ -50,7 +51,7 @@ re_possibly_a_date = re.compile('|'.join(POSSIBLE_PATTERNS))
 
 class Loader:
     """Base interface for loading files containing financial information to load into moneyGuru.
-    
+
     To use it, just call load() and then fetch the accounts & transactions. This information is in
     the form of lists of dicts. The transactions are sorted in order of date.
     """
@@ -63,7 +64,7 @@ class Loader:
     NATIVE_DATE_FORMAT = None
     # Some extra date formats to try before standard date guessing order
     EXTRA_DATE_FORMATS = None
-    
+
     def __init__(self, default_currency, default_date_format=None):
         self.default_currency = default_currency
         self.default_date_format = default_date_format
@@ -94,31 +95,31 @@ class Loader:
         # parsing dates. This format is used in the ImportWindow. It is also used in
         # self.parse_date_str as a default value
         self.parsing_date_format = self.NATIVE_DATE_FORMAT
-    
+
     #--- Virtual
     def _parse(self, infile):
-        """Parse infile and raise FileFormatError if infile is not the right format. Don't bother 
+        """Parse infile and raise FileFormatError if infile is not the right format. Don't bother
         with an exception message, app.MoneyGuru will re-raise it with a message if needed.
         """
         raise NotImplementedError()
-    
+
     def _load(self):
         """Use the parsed info to fill the appropriate account/txn info with the start_* and flush_*
         methods.
         """
         raise NotImplementedError()
-    
+
     def _post_load(self):
         """Perform post load processing, such as duplicate removal
         """
         pass
-    
+
     #--- Protected
     def clean_date(self, str_date):
         # return str_date without garbage around (such as timestamps) or None if impossible
         match = re_possibly_a_date.search(str_date)
         return match.group() if match is not None else None
-    
+
     def guess_date_format(self, str_dates):
         totry = DATE_FORMATS[:]
         extra = []
@@ -141,8 +142,8 @@ class Loader:
                 if found_at_least_one:
                     logging.debug("Correct date format: {0}".format(format))
                     return format
-        return None    
-    
+        return None
+
     def parse_date_str(self, date_str, date_format=None):
         """Parses date_str using date_format and perform heuristic fixes if needed.
         """
@@ -154,32 +155,32 @@ class Loader:
             year = (result.year % 100) + 2000
             result = result.replace(year=year)
         return result
-    
+
     def start_group(self):
         pass
-    
+
     def flush_group(self):
         if self.group_info.is_valid():
             self.group_infos.append(self.group_info)
         self.group_info = GroupInfo()
-    
+
     def start_account(self):
         self.flush_account() # Implicit
-    
+
     def flush_account(self):
         self.flush_transaction()
         if self.account_info.is_valid():
             self.account_infos.append(self.account_info)
         self.account_info = AccountInfo()
-    
+
     def cancel_account(self):
         self.account_info = AccountInfo()
         self.transaction_info = TransactionInfo()
         self.split_info = SplitInfo()
-    
+
     def start_transaction(self):
         self.flush_transaction() # Implicit
-    
+
     def flush_transaction(self):
         """If called between a start_account and flush_account call, ACCOUNT is automatically set"""
         self.flush_split()
@@ -190,25 +191,25 @@ class Loader:
                 self.transaction_infos.append(self.transaction_info)
         self.transaction_cancelled = False
         self.transaction_info = TransactionInfo()
-    
+
     def cancel_transaction(self):
         self.transaction_cancelled = True
-    
+
     def flush_split(self):
         if self.split_info.is_valid():
             self.transaction_info.splits.append(self.split_info)
         self.split_info = SplitInfo()
-    
+
     def flush_recurrence(self):
         if self.recurrence_info.is_valid():
             self.recurrence_infos.append(self.recurrence_info)
         self.recurrence_info = RecurrenceInfo()
-    
+
     def flush_budget(self):
         if self.budget_info.is_valid():
             self.budget_infos.append(self.budget_info)
         self.budget_info = BudgetInfo()
-    
+
     #--- Public
     def parse(self, filename):
         """Parses 'filename' and raises FileFormatError if appropriate."""
@@ -221,14 +222,14 @@ class Loader:
                 self._parse(infile)
         except IOError:
             raise FileFormatError()
-    
+
     @staticmethod
     def parse_amount(string, currency):
         return parse_amount(string, currency, with_expression=False)
-    
+
     def load(self):
         """Loads the parsed info into self.accounts and self.transactions.
-        
+
         You must have called parse() before calling this.
         """
         def load_transaction_info(info):
@@ -247,7 +248,7 @@ class Loader:
                 split = Split(transaction, account, amount)
                 split.memo = memo
                 if split_info.reconciliation_date is not None:
-                    split.reconciliation_date = split_info.reconciliation_date                    
+                    split.reconciliation_date = split_info.reconciliation_date
                 elif split_info.reconciled: # legacy
                     split.reconciliation_date = transaction.date
                 split.reference = split_info.reference
@@ -261,7 +262,7 @@ class Loader:
                     if split.reference is None:
                         split.reference = info.reference
             return transaction
-        
+
         self._load()
         self.flush_account() # Implicit
         # Now, we take the info we have and transform it into model instances
@@ -290,11 +291,11 @@ class Loader:
             account.notes = info.notes
             currencies.add(account.currency)
             self.accounts.add(account)
-        
+
         # Pre-parse transaction info. We bring all relevant info recorded at the txn level into the split level
         all_txn = self.transaction_infos + [r.transaction_info for r in self.recurrence_infos] +\
-                  flatten([stripfalse(r.date2exception.values()) for r in self.recurrence_infos]) +\
-                  flatten([r.date2globalchange.values() for r in self.recurrence_infos])
+            flatten([stripfalse(r.date2exception.values()) for r in self.recurrence_infos]) +\
+            flatten([r.date2globalchange.values() for r in self.recurrence_infos])
         for info in all_txn:
             split_accounts = [s.account for s in info.splits]
             if info.account and info.account not in split_accounts:
@@ -308,19 +309,23 @@ class Loader:
                     str_amount += split_info.currency
                 amount = self.parse_amount(str_amount, self.default_currency)
                 auto_create_type = AccountType.Income if amount >= 0 else AccountType.Expense
-                split_info.account = self.accounts.find(split_info.account, auto_create_type) if split_info.account else None
+                split_info.account = (
+                    self.accounts.find(split_info.account, auto_create_type)
+                    if split_info.account
+                    else None
+                )
                 currency = split_info.account.currency if split_info.account is not None else self.default_currency
                 split_info.amount = self.parse_amount(str_amount, currency)
                 if split_info.amount:
                     currencies.add(split_info.amount.currency)
-        
+
         self.transaction_infos.sort(key=attrgetter('date'))
         for date, transaction_infos in groupby(self.transaction_infos, attrgetter('date')):
             start_date = min(start_date, date)
             for position, info in enumerate(transaction_infos, start=1):
                 transaction = load_transaction_info(info)
                 self.transactions.add(transaction, position=position)
-        
+
         # Scheduled
         for info in self.recurrence_infos:
             ref = load_transaction_info(info.transaction_info)
@@ -357,16 +362,16 @@ class Loader:
         self._post_load()
         self.oven.cook(datetime.date.min, until_date=None)
         Currency.get_rates_db().ensure_rates(start_date, [x.code for x in currencies])
-    
+
 
 class GroupInfo:
     def __init__(self):
         self.name = None
         self.type = AccountType.Asset
-    
+
     def is_valid(self):
         return bool(self.name)
-    
+
 
 class AccountInfo:
     def __init__(self):
@@ -380,13 +385,13 @@ class AccountInfo:
         self.balance = None
         self.account_number = ''
         self.notes = ''
-    
+
     def __repr__(self):
         return '<AccountInfo: %s>' % self.name
-    
+
     def is_valid(self):
         return bool(self.name)
-    
+
 
 class TransactionInfo:
     def __init__(self):
@@ -405,7 +410,7 @@ class TransactionInfo:
 
     def is_valid(self):
         return bool(self.date and ((self.account and self.amount) or self.splits))
-    
+
 
 class SplitInfo:
     def __init__(self, account=None, amount=None, currency=None, amount_reversed=False):
@@ -417,13 +422,13 @@ class SplitInfo:
         self.reconciliation_date = None
         self.reference = None
         self.amount_reversed = amount_reversed
-    
+
     def __repr__(self):
         return '<SplitInfo %r %r>' % (self.account, self.amount)
-    
+
     def is_valid(self):
         return self.amount is not None
-    
+
 
 class RecurrenceInfo:
     def __init__(self):
@@ -433,10 +438,10 @@ class RecurrenceInfo:
         self.date2exception = {}
         self.date2globalchange = {}
         self.transaction_info = TransactionInfo()
-    
+
     def is_valid(self):
         return self.transaction_info.is_valid()
-    
+
 
 class BudgetInfo:
     def __init__(self, account=None, target=None, amount=None):
@@ -448,7 +453,7 @@ class BudgetInfo:
         self.repeat_every = None
         self.start_date = None
         self.stop_date = None
-    
+
     def is_valid(self):
         return self.account and self.amount
-    
+

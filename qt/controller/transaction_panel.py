@@ -1,15 +1,16 @@
 # Created By: Virgil Dupras
 # Created On: 2009-11-04
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4.QtCore import Qt, QSize
-from PyQt4.QtGui import (QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, QTabWidget, QLabel,
-    QLineEdit, QPlainTextEdit, QAbstractItemView, QSizePolicy, QSpacerItem, QPushButton,
-    QDialogButtonBox, QIcon, QPixmap)
+from PyQt4.QtGui import (
+    QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, QTabWidget, QLabel, QLineEdit, QPlainTextEdit,
+    QAbstractItemView, QSizePolicy, QSpacerItem, QPushButton, QDialogButtonBox, QIcon, QPixmap
+)
 
 from hscommon.trans import trget
 from ..support.item_view import TableView
@@ -29,7 +30,7 @@ class TransactionPanel(Panel):
         ('checkNoEdit', 'checkno'),
         ('notesEdit', 'notes'),
     ]
-    
+
     def __init__(self, mainwindow):
         Panel.__init__(self, mainwindow)
         self.mainwindow = mainwindow
@@ -37,13 +38,13 @@ class TransactionPanel(Panel):
         self._setupUi()
         self.model.view = self
         self.splitTable = SplitTable(model=self.model.split_table, view=self.splitTableView)
-        
+
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
         self.mctButton.clicked.connect(self.model.mct_balance)
         self.addSplitButton.clicked.connect(self.splitTable.model.add)
         self.removeSplitButton.clicked.connect(self.splitTable.model.delete)
-    
+
     def _setupUi(self):
         self.setWindowTitle(tr("Transaction Info"))
         self.resize(462, 329)
@@ -100,22 +101,22 @@ class TransactionPanel(Panel):
         self.notesLayout = QVBoxLayout(self.notesTab)
         self.notesEdit = QPlainTextEdit(self.notesTab)
         self.notesLayout.addWidget(self.notesEdit)
-        self.tabWidget.addTab(self.notesTab,  tr("Notes"))
+        self.tabWidget.addTab(self.notesTab, tr("Notes"))
         self.tabWidget.setCurrentIndex(0)
         self.mainLayout.addWidget(self.tabWidget)
         self.buttonBox = QDialogButtonBox(self)
         self.buttonBox.setOrientation(Qt.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Save)
         self.mainLayout.addWidget(self.buttonBox)
-    
+
     def _loadFields(self):
         Panel._loadFields(self)
         self.tabWidget.setCurrentIndex(0)
-    
+
     #--- model --> view
     def refresh_for_multi_currency(self):
         self.mctButton.setEnabled(self.model.is_multi_currency)
-    
+
 
 if __name__ == '__main__':
     import sys
@@ -125,3 +126,4 @@ if __name__ == '__main__':
     TransactionPanel._setupUi(dialog)
     dialog.show()
     sys.exit(app.exec_())
+

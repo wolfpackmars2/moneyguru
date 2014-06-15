@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-12-30
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 import sys
@@ -20,32 +20,52 @@ from setuptools import setup, Extension
 
 from hscommon import sphinxgen
 from hscommon.plat import ISOSX, ISLINUX, ISWINDOWS
-from hscommon.build import (print_and_do, copy_packages, move_all, copy, hardlink, filereplace,
+from hscommon.build import (
+    print_and_do, copy_packages, move_all, copy, hardlink, filereplace,
     add_to_pythonpath, copy_sysconfig_files_for_embed, build_cocoalib_xibless, OSXAppStructure,
-    build_cocoa_ext, copy_embeddable_python_dylib, collect_stdlib_dependencies)
+    build_cocoa_ext, copy_embeddable_python_dylib, collect_stdlib_dependencies
+)
 from hscommon import loc
 from hscommon.util import ensure_folder, modified_after, delete_files_with_pattern
 
 def parse_args():
     parser = ArgumentParser()
-    parser.add_argument('--clean', action='store_true', dest='clean',
-        help="Clean build folder before building")
-    parser.add_argument('--doc', action='store_true', dest='doc',
-        help="Build only the help file")
-    parser.add_argument('--loc', action='store_true', dest='loc',
-        help="Build only localization")
-    parser.add_argument('--updatepot', action='store_true', dest='updatepot',
-        help="Generate .pot files from source code.")
-    parser.add_argument('--mergepot', action='store_true', dest='mergepot',
-        help="Update all .po files based on .pot files.")
-    parser.add_argument('--cocoamod', action='store_true', dest='cocoamod',
-        help="Build only Cocoa modules")
-    parser.add_argument('--ext', action='store_true', dest='ext',
-        help="Build only ext modules")
-    parser.add_argument('--cocoa-compile', action='store_true', dest='cocoa_compile',
-        help="Build only Cocoa executable")
-    parser.add_argument('--xibless', action='store_true', dest='xibless',
-        help="Build only xibless UIs")
+    parser.add_argument(
+        '--clean', action='store_true', dest='clean',
+        help="Clean build folder before building"
+    )
+    parser.add_argument(
+        '--doc', action='store_true', dest='doc',
+        help="Build only the help file"
+    )
+    parser.add_argument(
+        '--loc', action='store_true', dest='loc',
+        help="Build only localization"
+    )
+    parser.add_argument(
+        '--updatepot', action='store_true', dest='updatepot',
+        help="Generate .pot files from source code."
+    )
+    parser.add_argument(
+        '--mergepot', action='store_true', dest='mergepot',
+        help="Update all .po files based on .pot files."
+    )
+    parser.add_argument(
+        '--cocoamod', action='store_true', dest='cocoamod',
+        help="Build only Cocoa modules"
+    )
+    parser.add_argument(
+        '--ext', action='store_true', dest='ext',
+        help="Build only ext modules"
+    )
+    parser.add_argument(
+        '--cocoa-compile', action='store_true', dest='cocoa_compile',
+        help="Build only Cocoa executable"
+    )
+    parser.add_argument(
+        '--xibless', action='store_true', dest='xibless',
+        help="Build only xibless UIs"
+    )
     args = parser.parse_args()
     return args
 
@@ -147,11 +167,15 @@ def build_cocoa(dev):
     app.copy_executable('cocoa/build/moneyGuru')
     build_help()
     print("Copying resources and frameworks")
-    resources = ['cocoa/dsa_pub.pem', 'build/mg_cocoa.py', 'build/help', 'data/example.moneyguru',
-        'plugin_examples'] + glob.glob('images/*')
+    resources = [
+        'cocoa/dsa_pub.pem', 'build/mg_cocoa.py', 'build/help', 'data/example.moneyguru',
+        'plugin_examples'
+    ] + glob.glob('images/*')
     app.copy_resources(*resources, use_symlinks=dev)
-    app.copy_frameworks('build/Python', 'cocoalib/Sparkle.framework',
-        'psmtabbarcontrol/PSMTabBarControl.framework')
+    app.copy_frameworks(
+        'build/Python', 'cocoalib/Sparkle.framework',
+        'psmtabbarcontrol/PSMTabBarControl.framework'
+    )
     print("Creating the run.py file")
     tmpl = open('run_template_cocoa.py', 'rt').read()
     run_contents = tmpl.replace('{{app_path}}', app.dest)
@@ -270,8 +294,8 @@ set MSSdk=1
         extra_compile_args=['-fno-strict-aliasing'],
     ))
     setup(
-        script_args = ['build_ext', '--inplace'],
-        ext_modules = exts,
+        script_args=['build_ext', '--inplace'],
+        ext_modules=exts,
     )
     move_all('_amount*', op.join('core', 'model'))
 
@@ -279,11 +303,13 @@ def build_cocoa_proxy_module():
     print("Building Cocoa Proxy")
     import objp.p2o
     objp.p2o.generate_python_proxy_code('cocoalib/cocoa/CocoaProxy.h', 'build/CocoaProxy.m')
-    build_cocoa_ext("CocoaProxy", 'cocoalib/cocoa',
-        ['cocoalib/cocoa/CocoaProxy.m', 'build/CocoaProxy.m', 'build/ObjP.m', 
+    build_cocoa_ext(
+        "CocoaProxy", 'cocoalib/cocoa',
+        ['cocoalib/cocoa/CocoaProxy.m', 'build/CocoaProxy.m', 'build/ObjP.m',
             'cocoalib/HSErrorReportWindow.m', 'cocoa/autogen/HSErrorReportWindow_UI.m'],
         ['AppKit', 'CoreServices'],
-        ['cocoalib', 'cocoa/autogen'])
+        ['cocoalib', 'cocoa/autogen']
+    )
 
 def build_cocoa_bridging_interfaces():
     print("Building Cocoa Bridging Interfaces")
@@ -292,14 +318,17 @@ def build_cocoa_bridging_interfaces():
     import objp.const
     add_to_pythonpath('cocoa')
     add_to_pythonpath('cocoalib')
-    from cocoa.inter import (PyGUIObject, GUIObjectView, PyTextField, PyTable, TableView, PyColumns,
-        ColumnsView, PyOutline, PySelectableList, SelectableListView, PyBaseApp, BaseAppView)
+    from cocoa.inter import (
+        PyGUIObject, GUIObjectView, PyTextField, PyTable, TableView, PyColumns,
+        ColumnsView, PyOutline, PySelectableList, SelectableListView, PyBaseApp, BaseAppView
+    )
     # This createPool() business is a bit hacky, but upon importing mg_cocoa, we call
     # install_gettext_trans_under_cocoa() which uses proxy functions (and thus need an active
     # autorelease pool). If we don't do that, we get leak warnings.
     from cocoa import proxy
     proxy.createPool()
-    from mg_cocoa import (PyPanel, PanelView, PyBaseView,
+    from mg_cocoa import (
+        PyPanel, PanelView, PyBaseView,
         PyTableWithDate, PyCompletableEdit, PyDateWidget,
         PyCSVImportOptions, CSVImportOptionsView, PyImportTable, PySplitTable, PyLookup, LookupView,
         PyDateRangeSelector, DateRangeSelectorView, PyImportWindow, ImportWindowView,
@@ -311,9 +340,11 @@ def build_cocoa_bridging_interfaces():
         BaseViewView, PyAccountSheetView, PyTransactionView,
         PyAccountView, AccountViewView, PyScheduleView, PyBudgetView,
         PyGeneralLedgerView, PyDocPropsView, PyEmptyView, PyReadOnlyPluginView, PyMainWindow,
-        MainWindowView, PyDocument, DocumentView, PyMoneyGuruApp)
+        MainWindowView, PyDocument, DocumentView, PyMoneyGuruApp
+    )
     from mg_cocoa import PyPrintView, PySplitPrint, PyTransactionPrint, PyEntryPrint
-    allclasses = [PyGUIObject, PyTextField, PyTable, PyColumns, PyOutline, PySelectableList,
+    allclasses = [
+        PyGUIObject, PyTextField, PyTable, PyColumns, PyOutline, PySelectableList,
         PyBaseApp, PyPanel, PyBaseView, PyTableWithDate, PyCompletableEdit, PyDateWidget,
         PyCSVImportOptions, PyImportTable, PySplitTable, PyLookup, PyDateRangeSelector,
         PyImportWindow, PyFilterBar, PyReport, PyScheduleTable, PyBudgetTable,
@@ -322,16 +353,19 @@ def build_cocoa_bridging_interfaces():
         PyExportPanel, PyPanelWithTransaction, PyTransactionPanel, PySchedulePanel,
         PyAccountSheetView, PyTransactionView, PyAccountView, PyScheduleView, PyBudgetView,
         PyGeneralLedgerView, PyDocPropsView, PyEmptyView, PyReadOnlyPluginView,
-        PyMainWindow, PyDocument, PyMoneyGuruApp]
+        PyMainWindow, PyDocument, PyMoneyGuruApp
+    ]
     proxy.destroyPool()
     allclasses += [PyPrintView, PySplitPrint, PyTransactionPrint, PyEntryPrint]
     for class_ in allclasses:
         objp.o2p.generate_objc_code(class_, 'cocoa/autogen', inherit=True)
-    allclasses = [GUIObjectView, TableView, ColumnsView, SelectableListView, BaseAppView, 
+    allclasses = [
+        GUIObjectView, TableView, ColumnsView, SelectableListView, BaseAppView,
         PanelView, CSVImportOptionsView, LookupView, DateRangeSelectorView, ImportWindowView,
         FilterBarView, ReportView, BudgetPanelView, ExportPanelView, PanelWithTransactionView,
         SchedulePanelView, BaseViewView, AccountViewView, MainWindowView,
-        DocumentView, ChartView]
+        DocumentView, ChartView
+    ]
     clsspecs = [objp.o2p.spec_from_python_class(class_) for class_ in allclasses]
     objp.p2o.generate_python_proxy_code_from_clsspec(clsspecs, 'build/CocoaViews.m')
     py_folder = op.join(cocoa_app().resources, 'py')

@@ -1,7 +1,7 @@
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from hscommon.notify import Listener, Repeater
@@ -14,90 +14,95 @@ class DocumentNotificationsMixin:
     """Mixin for listeners of :class:`.Document` notifications."""
     def account_added(self):
         """Account(s) were added to the document."""
-    
+
     def account_changed(self):
         """Account(s) had some of their properties changed."""
 
     def account_deleted(self):
         """Account(s) were deleted from the document."""
-    
+
     def accounts_excluded(self):
         """Account(s) had their exclusion status changed."""
-    
+
     def budget_changed(self):
         """Budget(s) had some of their properties changed."""
-    
+
     def budget_deleted(self):
         """Budget(s) were deleted from the document."""
-    
+
     def custom_date_range_selected(self):
         """We need to open the custom date range dialog."""
-    
+
     def date_range_changed(self):
         """The current date range was changed."""
 
     def date_range_will_change(self):
         """The current date range is just about to change."""
-    
+
     def document_restoring_preferences(self):
         """Our document is restoring its state from preferences."""
-    
-    def document_changed(self): 
+
+    def document_changed(self):
         """The whole doucment has changed (for example, when loading document)."""
-    
+
     def document_will_close(self):
         """The document is about to be closed."""
-    
+
     def edition_must_stop(self):
         """If any GUI is currently in editing mode, this has to stop now."""
-    
+
     def filter_applied(self):
         """A filter has just been applied to our transactions."""
-    
+
     def first_weekday_changed(self):
         """The First Weekday preferences has been changed."""
-    
+
     def performed_undo_or_redo(self):
         """An undo or redo operation was just performed."""
-    
+
     def saved_custom_ranges_changed(self):
         """A custom date range was just saved into one of the slots."""
-    
+
     def schedule_changed(self):
         """Schedule(s) had some of their properties changed."""
-    
+
     def schedule_deleted(self):
         """Schedule(s) were deleted from the document."""
-    
+
     def transaction_changed(self):
         """Transaction(s) had some of their properties changed."""
-    
+
     def transaction_deleted(self):
         """Transaction(s) were deleted from the document."""
-    
+
     def transactions_imported(self):
         """Transactions have just been imported into the document."""
-    
+
 
 class MainWindowNotificationsMixin:
     """Mixin for listeners of :class:`.MainWindow` notifications."""
     def transactions_selected(self):
         """Transactions were just selected."""
-    
+
     def area_visibility_changed(self):
         """One of the main window's main part had its visibility toggled."""
-    
+
 
 class SheetViewNotificationsMixin:
     """Mixin for listeners of :class:`.AccountSheetView` notifications."""
     def group_expanded_state_changed(self):
         """A group had its expand status toggled."""
-    
+
 
 MESSAGES_EVERYTHING_CHANGED = {'document_changed', 'performed_undo_or_redo'}
-MESSAGES_DOCUMENT_CHANGED = MESSAGES_EVERYTHING_CHANGED | {'account_added', 'account_changed',
-    'account_deleted', 'transaction_changed', 'transaction_deleted', 'transactions_imported',
-    'budget_changed', 'budget_deleted', 'schedule_changed', 'schedule_deleted'}
+MESSAGES_DOCUMENT_CHANGED = (
+    MESSAGES_EVERYTHING_CHANGED |
+    {
+        'account_added', 'account_changed', 'account_deleted', 'transaction_changed',
+        'transaction_deleted', 'transactions_imported', 'budget_changed', 'budget_deleted',
+        'schedule_changed', 'schedule_deleted'
+    }
+)
 
 class HideableObject:
     """An object receiving notifications, but that is disabled when hidden.
@@ -120,11 +125,11 @@ class HideableObject:
     INVALIDATING_MESSAGES = set()
     # Messages that are always passed, even if the object is hidden.
     ALWAYSON_MESSAGES = {'document_restoring_preferences'}
-    
+
     def __init__(self):
         self._hidden = True
         self._invalidated = True
-    
+
     #--- Protected
     def _process_message(self, msg):
         """*Protected*. Process notification ``msg``.
@@ -137,7 +142,7 @@ class HideableObject:
         if self._hidden and (msg in self.INVALIDATING_MESSAGES):
             self._invalidated = True
         return (not self._hidden) or (msg in self.ALWAYSON_MESSAGES)
-    
+
     def _revalidate(self):
         """*Virtual*. Refresh the GUI element's content.
 
@@ -145,7 +150,7 @@ class HideableObject:
         called when we show the element back and that we had received a notification invalidating
         our content.
         """
-    
+
     #--- Public
     def show(self):
         """Show the object and revalidate if necessary.
@@ -157,14 +162,14 @@ class HideableObject:
         if self._invalidated:
             self._revalidate()
             self._invalidated = False
-    
+
     def hide(self):
         """Hide the object.
 
         We will no longer process notifications. We'll refresh when we show up again, if needed.
         """
         self._hidden = True
-    
+
 
 class DocumentGUIObject(Listener, GUIObject, DocumentNotificationsMixin):
     """Base class for listeners of :class:`.Document`.
@@ -189,7 +194,7 @@ class DocumentGUIObject(Listener, GUIObject, DocumentNotificationsMixin):
         self.document = document
         #: Parent :class:`app <.Application>`.
         self.app = document.app
-    
+
 
 class MainWindowGUIObject(DocumentGUIObject, MainWindowNotificationsMixin):
     """Base class for listeners of :class:`.MainWindow`.
@@ -226,7 +231,7 @@ class ViewChild(MainWindowGUIObject, HideableObject):
         HideableObject.__init__(self)
         #: Parent :class:`base view <BaseView>`.
         self.parent_view = parent_view
-    
+
     def _process_message(self, msg):
         # We never want to process messages (such as document_restoring_preferences) when our view
         # is None because it will cause a crash.
@@ -234,29 +239,29 @@ class ViewChild(MainWindowGUIObject, HideableObject):
             return False
         else:
             return HideableObject._process_message(self, msg)
-    
+
     def dispatch(self, msg):
         if self._process_message(msg):
             Listener.dispatch(self, msg)
-    
+
 
 # XXX There's only core.gui.report.Report using this. No need for a base class. Push this back up.
 class RestorableChild(ViewChild):
     def __init__(self, parent_view):
         ViewChild.__init__(self, parent_view)
         self._was_restored = False
-    
+
     def _do_restore_view(self):
         # Virtual. Override this and perform actual restore process. Return True if restoration
         # could be done and False otherwise (for example, if our doc doesn't have a document ID yet
         # or other stuff like that).
         return False
-    
+
     def restore_view(self):
         if not self._was_restored:
             if self._do_restore_view():
                 self._was_restored = True
-    
+
 
 class GUIPanel(GUIObject):
     """GUI Modal dialog.
@@ -280,7 +285,7 @@ class GUIPanel(GUIObject):
         self.document = document
         #: Parent :class:`app <.Application>`.
         self.app = document.app
-    
+
     #--- Virtual
     def _load(self):
         """*Virtual*. Load the panel's content.
@@ -289,14 +294,14 @@ class GUIPanel(GUIObject):
         transaction, selected account, etc.). That's where it does this.
         """
         raise NotImplementedError()
-    
+
     def _new(self):
         """*Virtual*. Load the panel's content with default values for creation.
 
         We're creating a new element with our panel. Load it with appropriate initialization values.
         """
         raise NotImplementedError()
-    
+
     def _save(self):
         """*Virtual*. Save the panel's value into the document.
 
@@ -304,7 +309,7 @@ class GUIPanel(GUIObject):
         into our document.
         """
         raise NotImplementedError()
-    
+
     #--- Overrides
     def load(self, *args, **kwargs):
         """Load the panel's content.
@@ -321,7 +326,7 @@ class GUIPanel(GUIObject):
         self.view.pre_load()
         self._load(*args, **kwargs)
         self.view.post_load()
-    
+
     def new(self):
         """Load the panel's content with default values for creation.
 
@@ -330,7 +335,7 @@ class GUIPanel(GUIObject):
         self.view.pre_load()
         self._new()
         self.view.post_load()
-    
+
     def save(self):
         """Save the panel's value into the document.
 
@@ -339,7 +344,7 @@ class GUIPanel(GUIObject):
         """
         self.view.pre_save()
         self._save()
-    
+
 
 class MainWindowPanel(GUIPanel):
     """A :class:`GUIPanel` with :class:`.MainWindow` as a parent.
@@ -351,7 +356,7 @@ class MainWindowPanel(GUIPanel):
     def __init__(self, mainwindow):
         GUIPanel.__init__(self, mainwindow.document)
         self.mainwindow = mainwindow
-    
+
 
 class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, MainWindowNotificationsMixin):
     """Superclass for main "tabs" controllers.
@@ -371,12 +376,12 @@ class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, 
     #--- model -> view calls:
     # restore_subviews_size()
     #
-    
+
     #: A :class:`.PaneType` constant uniquely identifying our subclass.
     VIEW_TYPE = -1
     #: The class to use as a model when printing a tab. Defaults to :class:`.PrintView`.
     PRINT_VIEW_CLASS = PrintView
-    
+
     def __init__(self, mainwindow):
         Repeater.__init__(self, mainwindow)
         GUIObject.__init__(self)
@@ -389,7 +394,7 @@ class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, 
         #: :class:`.Application`
         self.app = mainwindow.document.app
         self._status_line = ""
-    
+
     #--- Virtual
     def new_item(self):
         """*Virtual*. Create a new item."""
@@ -426,14 +431,14 @@ class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, 
         """*Virtual*. Move select item(s) down in the list, if possible."""
         raise NotImplementedError()
 
-    
+
     #--- Overrides
     def dispatch(self, msg):
         if self._process_message(msg):
             Repeater.dispatch(self, msg)
         else:
             self._repeat_message(msg)
-    
+
     # This has to be call *once* and *right after creation*. The children are set after
     # initialization so that we can pass a reference to self during children's initialization.
     def set_children(self, children):
@@ -441,22 +446,22 @@ class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, 
         for child in children:
             child.connect()
         self.restore_subviews_size()
-    
+
     def show(self):
         HideableObject.show(self)
         for child in self._children:
             child.show()
-    
+
     def hide(self):
         HideableObject.hide(self)
         for child in self._children:
             child.hide()
-    
+
     #--- Public
     @classmethod
     def can_perform(cls, action_name):
         """Returns whether our view subclass can perform ``action_name``.
-        
+
         Base views have a specific set of actions they can perform, and the way they perform these
         actions is defined by the subclasses. However, not all views can perform all actions.
         You can use this method to determine whether a view can perform an action. It does so by
@@ -467,13 +472,13 @@ class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, 
         mymethod = getattr(cls, action_name, None)
         assert mymethod is not None
         return mymethod is not getattr(BaseView, action_name, None)
-    
+
     def restore_subviews_size(self):
         """*Virtual*. Restore subviews size from preferences."""
-    
+
     def save_preferences(self):
         """*Virtual*. Save subviews size to preferences."""
-    
+
     #--- Properties
     @property
     def status_line(self):
@@ -482,19 +487,19 @@ class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, 
         This is displayed at the bottom of the main window in the UI.
         """
         return self._status_line
-    
+
     @status_line.setter
     def status_line(self, value):
         self._status_line = value
         if not self._hidden:
             self.mainwindow.update_status_line()
-    
+
     #--- Notifications
     def document_restoring_preferences(self):
         self.restore_subviews_size()
         if self.view: # Some BaseView don't have a view
             self.view.restore_subviews_size()
-    
+
 
 class LinkedSelectableList(GUISelectableList):
     """Selectable list performing an action whenever the selection changes.
@@ -503,11 +508,11 @@ class LinkedSelectableList(GUISelectableList):
     is a function taking a single ``index`` argument. This function is called whenever our list's
     selection changes, and that newly selected index is passed to our ``setfunc``.
     """
-    def __init__(self,  items=None, setfunc=None):
+    def __init__(self, items=None, setfunc=None):
         # setfunc(newindex)
         GUISelectableList.__init__(self, items=items)
         self.setfunc = setfunc
-    
+
     def _update_selection(self):
         GUISelectableList._update_selection(self)
         if self.setfunc is not None:

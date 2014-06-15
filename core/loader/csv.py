@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-01-18
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 import csv
@@ -31,13 +31,14 @@ MERGABLE_FIELDS = {CsvField.Description, CsvField.Payee}
 
 class Loader(base.Loader):
     FILE_ENCODING = 'latin-1'
+
     def __init__(self, default_currency, default_date_format=None):
         base.Loader.__init__(self, default_currency, default_date_format)
         self.columns = []
         self.lines = []
         self.dialect = None # last used dialect
         self.rawlines = [] # last prepared file
-    
+
     #--- Private
     @staticmethod
     def _merge_columns(columns, lines):
@@ -56,7 +57,7 @@ class Loader(base.Loader):
                 lines[line_index] = new_line
             for index_to_remove in reversed(indexes[1:]):
                 del columns[index_to_remove]
-    
+
     def _prepare(self, infile):
         # Comment lines can confuse the sniffer. We remove them
         content = infile.read()
@@ -78,11 +79,12 @@ class Loader(base.Loader):
             delim, count = max(delim2count.items(), key=lambda x: x[1])
             if count / len(lines) < 1.5:
                 raise FileFormatError()
+
             class ManualDialect(csv.excel):
                 delimiter = delim
             self.dialect = ManualDialect
         self.rawlines = lines
-    
+
     def _scan_lines(self, encoding=None):
         rawlines = self.rawlines
         if encoding and encoding != self.FILE_ENCODING:
@@ -100,7 +102,7 @@ class Loader(base.Loader):
         for line in (l for l in lines if len(l) < maxlen):
             line += [''] * (maxlen - len(line))
         self.lines = lines
-    
+
     def _parse_date_format(self, lines, ci):
         date_index = ci[CsvField.Date]
         lines_to_load = []
@@ -117,7 +119,7 @@ class Loader(base.Loader):
         if date_format is None:
             raise FileLoadError(tr("The Date column has been set on a column that doesn't contain dates."))
         return date_format, lines_to_load
-    
+
     def _check_amount_values(self, lines, ci):
         for line in lines:
             for attr in [CsvField.Amount, CsvField.Increase, CsvField.Decrease]:
@@ -129,12 +131,12 @@ class Loader(base.Loader):
                     self.parse_amount(value, self.default_currency)
                 except ValueError:
                     raise FileLoadError(tr("The Amount column has been set on a column that doesn't contain amounts."))
-    
+
     #--- Override
     def _parse(self, infile):
         self._prepare(infile)
         self._scan_lines()
-    
+
     def _load(self):
         lines = self.lines[:]
         colcount = len(lines[0]) if lines else 0
@@ -167,8 +169,8 @@ class Loader(base.Loader):
                     value = value.strip()
                 if value:
                     setattr(self.transaction_info, attr, value)
-    
+
     #--- Public
     def rescan(self, encoding=None):
         self._scan_lines(encoding=encoding)
-    
+

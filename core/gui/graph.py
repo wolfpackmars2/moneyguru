@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-07-06
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from datetime import date
@@ -31,22 +31,22 @@ class GraphContext:
         self.yfactor = yfactor
         self.xoffset = xoffset
         self.yoffset = yoffset
-    
+
     def trpoint(self, p):
         x, y = p
         x += self.xoffset
         y += self.yoffset
         return Point(x, y)
-    
+
     def trpoints(self, pts):
         return [self.trpoint(p) for p in pts]
-    
+
     def trrect(self, r):
         x, y, w, h = r
         x += self.xoffset
         y += self.yoffset
         return Rect(x, y, w, h)
-    
+
 
 class Graph(Chart):
     PADDING = 16
@@ -55,12 +55,12 @@ class Graph(Chart):
     XLABELS_PADDING = 3
     YLABELS_PADDING = 8
     YAXIS_EXTRA_SPACE_ON_NEGATIVE = 3
-    
+
     #--- Private
     def _offset_xpos(self, xpos):
         return xpos - self._xoffset
-    
-    #--- Public    
+
+    #--- Public
     def compute_x_axis(self, min_date=None, max_date=None):
         # By default, xmin and xmax are determined by date range's start and end, but you can
         # override that by specifying min_date and max_date.
@@ -103,6 +103,7 @@ class Graph(Chart):
         ydelta = float(ymax - ymin)
         # our minimum yfactor is 100 or else the graphs are too squeezed with low datapoints
         yfactor = max(100, 10 ** int(log10(ydelta)))
+
         # We add/remove 0.05 so that datapoints being exactly on yfactors get some wiggle room.
         def adjust(amount, by):
             if amount == 0:
@@ -132,13 +133,13 @@ class Graph(Chart):
         self.compute_x_axis()
         self.compute_data()
         self.compute_y_axis()
-    
+
     def draw_graph(self, context):
         pass
-    
+
     def draw_graph_after_axis(self, context):
         pass
-    
+
     def draw_chart(self):
         if not hasattr(self, 'xmax'): # we haven't computed yet
             return
@@ -166,9 +167,9 @@ class Graph(Chart):
         xoffset = graph_rect.left
         yoffset = -(graph_bottom - graph_rect.y)
         context = GraphContext(xfactor, yfactor, xoffset, yoffset)
-        
+
         self.draw_graph(context)
-        
+
         # X/Y axis
         p1 = context.trpoint(Point(0, graph_bottom))
         p2 = context.trpoint(Point(graph_width, graph_bottom))
@@ -179,7 +180,7 @@ class Graph(Chart):
             p1 = context.trpoint(Point(0, 0))
             p2 = context.trpoint(Point(graph_width, 0))
             self.view.draw_line(p1, p2, PenID.Axis)
-        
+
         # X tickmarks
         tickBottomY = graph_bottom - self.TICKMARKS_LENGTH
         for tickPos in self.xtickmarks:
@@ -187,7 +188,7 @@ class Graph(Chart):
             p1 = context.trpoint(Point(tickX, graph_bottom))
             p2 = context.trpoint(Point(tickX, tickBottomY))
             self.view.draw_line(p1, p2, PenID.Axis)
-        
+
         # Y tickmarks
         tickLeftX = graph_left - self.TICKMARKS_LENGTH
         for tickPos in self.ytickmarks:
@@ -195,7 +196,7 @@ class Graph(Chart):
             p1 = context.trpoint(Point(graph_left, tickY))
             p2 = context.trpoint(Point(tickLeftX, tickY))
             self.view.draw_line(p1, p2, PenID.Axis)
-        
+
         # X Labels
         labelY = graph_bottom - labels_height - self.XLABELS_PADDING
         for label in self.xlabels:
@@ -204,7 +205,7 @@ class Graph(Chart):
             labelX = (label['pos'] * xfactor) - (labelWidth / 2)
             text_rect = context.trrect(Rect(labelX, labelY, labelWidth, labels_height))
             self.view.draw_text(labelText, text_rect, FontID.AxisLabel)
-        
+
         # Y Labels
         for label in self.ylabels:
             labelText = label['text']
@@ -213,12 +214,12 @@ class Graph(Chart):
             labelY = (label['pos'] * yfactor) - (labels_height / 2)
             text_rect = context.trrect(Rect(labelX, labelY, labelWidth, labels_height))
             self.view.draw_text(labelText, text_rect, FontID.AxisLabel)
-        
+
         # Title
         self.view.draw_text(title, Rect(0, titley, view_rect.w, title_height), FontID.Title)
-        
+
         self.draw_graph_after_axis(context)
-    
+
     def draw_axis_overlay_x(self, context):
         graph_bottom = round(self.ymin * context.yfactor)
         if graph_bottom < 0:
@@ -229,7 +230,7 @@ class Graph(Chart):
             p1 = context.trpoint(Point(tickX, graph_bottom))
             p2 = context.trpoint(Point(tickX, graph_top))
             self.view.draw_line(p1, p2, PenID.AxisOverlay)
-    
+
     def draw_axis_overlay_y(self, context):
         graph_left = round(self.xmin * context.xfactor)
         graph_right = round(self.xmax * context.xfactor)
@@ -238,4 +239,4 @@ class Graph(Chart):
             p1 = context.trpoint(Point(graph_left, tickY))
             p2 = context.trpoint(Point(graph_right, tickY))
             self.view.draw_line(p1, p2, PenID.AxisOverlay)
-    
+

@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-12-10
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4 import QtGui
@@ -22,11 +22,11 @@ class ScheduleScopeDialog(QDialog):
         QDialog.__init__(self, None, Qt.WindowTitleHint | Qt.WindowSystemMenuHint)
         self._setupUi()
         self._result = ScheduleScope.Local
-        
+
         self.cancelButton.clicked.connect(self.cancelClicked)
         self.globalScopeButton.clicked.connect(self.globalScopeClicked)
         self.localScopeButton.clicked.connect(self.localScopeClicked)
-    
+
     def _setupUi(self):
         self.setWindowTitle(tr("Schedule Modification Scope"))
         self.resize(333, 133)
@@ -38,7 +38,10 @@ class ScheduleScopeDialog(QDialog):
         self.label.setFont(font)
         self.label.setWordWrap(True)
         self.verticalLayout.addWidget(self.label)
-        self.label_2 = QtGui.QLabel(tr("You can force global scope (in other words, changing all future occurrences) by holding Shift when you perform the change."))
+        self.label_2 = QtGui.QLabel(tr(
+            "You can force global scope (in other words, changing all future occurrences) by "
+            "holding Shift when you perform the change."
+        ))
         self.label_2.setWordWrap(True)
         self.verticalLayout.addWidget(self.label_2)
         self.horizontalLayout = QtGui.QHBoxLayout()
@@ -55,20 +58,20 @@ class ScheduleScopeDialog(QDialog):
         self.localScopeButton.setDefault(True)
         self.horizontalLayout.addWidget(self.localScopeButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
-    
+
     def cancelClicked(self):
         self._result = ScheduleScope.Cancel
         self.accept()
-    
+
     def globalScopeClicked(self):
         self._result = ScheduleScope.Global
         self.accept()
-    
+
     def localScopeClicked(self):
         self._result = ScheduleScope.Local
         self.accept()
-    
+
     def queryForScope(self):
         self.exec_()
         return self._result
-    
+

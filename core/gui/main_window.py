@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-07-06
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 import logging
@@ -66,17 +66,17 @@ class ViewPane:
     def __init__(self, view, label):
         self.view = view
         self.label = label
-    
+
     def __repr__(self):
         return '<ViewPane {}>'.format(self.label)
-    
+
     @property
     def account(self):
         if self.view.VIEW_TYPE == PaneType.Account:
             return self.view.account
         else:
             return None
-    
+
 
 class MainWindow(Repeater, GUIObject):
     #--- model -> view calls:
@@ -90,7 +90,7 @@ class MainWindow(Repeater, GUIObject):
     # show_message(message)
     # view_closed(index)
     # update_area_visibility()
-    
+
     def __init__(self, document):
         Repeater.__init__(self, document)
         GUIObject.__init__(self)
@@ -103,12 +103,12 @@ class MainWindow(Repeater, GUIObject):
         self._account2visibleentries = {}
         self.panes = []
         self.hidden_areas = set()
-        
+
         self.search_field = SearchField(self)
         self.daterange_selector = DateRangeSelector(self)
         self.account_lookup = AccountLookup(self)
         self.completion_lookup = CompletionLookup(self)
-        
+
         self.account_panel = AccountPanel(self)
         self.transaction_panel = TransactionPanel(self)
         self.mass_edit_panel = MassEditionPanel(self)
@@ -120,16 +120,16 @@ class MainWindow(Repeater, GUIObject):
 
         self.csv_options = CSVOptions(self)
         self.import_window = ImportWindow(self)
-        
+
         msgs = MESSAGES_DOCUMENT_CHANGED | {'filter_applied', 'date_range_changed'}
         self.bind_messages(msgs, self._invalidate_visible_entries)
-    
+
     #--- Private
     def _add_pane(self, pane):
         self.panes.append(pane)
         self.view.refresh_panes()
         self.current_pane_index = len(self.panes) - 1
-    
+
     def _change_current_pane(self, pane):
         if self._current_pane is pane:
             return
@@ -139,7 +139,7 @@ class MainWindow(Repeater, GUIObject):
         self._current_pane.view.show()
         self.view.change_current_pane()
         self.update_status_line()
-    
+
     def _close_irrelevant_account_panes(self):
         indexes_to_close = []
         for index, pane in enumerate(self.panes):
@@ -149,19 +149,19 @@ class MainWindow(Repeater, GUIObject):
             self.select_pane_of_type(PaneType.NetWorth)
         for index in reversed(indexes_to_close):
             self.close_pane(index)
-    
+
     def _create_pane(self, pane_type, account=None):
         view = self._get_view_for_pane_type(pane_type, account)
         if pane_type == PaneType.Account:
             return ViewPane(view, account.name)
         else:
             return ViewPane(view, PANETYPE2LABEL[pane_type])
-    
+
     def _create_pane_from_plugin(self, plugin):
         plugin_inst = plugin(self)
         plugin_inst.view.connect()
         return ViewPane(plugin_inst.view, plugin_inst.NAME)
-    
+
     def _get_view_for_pane_type(self, pane_type, account):
         if pane_type == PaneType.Account: # we don't cache Account panes
             result = AccountView(self, account)
@@ -190,21 +190,23 @@ class MainWindow(Repeater, GUIObject):
             raise ValueError("Cannot create view of type {}".format(pane_type))
         result.connect()
         return result
-    
+
     def _invalidate_visible_entries(self):
         self._account2visibleentries = {}
-    
+
     def _perform_if_possible(self, action_name):
         current_view = self._current_pane.view
         if current_view.can_perform(action_name):
             getattr(current_view, action_name)()
-    
+
     def _restore_default_panes(self):
-        pane_types = [PaneType.NetWorth, PaneType.Profit, PaneType.Transaction,
-            PaneType.Schedule, PaneType.Budget]
+        pane_types = [
+            PaneType.NetWorth, PaneType.Profit, PaneType.Transaction,
+            PaneType.Schedule, PaneType.Budget
+        ]
         pane_data = list(zip(pane_types, [None] * len(pane_types)))
         self._set_panes(pane_data)
-    
+
     def _restore_opened_panes(self):
         stored_panes = self.document.get_default(Preference.OpenedPanes)
         logging.debug('Restoring panes from data %r', stored_panes)
@@ -229,7 +231,7 @@ class MainWindow(Repeater, GUIObject):
             selected_pane_index = self.document.get_default(Preference.SelectedPane)
             if selected_pane_index is not None:
                 self.current_pane_index = selected_pane_index
-    
+
     def _save_preferences(self):
         opened_panes = []
         for pane in self.panes:
@@ -247,7 +249,7 @@ class MainWindow(Repeater, GUIObject):
         window_frame = self.view.save_window_frame()
         if window_frame:
             self.document.set_default(Preference.WindowFrame, list(window_frame))
-    
+
     def _set_panes(self, pane_data):
         # Replace opened panes with new panes from `pane_data`, which is a [(pane_type, arg)]
         self._current_pane = None
@@ -269,17 +271,17 @@ class MainWindow(Repeater, GUIObject):
                     self.panes.append(self._create_pane(PaneType.NetWorth))
         self.view.refresh_panes()
         self.current_pane_index = 0
-    
+
     def _set_current_pane(self, newpane):
         index = self.current_pane_index
         self.panes[index] = newpane
         self.view.refresh_panes()
         self._change_current_pane(newpane)
-    
+
     def _update_area_visibility(self):
         self.notify('area_visibility_changed')
         self.view.update_area_visibility()
-    
+
     def _visible_entries_for_account(self, account):
         date_range = self.document.date_range
         entries = [e for e in account.entries if e.date in date_range]
@@ -300,14 +302,16 @@ class MainWindow(Repeater, GUIObject):
             else:
                 entries = [e for e in entries if e.amount < 0]
         elif filter_type is FilterType.Transfer:
-            entries = [e for e in entries if
-                any(s.account is not None and s.account.is_balance_sheet_account() for s in e.splits)]
+            entries = [
+                e for e in entries if
+                any(s.account is not None and s.account.is_balance_sheet_account() for s in e.splits)
+            ]
         elif filter_type is FilterType.Reconciled:
             entries = [e for e in entries if e.reconciled]
         elif filter_type is FilterType.NotReconciled:
             entries = [e for e in entries if not e.reconciled]
         return entries
-    
+
     #--- Override
     def _view_updated(self):
         self.daterange_selector.refresh()
@@ -320,7 +324,7 @@ class MainWindow(Repeater, GUIObject):
             self.notify('document_restoring_preferences')
         if not self.panes:
             self._restore_default_panes()
-    
+
     #--- Public
     def close_pane(self, index):
         if self.pane_count == 1: # don't close the last pane
@@ -342,35 +346,35 @@ class MainWindow(Repeater, GUIObject):
         if newindex != self._current_pane_index:
             self._current_pane_index = newindex
             self.view.change_current_pane()
-    
+
     def delete_item(self):
         self._perform_if_possible('delete_item')
-    
+
     def duplicate_item(self):
         self._perform_if_possible('duplicate_item')
-    
+
     def edit_item(self):
         try:
             self._perform_if_possible('edit_item')
         except OperationAborted:
             pass
-    
+
     def edit_selected_transactions(self):
         editable_txns = [txn for txn in self.selected_transactions if not isinstance(txn, BudgetSpawn)]
         if len(editable_txns) > 1:
             self.mass_edit_panel.load()
         elif len(editable_txns) == 1:
             self.transaction_panel.load()
-    
+
     def export(self):
         self.export_panel.load()
-    
+
     def jump_to_account(self):
         self.account_lookup.show()
-    
+
     def load_parsed_file_for_import(self):
         """Load a parsed file for import and trigger the opening of the Import window.
-        
+
         When the document's ``loader`` has finished parsing (either after having done CSV
         configuration or directly after :meth:`parse_file_for_import`), call this method to load the
         parsed data into model instances, ready to be shown in the Import window.
@@ -386,7 +390,7 @@ class MainWindow(Repeater, GUIObject):
         if current_view.VIEW_TYPE in {PaneType.Transaction, PaneType.Account}:
             if not self.selected_transactions:
                 return
-            # There's no test case for this, but select_pane_of_type() must happen before 
+            # There's no test case for this, but select_pane_of_type() must happen before
             # new_schedule_from_transaction() or else the sctable's selection upon view switch will
             # overwrite our selection.
             self.select_pane_of_type(PaneType.Schedule)
@@ -395,38 +399,38 @@ class MainWindow(Repeater, GUIObject):
             schedule = Recurrence(ref, RepeatType.Monthly, 1)
             self.selected_schedules = [schedule]
             self.edit_item()
-    
+
     def move_down(self):
         self._perform_if_possible('move_down')
-    
+
     def move_up(self):
         self._perform_if_possible('move_up')
-    
+
     def move_pane(self, pane_index, dest_index):
         pane = self.panes[pane_index]
         del self.panes[pane_index]
         self.panes.insert(dest_index, pane)
         self.current_pane_index = self.panes.index(self._current_pane)
         self.view.refresh_panes()
-    
+
     def navigate_back(self):
         self._perform_if_possible('navigate_back')
-    
+
     def new_item(self):
         try:
             self._perform_if_possible('new_item')
         except OperationAborted as e:
             if e.message:
                 self.view.show_message(e.message)
-    
+
     def new_group(self):
         self._perform_if_possible('new_group')
-    
+
     def new_tab(self):
         self.panes.append(self._create_pane(PaneType.Empty))
         self.view.refresh_panes()
         self.current_pane_index = len(self.panes) - 1
-    
+
     def open_account(self, account):
         if account is not None:
             # Try to find a suitable pane, or add a new one
@@ -437,21 +441,21 @@ class MainWindow(Repeater, GUIObject):
                 self.current_pane_index = index
         elif self._current_pane.view.VIEW_TYPE == PaneType.Account:
             self.select_pane_of_type(PaneType.NetWorth)
-    
+
     def pane_label(self, index):
         pane = self.panes[index]
         return pane.label
-    
+
     def pane_type(self, index):
         pane = self.panes[index]
         return pane.view.VIEW_TYPE
-    
+
     def pane_view(self, index):
         return self.panes[index].view
-    
+
     def parse_file_for_import(self, filename):
         """Parses ``filename`` in preparation for importing.
-        
+
         Opens and parses ``filename`` and try to determine its format by successively trying to read
         is as a moneyGuru file, an OFX, a QIF and finally a CSV. Once parsed, take the appropriate
         action for the file which is either to show the CSV options window or to call
@@ -484,26 +488,26 @@ class MainWindow(Repeater, GUIObject):
             self._add_pane(self._create_pane(pane_type))
         else:
             self.current_pane_index = index
-    
+
     def select_next_view(self):
         if self.current_pane_index == len(self.panes) - 1:
             return
         self.current_pane_index += 1
-    
+
     def select_previous_view(self):
         if self.current_pane_index == 0:
             return
         self.current_pane_index -= 1
-    
+
     def set_current_pane_type(self, pane_type):
         self._set_current_pane(self._create_pane(pane_type))
-    
+
     def set_current_pane_with_plugin(self, plugin):
         self._set_current_pane(self._create_pane_from_plugin(plugin))
-    
+
     def show_account(self):
         """Shows the currently selected account in the Account view.
-        
+
         If a sheet is selected, the selected account will be shown.
         If the Transaction or Account view is selected, the related account (From, To, Transfer)
         of the selected transaction will be shown.
@@ -511,27 +515,27 @@ class MainWindow(Repeater, GUIObject):
         current_view = self._current_pane.view
         if hasattr(current_view, 'show_account'):
             current_view.show_account()
-    
+
     def show_message(self, message):
         self.view.show_message(message)
-    
+
     def toggle_area_visibility(self, area):
         if area in self.hidden_areas:
             self.hidden_areas.remove(area)
         else:
             self.hidden_areas.add(area)
         self._update_area_visibility()
-    
+
     def update_status_line(self):
         self.view.refresh_status_line()
-    
+
     def visible_entries_for_account(self, account):
         if account is None:
             return []
         if account not in self._account2visibleentries:
             self._account2visibleentries[account] = self._visible_entries_for_account(account)
         return self._account2visibleentries[account]
-    
+
     #Column menu
     def column_menu_items(self):
         # Returns a list of (display_name, marked) items for each optional column in the current
@@ -539,17 +543,17 @@ class MainWindow(Repeater, GUIObject):
         if not hasattr(self._current_pane.view, 'columns'):
             return None
         return self._current_pane.view.columns.menu_items()
-    
+
     def toggle_column_menu_item(self, index):
         if not hasattr(self._current_pane.view, 'columns'):
             return None
         self._current_pane.view.columns.toggle_menu_item(index)
-    
+
     #--- Properties
     @property
     def current_pane_index(self):
         return self._current_pane_index
-    
+
     @current_pane_index.setter
     def current_pane_index(self, value):
         if value == self._current_pane_index:
@@ -559,79 +563,79 @@ class MainWindow(Repeater, GUIObject):
         pane = self.panes[value]
         self._current_pane_index = value
         self._change_current_pane(pane)
-    
+
     @property
     def pane_count(self):
         return len(self.panes)
-    
+
     @property
     def selected_schedules(self):
         return self._selected_schedules
-    
+
     @selected_schedules.setter
     def selected_schedules(self, schedules):
         self._selected_schedules = schedules
-    
+
     @property
     def selected_budgets(self):
         return self._selected_budgets
-    
+
     @selected_budgets.setter
     def selected_budgets(self, budgets):
         self._selected_budgets = budgets
-    
+
     @property
     def selected_transactions(self):
         return self._selected_transactions
-    
+
     @selected_transactions.setter
     def selected_transactions(self, transactions):
         self._selected_transactions = transactions
         self.notify('transactions_selected')
-    
+
     @property
     def explicitly_selected_transactions(self):
         return self._explicitly_selected_transactions
-    
+
     @explicitly_selected_transactions.setter
     def explicitly_selected_transactions(self, transactions):
         self._explicitly_selected_transactions = transactions
         self.selected_transactions = transactions
-    
+
     @property
     def status_line(self):
         return self._current_pane.view.status_line
-    
+
     #--- Event callbacks
     def _undo_stack_changed(self):
         self.view.refresh_undo_actions()
-    
+
     account_added = _undo_stack_changed
-    
+
     def account_changed(self):
         self._undo_stack_changed()
         tochange = first(p for p in self.panes if p.account is not None and p.account.name != p.label)
         if tochange is not None:
             tochange.label = tochange.account.name
             self.view.refresh_panes()
-    
+
     account_deleted = _undo_stack_changed
     budget_changed = _undo_stack_changed
     budget_deleted = _undo_stack_changed
-    
+
     def custom_date_range_selected(self):
         self.custom_daterange_panel.load()
-    
+
     def date_range_will_change(self):
         self.daterange_selector.remember_current_range()
-    
+
     def date_range_changed(self):
         self.daterange_selector.refresh()
-    
+
     def document_changed(self):
         self._close_irrelevant_account_panes()
         self._undo_stack_changed()
-    
+
     def document_will_close(self):
         self._save_preferences()
         for pane in self.panes:
@@ -643,7 +647,7 @@ class MainWindow(Repeater, GUIObject):
             # risk getting view refresh bugs under Qt because in there, closing a document doesn't
             # always mean closing the window (unlike under Cocoa).
             self._current_pane.view.hide()
-    
+
     def document_restoring_preferences(self):
         window_frame = self.document.get_default(Preference.WindowFrame)
         if window_frame:
@@ -651,27 +655,28 @@ class MainWindow(Repeater, GUIObject):
         self._restore_opened_panes()
         self.hidden_areas = set(self.document.get_default(Preference.HiddenAreas, fallback_value=[]))
         self._update_area_visibility()
-    
+
     def filter_applied(self):
-        if self.document.filter_string and self._current_pane.view.VIEW_TYPE not in {PaneType.Transaction, PaneType.Account}:
+        is_txn_pane = self._current_pane.view.VIEW_TYPE in {PaneType.Transaction, PaneType.Account}
+        if self.document.filter_string and not is_txn_pane:
             self.select_pane_of_type(PaneType.Transaction, clear_filter=False)
         self.search_field.refresh()
-    
+
     def performed_undo_or_redo(self):
         self._close_irrelevant_account_panes()
         self.view.refresh_undo_actions()
-    
+
     def saved_custom_ranges_changed(self):
         self.daterange_selector.refresh_custom_ranges()
-    
+
     schedule_changed = _undo_stack_changed
     schedule_deleted = _undo_stack_changed
     transaction_changed = _undo_stack_changed
-    
+
     def transaction_deleted(self):
         self._explicitly_selected_transactions = []
         self._selected_transactions = []
         self._close_irrelevant_account_panes() # after an auto-clean
         self.view.refresh_undo_actions()
-    
+
     transaction_imported = _undo_stack_changed

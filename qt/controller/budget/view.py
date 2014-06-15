@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-11-21
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4 import QtGui
@@ -17,7 +17,7 @@ class BudgetView(BaseView):
         self._setupUi()
         self.btable = BudgetTable(model=self.model.table, view=self.tableView)
         self._setupColumns() # Can only be done after the model has been connected
-    
+
     def _setupUi(self):
         self.resize(400, 300)
         self.verticalLayout = QtGui.QVBoxLayout(self)
@@ -31,16 +31,16 @@ class BudgetView(BaseView):
         self.tableView.verticalHeader().setVisible(False)
         self.tableView.verticalHeader().setDefaultSectionSize(18)
         self.verticalLayout.addWidget(self.tableView)
-    
+
     def _setupColumns(self):
         h = self.tableView.horizontalHeader()
         h.setMovable(True) # column drag & drop reorder
-    
+
     #--- QWidget override
     def setFocus(self):
         self.btable.view.setFocus()
-    
+
     #--- Public
     def fitViewsForPrint(self, viewPrinter):
         viewPrinter.fitTable(self.btable)
-    
+

@@ -1,7 +1,7 @@
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from datetime import timedelta, date
@@ -26,7 +26,7 @@ class BalanceSheet(Report):
         Column('delta_perc', display=trcol("Change %"), visible=False, optional=True),
         Column('budgeted', display=trcol("Budgeted"), optional=True),
     ]
-    
+
     #--- Override
     def _compute_account_node(self, node):
         account = node.account
@@ -54,7 +54,7 @@ class BalanceSheet(Report):
         node.budgeted = self.document.format_amount(budgeted_amount)
         node.delta = self.document.format_amount(delta)
         node.delta_perc = get_delta_perc(delta, start_amount)
-    
+
     def _make_node(self, name):
         node = Report._make_node(self, name)
         node.start = ''
@@ -66,7 +66,7 @@ class BalanceSheet(Report):
         node.end_amount = 0
         node.budgeted_amount = 0
         return node
-    
+
     def _refresh(self):
         self.clear()
         self.assets = self.make_type_node(tr('ASSETS'), AccountType.Asset)
@@ -87,11 +87,10 @@ class BalanceSheet(Report):
         self.append(self.assets)
         self.append(self.liabilities)
         self.append(self.net_worth)
-    
+
     #--- Public
     def make_total_node(self, parent, name):
         node = Report.make_total_node(self, name)
-        currency = self.document.default_currency
         parent.start_amount = sum(child.start_amount for child in parent)
         parent.end_amount = sum(child.end_amount for child in parent)
         parent.budgeted_amount = sum(child.budgeted_amount for child in parent)
@@ -102,4 +101,4 @@ class BalanceSheet(Report):
         node.delta = parent.delta = self.document.format_amount(delta_amount)
         node.delta_perc = parent.delta_perc = get_delta_perc(delta_amount, parent.start_amount)
         return node
-    
+

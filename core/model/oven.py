@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-09-14
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from collections import defaultdict
@@ -19,9 +19,9 @@ from .budget import BudgetSpawn
 
 class Oven:
     """Computes raw data from transactions, schedules, budgets.
-    
+
     Two main things the oven :ref:`cooks <cooking>`:
-    
+
     1. Spawns schedule and budget transactions and insert them into its cooked result,
        :attr:`transactions`. This :class:`.TransactionList` is what is then used by the rest of the
        app to display transactions and account entries.
@@ -37,7 +37,7 @@ class Oven:
         #: List of cooked transactions, containing :class:`.Transaction` instances mixed with
         #: schedule and budget :class:`.Spawn` instances (in date/position order).
         self.transactions = []
-    
+
     def _budget_spawns(self, until_date, schedule_spawns):
         if not self._budgets:
             return []
@@ -55,10 +55,11 @@ class Oven:
             spawns = [spawn for spawn in spawns if not spawn.is_null]
             result += spawns
         return result
-    
+
     def _cook_reconciliation_balances(self, splits, start_balance):
         balance = start_balance
         result = {} # split: reconciliation balance
+
         def recdate_key(s):
             t = s.transaction
             rdate = s.reconciliation_date
@@ -71,7 +72,7 @@ class Oven:
                 balance += split.amount
             result[split] = balance
         return result
-    
+
     def _cook_splits(self, account, splits):
         entries = account.entries
         balance = entries.balance()
@@ -85,21 +86,21 @@ class Oven:
                 balance += converted_amount
             reconciled_balance = split2reconciledbal[split]
             entries.add_entry(Entry(split, amount, balance, reconciled_balance, balance_with_budget))
-    
+
     def continue_cooking(self, until_date):
         """Cooks from where we stop last time until ``until_date``.
-        
+
         Cooking dates are often determined by the current date range, so when we advance or enlarge
         our date range, we usually need to cook a bit further than where we stopped last time.
-        
+
         This is what this method is about.
         """
         if until_date > self._cooked_until:
             self.cook(self._cooked_until, until_date)
-    
+
     def cook(self, from_date=None, until_date=None):
         """Cooks raw data into :attr:`transactions`.
-        
+
         :param from_date: when set, saves calculation time by re-using existing cooked transactions.
         :type from_date: ``datetime.date``
         :param until_date: because of recurrence, we must always have a date at which we stop
@@ -152,4 +153,4 @@ class Oven:
             self._cook_splits(account, splits)
         self.transactions += tocook
         self._cooked_until = until_date
-    
+

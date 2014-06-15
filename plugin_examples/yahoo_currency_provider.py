@@ -31,7 +31,7 @@ class YahooProviderPlugin(CurrencyProviderPlugin):
     # resolve.
     def get_currency_rate_today(self, currency_code):
         # the result of this request is a single CSV line like this:
-        # "CADBHD=X",0.3173,"11/7/2008","5:11pm",N/A,N/A,N/A,N/A,N/A 
+        # "CADBHD=X",0.3173,"11/7/2008","5:11pm",N/A,N/A,N/A,N/A,N/A
         try:
             url = 'http://download.finance.yahoo.com/d/quotes.csv?s=%sCAD=X&f=sl1d1t1c1ohgv&e=.csv' % currency_code
             with urlopen(url, timeout=10) as response:

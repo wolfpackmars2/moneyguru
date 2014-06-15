@@ -1,18 +1,20 @@
 # Created By: Virgil Dupras
 # Created On: 2009-10-31
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 import os.path as op
 
 from PyQt4 import QtGui
 from PyQt4.QtCore import Qt, QProcess, QUrl, QRect, QSize
-from PyQt4.QtGui import (QMainWindow, QPrintDialog, QMessageBox, QIcon, QPixmap,
-    QDesktopServices, QTabBar, QSizePolicy, QHBoxLayout, QPushButton, QMenu, QAction, QMenuBar,
-    QShortcut, QKeySequence, QFileDialog, QApplication)
+from PyQt4.QtGui import (
+    QMainWindow, QPrintDialog, QMessageBox, QIcon, QPixmap, QDesktopServices, QTabBar, QSizePolicy,
+    QHBoxLayout, QPushButton, QMenu, QAction, QMenuBar, QShortcut, QKeySequence, QFileDialog,
+    QApplication
+)
 
 from qtlib.recent import Recent
 from qtlib.search_edit import SearchEdit
@@ -83,9 +85,9 @@ class MainWindow(QMainWindow):
         QMainWindow.__init__(self, None)
         self.doc = doc
         self.app = doc.app
-        
+
         self._setupUi()
-        
+
         # Create base elements
         self.model = MainWindowModel(document=doc.model)
         self.model2view = {}
@@ -105,13 +107,13 @@ class MainWindow(QMainWindow):
         self.csvOptionsWindow = CSVOptionsWindow(self)
         self.recentDocuments = Recent(self.app, 'recentDocuments')
         self.recentDocuments.addMenu(self.menuOpenRecent)
-        
+
         self.model.view = self
         self.model.connect()
-        
+
         self._updateUndoActions()
         self._bindSignals()
-    
+
     def _setupUi(self): # has to take place *before* base elements creation
         self.setWindowTitle("moneyGuru")
         self.resize(700, 580)
@@ -138,7 +140,7 @@ class MainWindow(QMainWindow):
         self.verticalLayout.addWidget(self.tabBar)
         self.mainView = QtGui.QStackedWidget(self.centralwidget)
         self.verticalLayout.addWidget(self.mainView)
-        
+
         # Bottom buttons & status label
         self.bottomBar = QtGui.QWidget(self.centralwidget)
         self.horizontalLayout = QHBoxLayout(self.bottomBar)
@@ -173,13 +175,13 @@ class MainWindow(QMainWindow):
         self.columnsVisibilityButton.setSizePolicy(buttonSizePolicy)
         self.columnsVisibilityButton.setIcon(QIcon(QPixmap(':/columns_16')))
         self.horizontalLayout.addWidget(self.columnsVisibilityButton)
-        
+
         self.statusLabel = QtGui.QLabel(tr("Status"))
         self.statusLabel.setAlignment(Qt.AlignCenter)
         self.horizontalLayout.addWidget(self.statusLabel)
         self.verticalLayout.addWidget(self.bottomBar)
-        
-        
+
+
         self.setCentralWidget(self.centralwidget)
         self.menubar = QMenuBar(self)
         self.menubar.setGeometry(QRect(0, 0, 700, 20))
@@ -271,7 +273,7 @@ class MainWindow(QMainWindow):
         self.actionNewTab.setShortcut("Ctrl+T")
         self.actionCloseTab = QAction(tr("Close Tab"), self)
         self.actionCloseTab.setShortcut("Ctrl+W")
-        
+
         self.menuFile.addAction(self.actionNewDocument)
         self.menuFile.addAction(self.actionNewTab)
         self.menuFile.addAction(self.actionOpenDocument)
@@ -327,16 +329,16 @@ class MainWindow(QMainWindow):
         setAccelKeys(self.menubar)
         self.tabBar.setMovable(True)
         self.tabBar.setTabsClosable(True)
-        
+
         seq = QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_Right)
         self._shortcutNextTab = QShortcut(seq, self)
         seq = QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_Left)
         self._shortcutPrevTab = QShortcut(seq, self)
-        
+
         # Linux setup
         if ISLINUX:
             self.actionCheckForUpdate.setVisible(False) # This only works on Windows
-    
+
     def _bindSignals(self):
         self.newItemButton.clicked.connect(self.actionNewItem.trigger)
         self.deleteItemButton.clicked.connect(self.actionDeleteItem.trigger)
@@ -351,19 +353,19 @@ class MainWindow(QMainWindow):
         self.tabBar.currentChanged.connect(self.currentTabChanged)
         self.tabBar.tabCloseRequested.connect(self.tabCloseRequested)
         self.tabBar.tabMoved.connect(self.tabMoved)
-        
+
         # Views
-        self.actionShowNetWorth.triggered.connect(self.showNetWorthTriggered)        
-        self.actionShowProfitLoss.triggered.connect(self.showProfitLossTriggered)        
-        self.actionShowTransactions.triggered.connect(self.showTransactionsTriggered)        
-        self.actionShowSchedules.triggered.connect(self.showSchedulesTriggered)        
-        self.actionShowBudgets.triggered.connect(self.showBudgetsTriggered)        
-        self.actionShowPreviousView.triggered.connect(self.showPreviousViewTriggered)        
-        self.actionShowNextView.triggered.connect(self.showNextViewTriggered)        
+        self.actionShowNetWorth.triggered.connect(self.showNetWorthTriggered)
+        self.actionShowProfitLoss.triggered.connect(self.showProfitLossTriggered)
+        self.actionShowTransactions.triggered.connect(self.showTransactionsTriggered)
+        self.actionShowSchedules.triggered.connect(self.showSchedulesTriggered)
+        self.actionShowBudgets.triggered.connect(self.showBudgetsTriggered)
+        self.actionShowPreviousView.triggered.connect(self.showPreviousViewTriggered)
+        self.actionShowNextView.triggered.connect(self.showNextViewTriggered)
         self.actionShowPreferences.triggered.connect(self.app.showPreferences)
         self.actionToggleGraph.triggered.connect(self.toggleGraphTriggered)
         self.actionTogglePieChart.triggered.connect(self.togglePieChartTriggered)
-        
+
         # Document Edition
         self.actionNewItem.triggered.connect(self.newItemTriggered)
         self.actionNewAccountGroup.triggered.connect(self.newAccountGroupTriggered)
@@ -374,7 +376,7 @@ class MainWindow(QMainWindow):
         self.actionDuplicateTransaction.triggered.connect(self.model.duplicate_item)
         self.actionUndo.triggered.connect(self.doc.model.undo)
         self.actionRedo.triggered.connect(self.doc.model.redo)
-        
+
         # Open / Save / Import / Export / New
         self.actionNewDocument.triggered.connect(self.doc.new)
         self.actionOpenDocument.triggered.connect(self.doc.openDocument)
@@ -384,7 +386,7 @@ class MainWindow(QMainWindow):
         self.actionSave.triggered.connect(self.doc.save)
         self.actionSaveAs.triggered.connect(self.doc.saveAs)
         self.actionExport.triggered.connect(self.model.export)
-        
+
         # Misc
         self.actionNewTab.triggered.connect(self.model.new_tab)
         self.actionCloseTab.triggered.connect(self.closeTabTriggered)
@@ -401,18 +403,18 @@ class MainWindow(QMainWindow):
         self.actionAbout.triggered.connect(self.aboutTriggered)
         self.actionOpenDebugLog.triggered.connect(self.openDebugLogTriggered)
         self.actionQuit.triggered.connect(self.close)
-        
+
         # Extra Shortcuts
         self._shortcutNextTab.activated.connect(self.showNextViewTriggered)
         self._shortcutPrevTab.activated.connect(self.showPreviousViewTriggered)
-    
+
     #--- QWidget overrides
     def closeEvent(self, event):
         if self.doc.confirmDestructiveAction():
             event.accept()
         else:
             event.ignore()
-    
+
     #--- Private
     def _print(self):
         dialog = QPrintDialog(self)
@@ -423,7 +425,7 @@ class MainWindow(QMainWindow):
         viewPrinter = ViewPrinter(printer, currentView)
         currentView.fitViewsForPrint(viewPrinter)
         viewPrinter.render()
-    
+
     def _getViewforPane(self, pane_type, pane_view):
         if pane_view in self.model2view:
             view = self.model2view[pane_view]
@@ -433,7 +435,7 @@ class MainWindow(QMainWindow):
             self.mainView.addWidget(view)
             view.restoreSubviewsSize()
         return view
-    
+
     def _setTabIndex(self, index):
         if not self.tabBar.count():
             return
@@ -444,23 +446,23 @@ class MainWindow(QMainWindow):
         view = self._getViewforPane(pane_type, pane_view)
         self.mainView.setCurrentWidget(view)
         view.setFocus()
-    
+
     def _activeView(self):
         paneIndex = self.model.current_pane_index
         return self.model.pane_view(paneIndex)
-    
+
     def _updateActionsState(self):
         # Updates enable/disable checked/unchecked state of all actions. These state can change
         # under various conditions: main view change, date range type change and when reconciliation
         # mode is toggled
-        
+
         # Determine what actions are enabled
         view = self._activeView()
         viewType = view.VIEW_TYPE
         isSheet = viewType in {PaneType.NetWorth, PaneType.Profit}
         isTransactionOrEntryTable = viewType in {PaneType.Transaction, PaneType.Account}
         canToggleReconciliation = viewType == PaneType.Account and view.can_toggle_reconciliation_mode
-        
+
         newItemLabel = {
             PaneType.NetWorth: tr("New Account"),
             PaneType.Profit: tr("New Account"),
@@ -483,7 +485,7 @@ class MainWindow(QMainWindow):
         self.actionNavigateBack.setEnabled(viewType == PaneType.Account)
         self.actionToggleReconciliationMode.setEnabled(canToggleReconciliation)
         self.actionToggleAccountExclusion.setEnabled(isSheet)
-    
+
     def _updateUndoActions(self):
         if self.doc.model.can_undo():
             self.actionUndo.setEnabled(True)
@@ -497,80 +499,80 @@ class MainWindow(QMainWindow):
         else:
             self.actionRedo.setEnabled(False)
             self.actionRedo.setText(tr("Redo"))
-    
+
     #--- Actions
     # Views
     def showNetWorthTriggered(self):
         self.model.select_pane_of_type(PaneType.NetWorth)
-    
+
     def showProfitLossTriggered(self):
         self.model.select_pane_of_type(PaneType.Profit)
-    
+
     def showTransactionsTriggered(self):
         self.model.select_pane_of_type(PaneType.Transaction)
-    
+
     def showSchedulesTriggered(self):
         self.model.select_pane_of_type(PaneType.Schedule)
-    
+
     def showBudgetsTriggered(self):
         self.model.select_pane_of_type(PaneType.Budget)
-    
+
     def showPreviousViewTriggered(self):
         self.model.select_previous_view()
-    
+
     def showNextViewTriggered(self):
         self.model.select_next_view()
-    
+
     # Document Edition
     def newItemTriggered(self):
         self.model.new_item()
-    
+
     def newAccountGroupTriggered(self):
         self.model.new_group()
-    
+
     def deleteItemTriggered(self):
         self.model.delete_item()
-    
+
     def editItemTriggered(self):
         self.model.edit_item()
-    
+
     def moveUpTriggered(self):
         self.model.move_up()
-    
+
     def moveDownTriggered(self):
         self.model.move_down()
-    
+
     # Misc
     def closeTabTriggered(self):
         self.model.close_pane(self.model.current_pane_index)
-    
+
     def navigateBackTriggered(self):
         self.model.navigate_back()
-    
+
     def jumpToAccountTriggered(self):
         self.model.jump_to_account()
-    
+
     def makeScheduleFromSelectedTriggered(self):
         self.model.make_schedule_from_selected()
-    
+
     def reconcileSelectedTriggered(self):
         self._activeView().etable.toggle_reconciled()
-    
+
     def toggleReconciliationModeTriggered(self):
         self._activeView().toggle_reconciliation_mode()
         self._updateActionsState()
-    
+
     def toggleAccountExclusionTriggered(self):
         viewType = self.model.pane_type(self.model.current_pane_index)
         if viewType in {PaneType.NetWorth, PaneType.Profit}:
             self._activeView().sheet.toggle_excluded()
-    
+
     def toggleGraphTriggered(self):
         self.model.toggle_area_visibility(PaneArea.BottomGraph)
-    
+
     def togglePieChartTriggered(self):
         self.model.toggle_area_visibility(PaneArea.RightChart)
-    
+
     def columnsVisibilityButtonClicked(self):
         items = self.model.column_menu_items()
         if not items:
@@ -585,24 +587,24 @@ class MainWindow(QMainWindow):
         self._columnMenuHolder = menu # we need to hold a reference to it while it popups
         button = self.columnsVisibilityButton
         menu.popup(button.parentWidget().mapToGlobal(button.geometry().topLeft()))
-    
+
     def columnsMenuItemWasClicked(self):
         action = self.sender()
         if action is not None:
             index = action.data()
             self.model.toggle_column_menu_item(index)
-    
+
     def checkForUpdateTriggered(self):
         QProcess.execute('updater.exe', ['/checknow'])
-    
+
     def aboutTriggered(self):
         self.app.showAboutBox()
-    
+
     def openDebugLogTriggered(self):
         debugLogPath = op.join(getAppData(), 'debug.log')
         url = QUrl.fromLocalFile(debugLogPath)
         QDesktopServices.openUrl(url)
-    
+
     def importDocument(self):
         title = tr("Select a document to import")
         filters = tr("Supported files (*.moneyguru *.ofx *.qfx *.qif *.csv *.txt)")
@@ -626,24 +628,24 @@ class MainWindow(QMainWindow):
     def currentTabChanged(self, index):
         self.model.current_pane_index = index
         self._setTabIndex(index)
-    
+
     def documentPathChanged(self):
         if self.doc.documentPath:
             title = "moneyGuru ({})".format(self.doc.documentPath)
         else:
             title = "moneyGuru"
         self.setWindowTitle(title)
-    
+
     def tabCloseRequested(self, index):
         self.model.close_pane(index)
-    
+
     def tabMoved(self, fromIndex, toIndex):
         self.model.move_pane(fromIndex, toIndex)
-    
+
     #--- model --> view
     def change_current_pane(self):
         self._setTabIndex(self.model.current_pane_index)
-    
+
     def refresh_panes(self):
         while self.tabBar.count() < self.model.pane_count:
             self.tabBar.addTab('')
@@ -679,29 +681,29 @@ class MainWindow(QMainWindow):
 
     def refresh_status_line(self):
         self.statusLabel.setText(self.model.status_line)
-    
+
     def refresh_undo_actions(self):
         self._updateUndoActions()
-    
+
     def restore_window_frame(self, frame):
         self.setGeometry(*frame)
-    
+
     def save_window_frame(self):
         r = self.geometry()
         return (r.x(), r.y(), r.width(), r.height())
-    
+
     def show_message(self, msg):
         title = tr("Warning")
         QMessageBox.warning(self, title, msg)
-    
+
     def update_area_visibility(self):
         hidden = self.model.hidden_areas
         graphimg = ':/graph_visibility_{}_16'.format('off' if PaneArea.BottomGraph in hidden else 'on')
         pieimg = ':/piechart_visibility_{}_16'.format('off' if PaneArea.RightChart in hidden else 'on')
         self.graphVisibilityButton.setIcon(QIcon(QPixmap(graphimg)))
         self.piechartVisibilityButton.setIcon(QIcon(QPixmap(pieimg)))
-    
+
     def view_closed(self, index):
         self.tabBar.removeTab(index)
         self.tabBar.setTabsClosable(self.model.pane_count > 1)
-    
+

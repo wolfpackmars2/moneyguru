@@ -1,12 +1,14 @@
 # Created By: Virgil Dupras
 # Created On: 2008-08-07
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
-from hscommon.util import flatten, dedupe, first
+# To avoid clashing with "first" in the "first/second" pattern being all over the place in this
+# unit, we rename our imported first() function here
+from hscommon.util import flatten, dedupe, first as getfirst
 from hscommon.trans import tr
 
 from ..exception import OperationAborted
@@ -61,7 +63,7 @@ class AccountPane:
         self._match_entries()
         self._swap_possibilities = set()
         self._compute_swap_possibilities()
-    
+
     def _compute_swap_possibilities(self):
         entries = self.account.entries[:]
         if not entries:
@@ -74,7 +76,7 @@ class AccountPane:
                 except ValueError:
                     self._swap_possibilities.remove((first, second))
                     break
-    
+
     def _match_entries(self):
         to_import = self.account.entries[:]
         reference2entry = {}
@@ -96,35 +98,35 @@ class AccountPane:
                     self.matches.append([entry, other])
         self.matches += [[None, entry] for entry in to_import]
         self._sort_matches()
-    
+
     def _sort_matches(self):
         self.matches.sort(key=lambda t: t[0].date if t[0] is not None else t[1].date)
-        
-    
+
+
     def bind(self, existing, imported):
         [match1] = [m for m in self.matches if m[0] is existing]
         [match2] = [m for m in self.matches if m[1] is imported]
         match1[1] = match2[1]
         self.matches.remove(match2)
-    
+
     def can_swap_date_fields(self, first, second): # 'day', 'month', 'year'
         return (first, second) in self._swap_possibilities or (second, first) in self._swap_possibilities
-    
+
     def unbind(self, existing, imported):
         [match] = [m for m in self.matches if m[0] is existing and m[1] is imported]
         match[1] = None
         self.matches.append([None, imported])
         self._sort_matches()
-    
+
     @property
     def selected_target(self):
         return self._selected_target
-    
+
     @selected_target.setter
     def selected_target(self, value):
         self._selected_target = value
         self._match_entries()
-    
+
 
 class ImportWindow(MainWindowGUIObject):
     #--- View interface
@@ -136,11 +138,12 @@ class ImportWindow(MainWindowGUIObject):
     # show()
     # update_selected_pane()
     #
-    
+
     def __init__(self, mainwindow):
         MainWindowGUIObject.__init__(self, mainwindow)
         self._selected_pane_index = 0
         self._selected_target_index = 0
+
         def setfunc(index):
             self.view.set_swap_button_enabled(self.can_perform_swap())
         self.swap_type_list = LinkedSelectableList(items=[
@@ -153,14 +156,14 @@ class ImportWindow(MainWindowGUIObject):
         self.swap_type_list.selected_index = SwapType.DayMonth
         self.panes = []
         self.import_table = ImportTable(self)
-    
+
     #--- Private
     def _can_swap_date_fields(self, first, second): # 'day', 'month', 'year'
         pane = self.selected_pane
         if pane is None:
             return False
         return pane.can_swap_date_fields(first, second)
-    
+
     def _invert_amounts(self, apply_to_all):
         if apply_to_all:
             panes = self.panes
@@ -175,7 +178,7 @@ class ImportWindow(MainWindowGUIObject):
         for entry in entries:
             entry.amount = entry.split.amount
         self.import_table.refresh()
-    
+
     def _refresh_target_selection(self):
         if not self.panes:
             return
@@ -186,7 +189,7 @@ class ImportWindow(MainWindowGUIObject):
                 self._selected_target_index = self.target_accounts.index(target) + 1
             except ValueError:
                 pass
-    
+
     def _refresh_swap_list_items(self):
         if not self.panes:
             return
@@ -196,17 +199,17 @@ class ImportWindow(MainWindowGUIObject):
             swapped = swap_format_elements(basefmt, first, second)
             items.append("{} --> {}".format(basefmt.iso_format, swapped.iso_format))
         self.swap_type_list[:3] = items
-    
+
     def _swap_date_fields(self, first, second, apply_to_all): # 'day', 'month', 'year'
         assert self._can_swap_date_fields(first, second)
         if apply_to_all:
             panes = [p for p in self.panes if p.can_swap_date_fields(first, second)]
         else:
             panes = [self.selected_pane]
-        
+
         def switch_func(txn):
             txn.date = swapped_date(txn.date, first, second)
-        
+
         self._swap_fields(panes, switch_func)
         # Now, lets' change the date format on these panes
         for pane in panes:
@@ -214,38 +217,38 @@ class ImportWindow(MainWindowGUIObject):
             swapped = swap_format_elements(basefmt, first, second)
             pane.parsing_date_format = swapped
         self._refresh_swap_list_items()
-    
+
     def _swap_description_payee(self, apply_to_all):
         if apply_to_all:
             panes = self.panes
         else:
             panes = [self.selected_pane]
-        
+
         def switch_func(txn):
             txn.description, txn.payee = txn.payee, txn.description
-        
+
         self._swap_fields(panes, switch_func)
-    
+
     def _swap_fields(self, panes, switch_func):
         entries = flatten(p.account.entries for p in panes)
         txns = dedupe(e.transaction for e in entries)
         for txn in txns:
             switch_func(txn)
         self.import_table.refresh()
-    
+
     def _update_selected_pane(self):
         self.import_table.refresh()
         self._refresh_swap_list_items()
         self.view.update_selected_pane()
         self.view.set_swap_button_enabled(self.can_perform_swap())
-    
+
     #--- Override
     def _view_updated(self):
         self.connect()
         if self.document.can_restore_from_prefs():
             # See MainWindow._view_updated() comment.
             self.document_restoring_preferences()
-    
+
     #--- Public
     def can_perform_swap(self):
         index = self.swap_type_list.selected_index
@@ -257,7 +260,7 @@ class ImportWindow(MainWindowGUIObject):
             return self._can_swap_date_fields(DAY, YEAR)
         else:
             return True
-    
+
     def close_pane(self, index):
         was_selected = index == self.selected_pane_index
         del self.panes[index]
@@ -267,8 +270,8 @@ class ImportWindow(MainWindowGUIObject):
         self._selected_pane_index = min(self._selected_pane_index, len(self.panes) - 1)
         if was_selected:
             self._update_selected_pane()
-            
-    
+
+
     def import_selected_pane(self):
         pane = self.selected_pane
         matches = pane.matches
@@ -285,7 +288,7 @@ class ImportWindow(MainWindowGUIObject):
         else:
             self.close_pane(self.selected_pane_index)
             self.view.close_selected_tab()
-    
+
     def perform_swap(self, apply_to_all=False):
         index = self.swap_type_list.selected_index
         if index == SwapType.DayMonth:
@@ -298,11 +301,11 @@ class ImportWindow(MainWindowGUIObject):
             self._swap_description_payee(apply_to_all=apply_to_all)
         elif index == SwapType.InvertAmount:
             self._invert_amounts(apply_to_all=apply_to_all)
-    
+
     def refresh_targets(self):
         self.target_accounts = [a for a in self.document.accounts if a.is_balance_sheet_account()]
         self.target_accounts.sort(key=lambda a: a.name.lower())
-    
+
     def refresh_panes(self):
         if not hasattr(self.mainwindow, 'loader'):
             return
@@ -314,13 +317,15 @@ class ImportWindow(MainWindowGUIObject):
             if self.mainwindow.loader.target_account is not None:
                 target_account = self.mainwindow.loader.target_account
             elif account.reference:
-                target_account = first(t for t in self.target_accounts if t.reference == account.reference)
+                target_account = getfirst(
+                    t for t in self.target_accounts if t.reference == account.reference
+                )
             self.panes.append(AccountPane(account, target_account, parsing_date_format))
         # XXX Should replace by _update_selected_pane()?
         self._refresh_target_selection()
         self._refresh_swap_list_items()
         self.import_table.refresh()
-    
+
     def show(self):
         self.refresh_panes()
         self.view.refresh_target_accounts()
@@ -331,11 +336,11 @@ class ImportWindow(MainWindowGUIObject):
     @property
     def selected_pane(self):
         return self.panes[self.selected_pane_index] if self.panes else None
-    
+
     @property
     def selected_pane_index(self):
         return self._selected_pane_index
-    
+
     @selected_pane_index.setter
     def selected_pane_index(self, value):
         if value >= len(self.panes):
@@ -343,38 +348,38 @@ class ImportWindow(MainWindowGUIObject):
         self._selected_pane_index = value
         self._refresh_target_selection()
         self._update_selected_pane()
-    
+
     @property
     def selected_target_account(self):
         return self.selected_pane.selected_target
-    
+
     @property
     def selected_target_account_index(self):
         return self._selected_target_index
-    
+
     @selected_target_account_index.setter
     def selected_target_account_index(self, value):
         target = self.target_accounts[value - 1] if value > 0 else None
         self.selected_pane.selected_target = target
         self._selected_target_index = value
         self.import_table.refresh()
-    
+
     @property
     def target_account_names(self):
         return [tr('< New Account >')] + [a.name for a in self.target_accounts]
-    
+
     #--- Events
     def account_added(self):
         self.refresh_targets()
         self._refresh_target_selection()
         self.view.refresh_target_accounts()
-    
+
     account_changed = account_added
     account_deleted = account_added
-    
+
     def document_will_close(self):
         self.import_table.columns.save_columns()
-    
+
     def document_restoring_preferences(self):
         self.import_table.columns.restore_columns()
-    
+

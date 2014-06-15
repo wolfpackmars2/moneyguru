@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-12-06
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from collections import namedtuple
@@ -13,8 +13,10 @@ from PyQt4.QtGui import QFont, QFontMetrics
 
 from hscommon.util import nonone
 
-from ..const import (INDENTATION_OFFSET_ROLE, EXTRA_ROLE, EXTRA_UNDERLINED, EXTRA_UNDERLINED_DOUBLE,
-    EXTRA_SPAN_ALL_COLUMNS)
+from ..const import (
+    INDENTATION_OFFSET_ROLE, EXTRA_ROLE, EXTRA_UNDERLINED, EXTRA_UNDERLINED_DOUBLE,
+    EXTRA_SPAN_ALL_COLUMNS
+)
 from .layout import LayoutElement
 
 CELL_MARGIN = 2
@@ -40,109 +42,109 @@ class ItemPrintDatasource:
         self._splitFont.setPointSize(self._splitFont.pointSize()-2)
         self._headerFont = QFont(self._rowFont)
         self._headerFont.setBold(True)
-    
+
     def columnCount(self):
         """Returns the number of columns *to print*."""
         raise NotImplementedError()
-    
+
     def rowCount(self):
         """Returns the number of rows *to print*."""
         raise NotImplementedError()
-    
+
     def splitCount(self, rowIndex):
         raise NotImplementedError()
-    
+
     def splitValues(self, rowIndex, splitIndex):
         raise NotImplementedError()
-    
+
     def data(self, rowIndex, colIndex, role):
         """Returns model data for the index at the *printable* (rowIndex, colIndex) cell."""
         raise NotImplementedError()
-    
+
     def columnAtIndex(self, colIndex):
         """Returns the Column instance at index `colIndex`"""
         raise NotImplementedError()
-    
+
     def indentation(self, rowIndex, colIndex):
         """Returns the indentation pixels for the (rowIndex, colIndex)."""
         return 0
-    
+
     def rowFont(self):
         return self._rowFont
-    
+
     def splitFont(self):
         return self._splitFont
-    
+
     def headerFont(self):
         return self._headerFont
-    
+
 
 class TablePrintDatasource(ItemPrintDatasource):
     def __init__(self, printViewModel, table):
         ItemPrintDatasource.__init__(self, printViewModel, baseFont=table.view.font())
         self.table = table
         self.columns = [c for c in table.model.columns.ordered_columns if c.visible]
-    
+
     def columnCount(self):
         return len(self.columns)
-    
+
     def rowCount(self):
         return self.table.rowCount(QModelIndex())
-    
+
     def splitCount(self, rowIndex):
         return self.printViewModel.split_count_at_row(rowIndex)
-    
+
     def splitValues(self, rowIndex, splitIndex):
         return self.printViewModel.split_values(rowIndex, splitIndex)
-    
+
     def data(self, rowIndex, colIndex, role):
         index = self.table.index(rowIndex, self.columns[colIndex].logical_index)
         return self.table.data(index, role)
-    
+
     def columnAtIndex(self, colIndex):
         return self.columns[colIndex]
-    
+
 
 class TreePrintDatasource(ItemPrintDatasource):
     def __init__(self, printViewModel, tree):
         ItemPrintDatasource.__init__(self, printViewModel, tree.view.font())
         self.tree = tree
         self.columns = [c for c in tree.model.columns.ordered_columns if c.visible]
-        
+
         self._mapRows()
-    
+
     def _getIndex(self, rowIndex, colIndex):
         index = self.rows[rowIndex]
         # `index` is for the column 0 of the row, now we have to get the correct cell
         index = index.sibling(index.row(), self.columns[colIndex].logical_index)
         return index
-    
+
     def _mapRows(self):
         self.rows = []
         index = self.tree.index(0, 0, QModelIndex())
         while index.isValid():
             self.rows.append(index)
             index = self.tree.view.indexBelow(index)
-    
+
     def columnCount(self):
         return len(self.columns)
-    
+
     def rowCount(self):
         return len(self.rows)
-    
+
     def splitCount(self, rowIndex):
         return 0
-    
+
     def splitValues(self, rowIndex, splitIndex):
         return None
-    
+
     def data(self, rowIndex, colIndex, role):
         index = self._getIndex(rowIndex, colIndex)
         return self.tree.data(index, role)
-    
+
     def columnAtIndex(self, colIndex):
         return self.columns[colIndex]
-    
+
     def indentation(self, rowIndex, colIndex):
         if colIndex != 0:
             return 0
@@ -155,7 +157,7 @@ class TreePrintDatasource(ItemPrintDatasource):
         if indentationOffset:
             result += indentationOffset
         return result
-    
+
 
 ColumnStats = namedtuple('ColumnStats', 'index col avgWidth maxWidth minWidth')
 RowStats = namedtuple('RowStats', 'index height splitCount')
@@ -166,14 +168,14 @@ class ItemViewLayoutElement(LayoutElement):
         # and then we let the element be placed. Afterwards, we can know how many rows we can fit
         # (so that the ViewPrinter can know if we need another page).
         height = stats.headerHeight + stats.rowHeight
-        rect = QRect(QPoint(), QSize(width, height)) 
+        rect = QRect(QPoint(), QSize(width, height))
         LayoutElement.__init__(self, rect)
         self.ds = ds
         self.stats = stats
         self.startRow = startRow
         self.endRow = startRow
         self.rowStats = []
-    
+
     def placed(self):
         height = self.rect.height()
         height -= self.stats.headerHeight
@@ -195,7 +197,7 @@ class ItemViewLayoutElement(LayoutElement):
         # If it's the last page, we want to adjust the height of the rect so it's possible to fit
         # stuff under it.
         self.rect.setHeight(self.stats.headerHeight+totalHeight)
-    
+
     def renderCell(self, painter, rowStats, colStats, itemRect):
         rowIndex = rowStats.index
         colIndex = colStats.index if colStats is not None else 0
@@ -229,7 +231,7 @@ class ItemViewLayoutElement(LayoutElement):
         if extraFlags & (EXTRA_UNDERLINED | EXTRA_UNDERLINED_DOUBLE):
             p1 = itemRect.bottomLeft()
             p2 = itemRect.bottomRight()
-            # Things get crowded with double lines and we have to cheat a little bit on 
+            # Things get crowded with double lines and we have to cheat a little bit on
             # item rects.
             p1.setY(p1.y()+2)
             p2.setY(p2.y()+2)
@@ -238,7 +240,7 @@ class ItemViewLayoutElement(LayoutElement):
                 p1.setY(p1.y()-3)
                 p2.setY(p2.y()-3)
                 painter.drawLine(p1, p2)
-    
+
     def renderSplit(self, painter, rowStats, splitsRect):
         painter.setFont(self.ds.splitFont())
         splitValues = [self.ds.splitValues(rowStats.index, i) for i in range(rowStats.splitCount)]
@@ -258,7 +260,7 @@ class ItemViewLayoutElement(LayoutElement):
             rect.setWidth(colWidths[2])
             painter.drawText(rect, Qt.AlignRight, sv.amount)
             top += self.stats.splitHeight
-    
+
     def render(self, painter):
         # We used to re-use itemDelegate() for cell drawing, but it turned out to me more
         # complex than anything (with margins being too wide and all...)
@@ -277,7 +279,10 @@ class ItemViewLayoutElement(LayoutElement):
             left += colWidth
         top += headerHeight
         painter.restore()
-        painter.drawLine(self.rect.left(), self.rect.top()+headerHeight, self.rect.right(), self.rect.top()+headerHeight)
+        painter.drawLine(
+            self.rect.left(), self.rect.top()+headerHeight,
+            self.rect.right(), self.rect.top()+headerHeight
+        )
         painter.save()
         painter.setFont(self.ds.rowFont())
         for rs in self.rowStats:
@@ -296,12 +301,14 @@ class ItemViewLayoutElement(LayoutElement):
                     self.renderCell(painter, rs, colStats, itemRect)
                     left += colWidth
                 if rs.splitCount > 2:
-                    splitsRect = QRect(self.rect.left()+SPLIT_XOFFSET, top+rowHeight,
-                        self.rect.width(), rs.height-rowHeight)
+                    splitsRect = QRect(
+                        self.rect.left()+SPLIT_XOFFSET, top+rowHeight,
+                        self.rect.width(), rs.height-rowHeight
+                    )
                     self.renderSplit(painter, rs, splitsRect)
             top += rs.height
         painter.restore()
-    
+
 
 class ItemViewPrintStats:
     def __init__(self, ds):
@@ -346,7 +353,7 @@ class ItemViewPrintStats:
             self.columns.append(cs)
         self.maxWidth = sum(cs.maxWidth for cs in self.columns)
         self.minWidth = sum(cs.minWidth for cs in self.columns)
-    
+
     def columnWidths(self, maxWidth):
         # Returns a list of recommended widths for columns if the table has `maxWidth` for
         # rendering. If it's possible to have maxWidth everywhere, each column will get it. If not,
@@ -365,4 +372,4 @@ class ItemViewPrintStats:
         # Last column gets the rounding error
         extraWidths.append(leftOver-sum(extraWidths))
         return [base+extra for base, extra in zip(baseWidths, extraWidths)]
-    
+

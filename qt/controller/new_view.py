@@ -1,14 +1,16 @@
 # Created By: Virgil Dupras
 # Created On: 2010-06-09
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4.QtCore import Qt
-from PyQt4.QtGui import (QShortcut, QKeySequence, QGridLayout, QIcon, QPixmap, QPushButton, QLabel,
-    QVBoxLayout, QListView, QAbstractItemView)
+from PyQt4.QtGui import (
+    QShortcut, QKeySequence, QGridLayout, QIcon, QPixmap, QPushButton, QLabel, QVBoxLayout,
+    QListView, QAbstractItemView
+)
 
 from hscommon.trans import trget
 from qtlib.util import horizontalSpacer, verticalSpacer
@@ -22,7 +24,7 @@ tr = trget('ui')
 class NewView(BaseView):
     def _setup(self):
         self._setupUi()
-        
+
         self.pluginList = ListviewModel(self.model.plugin_list, self.pluginListView)
         self.pluginListView.doubleClicked.connect(self.model.open_selected_plugin)
         self.networthButton.clicked.connect(self.networthButtonClicked)
@@ -39,7 +41,7 @@ class NewView(BaseView):
         self.shortcut5.activated.connect(self.scheduleButtonClicked)
         self.shortcut6.activated.connect(self.budgetButtonClicked)
         self.shortcut7.activated.connect(self.docpropsButtonClicked)
-    
+
     def _setupUi(self):
         self.resize(400, 300)
         self.gridLayout = QGridLayout(self)
@@ -78,30 +80,30 @@ class NewView(BaseView):
         self.gridLayout.addLayout(self.verticalLayout, 1, 1, 1, 1)
         self.gridLayout.addItem(horizontalSpacer(), 1, 2, 1, 1)
         self.gridLayout.addItem(verticalSpacer(), 2, 1, 1, 1)
-        
+
         for i in range(1, 8):
             shortcut = QShortcut(QKeySequence(str(i)), self, None, None, Qt.WidgetShortcut)
             setattr(self, 'shortcut{0}'.format(i), shortcut)
-    
+
     #--- Event Handlers
     def networthButtonClicked(self):
         self.model.select_pane_type(PaneType.NetWorth)
-    
+
     def profitButtonClicked(self):
         self.model.select_pane_type(PaneType.Profit)
-    
+
     def transactionButtonClicked(self):
         self.model.select_pane_type(PaneType.Transaction)
-    
+
     def gledgerButtonClicked(self):
         self.model.select_pane_type(PaneType.GeneralLedger)
-    
+
     def scheduleButtonClicked(self):
         self.model.select_pane_type(PaneType.Schedule)
-    
+
     def budgetButtonClicked(self):
         self.model.select_pane_type(PaneType.Budget)
-        
+
     def docpropsButtonClicked(self):
         self.model.select_pane_type(PaneType.DocProps)
-    
+
