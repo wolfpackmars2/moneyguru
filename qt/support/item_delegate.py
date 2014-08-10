@@ -29,14 +29,16 @@ class ItemDelegate(QStyledItemDelegate):
 
     #--- Overrides
     def handleClick(self, index, pos, itemRect, selected):
+        # Returns True if at one of the decorations were in the hit zone.
         decorations = self._get_decorations(index, selected)
         currentRight = itemRect.right()
         for dec in decorations:
             pixmap = dec.pixmap
             if pos.x() >= currentRight - pixmap.width():
                 dec.onClickCallable()
-                break
+                return True
             currentRight -= pixmap.width()
+        return False
 
     def paint(self, painter, option, index):
         self.initStyleOption(option, index)

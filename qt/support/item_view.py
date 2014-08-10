@@ -27,10 +27,10 @@ from hscommon.util import first
 class ItemViewMixIn: # Must be mixed with a QAbstractItemView subclass
     def _headerView(self):
         raise NotImplementedError()
-    
+
     def _firstEditableIndex(self, originalIndex, columnIndexes=None):
         """Returns the first editable index in `originalIndex`'s row or None.
-        
+
         If `columnIndexes` is not None, the scan for an editable index will be limited to these
         columns.
         """
@@ -43,7 +43,7 @@ class ItemViewMixIn: # Must be mixed with a QAbstractItemView subclass
         scannedIndexes = (create(i) for i in columnIndexes if not h.isSectionHidden(i))
         editableIndex = first(index for index in scannedIndexes if model.flags(index) & Qt.ItemIsEditable)
         return editableIndex
-    
+
     def _previousEditableIndex(self, originalIndex):
         """Returns the first editable index at the left of `originalIndex` or None.
         """
@@ -55,7 +55,7 @@ class ItemViewMixIn: # Must be mixed with a QAbstractItemView subclass
         # We want the previous item, the columns have to be in reverse order
         columnIndexes = reversed(columnIndexes)
         return self._firstEditableIndex(originalIndex, columnIndexes)
-    
+
     def _nextEditableIndex(self, originalIndex):
         """Returns the first editable index at the right of `originalIndex` or None.
         """
@@ -65,7 +65,7 @@ class ItemViewMixIn: # Must be mixed with a QAbstractItemView subclass
         # keep only columns after myCol
         columnIndexes = columnIndexes[columnIndexes.index(myCol)+1:]
         return self._firstEditableIndex(originalIndex, columnIndexes)
-    
+
     def _handleCloseEditor(self, editor, hint, superMethod):
         # The problem we're trying to solve here is the edit-and-go-away problem. When ending the
         # editing with escape or return, there's no problem, the model's submit()/revert() is
@@ -74,7 +74,7 @@ class ItemViewMixIn: # Must be mixed with a QAbstractItemView subclass
         # NoHint (0). So, in these cases, we want to call model.submit()
         if hint == QAbstractItemDelegate.NoHint:
             superMethod(self, editor, QAbstractItemDelegate.SubmitModelCache)
-        
+
         # And here, what we're trying to solve is the problem with editing next/previous lines.
         # If there are no more editable indexes, stop edition right there. Additionally, we are
         # making tabbing step over non-editable cells
@@ -91,7 +91,7 @@ class ItemViewMixIn: # Must be mixed with a QAbstractItemView subclass
                 self.edit(editableIndex, QAbstractItemView.AllEditTriggers, None)
         else:
             superMethod(self, editor, hint)
-    
+
     def _handleKeyPressEvent(self, event, superMethod):
         # This is kind of a hack, but it's the only way I found to let the model tell the view if
         # the keypress has already been handled. event.isAccepted() is initially true. If you handle
@@ -112,22 +112,23 @@ class ItemViewMixIn: # Must be mixed with a QAbstractItemView subclass
             self.editSelected()
         else:
             superMethod(self, event)
-    
+
     def _handleMousePressEvent(self, event, superMethod):
+        callsuper = True
         pos = event.pos()
         index = self.indexAt(pos)
-        selected = index in self.selectedIndexes()
-        superMethod(self, event)
-        if not index.isValid():
-            return
-        rect = self.visualRect(index)
-        relativePos = QPoint(pos.x()-rect.x(), pos.y()-rect.y())
-        delegate = self.itemDelegate(index)
-        # handleClick(index, relativePos, itemRect, selected)
-        if hasattr(delegate, 'handleClick'):
-            rect = QRect(0, 0, rect.width(), rect.height())
-            delegate.handleClick(index, relativePos, rect, selected)
-    
+        if index.isValid():
+            selected = index in self.selectedIndexes()
+            rect = self.visualRect(index)
+            relativePos = QPoint(pos.x()-rect.x(), pos.y()-rect.y())
+            delegate = self.itemDelegate(index)
+            if hasattr(delegate, 'handleClick'):
+                rect = QRect(0, 0, rect.width(), rect.height())
+                if delegate.handleClick(index, relativePos, rect, selected):
+                    callsuper = False
+        if callsuper:
+            superMethod(self, event)
+
     #--- Public
     def editSelected(self):
         selectedRows = self.selectionModel().selectedRows()
@@ -141,23 +142,23 @@ class ItemViewMixIn: # Must be mixed with a QAbstractItemView subclass
             # is inside the selection). That's why we have to make this call with the NoUpdate flag.
             self.selectionModel().setCurrentIndex(editableIndex, QItemSelectionModel.NoUpdate)
             self.edit(editableIndex)
-    
+
 
 class TableView(QTableView, ItemViewMixIn):
     #--- QTableView override
     def closeEditor(self, editor, hint):
         self._handleCloseEditor(editor, hint, QTableView.closeEditor)
-    
+
     def keyPressEvent(self, event):
         self._handleKeyPressEvent(event, QTableView.keyPressEvent)
-    
+
     def mousePressEvent(self, event):
         self._handleMousePressEvent(event, QTableView.mousePressEvent)
-    
+
     #--- ItemViewMixIn overrides
     def _headerView(self):
         return self.horizontalHeader()
-    
+
     #--- Signals
     keyPressed = pyqtSignal(['QEvent'])
     deletePressed = pyqtSignal()
@@ -167,17 +168,17 @@ class TreeView(QTreeView, ItemViewMixIn): # Same as in TableView, see comments t
     #--- QTreeView override
     def closeEditor(self, editor, hint):
         self._handleCloseEditor(editor, hint, QTreeView.closeEditor)
-    
+
     def keyPressEvent(self, event):
         self._handleKeyPressEvent(event, QTreeView.keyPressEvent)
-    
+
     def mousePressEvent(self, event):
         self._handleMousePressEvent(event, QTreeView.mousePressEvent)
-    
+
     #--- ItemViewMixIn overrides
     def _headerView(self):
         return self.header()
-    
+
     #--- Signals
     keyPressed = pyqtSignal(['QEvent'])
     deletePressed = pyqtSignal()
