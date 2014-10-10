@@ -9,7 +9,7 @@
 from PyQt4.QtCore import Qt
 
 from qtlib.column import Column
-from ..table import Table
+from ..table import Table, AMOUNT_PAINTER
 
 class BudgetTable(Table):
     COLUMNS = [
@@ -19,7 +19,7 @@ class BudgetTable(Table):
         Column('interval', 50),
         Column('account', 144),
         Column('target', 144),
-        Column('amount', 100, alignment=Qt.AlignRight),
+        Column('amount', 100, alignment=Qt.AlignRight, painter=AMOUNT_PAINTER, resizeToFit=True),
     ]
 
     def __init__(self, model, view):

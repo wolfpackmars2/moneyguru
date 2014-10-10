@@ -9,7 +9,7 @@
 from PyQt4.QtCore import Qt
 
 from qtlib.column import Column
-from ..table import Table
+from ..table import Table, AMOUNT_PAINTER
 
 class ScheduleTable(Table):
     COLUMNS = [
@@ -22,7 +22,7 @@ class ScheduleTable(Table):
         Column('checkno', 70),
         Column('from', 100),
         Column('to', 100),
-        Column('amount', 97, alignment=Qt.AlignRight),
+        Column('amount', 97, alignment=Qt.AlignRight, painter=AMOUNT_PAINTER, resizeToFit=True),
     ]
     
     def __init__(self, model, view):

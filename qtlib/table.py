@@ -11,6 +11,11 @@ from PyQt4.QtGui import QItemSelectionModel, QItemSelection
 
 from .column import Columns
 
+
+class ItemFlags(Qt.ItemFlags):
+    ItemHasValuePainter = 128
+
+
 class Table(QAbstractTableModel):
     # Flags you want when index.isValid() is False. In those cases, _getFlags() is never called.
     INVALID_INDEX_FLAGS = Qt.ItemIsEnabled
@@ -22,6 +27,7 @@ class Table(QAbstractTableModel):
         self.view = view
         self.view.setModel(self)
         self.model.view = self
+
         if hasattr(self.model, 'columns'):
             self.columns = Columns(self.model.columns, self.COLUMNS, view.horizontalHeader())
         
@@ -51,7 +57,14 @@ class Table(QAbstractTableModel):
     #--- Data Model methods
     # Virtual
     def _getData(self, row, column, role):
-        if role in (Qt.DisplayRole, Qt.EditRole):
+
+        # See moneyguru #14, #15 added to do custom painting of amounts
+        # but can be used as a pattern to paint custom values of other model attribute data.
+        has_custom_painter = self._getFlags(row, column) & ItemFlags.ItemHasValuePainter
+
+        if role == Qt.DisplayRole and has_custom_painter:
+            return None
+        elif role in (Qt.DisplayRole, Qt.EditRole):
             attrname = column.name
             return row.get_cell_value(attrname)
         elif role == Qt.TextAlignmentRole:

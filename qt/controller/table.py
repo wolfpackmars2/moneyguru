@@ -8,9 +8,10 @@
 
 from PyQt4.QtGui import QFontMetrics
 
-from qtlib.table import Table as TableBase
+from qtlib.table import Table as TableBase, ItemFlags
 
 from ..support.completable_edit import DescriptionEdit, PayeeEdit, AccountEdit
+from ..support.column_view import AmountPainter
 from ..support.date_edit import DateEdit
 from ..support.item_delegate import ItemDelegate
 
@@ -18,6 +19,10 @@ DATE_EDIT = 'date_edit'
 DESCRIPTION_EDIT = 'description_edit'
 PAYEE_EDIT = 'payee_edit'
 ACCOUNT_EDIT = 'account_edit'
+
+# See #14, #15 Added to indicate an amount to be painted to a table
+# with nicely aligned currency / value
+AMOUNT_PAINTER = 'amount_painter'
 
 EDIT_TYPE2COMPLETABLE_EDIT = {
     DESCRIPTION_EDIT: DescriptionEdit,
@@ -29,6 +34,17 @@ class TableDelegate(ItemDelegate):
     def __init__(self, model):
         ItemDelegate.__init__(self)
         self._model = model
+        self._column_painters = {}
+        for column in self._model.columns.column_list:
+            if column.painter == AMOUNT_PAINTER:
+                # See #14, #15.
+                self._column_painters[column.name] = AmountPainter(column.name, self._model)
+
+    def _get_value_painter(self, index):
+        column = self._model.columns.column_by_index(index.column())
+
+        if column.name in self._column_painters:
+            return self._column_painters[column.name]
     
     def createEditor(self, parent, option, index):
         column = self._model.columns.column_by_index(index.column())
@@ -39,7 +55,7 @@ class TableDelegate(ItemDelegate):
             return DateEdit(parent)
         elif editType in EDIT_TYPE2COMPLETABLE_EDIT:
             return EDIT_TYPE2COMPLETABLE_EDIT[editType](self._model.completable_edit, parent)
-    
+
 
 class Table(TableBase):
     def __init__(self, model, view):
@@ -57,6 +73,15 @@ class Table(TableBase):
         self.view.setFont(font)
         fm = QFontMetrics(font)
         self.view.verticalHeader().setDefaultSectionSize(fm.height()+2)
+        # (#14, #15) When a new font was selected in the preferences panel,
+        # the column would redraw but not resize appropriately.  A call
+        # to resize(sizeHint()) was added on the update of the size info
+        # in the custom drawing for the amount field.
+        self.view.resize(self.view.sizeHint())
+
+    def _getFlags(self, row, column):
+        has_painter = ItemFlags.ItemHasValuePainter if column.painter else 0
+        return TableBase._getFlags(self, row, column) | has_painter
 
     def appPrefsChanged(self):
         self._updateFontSize()

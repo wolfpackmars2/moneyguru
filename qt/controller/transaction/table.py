@@ -11,8 +11,9 @@ from PyQt4.QtGui import QPixmap
 
 from qtlib.column import Column
 from ...support.item_delegate import ItemDecoration
-from ..table import TableDelegate, DATE_EDIT, DESCRIPTION_EDIT, PAYEE_EDIT, ACCOUNT_EDIT
+from ..table import TableDelegate, DATE_EDIT, DESCRIPTION_EDIT, PAYEE_EDIT, ACCOUNT_EDIT, AMOUNT_PAINTER
 from ..table_with_transactions import TableWithTransactions
+
 
 class TransactionTableDelegate(TableDelegate):
     def __init__(self, model):
@@ -32,7 +33,7 @@ class TransactionTableDelegate(TableDelegate):
             return [self._decoToArrowSelected if isSelected else self._decoToArrow]
         else:
             return []
-    
+
 
 class TransactionTable(TableWithTransactions):
     COLUMNS = [
@@ -43,7 +44,7 @@ class TransactionTable(TableWithTransactions):
         Column('checkno', 80),
         Column('from', 120, editor=ACCOUNT_EDIT),
         Column('to', 120, editor=ACCOUNT_EDIT),
-        Column('amount', 100, alignment=Qt.AlignRight, cantTruncate=True),
+        Column('amount', 100, alignment=Qt.AlignRight, cantTruncate=True, painter=AMOUNT_PAINTER, resizeToFit=True),
         Column('mtime', 140),
     ]
     
@@ -53,4 +54,5 @@ class TransactionTable(TableWithTransactions):
         self.view.setItemDelegate(self.tableDelegate)
         self.view.sortByColumn(1, Qt.AscendingOrder) # sorted by date by default
         self.view.deletePressed.connect(self.model.delete)
-    
+
+
