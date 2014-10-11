@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-02-15
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from datetime import date
@@ -249,7 +249,7 @@ def test_other_sections():
     eq_(len(loader.transactions), 3)
 
 def test_missing_line_sep():
-    # It is possible sometimes that some apps do bad exports that contain some missing line 
+    # It is possible sometimes that some apps do bad exports that contain some missing line
     # separators Make sure that it doesn't prevent the QIF from being loaded
     loader = Loader(USD)
     loader.parse(testdata.filepath('qif', 'missing_line_sep.qif'))
@@ -326,7 +326,7 @@ def test_transfer_space_in_account_names():
     loader.parse(testdata.filepath('qif', 'transfer_space_in_account_names.qif'))
     loader.load()
     eq_(len(loader.transactions), 1) # the transactions hasn't been doubled.
-    
+
 def test_export_to_qif(tmpdir):
     # When there's a transfer between 2 assets, export all entries (otherwise some apps will import
     # the QIF wrongly)
@@ -373,7 +373,18 @@ def test_same_date_same_amount():
     eq_(len(loader.transactions), 3)
 
 def test_same_date_same_amount_transfer():
+    # Previously, our test file had two transfer transactions in it, but it turned out that it
+    # wasn't enough because, depending on the algo's internal dictionary iteration order (which is
+    # random), the test here would falsely pass. Now, with 3 transactions, it's much less likely to
+    # falsely pass.
     loader = Loader(USD)
     loader.parse(testdata.filepath('qif', 'same_date_same_amount_transfer.qif'))
     loader.load()
-    eq_(len(loader.transactions), 2)
+    expected_descs = {
+        'Transfer 1, Date 1, Amount 1',
+        'Transfer 2, Date 1, Amount 1',
+        'Transfer 3, Date 1, Amount 1',
+    }
+    actual_descs = {txn.description for txn in loader.transactions}
+    eq_(actual_descs, expected_descs)
+

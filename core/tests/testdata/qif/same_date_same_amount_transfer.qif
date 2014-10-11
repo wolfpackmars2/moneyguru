@@ -13,6 +13,11 @@ MTransfer 2, Date 1, Amount 1
 T1.00
 LAccount 2
 ^
+D01/04/12
+MTransfer 3, Date 1, Amount 1
+T1.00
+LAccount 2
+^
 !Account
 NAccount 2
 TBank
@@ -25,6 +30,11 @@ LAccount 1
 ^
 D01/04/12
 MTransfer 2, Date 1, Amount 1
+T-1.00
+LAccount 1
+^
+D01/04/12
+MTransfer 3, Date 1, Amount 1
 T-1.00
 LAccount 1
 ^

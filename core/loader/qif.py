@@ -245,7 +245,12 @@ class Loader(base.Loader):
                     matches = txn2matches[txn1]
                     matches.append(txn2)
         toremove = set()
-        for txn, matches in txn2matches.items():
+        # Here, we sort by match length to make sure that description matching (the
+        # ``match.sort()`` line a few lines below) has all the opportunities it needs to actually
+        # do that matching. Also, if we don't do that, there's actually a chance that we falsely
+        # remove matching pairs from our transactions.
+        matchpairs = sorted(txn2matches.items(), key=lambda pair: len(pair[1]), reverse=True)
+        for txn, matches in matchpairs:
             if txn in toremove:
                 continue
             matches = [t for t in matches if t not in toremove]
