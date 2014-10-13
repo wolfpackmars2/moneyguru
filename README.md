@@ -17,7 +17,7 @@ This package contains the source for moneyGuru. Its documentation is
 * qt: UI code for the Qt toolkit. It's written in Python and uses PyQt.
 * images: Images used by the different UI codebases.
 * debian: Skeleton files required to create a .deb package.
-* help: Help document, written for Sphinx.
+* help: Help document, written for [Sphinx][sphinx].
 * locale: .po files for localisation.
 
 There are also other sub-folder that comes from external repositories and are part of this repo as
@@ -87,10 +87,23 @@ You can also package moneyGuru into an installable package with:
     
     $ python package.py
 
+# Running tests
+
+The complete test suite is ran with [Tox 1.7+][tox]. If you have it installed system-wide, you
+don't even need to set up a virtualenv. Just `cd` into the root project folder and run `tox`.
+
+If you don't have Tox system-wide, install it in your virtualenv with `pip install tox` and then
+run `tox`.
+
+You can also run automated tests without Tox. Extra requirements for running tests are in
+`requirements-tests.txt`. So, you can do `pip install -r requirements-tests.txt` inside your
+virtualenv and then `py.test core hscommon`
+
 # Further documentation
 
-There's a more complete development documention in 'devdoc'. This documentation has to be built
-using [Sphinx][sphinx]. This documentation is also [available online][devdocs].
+For further development-related documentation, there's a "moneyGuru Developer Documentation"
+section in the english version of the main documentation. This documentation is built with the app
+and is also [available online][documentation].
 
 [moneyguru]: http://www.hardcoded.net/moneyguru/
 [documentation]: http://www.hardcoded.net/moneyguru/help/en/
@@ -99,5 +112,6 @@ using [Sphinx][sphinx]. This documentation is also [available online][devdocs].
 [cxfreeze]: http://cx-freeze.sourceforge.net/
 [advinst]: http://www.advancedinstaller.com
 [sphinx]: http://sphinx.pocoo.org/
-[devdocs]: http://www.hardcoded.net/docs/moneyguru/
 [polib]: https://bitbucket.org/izi/polib/issue/42
+[tox]: https://tox.readthedocs.org/en/latest/
+
