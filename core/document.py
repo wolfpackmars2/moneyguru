@@ -1275,11 +1275,14 @@ class Document(Repeater, GUIObject):
         key = 'Doc{0}.{1}'.format(self._document_id, key)
         self.app.set_default(key, value)
 
-    def format_amount(self, amount, **kw):
-        default_currency = self.default_currency
+    def format_amount(self, amount, force_explicit_currency=False, **kwargs):
+        if force_explicit_currency:
+            default_currency = None
+        else:
+            default_currency = self.default_currency
         return format_amount(
             amount, default_currency, decimal_sep=self.app._decimal_sep,
-            grouping_sep=self.app._grouping_sep, **kw
+            grouping_sep=self.app._grouping_sep, **kwargs
         )
 
     def parse_amount(self, amount, default_currency=None):

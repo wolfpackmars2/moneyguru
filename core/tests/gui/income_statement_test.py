@@ -172,11 +172,12 @@ def test_with_budget(app, monkeypatch):
 @with_app(app_multiple_currencies)
 def test_income_statement_multiple_currencies(app):
     # Each income/expense transaction is converted using the day's rate.
+    # Also, every amount show their currency explicitly. Ref #392
     eq_(app.doc.date_range, MonthRange(date(2008, 1, 1)))
     eq_(app.istatement.income[0][0].cash_flow, '100.00')
     eq_(app.istatement.income[0][1].cash_flow, 'USD 100.00')
-    eq_(app.istatement.income[0].cash_flow, '182.00')   # 80 * .8 + 20 * .9 + 100
-    eq_(app.istatement.income.cash_flow, '182.00')
+    eq_(app.istatement.income[0].cash_flow, 'CAD 182.00')   # 80 * .8 + 20 * .9 + 100
+    eq_(app.istatement.income.cash_flow, 'CAD 182.00')
 
 #---
 def app_multiple_currencies_over_two_months():
@@ -209,13 +210,13 @@ def test_income_statement_multiple_currencies_over_two_months(app):
     eq_(app.istatement.expenses[0].last_cash_flow, 'USD 150.00')
     eq_(app.istatement.expenses[0].delta, 'USD -50.00')
     eq_(app.istatement.expenses[0].delta_perc, '-33.3%')
-    eq_(app.istatement.expenses.cash_flow, '90.00')   # 100 * .9
-    eq_(app.istatement.expenses.last_cash_flow, '122.00')   # 130 * .8 + 20 * .9
-    eq_(app.istatement.expenses.delta, '-32.00')   # 130 * .8 + 20 * .9
+    eq_(app.istatement.expenses.cash_flow, 'CAD 90.00')   # 100 * .9
+    eq_(app.istatement.expenses.last_cash_flow, 'CAD 122.00')   # 130 * .8 + 20 * .9
+    eq_(app.istatement.expenses.delta, 'CAD -32.00')   # 130 * .8 + 20 * .9
     eq_(app.istatement.expenses.delta_perc, '-26.2%')
-    eq_(app.istatement.net_income.cash_flow, '100.00')
-    eq_(app.istatement.net_income.last_cash_flow, '78.00')
-    eq_(app.istatement.net_income.delta, '22.00')
+    eq_(app.istatement.net_income.cash_flow, 'CAD 100.00')
+    eq_(app.istatement.net_income.last_cash_flow, 'CAD 78.00')
+    eq_(app.istatement.net_income.delta, 'CAD 22.00')
     eq_(app.istatement.net_income.delta_perc, '+28.2%')
 
 #---

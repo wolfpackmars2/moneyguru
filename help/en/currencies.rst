@@ -39,6 +39,19 @@ that you temporarily have an amount of a foreign currency in one of your asset o
 you reconcile this amount (and change it to the account's currency), the running balance that is
 shown will be an estimate.
 
+The sheets' exception
+---------------------
+
+There's a little exception to the implicitness of native currencies: sheets' totals. In the Net
+Worth view and Profit & Loss view, totals (which are always displayed in the document's native
+currency) will have their currency explicitly displayed when there's at least one account of a
+different currency in the document.
+
+This is to avoid a common confusion for new users who think that the totals don't add up. There's
+also a rather common case where all accounts are in a currency that is different from the
+document's currency because the document wasn't properly set up. Making the totals currency
+explicit makes the problem obvious and thus easier to fix.
+
 .. _multi-currency-txn:
 
 Multiple Currencies Transactions

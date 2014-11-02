@@ -1,7 +1,7 @@
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from datetime import date
@@ -19,7 +19,7 @@ from ...model.account import AccountType
 from ...model.date import MonthRange
 
 # IMPORTANT NOTE: Keep in mind that every node count check in these tests take the total node and the
-# blank node into account. For example, the node acount of an empty ASSETS node is 2.
+# blank node into account. For example, the node count of an empty ASSETS node is 2.
 
 #--- Pristine app
 @with_app(TestApp)
@@ -455,7 +455,7 @@ def test_invalid_expanded_paths_are_removed_on_refreshes(app):
     app.bsheet.expand_node(app.bsheet.assets[0])
     app.doc.clear()
     eq_(app.bsheet.expanded_paths, [(0, ), (1, )])
-    
+
 #--- Accounts and entries (Re-used in sub-app funcs below)
 def app_accounts_and_entries():
     app = TestApp()
@@ -519,7 +519,7 @@ def test_budget(app, monkeypatch):
 
 @with_app(app_accounts_and_entries)
 def test_budget_multiple_currencies(app, monkeypatch):
-    # budgeted amounts must be correctly converted to the target's currency
+    # budgeted amounts must be correctly converted to the target account's currency
     monkeypatch.patch_today(2008, 1, 15)
     USD.set_CAD_value(0.8, date(2008, 1, 1))
     app.show_pview()
@@ -634,16 +634,22 @@ def app_multiple_currencies():
 
 @with_app(app_multiple_currencies)
 def test_balance_sheet_with_multiple_currencies(app):
+    # Totals in balance sheets are properly converted using conversion rates. Also, whenever
+    # multiple currencies are involved, we always explicitly display currencies. Ref #392
     eq_(USD.value_in(CAD, date(2008, 2, 1)), 0.9)
     eq_(app.doc.date_range, MonthRange(date(2008, 1, 1)))
-    eq_(app.bsheet.assets.start, '40.00')
-    eq_(app.bsheet.assets.end, '235.00')
-    eq_(app.bsheet.assets.delta, '195.00')
+    eq_(app.bsheet.assets.start, 'CAD 40.00')
+    eq_(app.bsheet.assets.end, 'CAD 235.00')
+    eq_(app.bsheet.assets.delta, 'CAD 195.00')
     eq_(app.bsheet.assets.delta_perc, '+487.5%')
-    eq_(app.bsheet.assets[0].start, '40.00')
-    eq_(app.bsheet.assets[0].end, '235.00')
-    eq_(app.bsheet.assets[0].delta, '195.00')
+    eq_(app.bsheet.assets[0].start, 'CAD 40.00')
+    eq_(app.bsheet.assets[0].end, 'CAD 235.00')
+    eq_(app.bsheet.assets[0].delta, 'CAD 195.00')
     eq_(app.bsheet.assets[0].delta_perc, '+487.5%')
+    eq_(app.bsheet.net_worth.start, 'CAD 40.00')
+    eq_(app.bsheet.net_worth.end, 'CAD 235.00')
+    eq_(app.bsheet.net_worth.delta, 'CAD 195.00')
+    eq_(app.bsheet.net_worth.delta_perc, '+487.5%')
 
 @with_app(app_multiple_currencies)
 def test_delete_transaction(app):
@@ -653,7 +659,7 @@ def test_delete_transaction(app):
     app.ttable.select([2]) # last entry, on the 31st
     app.ttable.delete()
     app.show_nwview()
-    eq_(app.bsheet.assets.end, '217.00')
+    eq_(app.bsheet.assets.end, 'CAD 217.00')
 
 @with_app(app_multiple_currencies)
 def test_exclude_group(app):

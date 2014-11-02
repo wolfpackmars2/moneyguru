@@ -69,6 +69,7 @@ class BalanceSheet(Report):
 
     def _refresh(self):
         self.clear()
+        self.has_multiple_currencies = self.document.accounts.has_multiple_currencies()
         self.assets = self.make_type_node(tr('ASSETS'), AccountType.Asset)
         self.liabilities = self.make_type_node(tr('LIABILITIES'), AccountType.Liability)
         self.net_worth = self._make_node(tr('NET WORTH'))
@@ -78,10 +79,19 @@ class BalanceSheet(Report):
         # The net worth's budget is not a simple subtraction, it must count the target-less budgets
         net_worth_budgeted = self.document.budgeted_amount_for_target(None, budget_date_range)
         net_worth_delta = net_worth_end - net_worth_start
-        self.net_worth.start = self.document.format_amount(net_worth_start)
-        self.net_worth.end = self.document.format_amount(net_worth_end)
-        self.net_worth.budgeted = self.document.format_amount(net_worth_budgeted)
-        self.net_worth.delta = self.document.format_amount(net_worth_delta)
+        force_explicit_currency = self.has_multiple_currencies
+        self.net_worth.start = self.document.format_amount(
+            net_worth_start, force_explicit_currency=force_explicit_currency
+        )
+        self.net_worth.end = self.document.format_amount(
+            net_worth_end, force_explicit_currency=force_explicit_currency
+        )
+        self.net_worth.budgeted = self.document.format_amount(
+            net_worth_budgeted, force_explicit_currency=force_explicit_currency
+        )
+        self.net_worth.delta = self.document.format_amount(
+            net_worth_delta, force_explicit_currency=force_explicit_currency
+        )
         self.net_worth.delta_perc = get_delta_perc(net_worth_delta, net_worth_start)
         self.net_worth.is_total = True
         self.append(self.assets)
@@ -95,10 +105,19 @@ class BalanceSheet(Report):
         parent.end_amount = sum(child.end_amount for child in parent)
         parent.budgeted_amount = sum(child.budgeted_amount for child in parent)
         delta_amount = parent.end_amount - parent.start_amount
-        node.start = parent.start = self.document.format_amount(parent.start_amount)
-        node.end = parent.end = self.document.format_amount(parent.end_amount)
-        node.budgeted = parent.budgeted = self.document.format_amount(parent.budgeted_amount)
-        node.delta = parent.delta = self.document.format_amount(delta_amount)
+        force_explicit_currency = self.has_multiple_currencies
+        node.start = parent.start = self.document.format_amount(
+            parent.start_amount, force_explicit_currency=force_explicit_currency
+        )
+        node.end = parent.end = self.document.format_amount(
+            parent.end_amount, force_explicit_currency=force_explicit_currency
+        )
+        node.budgeted = parent.budgeted = self.document.format_amount(
+            parent.budgeted_amount, force_explicit_currency=force_explicit_currency
+        )
+        node.delta = parent.delta = self.document.format_amount(
+            delta_amount, force_explicit_currency=force_explicit_currency
+        )
         node.delta_perc = parent.delta_perc = get_delta_perc(delta_amount, parent.start_amount)
         return node
 
