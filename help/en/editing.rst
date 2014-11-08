@@ -54,7 +54,22 @@ One thing to remember about this entry editing table is that it's constantly aut
 
 |edition_three_way_split|
 
-Congratulations, you just made a 3 ways split transaction. This transaction correctly reflect reality where 40$ are out of your checking account, internet had a net cost of 20$ for you and you end up with 20 more dollars in your pocket.
+Congratulations, you just made a 3 ways split transaction. This transaction correctly reflect
+reality where 40$ are out of your checking account, internet had a net cost of 20$ for you and you
+end up with 20 more dollars in your pocket.
+
+There are two special buttons under the split table, **Multi-currency balance** and
+**Assign imbalance**. We won't cover the first one here because it's covered in :doc:`currencies`.
+As for Assign imbalance, it's a handy shortcut for assigning all remaining imbalance amounts
+(amounts in splits that are assigned to no account) to the currently selected split.
+
+Let's use our previous split example again. Let's say that instead of changing the amount for
+Utilities to 20$, you instead added a new split for 20$ assigned to Cash. Now, you're stuck with
+a 4 way split with a 40$ Utilities and a 20$ unassigned split. Of course, you could manually
+subtract 20$ to the Utilities split, but that's sometimes tedious when you have complex numbers.
+
+All you have to do instead is to select the Utilities split and click Assign imbalance. Unassigned
+splits will then be "merged" with the selected split with a final amount of 20$.
 
 |edition_mass_edition_panel|
 
@@ -107,3 +122,4 @@ Under Mac OS X, it's possible to summon a lookup list for any auto-completable f
 .. |edition_mass_edition_panel| image:: image/edition_mass_edition_panel.png
 .. |backward_16| image:: image/backward_16.png
 .. |forward_16| image:: image/forward_16.png
+

@@ -21,6 +21,7 @@ transfersLabel = FieldLabel(infoTab.view, "Transfers")
 transfersTable = TableView(infoTab.view)
 transfersTable.OBJC_CLASS = 'MGTableView'
 mctButton = Button(infoTab.view, "Multi-Currency Balance", action=Action(owner, 'mctBalance'))
+assignImbalanceButton = Button(infoTab.view, "Assign imbalance", action=Action(owner, 'assignImbalance'))
 addTransferButton = Button(infoTab.view, "", action=Action(owner, 'addSplit'))
 removeTransferButton = Button(infoTab.view, "", action=Action(owner, 'deleteSplit'))
 navigateNoticeLabel = FieldLabel(infoTab.view, "You can navigate tabs with ⌘⌥→ and ⌘⌥←")
@@ -56,6 +57,7 @@ transfersTable.allowsTypeSelect = False
 transfersTable.alternatingRows = True
 transfersTable.gridStyleMask = const.NSTableViewSolidVerticalGridLineMask | const.NSTableViewSolidHorizontalGridLineMask
 mctButton.controlSize = ControlSize.Small
+assignImbalanceButton.controlSize = ControlSize.Small
 addTransferButton.bezelStyle = removeTransferButton.bezelStyle = const.NSSmallSquareBezelStyle
 addTransferButton.image = 'NSAddTemplate'
 removeTransferButton.image = 'NSRemoveTemplate'
@@ -78,6 +80,7 @@ for field in [dateField, checknoField]:
     field.width = 111
 transfersTable.height = 76
 mctButton.width = 160
+assignImbalanceButton.width = 160
 addTransferButton.width = removeTransferButton.width = 25
 addTransferButton.height = removeTransferButton.height = 21
 cancelButton.width = saveButton.width = 84
@@ -98,7 +101,7 @@ infoLayout = VHLayout([
     [payeeLabel, payeeField],
     [checknoLabel, checknoField],
     [transfersLabel, transfersTable],
-    [None, mctButton, addTransferButton, removeTransferButton],
+    [None, mctButton, assignImbalanceButton, addTransferButton, removeTransferButton],
     [navigateNoticeLabel],
     ],
     hfillers={descriptionField, payeeField, transfersTable, navigateNoticeLabel},

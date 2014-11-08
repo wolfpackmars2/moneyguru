@@ -42,4 +42,5 @@ http://www.hardcoded.net/licenses/bsd_license
 - (void)addSplit;
 - (void)deleteSplit;
 - (void)mctBalance;
+- (void)assignImbalance;
 @end

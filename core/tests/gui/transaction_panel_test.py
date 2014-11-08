@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-07-06
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from datetime import date
@@ -166,7 +166,7 @@ def test_set_values():
     # The reason why we select another entry is to make sure that the value we're testing isn't
     # simply a buffer in the gui layer.
     app = app_two_amountless_entries()
-    
+
     def set_and_test(attrname, newvalue, othervalue):
         app.tpanel.load()
         setattr(app.tpanel, attrname, newvalue)
@@ -177,7 +177,7 @@ def test_set_values():
         app.etable.select([1])
         app.tpanel.load()
         eq_(getattr(app.tpanel, attrname), newvalue)
-    
+
     yield set_and_test, 'date', '08/07/2008', '06/07/2008'
     yield set_and_test, 'description', 'new', 'desc1'
     yield set_and_test, 'payee', 'new', 'payee1'
@@ -246,15 +246,96 @@ def test_stop_edition_on_mct_balance():
     app.tpanel.mct_balance()
     app.stable.view.check_gui_calls_partial(['stop_editing'])
 
+@with_app(app_multi_currency_transaction)
+def test_mct_assign_imbalance_assigns_only_same_currency(app):
+    # When doing Assign imbalance in an MCT context, assign only imbalance in the same currency
+    stable = app.tpanel.split_table
+    stable.add()
+    stable[2].debit = '1 cad'
+    stable.save_edits()
+    stable.add()
+    stable[3].credit = '2 usd'
+    stable.save_edits()
+    stable.select(0)
+    app.tpanel.assign_imbalance() # no crash
+    eq_(stable[0].credit, '46.00')
+
+@with_app(app_multi_currency_transaction)
+def test_mct_assign_imbalance_zero_amount_selected(app):
+    # When doing Assign imbalance in an MCT context with a 0 amount selected, use whichever
+    # unassigned split comes first as the base currency.
+    stable = app.tpanel.split_table
+    stable.add()
+    stable[2].debit = '1 cad'
+    stable.save_edits()
+    stable.add()
+    stable[3].credit = '2 usd'
+    stable.save_edits()
+    stable.add()
+    stable[4].account = 'whatever'
+    stable.save_edits()
+    stable.select(4)
+    app.tpanel.assign_imbalance() # no crash
+    # CAD split is the first, and the split was deleted so our new index is 3
+    eq_(len(stable), 4)
+    eq_(stable[3].debit, 'CAD 1.00')
+
+#--- Unassigned split
+def app_with_unassigned_split():
+    app = TestApp()
+    splits = [
+        ('account1', '', '42', ''),
+        ('account2', '', '', '42'),
+        ('account3', '', '15', ''),
+    ]
+    app.add_txn_with_splits(splits=splits, date='07/11/2014')
+    app.tpanel.load()
+    return app
+
+@with_app(app_with_unassigned_split)
+def test_assign_imbalance_same_side(app):
+    # When triggering Assign imbalance with a split on the "same side" as unassigned splits, we add
+    # the value to it.
+    stable = app.tpanel.split_table
+    stable.select(1)
+    app.tpanel.assign_imbalance()
+    eq_(stable[1].credit, '57.00')
+
+@with_app(app_with_unassigned_split)
+def test_assign_imbalance_other_side(app):
+    # When triggering Assign imbalance with a split on the "other side" as unassigned splits, we subtract
+    # the value to it.
+    stable = app.tpanel.split_table
+    stable.select(0)
+    app.tpanel.assign_imbalance()
+    eq_(stable[0].debit, '27.00')
+
+@with_app(app_with_unassigned_split)
+def test_assign_imbalance_unassigned_selected(app):
+    # When triggering Assign imbalance with an unassigned split, nothing happens.
+    stable = app.tpanel.split_table
+    stable.select(3)
+    app.tpanel.assign_imbalance()
+    eq_(stable[3].credit, '15.00')
+
+@with_app(app_with_unassigned_split)
+def test_assign_imbalance_nothing_selected(app):
+    # When triggering Assign imbalance with no selected split, nothing happens.
+    stable = app.tpanel.split_table
+    stable.select([])
+    app.tpanel.assign_imbalance() # no crash
+    eq_(stable[3].credit, '15.00')
+
 #--- Generators (tests with more than one setup)
 def test_is_multi_currency():
     def check(setupfunc, expected):
         app = setupfunc()
         eq_(app.tpanel.is_multi_currency, expected)
-    
+
     # doesn't crash if there is no split with amounts
     yield check, app_amountless_entry_panel_loaded, False
     # the mct balance button is enabled if the txn is a MCT
     yield check, app_entry_with_amount_panel_loaded, False
     # the mct balance button is enabled if the txn is a MCT
     yield check, app_multi_currency_transaction, True
+

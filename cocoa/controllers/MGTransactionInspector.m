@@ -123,4 +123,9 @@ http://www.hardcoded.net/licenses/bsd_license
 {
     [[self model] mctBalance];
 }
+
+- (void)assignImbalance
+{
+    [[self model] assignImbalance];
+}
 @end

@@ -110,8 +110,9 @@ class TransactionPanel(PanelWithTransaction):
 
     #--- Public
     def mct_balance(self):
-        """Balances the mct by using xchange rates. The currency of the new split is the currency of
-        the currently selected split.
+        """Balances the mct by using xchange rates.
+
+        The currency of the new split is the currency of the currently selected split.
         """
         self.split_table.edition_must_stop()
         split = first(self._selected_splits)
@@ -120,6 +121,16 @@ class TransactionPanel(PanelWithTransaction):
             new_split_currency = split.amount.currency
         self.transaction.mct_balance(new_split_currency)
         self.split_table.refresh_splits()
+
+    def assign_imbalance(self):
+        """Assigns remaining imbalance to the selected split.
+
+        If the selected split is not an assigned split, does nothing.
+        """
+        split = first(self._selected_splits)
+        if split is not None:
+            self.transaction.assign_imbalance(split)
+            self.split_table.refresh_splits()
 
     @property
     def date(self):
