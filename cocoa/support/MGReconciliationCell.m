@@ -30,8 +30,12 @@ http://www.hardcoded.net/licenses/bsd_license
     if (i != nil) {
         CGFloat rectSize = MIN(cellFrame.size.width, cellFrame.size.height);
         NSRect drawRect = NSMakeRect(cellFrame.origin.x, cellFrame.origin.y, rectSize, rectSize);
-        [i setFlipped:YES];
-        [i drawInRect:drawRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1];
+        [i drawInRect:drawRect
+             fromRect:NSZeroRect
+            operation:NSCompositeSourceOver
+             fraction:1
+       respectFlipped:YES
+                hints:nil];
     }
 }
 /* Public */

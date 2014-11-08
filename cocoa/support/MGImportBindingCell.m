@@ -14,7 +14,6 @@ http://www.hardcoded.net/licenses/bsd_license
     if ([self intValue])
     {
         NSImage *i = [NSImage imageNamed:@"lock_12"];
-        [i setFlipped:YES];
         NSSize s = [i size];
         CGFloat w = s.width;
         CGFloat h = s.height;
@@ -23,7 +22,12 @@ http://www.hardcoded.net/licenses/bsd_license
         CGFloat fw = cellFrame.size.width;
         CGFloat fh = cellFrame.size.height;
         NSRect destRect = NSMakeRect(fx + (fw - w) / 2, fy + (fh - h) / 2, w, h);
-        [i drawInRect:destRect fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:1];
+        [i drawInRect:destRect
+             fromRect:NSZeroRect
+            operation:NSCompositeSourceOver
+             fraction:1
+       respectFlipped:YES
+                hints:nil];
     }    
 }
 @end

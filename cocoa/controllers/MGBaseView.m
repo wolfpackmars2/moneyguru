@@ -49,7 +49,7 @@ http://www.hardcoded.net/licenses/bsd_license
     /* Setup a MGTableView programatically with correct bindings and stuff. */
     [aTableView setGridStyleMask:NSTableViewSolidHorizontalGridLineMask|NSTableViewSolidVerticalGridLineMask];
     [aTableView setUsesAlternatingRowBackgroundColors:YES];
-    NSUserDefaults *udc = [NSUserDefaultsController sharedUserDefaultsController];
+    NSUserDefaultsController *udc = [NSUserDefaultsController sharedUserDefaultsController];
     NSDictionary *options = [NSDictionary dictionaryWithObject:@"vtRowHeightOffset" forKey:NSValueTransformerNameBindingOption];
     [aTableView bind:@"rowHeight" toObject:udc withKeyPath:@"values.TableFontSize" options:options];
 }

@@ -12,7 +12,7 @@ http://www.hardcoded.net/licenses/bsd_license
 #import "HSAboutBox.h"
 #import "MGConst.h" // to have MG consts in the main_menu UI script.
 
-@interface MGAppDelegate : NSObject
+@interface MGAppDelegate : NSObject <NSFileManagerDelegate>
 {
     NSWindow *preferencesPanel;
     NSTextField *autoSaveIntervalField;
