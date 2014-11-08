@@ -4,7 +4,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: utf-8\n"
 
-#: qt/controller/account/filter_bar.py:18 qt/controller/export_panel.py:48
+#: qt/controller/account/filter_bar.py:18 qt/controller/export_panel.py:50
 #: qt/controller/transaction/filter_bar.py:18
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "All"
@@ -42,39 +42,39 @@ msgstr "Spárováno"
 msgid "Not Reconciled"
 msgstr "Nespárováno"
 
-#: qt/controller/account/view.py:55 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/account/view.py:57 cocoa/en.lproj/Localizable.strings:0
 msgid "Reconciliation"
 msgstr "Párování"
 
-#: qt/controller/account_panel.py:39 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/account_panel.py:41 cocoa/en.lproj/Localizable.strings:0
 msgid "Account Info"
 msgstr "Informace o účtu"
 
-#: qt/controller/account_panel.py:45 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/account_panel.py:47 cocoa/en.lproj/Localizable.strings:0
 msgid "Name"
 msgstr "Název"
 
-#: qt/controller/account_panel.py:49 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/account_panel.py:51 cocoa/en.lproj/Localizable.strings:0
 msgid "Type"
 msgstr "Typ"
 
-#: qt/controller/account_panel.py:53 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/account_panel.py:55 cocoa/en.lproj/Localizable.strings:0
 msgid "Currency"
 msgstr "Měna"
 
-#: qt/controller/account_panel.py:64 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/account_panel.py:66 cocoa/en.lproj/Localizable.strings:0
 msgid "Account #"
 msgstr "Účet č."
 
-#: qt/controller/account_panel.py:71 qt/controller/budget_panel.py:85
+#: qt/controller/account_panel.py:73 qt/controller/budget_panel.py:87
 msgid "Notes:"
 msgstr "Poznámky:"
 
-#: qt/controller/account_reassign_panel.py:37
+#: qt/controller/account_reassign_panel.py:38
 msgid "Re-assign Account"
 msgstr ""
 
-#: qt/controller/account_reassign_panel.py:41
+#: qt/controller/account_reassign_panel.py:42
 #: cocoa/en.lproj/Localizable.strings:0
 msgid ""
 "You're about to delete a non-empty account. Select an account to re-assign "
@@ -83,48 +83,48 @@ msgstr ""
 "Chystáte se smazat neprázdný účet. Vyberte účet, na který přesunete jeho "
 "transakce."
 
-#: qt/controller/account_reassign_panel.py:57
-#: qt/controller/import_/csv_options.py:93
-#: qt/controller/schedule_scope_dialog.py:45
+#: qt/controller/account_reassign_panel.py:61
+#: qt/controller/import_/csv_options.py:95
+#: qt/controller/schedule_scope_dialog.py:48
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Cancel"
 msgstr "Zrušit"
 
-#: qt/controller/account_reassign_panel.py:62
+#: qt/controller/account_reassign_panel.py:66
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Continue"
 msgstr "Pokračovat"
 
-#: qt/controller/budget_panel.py:43 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/budget_panel.py:45 cocoa/en.lproj/Localizable.strings:0
 msgid "Budget Info"
 msgstr "Info o rozpočtu"
 
-#: qt/controller/budget_panel.py:49 qt/controller/schedule_panel.py:59
+#: qt/controller/budget_panel.py:51 qt/controller/schedule_panel.py:61
 msgid "Start Date:"
 msgstr "Odkdy:"
 
-#: qt/controller/budget_panel.py:54 qt/controller/schedule_panel.py:64
+#: qt/controller/budget_panel.py:56 qt/controller/schedule_panel.py:66
 msgid "Repeat Type:"
 msgstr "Typ opakování:"
 
-#: qt/controller/budget_panel.py:58 qt/controller/schedule_panel.py:68
+#: qt/controller/budget_panel.py:60 qt/controller/schedule_panel.py:70
 msgid "Every:"
 msgstr "Každých:"
 
-#: qt/controller/budget_panel.py:67 qt/controller/schedule_panel.py:77
+#: qt/controller/budget_panel.py:69 qt/controller/schedule_panel.py:79
 msgid "Stop Date:"
 msgstr "Dokdy:"
 
-#: qt/controller/budget_panel.py:74
+#: qt/controller/budget_panel.py:76
 msgid "Account:"
 msgstr "Účet:"
 
-#: qt/controller/budget_panel.py:78 qt/controller/import_/csv_options.py:61
+#: qt/controller/budget_panel.py:80 qt/controller/import_/csv_options.py:63
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Target:"
 msgstr "Cíl:"
 
-#: qt/controller/budget_panel.py:83 qt/controller/mass_edition_panel.py:106
+#: qt/controller/budget_panel.py:85 qt/controller/mass_edition_panel.py:105
 msgid "Amount:"
 msgstr "Částka:"
 
@@ -213,19 +213,19 @@ msgstr "Všechny transakce"
 msgid "Custom..."
 msgstr ""
 
-#: qt/controller/docprops_view.py:36 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/docprops_view.py:42 cocoa/en.lproj/Localizable.strings:0
 msgid "Native Currency:"
 msgstr ""
 
-#: qt/controller/docprops_view.py:40 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/docprops_view.py:46 cocoa/en.lproj/Localizable.strings:0
 msgid "First day of the week:"
 msgstr "První den v týdnu:"
 
-#: qt/controller/docprops_view.py:44 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/docprops_view.py:50 cocoa/en.lproj/Localizable.strings:0
 msgid "Ahead months in Running Year:"
 msgstr "Měsíců napřed v probíhajícím roce:"
 
-#: qt/controller/docprops_view.py:48 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/docprops_view.py:54 cocoa/en.lproj/Localizable.strings:0
 msgid "Year starts in:"
 msgstr "Rok začíná:"
 
@@ -237,15 +237,15 @@ msgstr ""
 msgid "Do you want to save your changes before continuing?"
 msgstr ""
 
-#: qt/controller/main_window.py:607
+#: qt/controller/main_window.py:609
 msgid "Select a document to import"
 msgstr ""
 
-#: qt/controller/main_window.py:608
+#: qt/controller/main_window.py:610
 msgid "Supported files (*.moneyguru *.ofx *.qfx *.qif *.csv *.txt)"
 msgstr ""
 
-#: qt/controller/main_window.py:623
+#: qt/controller/main_window.py:625
 msgid "Cannot import file"
 msgstr ""
 
@@ -265,36 +265,36 @@ msgstr ""
 msgid "Save As"
 msgstr "Uložit jako"
 
-#: qt/controller/export_panel.py:42 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/export_panel.py:44 cocoa/en.lproj/Localizable.strings:0
 msgid "Export Options"
 msgstr "Možnosti exportu"
 
-#: qt/controller/export_panel.py:45 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/export_panel.py:47 cocoa/en.lproj/Localizable.strings:0
 msgid "Which accounts do you want to export?"
 msgstr "Které účty si přejete exportovat?"
 
-#: qt/controller/export_panel.py:52
+#: qt/controller/export_panel.py:54
 msgid "Selected"
 msgstr "Vybrané"
 
-#: qt/controller/export_panel.py:63 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/export_panel.py:65 cocoa/en.lproj/Localizable.strings:0
 msgid "Export format:"
 msgstr "Formát pro export:"
 
-#: qt/controller/export_panel.py:74 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/export_panel.py:76 cocoa/en.lproj/Localizable.strings:0
 msgid "Export scope:"
 msgstr "Export scope:"
 
-#: qt/controller/export_panel.py:76 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/export_panel.py:78 cocoa/en.lproj/Localizable.strings:0
 msgid "Current date range only"
 msgstr "Current date range only"
 
-#: qt/controller/export_panel.py:82 qt/controller/export_panel.py:96
+#: qt/controller/export_panel.py:84 qt/controller/export_panel.py:98
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Export"
 msgstr "Export"
 
-#: qt/controller/export_panel.py:98
+#: qt/controller/export_panel.py:100
 msgid "{0} Files (*.{1})"
 msgstr ""
 
@@ -313,63 +313,63 @@ msgstr ""
 "řádků, které nepředstavují transakce (záhlaví, zápatí, komentáře) "
 "nezapomeňte zrušit zašktrnutí ve sloupci \"Import\"."
 
-#: qt/controller/import_/csv_options.py:49
+#: qt/controller/import_/csv_options.py:51
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Layout:"
 msgstr "Layout:"
 
-#: qt/controller/import_/csv_options.py:54
+#: qt/controller/import_/csv_options.py:56
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Delimiter:"
 msgstr "Oddělovač:"
 
-#: qt/controller/import_/csv_options.py:71
+#: qt/controller/import_/csv_options.py:73
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Rescan"
 msgstr "Přenačíst"
 
-#: qt/controller/import_/csv_options.py:79
+#: qt/controller/import_/csv_options.py:81
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Encoding:"
 msgstr "Kódování:"
 
-#: qt/controller/import_/csv_options.py:96
+#: qt/controller/import_/csv_options.py:98
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Continue Import"
 msgstr "Pokračovat v importu"
 
-#: qt/controller/import_/csv_options.py:103
+#: qt/controller/import_/csv_options.py:105
 msgid "New Layout"
 msgstr ""
 
-#: qt/controller/import_/csv_options.py:104
+#: qt/controller/import_/csv_options.py:106
 msgid "Choose a name for your new layout:"
 msgstr ""
 
-#: qt/controller/import_/csv_options.py:110
+#: qt/controller/import_/csv_options.py:112
 msgid "Rename Layout"
 msgstr ""
 
-#: qt/controller/import_/csv_options.py:111
+#: qt/controller/import_/csv_options.py:113
 msgid "Choose a name for your layout:"
 msgstr ""
 
-#: qt/controller/import_/csv_options.py:157
+#: qt/controller/import_/csv_options.py:159
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "New Layout..."
 msgstr "Nové rozvržení..."
 
-#: qt/controller/import_/csv_options.py:158
+#: qt/controller/import_/csv_options.py:160
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Rename Selected Layout..."
 msgstr "Přejmenovat vybrané rozvržení..."
 
-#: qt/controller/import_/csv_options.py:159
+#: qt/controller/import_/csv_options.py:161
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Delete Selected Layout"
 msgstr "Smazat vybrané rozvržení"
 
-#: qt/controller/import_/csv_options.py:232 qt/controller/import_/window.py:39
+#: qt/controller/import_/csv_options.py:234 qt/controller/import_/window.py:39
 #: qt/controller/import_/window.py:77 cocoa/en.lproj/Localizable.strings:0
 msgid "Import"
 msgstr "Import"
@@ -386,319 +386,319 @@ msgstr "Použít pro všechny účty"
 msgid "Lookup"
 msgstr ""
 
-#: qt/controller/main_window.py:177
+#: qt/controller/main_window.py:179
 msgid "Status"
 msgstr "Stav"
 
-#: qt/controller/main_window.py:186 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:188 cocoa/en.lproj/Localizable.strings:0
 msgid "File"
 msgstr "Soubor"
 
-#: qt/controller/main_window.py:187
+#: qt/controller/main_window.py:189
 msgid "Open Recent"
 msgstr "Otevřít nedávné"
 
-#: qt/controller/main_window.py:188 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:190 cocoa/en.lproj/Localizable.strings:0
 msgid "View"
 msgstr "Pohled"
 
-#: qt/controller/main_window.py:189 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:191 cocoa/en.lproj/Localizable.strings:0
 msgid "Date Range"
 msgstr "Časové rozmezí"
 
-#: qt/controller/main_window.py:190 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:192 cocoa/en.lproj/Localizable.strings:0
 msgid "Edit"
 msgstr "Upravit"
 
-#: qt/controller/main_window.py:191 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:193 cocoa/en.lproj/Localizable.strings:0
 msgid "Help"
 msgstr "Nápověda"
 
-#: qt/controller/main_window.py:193 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:195 cocoa/en.lproj/Localizable.strings:0
 msgid "Open..."
 msgstr "Otevřít..."
 
-#: qt/controller/main_window.py:195 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:197 cocoa/en.lproj/Localizable.strings:0
 msgid "Net Worth"
 msgstr "Čisté jmění"
 
-#: qt/controller/main_window.py:198 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:200 cocoa/en.lproj/Localizable.strings:0
 msgid "Profit & Loss"
 msgstr "Zisky & Ztráty"
 
-#: qt/controller/main_window.py:201 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:203 cocoa/en.lproj/Localizable.strings:0
 msgid "Transactions"
 msgstr "Transakce"
 
-#: qt/controller/main_window.py:204 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:206 cocoa/en.lproj/Localizable.strings:0
 msgid "Show Account"
 msgstr "Zobrazit účet"
 
-#: qt/controller/main_window.py:206 qt/controller/main_window.py:472
+#: qt/controller/main_window.py:208 qt/controller/main_window.py:474
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "New Item"
 msgstr "Nová položka"
 
-#: qt/controller/main_window.py:208
+#: qt/controller/main_window.py:210
 msgid "Remove Selected"
 msgstr ""
 
-#: qt/controller/main_window.py:209 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:211 cocoa/en.lproj/Localizable.strings:0
 msgid "Show Info"
 msgstr "Zobrazit info"
 
-#: qt/controller/main_window.py:211 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:213 cocoa/en.lproj/Localizable.strings:0
 msgid "Toggle Graph"
 msgstr ""
 
-#: qt/controller/main_window.py:213 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:215 cocoa/en.lproj/Localizable.strings:0
 msgid "Toggle Pie Chart"
 msgstr ""
 
-#: qt/controller/main_window.py:215 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:217 cocoa/en.lproj/Localizable.strings:0
 msgid "Move Up"
 msgstr "Posun nahoru"
 
-#: qt/controller/main_window.py:217 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:219 cocoa/en.lproj/Localizable.strings:0
 msgid "Move Down"
 msgstr "Posun dolů"
 
-#: qt/controller/main_window.py:219 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:221 cocoa/en.lproj/Localizable.strings:0
 msgid "Go Back"
 msgstr "Vrátit se"
 
-#: qt/controller/main_window.py:221 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:223 cocoa/en.lproj/Localizable.strings:0
 msgid "New Account Group"
 msgstr "Nová skupina účtů"
 
-#: qt/controller/main_window.py:223
+#: qt/controller/main_window.py:225
 msgid "Next View"
 msgstr ""
 
-#: qt/controller/main_window.py:225
+#: qt/controller/main_window.py:227
 msgid "Previous View"
 msgstr ""
 
-#: qt/controller/main_window.py:227 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:229 cocoa/en.lproj/Localizable.strings:0
 msgid "New Document"
 msgstr "Nový dokument"
 
-#: qt/controller/main_window.py:228 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:230 cocoa/en.lproj/Localizable.strings:0
 msgid "Open Example Document"
 msgstr "Otevřít vzorový dokument"
 
-#: qt/controller/main_window.py:230 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:232 cocoa/en.lproj/Localizable.strings:0
 msgid "Import..."
 msgstr "Import..."
 
-#: qt/controller/main_window.py:232 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:234 cocoa/en.lproj/Localizable.strings:0
 msgid "Export..."
 msgstr "Export..."
 
-#: qt/controller/main_window.py:234 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:236 cocoa/en.lproj/Localizable.strings:0
 msgid "Save"
 msgstr "Uložit"
 
-#: qt/controller/main_window.py:236 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:238 cocoa/en.lproj/Localizable.strings:0
 msgid "Save As..."
 msgstr "Uložit jako..."
 
-#: qt/controller/main_window.py:238 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:240 cocoa/en.lproj/Localizable.strings:0
 msgid "About moneyGuru"
 msgstr "O aplikaci"
 
-#: qt/controller/main_window.py:239 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:241 cocoa/en.lproj/Localizable.strings:0
 msgid "Toggle Reconciliation Mode"
 msgstr "Přepnout režim párování"
 
-#: qt/controller/main_window.py:241 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:243 cocoa/en.lproj/Localizable.strings:0
 msgid "Toggle Exclusion Status of Account"
 msgstr "Přepnout stav vyloučení účtu"
 
-#: qt/controller/main_window.py:243 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:245 cocoa/en.lproj/Localizable.strings:0
 msgid "Schedules"
 msgstr "Plány"
 
-#: qt/controller/main_window.py:246 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:248 cocoa/en.lproj/Localizable.strings:0
 msgid "Budgets"
 msgstr "Rozpočty"
 
-#: qt/controller/main_window.py:249 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:251 cocoa/en.lproj/Localizable.strings:0
 msgid "Reconcile Selection"
 msgstr "Spárovat výběr"
 
-#: qt/controller/main_window.py:251 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:253 cocoa/en.lproj/Localizable.strings:0
 msgid "Make Schedule from Selected"
 msgstr "Vytvořit plán z výběru"
 
-#: qt/controller/main_window.py:253 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:255 cocoa/en.lproj/Localizable.strings:0
 msgid "Preferences..."
 msgstr "Předvolby..."
 
-#: qt/controller/main_window.py:254
+#: qt/controller/main_window.py:256
 msgid "Print..."
 msgstr ""
 
-#: qt/controller/main_window.py:256 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:258 cocoa/en.lproj/Localizable.strings:0
 msgid "Quit moneyGuru"
 msgstr "Ukončit moneyGuru"
 
-#: qt/controller/main_window.py:258 qt/controller/main_window.py:493
+#: qt/controller/main_window.py:260 qt/controller/main_window.py:495
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Undo"
 msgstr "Zpět"
 
-#: qt/controller/main_window.py:260 qt/controller/main_window.py:499
+#: qt/controller/main_window.py:262 qt/controller/main_window.py:501
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Redo"
 msgstr "Znovu"
 
-#: qt/controller/main_window.py:262 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:264 cocoa/en.lproj/Localizable.strings:0
 msgid "moneyGuru Help"
 msgstr "Nápověda moneyGuru"
 
-#: qt/controller/main_window.py:264
+#: qt/controller/main_window.py:266
 msgid "Check for update"
 msgstr "Zkontrolovat aktualizace"
 
-#: qt/controller/main_window.py:265
+#: qt/controller/main_window.py:267
 msgid "Open Debug Log"
 msgstr ""
 
-#: qt/controller/main_window.py:266
+#: qt/controller/main_window.py:268
 msgid "Duplicate Transaction"
 msgstr ""
 
-#: qt/controller/main_window.py:268 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:270 cocoa/en.lproj/Localizable.strings:0
 msgid "Jump to Account..."
 msgstr "Přejít na účet..."
 
-#: qt/controller/main_window.py:270 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:272 cocoa/en.lproj/Localizable.strings:0
 msgid "New Tab"
 msgstr "Nová záložka"
 
-#: qt/controller/main_window.py:272
+#: qt/controller/main_window.py:274
 msgid "Close Tab"
 msgstr ""
 
-#: qt/controller/main_window.py:465 qt/controller/main_window.py:466
+#: qt/controller/main_window.py:467 qt/controller/main_window.py:468
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "New Account"
 msgstr "Nový účet"
 
-#: qt/controller/main_window.py:467 qt/controller/main_window.py:468
-#: qt/controller/main_window.py:471 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:469 qt/controller/main_window.py:470
+#: qt/controller/main_window.py:473 cocoa/en.lproj/Localizable.strings:0
 msgid "New Transaction"
 msgstr "Nová transakce"
 
-#: qt/controller/main_window.py:469 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:471 cocoa/en.lproj/Localizable.strings:0
 msgid "New Schedule"
 msgstr "Nový plán"
 
-#: qt/controller/main_window.py:470 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:472 cocoa/en.lproj/Localizable.strings:0
 msgid "New Budget"
 msgstr "Nový rozpočet"
 
-#: qt/controller/main_window.py:490
+#: qt/controller/main_window.py:492
 msgid "Undo {0}"
 msgstr ""
 
-#: qt/controller/main_window.py:496
+#: qt/controller/main_window.py:498
 msgid "Redo {0}"
 msgstr ""
 
-#: qt/controller/main_window.py:692
+#: qt/controller/main_window.py:696
 msgid "Warning"
 msgstr ""
 
-#: qt/controller/new_view.py:46
+#: qt/controller/new_view.py:48
 msgid "Choose a type for this tab:"
 msgstr ""
 
-#: qt/controller/new_view.py:51
+#: qt/controller/new_view.py:53
 msgid "1. Net Worth"
 msgstr ""
 
-#: qt/controller/new_view.py:54
+#: qt/controller/new_view.py:56
 msgid "2. Profit && Loss"
 msgstr ""
 
-#: qt/controller/new_view.py:57
+#: qt/controller/new_view.py:59
 msgid "3. Transactions"
 msgstr ""
 
-#: qt/controller/new_view.py:60
+#: qt/controller/new_view.py:62
 msgid "4. General Ledger"
 msgstr ""
 
-#: qt/controller/new_view.py:63
+#: qt/controller/new_view.py:65
 msgid "5. Schedules"
 msgstr ""
 
-#: qt/controller/new_view.py:66
+#: qt/controller/new_view.py:68
 msgid "6. Budgets"
 msgstr ""
 
-#: qt/controller/new_view.py:69
+#: qt/controller/new_view.py:71
 msgid "7. Document Properties"
 msgstr ""
 
-#: qt/controller/preferences_panel.py:34
+#: qt/controller/preferences_panel.py:36
 msgid "Preferences"
 msgstr "Předvolby"
 
-#: qt/controller/preferences_panel.py:41 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/preferences_panel.py:43 cocoa/en.lproj/Localizable.strings:0
 msgid "minute(s) (0 for none)"
 msgstr "minut(y) (0 vypíná)"
 
-#: qt/controller/preferences_panel.py:42 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/preferences_panel.py:45 cocoa/en.lproj/Localizable.strings:0
 msgid "Auto-save interval:"
 msgstr "Interval ukládání:"
 
-#: qt/controller/preferences_panel.py:58
+#: qt/controller/preferences_panel.py:62
 msgid "Language:"
 msgstr ""
 
-#: qt/controller/preferences_panel.py:61 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/preferences_panel.py:65 cocoa/en.lproj/Localizable.strings:0
 msgid "Show scope dialog when modifying a scheduled transaction"
 msgstr "Zobrazit dialog pro určení rozsahu při změně naplánované transakce"
 
-#: qt/controller/preferences_panel.py:63 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/preferences_panel.py:67 cocoa/en.lproj/Localizable.strings:0
 msgid "Automatically place decimals when typing"
 msgstr "Automaticky vkládat desetinnou čárku při psaní"
 
-#: qt/controller/preferences_panel.py:106
+#: qt/controller/preferences_panel.py:110
 msgid "moneyGuru has to restart for these changes to take effect"
 msgstr ""
 
-#: qt/controller/schedule_panel.py:51 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/schedule_panel.py:53 cocoa/en.lproj/Localizable.strings:0
 msgid "Schedule Info"
 msgstr "Info o plánu"
 
-#: qt/controller/mass_edition_panel.py:66 qt/controller/schedule_panel.py:82
-#: qt/controller/transaction_panel.py:61
+#: qt/controller/mass_edition_panel.py:65 qt/controller/schedule_panel.py:84
+#: qt/controller/transaction_panel.py:63
 msgid "Description:"
 msgstr "Popis:"
 
-#: qt/controller/mass_edition_panel.py:74 qt/controller/schedule_panel.py:86
-#: qt/controller/transaction_panel.py:63
+#: qt/controller/mass_edition_panel.py:73 qt/controller/schedule_panel.py:88
+#: qt/controller/transaction_panel.py:65
 msgid "Payee:"
 msgstr "Příjemce:"
 
-#: qt/controller/schedule_panel.py:90 qt/controller/transaction_panel.py:66
+#: qt/controller/schedule_panel.py:92 qt/controller/transaction_panel.py:68
 msgid "Check #:"
 msgstr "Šek č.:"
 
-#: qt/controller/schedule_panel.py:95 qt/controller/transaction_panel.py:68
+#: qt/controller/schedule_panel.py:97 qt/controller/transaction_panel.py:70
 msgid "Transfers:"
 msgstr "Přesuny:"
 
-#: qt/controller/schedule_panel.py:129 qt/controller/transaction_panel.py:98
+#: qt/controller/schedule_panel.py:131 qt/controller/transaction_panel.py:102
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Info"
 msgstr "Info"
 
-#: qt/controller/schedule_panel.py:134 qt/controller/transaction_panel.py:103
+#: qt/controller/schedule_panel.py:136 qt/controller/transaction_panel.py:107
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Notes"
 msgstr "Poznámky"
@@ -718,11 +718,11 @@ msgid ""
 " by holding Shift when you perform the change."
 msgstr ""
 
-#: qt/controller/schedule_scope_dialog.py:50
+#: qt/controller/schedule_scope_dialog.py:53
 msgid "All future occurrences"
 msgstr ""
 
-#: qt/controller/schedule_scope_dialog.py:53
+#: qt/controller/schedule_scope_dialog.py:56
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Just this one"
 msgstr "Pouze tento"
@@ -737,18 +737,14 @@ msgstr "Příjem"
 msgid "Expenses"
 msgstr "Výdaje"
 
-#: qt/controller/transaction_panel.py:48 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/transaction_panel.py:50 cocoa/en.lproj/Localizable.strings:0
 msgid "Transaction Info"
 msgstr "Info o transakci"
 
-#: qt/controller/mass_edition_panel.py:58
-#: qt/controller/transaction_panel.py:59
+#: qt/controller/mass_edition_panel.py:57
+#: qt/controller/transaction_panel.py:61
 msgid "Date:"
 msgstr "Datum:"
-
-#: qt/controller/transaction_panel.py:85
-msgid "Multi-currency balance"
-msgstr ""
 
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Window"
@@ -790,7 +786,7 @@ msgstr "Částka"
 msgid "Date"
 msgstr "Datum"
 
-#: qt/controller/mass_edition_panel.py:82 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/mass_edition_panel.py:81 cocoa/en.lproj/Localizable.strings:0
 msgid "Check #"
 msgstr "Šek č."
 
@@ -996,7 +992,7 @@ msgstr "Předvolby moneyGuru"
 msgid "Automatically check for updates"
 msgstr "Automaticky kontrolovat aktualizace"
 
-#: qt/controller/preferences_panel.py:52 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/preferences_panel.py:56 cocoa/en.lproj/Localizable.strings:0
 msgid "Font size:"
 msgstr "Velikost písma:"
 
@@ -1075,15 +1071,15 @@ msgstr "Nový řádek vložíte stiskem ⌥+Return."
 msgid "Multi-Currency Balance"
 msgstr "Zůstatek ve více měnách"
 
-#: qt/controller/mass_edition_panel.py:90
+#: qt/controller/mass_edition_panel.py:89
 msgid "From:"
 msgstr ""
 
-#: qt/controller/mass_edition_panel.py:98
+#: qt/controller/mass_edition_panel.py:97
 msgid "To:"
 msgstr ""
 
-#: qt/controller/mass_edition_panel.py:114
+#: qt/controller/mass_edition_panel.py:113
 msgid "Currency:"
 msgstr ""
 
@@ -1111,15 +1107,15 @@ msgstr ""
 msgid "Toggle Columns"
 msgstr ""
 
-#: qt/controller/main_window.py:229 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:231 cocoa/en.lproj/Localizable.strings:0
 msgid "Open Plugin Folder"
 msgstr ""
 
-#: qt/controller/new_view.py:72 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/new_view.py:74 cocoa/en.lproj/Localizable.strings:0
 msgid "Plugins (double-click to open)"
 msgstr ""
 
-#: qt/controller/preferences_panel.py:65 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/preferences_panel.py:69 cocoa/en.lproj/Localizable.strings:0
 msgid "Debug mode (restart required)"
 msgstr ""
 
@@ -1159,6 +1155,21 @@ msgstr ""
 msgid "Fix"
 msgstr ""
 
-#: qt/controller/preferences_panel.py:47
+#: qt/controller/preferences_panel.py:51
 msgid "Date format:"
 msgstr ""
+
+#: qt/controller/transaction_panel.py:87
+msgid "&Multi-currency balance"
+msgstr ""
+
+#: qt/controller/transaction_panel.py:89
+msgid "Assign &imbalance"
+msgstr ""
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Assign imbalance"
+msgstr ""
+
+#~ msgid "Multi-currency balance"
+#~ msgstr ""

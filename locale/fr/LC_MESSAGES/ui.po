@@ -4,7 +4,7 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: utf-8\n"
 
-#: qt/controller/account/filter_bar.py:18 qt/controller/export_panel.py:48
+#: qt/controller/account/filter_bar.py:18 qt/controller/export_panel.py:50
 #: qt/controller/transaction/filter_bar.py:18
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "All"
@@ -42,39 +42,39 @@ msgstr "Reconcilié"
 msgid "Not Reconciled"
 msgstr "Non Reconcilié"
 
-#: qt/controller/account/view.py:55 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/account/view.py:57 cocoa/en.lproj/Localizable.strings:0
 msgid "Reconciliation"
 msgstr "Réconciliation"
 
-#: qt/controller/account_panel.py:39 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/account_panel.py:41 cocoa/en.lproj/Localizable.strings:0
 msgid "Account Info"
 msgstr "Détails de compte"
 
-#: qt/controller/account_panel.py:45 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/account_panel.py:47 cocoa/en.lproj/Localizable.strings:0
 msgid "Name"
 msgstr "Nom"
 
-#: qt/controller/account_panel.py:49 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/account_panel.py:51 cocoa/en.lproj/Localizable.strings:0
 msgid "Type"
 msgstr "Type"
 
-#: qt/controller/account_panel.py:53 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/account_panel.py:55 cocoa/en.lproj/Localizable.strings:0
 msgid "Currency"
 msgstr "Devise"
 
-#: qt/controller/account_panel.py:64 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/account_panel.py:66 cocoa/en.lproj/Localizable.strings:0
 msgid "Account #"
 msgstr "# Compte"
 
-#: qt/controller/account_panel.py:71 qt/controller/budget_panel.py:85
+#: qt/controller/account_panel.py:73 qt/controller/budget_panel.py:87
 msgid "Notes:"
 msgstr "Notes:"
 
-#: qt/controller/account_reassign_panel.py:37
+#: qt/controller/account_reassign_panel.py:38
 msgid "Re-assign Account"
 msgstr "Réassigner un compte"
 
-#: qt/controller/account_reassign_panel.py:41
+#: qt/controller/account_reassign_panel.py:42
 #: cocoa/en.lproj/Localizable.strings:0
 msgid ""
 "You're about to delete a non-empty account. Select an account to re-assign "
@@ -83,48 +83,48 @@ msgstr ""
 "Vous supprimez un compte qui n'est pas vide. Sélectionnez un compte pour "
 "réassigner les transactions."
 
-#: qt/controller/account_reassign_panel.py:57
-#: qt/controller/import_/csv_options.py:93
-#: qt/controller/schedule_scope_dialog.py:45
+#: qt/controller/account_reassign_panel.py:61
+#: qt/controller/import_/csv_options.py:95
+#: qt/controller/schedule_scope_dialog.py:48
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Cancel"
 msgstr "Annuler"
 
-#: qt/controller/account_reassign_panel.py:62
+#: qt/controller/account_reassign_panel.py:66
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Continue"
 msgstr "Continuer"
 
-#: qt/controller/budget_panel.py:43 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/budget_panel.py:45 cocoa/en.lproj/Localizable.strings:0
 msgid "Budget Info"
 msgstr "Détails de budget"
 
-#: qt/controller/budget_panel.py:49 qt/controller/schedule_panel.py:59
+#: qt/controller/budget_panel.py:51 qt/controller/schedule_panel.py:61
 msgid "Start Date:"
 msgstr "Date début:"
 
-#: qt/controller/budget_panel.py:54 qt/controller/schedule_panel.py:64
+#: qt/controller/budget_panel.py:56 qt/controller/schedule_panel.py:66
 msgid "Repeat Type:"
 msgstr "Répéter:"
 
-#: qt/controller/budget_panel.py:58 qt/controller/schedule_panel.py:68
+#: qt/controller/budget_panel.py:60 qt/controller/schedule_panel.py:70
 msgid "Every:"
 msgstr "Tout les:"
 
-#: qt/controller/budget_panel.py:67 qt/controller/schedule_panel.py:77
+#: qt/controller/budget_panel.py:69 qt/controller/schedule_panel.py:79
 msgid "Stop Date:"
 msgstr "Date fin:"
 
-#: qt/controller/budget_panel.py:74
+#: qt/controller/budget_panel.py:76
 msgid "Account:"
 msgstr "Compte:"
 
-#: qt/controller/budget_panel.py:78 qt/controller/import_/csv_options.py:61
+#: qt/controller/budget_panel.py:80 qt/controller/import_/csv_options.py:63
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Target:"
 msgstr "Cible:"
 
-#: qt/controller/budget_panel.py:83 qt/controller/mass_edition_panel.py:106
+#: qt/controller/budget_panel.py:85 qt/controller/mass_edition_panel.py:105
 msgid "Amount:"
 msgstr "Montant:"
 
@@ -213,19 +213,19 @@ msgstr "Toutes les transactions"
 msgid "Custom..."
 msgstr "Personnalisé..."
 
-#: qt/controller/docprops_view.py:36 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/docprops_view.py:42 cocoa/en.lproj/Localizable.strings:0
 msgid "Native Currency:"
 msgstr "Devise principale:"
 
-#: qt/controller/docprops_view.py:40 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/docprops_view.py:46 cocoa/en.lproj/Localizable.strings:0
 msgid "First day of the week:"
 msgstr "Premier jour de la semaine:"
 
-#: qt/controller/docprops_view.py:44 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/docprops_view.py:50 cocoa/en.lproj/Localizable.strings:0
 msgid "Ahead months in Running Year:"
 msgstr "Nombre de mois flottants:"
 
-#: qt/controller/docprops_view.py:48 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/docprops_view.py:54 cocoa/en.lproj/Localizable.strings:0
 msgid "Year starts in:"
 msgstr "Début de l'année:"
 
@@ -237,15 +237,15 @@ msgstr "Document non-sauvegardé"
 msgid "Do you want to save your changes before continuing?"
 msgstr "Voulez-vous sauvegarder vos changement avant de continuer?"
 
-#: qt/controller/main_window.py:607
+#: qt/controller/main_window.py:609
 msgid "Select a document to import"
 msgstr "Selectionner un fichier à importer"
 
-#: qt/controller/main_window.py:608
+#: qt/controller/main_window.py:610
 msgid "Supported files (*.moneyguru *.ofx *.qfx *.qif *.csv *.txt)"
 msgstr "Fichiers supportés (*.moneyguru *.ofx *.qfx *.qif *.csv *.txt)"
 
-#: qt/controller/main_window.py:623
+#: qt/controller/main_window.py:625
 msgid "Cannot import file"
 msgstr "Impossible d'importer le fichier"
 
@@ -265,36 +265,36 @@ msgstr "Documents moneyGuru (*.moneyguru)"
 msgid "Save As"
 msgstr "Sauvegarder sous"
 
-#: qt/controller/export_panel.py:42 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/export_panel.py:44 cocoa/en.lproj/Localizable.strings:0
 msgid "Export Options"
 msgstr "Options d'exportation"
 
-#: qt/controller/export_panel.py:45 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/export_panel.py:47 cocoa/en.lproj/Localizable.strings:0
 msgid "Which accounts do you want to export?"
 msgstr "Quels comptes voulez-vous exporter?"
 
-#: qt/controller/export_panel.py:52
+#: qt/controller/export_panel.py:54
 msgid "Selected"
 msgstr "Comptes sélectionnés"
 
-#: qt/controller/export_panel.py:63 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/export_panel.py:65 cocoa/en.lproj/Localizable.strings:0
 msgid "Export format:"
 msgstr "Format d'exportation:"
 
-#: qt/controller/export_panel.py:74 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/export_panel.py:76 cocoa/en.lproj/Localizable.strings:0
 msgid "Export scope:"
 msgstr "Export scope:"
 
-#: qt/controller/export_panel.py:76 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/export_panel.py:78 cocoa/en.lproj/Localizable.strings:0
 msgid "Current date range only"
 msgstr "Current date range only"
 
-#: qt/controller/export_panel.py:82 qt/controller/export_panel.py:96
+#: qt/controller/export_panel.py:84 qt/controller/export_panel.py:98
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Export"
 msgstr "Exporter"
 
-#: qt/controller/export_panel.py:98
+#: qt/controller/export_panel.py:100
 msgid "{0} Files (*.{1})"
 msgstr ""
 
@@ -313,63 +313,63 @@ msgstr ""
 "décocher les cases de la colonne \"Imp.\" pour chaque ligne n'étant pas une "
 "transaction (entête, commentaire)."
 
-#: qt/controller/import_/csv_options.py:49
+#: qt/controller/import_/csv_options.py:51
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Layout:"
 msgstr "Config.:"
 
-#: qt/controller/import_/csv_options.py:54
+#: qt/controller/import_/csv_options.py:56
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Delimiter:"
 msgstr "Séparateur:"
 
-#: qt/controller/import_/csv_options.py:71
+#: qt/controller/import_/csv_options.py:73
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Rescan"
 msgstr "Rescanner"
 
-#: qt/controller/import_/csv_options.py:79
+#: qt/controller/import_/csv_options.py:81
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Encoding:"
 msgstr "Encodage:"
 
-#: qt/controller/import_/csv_options.py:96
+#: qt/controller/import_/csv_options.py:98
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Continue Import"
 msgstr "Continuer d'importer"
 
-#: qt/controller/import_/csv_options.py:103
+#: qt/controller/import_/csv_options.py:105
 msgid "New Layout"
 msgstr "Nouvelle configuration"
 
-#: qt/controller/import_/csv_options.py:104
+#: qt/controller/import_/csv_options.py:106
 msgid "Choose a name for your new layout:"
 msgstr "Choisissez un nom pour la nouvelle configuration:"
 
-#: qt/controller/import_/csv_options.py:110
+#: qt/controller/import_/csv_options.py:112
 msgid "Rename Layout"
 msgstr "Renommer la configuration"
 
-#: qt/controller/import_/csv_options.py:111
+#: qt/controller/import_/csv_options.py:113
 msgid "Choose a name for your layout:"
 msgstr "Choisissez un nom pour la configuration:"
 
-#: qt/controller/import_/csv_options.py:157
+#: qt/controller/import_/csv_options.py:159
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "New Layout..."
 msgstr "Nouvelle configuration..."
 
-#: qt/controller/import_/csv_options.py:158
+#: qt/controller/import_/csv_options.py:160
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Rename Selected Layout..."
 msgstr "Renommer la configuration sélectionnée..."
 
-#: qt/controller/import_/csv_options.py:159
+#: qt/controller/import_/csv_options.py:161
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Delete Selected Layout"
 msgstr "Supprimer la configuration sélectionnée"
 
-#: qt/controller/import_/csv_options.py:232 qt/controller/import_/window.py:39
+#: qt/controller/import_/csv_options.py:234 qt/controller/import_/window.py:39
 #: qt/controller/import_/window.py:77 cocoa/en.lproj/Localizable.strings:0
 msgid "Import"
 msgstr "Importer"
@@ -386,319 +386,319 @@ msgstr "Appliquer à tous"
 msgid "Lookup"
 msgstr ""
 
-#: qt/controller/main_window.py:177
+#: qt/controller/main_window.py:179
 msgid "Status"
 msgstr ""
 
-#: qt/controller/main_window.py:186 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:188 cocoa/en.lproj/Localizable.strings:0
 msgid "File"
 msgstr "Fichier"
 
-#: qt/controller/main_window.py:187
+#: qt/controller/main_window.py:189
 msgid "Open Recent"
 msgstr "Ouvrir un fichier récent"
 
-#: qt/controller/main_window.py:188 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:190 cocoa/en.lproj/Localizable.strings:0
 msgid "View"
 msgstr "Vues"
 
-#: qt/controller/main_window.py:189 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:191 cocoa/en.lproj/Localizable.strings:0
 msgid "Date Range"
 msgstr "Intervalle Date"
 
-#: qt/controller/main_window.py:190 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:192 cocoa/en.lproj/Localizable.strings:0
 msgid "Edit"
 msgstr "Édition"
 
-#: qt/controller/main_window.py:191 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:193 cocoa/en.lproj/Localizable.strings:0
 msgid "Help"
 msgstr "Aide"
 
-#: qt/controller/main_window.py:193 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:195 cocoa/en.lproj/Localizable.strings:0
 msgid "Open..."
 msgstr "Ouvrir..."
 
-#: qt/controller/main_window.py:195 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:197 cocoa/en.lproj/Localizable.strings:0
 msgid "Net Worth"
 msgstr "Valeur Nette"
 
-#: qt/controller/main_window.py:198 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:200 cocoa/en.lproj/Localizable.strings:0
 msgid "Profit & Loss"
 msgstr "Profits & Pertes"
 
-#: qt/controller/main_window.py:201 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:203 cocoa/en.lproj/Localizable.strings:0
 msgid "Transactions"
 msgstr "Transactions"
 
-#: qt/controller/main_window.py:204 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:206 cocoa/en.lproj/Localizable.strings:0
 msgid "Show Account"
 msgstr "Ouvrir le compte"
 
-#: qt/controller/main_window.py:206 qt/controller/main_window.py:472
+#: qt/controller/main_window.py:208 qt/controller/main_window.py:474
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "New Item"
 msgstr "Nouvel Item"
 
-#: qt/controller/main_window.py:208
+#: qt/controller/main_window.py:210
 msgid "Remove Selected"
 msgstr "Supprimer la sélection"
 
-#: qt/controller/main_window.py:209 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:211 cocoa/en.lproj/Localizable.strings:0
 msgid "Show Info"
 msgstr "Montrer info"
 
-#: qt/controller/main_window.py:211 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:213 cocoa/en.lproj/Localizable.strings:0
 msgid "Toggle Graph"
 msgstr ""
 
-#: qt/controller/main_window.py:213 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:215 cocoa/en.lproj/Localizable.strings:0
 msgid "Toggle Pie Chart"
 msgstr ""
 
-#: qt/controller/main_window.py:215 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:217 cocoa/en.lproj/Localizable.strings:0
 msgid "Move Up"
 msgstr "Monter"
 
-#: qt/controller/main_window.py:217 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:219 cocoa/en.lproj/Localizable.strings:0
 msgid "Move Down"
 msgstr "Descendre"
 
-#: qt/controller/main_window.py:219 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:221 cocoa/en.lproj/Localizable.strings:0
 msgid "Go Back"
 msgstr "Revenir"
 
-#: qt/controller/main_window.py:221 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:223 cocoa/en.lproj/Localizable.strings:0
 msgid "New Account Group"
 msgstr "Nouveau groupe de comptes"
 
-#: qt/controller/main_window.py:223
+#: qt/controller/main_window.py:225
 msgid "Next View"
 msgstr "Onglet suivant"
 
-#: qt/controller/main_window.py:225
+#: qt/controller/main_window.py:227
 msgid "Previous View"
 msgstr "Onglet précédent"
 
-#: qt/controller/main_window.py:227 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:229 cocoa/en.lproj/Localizable.strings:0
 msgid "New Document"
 msgstr "Nouveau document"
 
-#: qt/controller/main_window.py:228 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:230 cocoa/en.lproj/Localizable.strings:0
 msgid "Open Example Document"
 msgstr "Ouvrir le document d'exemple"
 
-#: qt/controller/main_window.py:230 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:232 cocoa/en.lproj/Localizable.strings:0
 msgid "Import..."
 msgstr "Importer..."
 
-#: qt/controller/main_window.py:232 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:234 cocoa/en.lproj/Localizable.strings:0
 msgid "Export..."
 msgstr "Exporter..."
 
-#: qt/controller/main_window.py:234 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:236 cocoa/en.lproj/Localizable.strings:0
 msgid "Save"
 msgstr "Enregistrer"
 
-#: qt/controller/main_window.py:236 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:238 cocoa/en.lproj/Localizable.strings:0
 msgid "Save As..."
 msgstr "Sauvegarder sous..."
 
-#: qt/controller/main_window.py:238 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:240 cocoa/en.lproj/Localizable.strings:0
 msgid "About moneyGuru"
 msgstr "À propos de moneyGuru"
 
-#: qt/controller/main_window.py:239 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:241 cocoa/en.lproj/Localizable.strings:0
 msgid "Toggle Reconciliation Mode"
 msgstr "Changer le mode de réconciliation"
 
-#: qt/controller/main_window.py:241 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:243 cocoa/en.lproj/Localizable.strings:0
 msgid "Toggle Exclusion Status of Account"
 msgstr "Exclure/Inclure le compte"
 
-#: qt/controller/main_window.py:243 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:245 cocoa/en.lproj/Localizable.strings:0
 msgid "Schedules"
 msgstr "Récurrences"
 
-#: qt/controller/main_window.py:246 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:248 cocoa/en.lproj/Localizable.strings:0
 msgid "Budgets"
 msgstr "Budgets"
 
-#: qt/controller/main_window.py:249 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:251 cocoa/en.lproj/Localizable.strings:0
 msgid "Reconcile Selection"
 msgstr "Réconcilier la sélection"
 
-#: qt/controller/main_window.py:251 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:253 cocoa/en.lproj/Localizable.strings:0
 msgid "Make Schedule from Selected"
 msgstr "Créer une récurrence à partir de la sélection"
 
-#: qt/controller/main_window.py:253 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:255 cocoa/en.lproj/Localizable.strings:0
 msgid "Preferences..."
 msgstr "Préférences..."
 
-#: qt/controller/main_window.py:254
+#: qt/controller/main_window.py:256
 msgid "Print..."
 msgstr "Imprimer..."
 
-#: qt/controller/main_window.py:256 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:258 cocoa/en.lproj/Localizable.strings:0
 msgid "Quit moneyGuru"
 msgstr "Quitter moneyGuru"
 
-#: qt/controller/main_window.py:258 qt/controller/main_window.py:493
+#: qt/controller/main_window.py:260 qt/controller/main_window.py:495
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Undo"
 msgstr "Annuler"
 
-#: qt/controller/main_window.py:260 qt/controller/main_window.py:499
+#: qt/controller/main_window.py:262 qt/controller/main_window.py:501
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Redo"
 msgstr "Refaire"
 
-#: qt/controller/main_window.py:262 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:264 cocoa/en.lproj/Localizable.strings:0
 msgid "moneyGuru Help"
 msgstr "Aide de moneyGuru"
 
-#: qt/controller/main_window.py:264
+#: qt/controller/main_window.py:266
 msgid "Check for update"
 msgstr "Vérifier les mises-à-jour"
 
-#: qt/controller/main_window.py:265
+#: qt/controller/main_window.py:267
 msgid "Open Debug Log"
 msgstr ""
 
-#: qt/controller/main_window.py:266
+#: qt/controller/main_window.py:268
 msgid "Duplicate Transaction"
 msgstr "Dupliquer la transaction"
 
-#: qt/controller/main_window.py:268 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:270 cocoa/en.lproj/Localizable.strings:0
 msgid "Jump to Account..."
 msgstr "Ouvrir un compte..."
 
-#: qt/controller/main_window.py:270 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:272 cocoa/en.lproj/Localizable.strings:0
 msgid "New Tab"
 msgstr "Nouvel onglet"
 
-#: qt/controller/main_window.py:272
+#: qt/controller/main_window.py:274
 msgid "Close Tab"
 msgstr "Fermer l'onglet"
 
-#: qt/controller/main_window.py:465 qt/controller/main_window.py:466
+#: qt/controller/main_window.py:467 qt/controller/main_window.py:468
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "New Account"
 msgstr "Nouveau compte"
 
-#: qt/controller/main_window.py:467 qt/controller/main_window.py:468
-#: qt/controller/main_window.py:471 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:469 qt/controller/main_window.py:470
+#: qt/controller/main_window.py:473 cocoa/en.lproj/Localizable.strings:0
 msgid "New Transaction"
 msgstr "Nouvelle Transaction"
 
-#: qt/controller/main_window.py:469 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:471 cocoa/en.lproj/Localizable.strings:0
 msgid "New Schedule"
 msgstr "Nouvelle Récurrence"
 
-#: qt/controller/main_window.py:470 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:472 cocoa/en.lproj/Localizable.strings:0
 msgid "New Budget"
 msgstr "Nouveau Budget"
 
-#: qt/controller/main_window.py:490
+#: qt/controller/main_window.py:492
 msgid "Undo {0}"
 msgstr "Défaire {0}"
 
-#: qt/controller/main_window.py:496
+#: qt/controller/main_window.py:498
 msgid "Redo {0}"
 msgstr "Refaire {0}"
 
-#: qt/controller/main_window.py:692
+#: qt/controller/main_window.py:696
 msgid "Warning"
 msgstr "Avertissement"
 
-#: qt/controller/new_view.py:46
+#: qt/controller/new_view.py:48
 msgid "Choose a type for this tab:"
 msgstr "Choisissez un type d'onglet:"
 
-#: qt/controller/new_view.py:51
+#: qt/controller/new_view.py:53
 msgid "1. Net Worth"
 msgstr "1. Valeur nette"
 
-#: qt/controller/new_view.py:54
+#: qt/controller/new_view.py:56
 msgid "2. Profit && Loss"
 msgstr ""
 
-#: qt/controller/new_view.py:57
+#: qt/controller/new_view.py:59
 msgid "3. Transactions"
 msgstr "3. Transactions"
 
-#: qt/controller/new_view.py:60
+#: qt/controller/new_view.py:62
 msgid "4. General Ledger"
 msgstr "4. Grand Livre"
 
-#: qt/controller/new_view.py:63
+#: qt/controller/new_view.py:65
 msgid "5. Schedules"
 msgstr "5. Récurrences"
 
-#: qt/controller/new_view.py:66
+#: qt/controller/new_view.py:68
 msgid "6. Budgets"
 msgstr "6. Budgets"
 
-#: qt/controller/new_view.py:69
+#: qt/controller/new_view.py:71
 msgid "7. Document Properties"
 msgstr ""
 
-#: qt/controller/preferences_panel.py:34
+#: qt/controller/preferences_panel.py:36
 msgid "Preferences"
 msgstr "Préférences"
 
-#: qt/controller/preferences_panel.py:41 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/preferences_panel.py:43 cocoa/en.lproj/Localizable.strings:0
 msgid "minute(s) (0 for none)"
 msgstr "minute(s) (0 = inactif)"
 
-#: qt/controller/preferences_panel.py:42 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/preferences_panel.py:45 cocoa/en.lproj/Localizable.strings:0
 msgid "Auto-save interval:"
 msgstr "Intervalle sauvegarde auto.:"
 
-#: qt/controller/preferences_panel.py:58
+#: qt/controller/preferences_panel.py:62
 msgid "Language:"
 msgstr ""
 
-#: qt/controller/preferences_panel.py:61 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/preferences_panel.py:65 cocoa/en.lproj/Localizable.strings:0
 msgid "Show scope dialog when modifying a scheduled transaction"
 msgstr "Confirmer la portée des changements aux récurrences"
 
-#: qt/controller/preferences_panel.py:63 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/preferences_panel.py:67 cocoa/en.lproj/Localizable.strings:0
 msgid "Automatically place decimals when typing"
 msgstr "Placement automatique de décimale"
 
-#: qt/controller/preferences_panel.py:106
+#: qt/controller/preferences_panel.py:110
 msgid "moneyGuru has to restart for these changes to take effect"
 msgstr ""
 
-#: qt/controller/schedule_panel.py:51 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/schedule_panel.py:53 cocoa/en.lproj/Localizable.strings:0
 msgid "Schedule Info"
 msgstr "Détails de récurrence"
 
-#: qt/controller/mass_edition_panel.py:66 qt/controller/schedule_panel.py:82
-#: qt/controller/transaction_panel.py:61
+#: qt/controller/mass_edition_panel.py:65 qt/controller/schedule_panel.py:84
+#: qt/controller/transaction_panel.py:63
 msgid "Description:"
 msgstr "Description:"
 
-#: qt/controller/mass_edition_panel.py:74 qt/controller/schedule_panel.py:86
-#: qt/controller/transaction_panel.py:63
+#: qt/controller/mass_edition_panel.py:73 qt/controller/schedule_panel.py:88
+#: qt/controller/transaction_panel.py:65
 msgid "Payee:"
 msgstr "Tiers:"
 
-#: qt/controller/schedule_panel.py:90 qt/controller/transaction_panel.py:66
+#: qt/controller/schedule_panel.py:92 qt/controller/transaction_panel.py:68
 msgid "Check #:"
 msgstr "# Chèque:"
 
-#: qt/controller/schedule_panel.py:95 qt/controller/transaction_panel.py:68
+#: qt/controller/schedule_panel.py:97 qt/controller/transaction_panel.py:70
 msgid "Transfers:"
 msgstr "Transferts:"
 
-#: qt/controller/schedule_panel.py:129 qt/controller/transaction_panel.py:98
+#: qt/controller/schedule_panel.py:131 qt/controller/transaction_panel.py:102
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Info"
 msgstr "Détails"
 
-#: qt/controller/schedule_panel.py:134 qt/controller/transaction_panel.py:103
+#: qt/controller/schedule_panel.py:136 qt/controller/transaction_panel.py:107
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Notes"
 msgstr "Notes"
@@ -721,11 +721,11 @@ msgstr ""
 "Vous pouvez forcer une portée globale (changer les occurrences futures) en "
 "appuyant sur ⇧ lors du changement."
 
-#: qt/controller/schedule_scope_dialog.py:50
+#: qt/controller/schedule_scope_dialog.py:53
 msgid "All future occurrences"
 msgstr "Oui, toutes"
 
-#: qt/controller/schedule_scope_dialog.py:53
+#: qt/controller/schedule_scope_dialog.py:56
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Just this one"
 msgstr "Non"
@@ -740,18 +740,14 @@ msgstr "Revenu"
 msgid "Expenses"
 msgstr "Dépenses"
 
-#: qt/controller/transaction_panel.py:48 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/transaction_panel.py:50 cocoa/en.lproj/Localizable.strings:0
 msgid "Transaction Info"
 msgstr "Détails de transaction"
 
-#: qt/controller/mass_edition_panel.py:58
-#: qt/controller/transaction_panel.py:59
+#: qt/controller/mass_edition_panel.py:57
+#: qt/controller/transaction_panel.py:61
 msgid "Date:"
 msgstr "Date:"
-
-#: qt/controller/transaction_panel.py:85
-msgid "Multi-currency balance"
-msgstr "Balancer les devises"
 
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Window"
@@ -793,7 +789,7 @@ msgstr "Montant"
 msgid "Date"
 msgstr "Date"
 
-#: qt/controller/mass_edition_panel.py:82 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/mass_edition_panel.py:81 cocoa/en.lproj/Localizable.strings:0
 msgid "Check #"
 msgstr "# Chèque"
 
@@ -1001,7 +997,7 @@ msgstr "Préférences de moneyGuru"
 msgid "Automatically check for updates"
 msgstr "Vérifier les mises-à-jour automatiquement"
 
-#: qt/controller/preferences_panel.py:52 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/preferences_panel.py:56 cocoa/en.lproj/Localizable.strings:0
 msgid "Font size:"
 msgstr "Taille police:"
 
@@ -1076,15 +1072,15 @@ msgstr "Utilisez ⌥+Entrée pour insérer une nouvelle ligne."
 msgid "Multi-Currency Balance"
 msgstr "Balancer les devises"
 
-#: qt/controller/mass_edition_panel.py:90
+#: qt/controller/mass_edition_panel.py:89
 msgid "From:"
 msgstr ""
 
-#: qt/controller/mass_edition_panel.py:98
+#: qt/controller/mass_edition_panel.py:97
 msgid "To:"
 msgstr ""
 
-#: qt/controller/mass_edition_panel.py:114
+#: qt/controller/mass_edition_panel.py:113
 msgid "Currency:"
 msgstr ""
 
@@ -1112,11 +1108,11 @@ msgstr ""
 msgid "Toggle Columns"
 msgstr ""
 
-#: qt/controller/main_window.py:229 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/main_window.py:231 cocoa/en.lproj/Localizable.strings:0
 msgid "Open Plugin Folder"
 msgstr ""
 
-#: qt/controller/new_view.py:72 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/new_view.py:74 cocoa/en.lproj/Localizable.strings:0
 msgid "Plugins (double-click to open)"
 msgstr ""
 
@@ -1124,7 +1120,7 @@ msgstr ""
 msgid "Choose a view for this tab"
 msgstr "Choisissez un type d'onglet"
 
-#: qt/controller/preferences_panel.py:65 cocoa/en.lproj/Localizable.strings:0
+#: qt/controller/preferences_panel.py:69 cocoa/en.lproj/Localizable.strings:0
 msgid "Debug mode (restart required)"
 msgstr ""
 
@@ -1164,6 +1160,21 @@ msgstr ""
 msgid "Fix"
 msgstr ""
 
-#: qt/controller/preferences_panel.py:47
+#: qt/controller/preferences_panel.py:51
 msgid "Date format:"
 msgstr ""
+
+#: qt/controller/transaction_panel.py:87
+msgid "&Multi-currency balance"
+msgstr ""
+
+#: qt/controller/transaction_panel.py:89
+msgid "Assign &imbalance"
+msgstr ""
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Assign imbalance"
+msgstr ""
+
+#~ msgid "Multi-currency balance"
+#~ msgstr "Balancer les devises"

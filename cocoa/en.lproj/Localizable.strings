@@ -12,6 +12,7 @@
 "Amount" = "Amount";
 "Apply to all accounts" = "Apply to all accounts";
 "Are some fields wrong? Fix them!" = "Are some fields wrong? Fix them!";
+"Assign imbalance" = "Assign imbalance";
 "Auto-save interval:" = "Auto-save interval:";
 "Automatically check for updates" = "Automatically check for updates";
 "Automatically place decimals when typing" = "Automatically place decimals when typing";

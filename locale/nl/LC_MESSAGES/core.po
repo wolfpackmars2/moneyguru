@@ -4,95 +4,95 @@ msgstr ""
 "Content-Type: text/plain; charset=utf-8\n"
 "Content-Transfer-Encoding: utf-8\n"
 
-#: core/document.py:212
+#: core/document.py:217
 msgid "Add transaction"
 msgstr "Transactie toevoegen"
 
-#: core/document.py:215 core/document.py:533
+#: core/document.py:220 core/document.py:538
 msgid "Change transaction"
 msgstr "Transactie wijzigen"
 
-#: core/document.py:335
+#: core/document.py:340
 msgid "Change account"
 msgstr "Rekening wijzigen"
 
-#: core/document.py:365
+#: core/document.py:370
 msgid "Remove account"
 msgstr "Rekening verwijderen"
 
-#: core/document.py:407
+#: core/document.py:412
 msgid "New account"
 msgstr "Nieuwe rekening"
 
-#: core/document.py:410
+#: core/document.py:415
 msgid "Add account"
 msgstr "Rekening toevoegen"
 
-#: core/document.py:443
+#: core/document.py:448
 msgid "Change group"
 msgstr "Groep wijzigen"
 
-#: core/document.py:460
+#: core/document.py:465
 msgid "Remove group"
 msgstr "Groep verwijderen"
 
-#: core/document.py:480
+#: core/document.py:485
 msgid "New group"
 msgstr "Nieuwe groep"
 
-#: core/document.py:482
+#: core/document.py:487
 msgid "Add group"
 msgstr "Groep toevoegen"
 
-#: core/document.py:621
+#: core/document.py:629
 msgid "Remove transaction"
 msgstr "Transactie verwijderen"
 
-#: core/document.py:657
+#: core/document.py:665
 msgid "Duplicate transactions"
 msgstr "Transactie kopieëren"
 
-#: core/document.py:684
+#: core/document.py:692
 msgid "Move transaction"
 msgstr "Transactie verplaatsen"
 
-#: core/document.py:769
+#: core/document.py:779
 msgid "Change reconciliation"
 msgstr "Vereffening wijzigen"
 
-#: core/document.py:836
+#: core/document.py:846
 msgid "Change Budget"
 msgstr "Budget wijzigen"
 
-#: core/document.py:839
+#: core/document.py:849
 msgid "Add Budget"
 msgstr "Budget toevoegen"
 
-#: core/document.py:864
+#: core/document.py:874
 msgid "Remove Budget"
 msgstr "Budget verwijderen"
 
-#: core/document.py:889
+#: core/document.py:899
 msgid "Change Schedule"
 msgstr "Periodieke boeking wijzigen"
 
-#: core/document.py:892
+#: core/document.py:902
 msgid "Add Schedule"
 msgstr "Periodieke boeking toevoegen"
 
-#: core/document.py:917
+#: core/document.py:929
 msgid "Remove Schedule"
 msgstr "Periodieke boeking verwijderen"
 
-#: core/document.py:985
+#: core/document.py:997
 msgid "\"%s\" is not a moneyGuru file"
 msgstr "\"%s\" is geen moneyGuru bestan"
 
-#: core/gui/main_window.py:472
+#: core/gui/main_window.py:476
 msgid "%s is of an unknown format."
 msgstr "%s heeft een onbekend formaat"
 
-#: core/document.py:1073
+#: core/document.py:1087
 msgid "Import"
 msgstr "Importeren"
 
@@ -122,19 +122,19 @@ msgid ""
 "Entries from {start_date} to {end_date}"
 msgstr "Transacties van {start_date} tot {end_data}"
 
-#: core/gui/account_view.py:56
+#: core/gui/account_view.py:58
 msgid "{0} out of {1} selected. Increase: {2} Decrease: {3}"
 msgstr "{0} van {1} geselecteerd. Bij: {2} Af: {3}"
 
-#: core/gui/balance_sheet.py:72
+#: core/gui/balance_sheet.py:73
 msgid "ASSETS"
 msgstr "ACTIVA"
 
-#: core/gui/balance_sheet.py:73
+#: core/gui/balance_sheet.py:74
 msgid "LIABILITIES"
 msgstr "PASSIVA"
 
-#: core/gui/balance_sheet.py:74
+#: core/gui/balance_sheet.py:75
 msgid "NET WORTH"
 msgstr "VERMOGEN"
 
@@ -192,12 +192,12 @@ msgstr "Valuta"
 msgid "Transaction ID"
 msgstr "Transactienummer"
 
-#: core/gui/csv_options.py:102 core/gui/csv_options.py:207
-#: core/gui/csv_options.py:241
+#: core/gui/csv_options.py:104 core/gui/csv_options.py:209
+#: core/gui/csv_options.py:243
 msgid "Default"
 msgstr "Standaard"
 
-#: core/gui/csv_options.py:257 core/gui/import_window.py:364
+#: core/gui/csv_options.py:259 core/gui/import_window.py:369
 msgid "< New Account >"
 msgstr "< Nieuwe rekening >"
 
@@ -229,51 +229,51 @@ msgstr "zaterdag"
 msgid "Sunday"
 msgstr "zondag"
 
-#: core/gui/docprops_view.py:36
+#: core/gui/docprops_view.py:38
 msgid "January"
 msgstr "Januari"
 
-#: core/gui/docprops_view.py:37
+#: core/gui/docprops_view.py:39
 msgid "February"
 msgstr "Februari"
 
-#: core/gui/docprops_view.py:38
+#: core/gui/docprops_view.py:40
 msgid "March"
 msgstr "Maart"
 
-#: core/gui/docprops_view.py:39
+#: core/gui/docprops_view.py:41
 msgid "April"
 msgstr "April"
 
-#: core/gui/docprops_view.py:40
+#: core/gui/docprops_view.py:42
 msgid "May"
 msgstr "Mei"
 
-#: core/gui/docprops_view.py:41
+#: core/gui/docprops_view.py:43
 msgid "June"
 msgstr "Juni"
 
-#: core/gui/docprops_view.py:42
+#: core/gui/docprops_view.py:44
 msgid "July"
 msgstr "Juli"
 
-#: core/gui/docprops_view.py:43
+#: core/gui/docprops_view.py:45
 msgid "August"
 msgstr "Augustus"
 
-#: core/gui/docprops_view.py:44
+#: core/gui/docprops_view.py:46
 msgid "September"
 msgstr "September"
 
-#: core/gui/docprops_view.py:45
+#: core/gui/docprops_view.py:47
 msgid "October"
 msgstr "Oktober"
 
-#: core/gui/docprops_view.py:46
+#: core/gui/docprops_view.py:48
 msgid "November"
 msgstr "November"
 
-#: core/gui/docprops_view.py:47
+#: core/gui/docprops_view.py:49
 msgid "December"
 msgstr "December"
 
@@ -281,11 +281,11 @@ msgstr "December"
 msgid "Debit/Credit"
 msgstr "Debit/Credit"
 
-#: core/gui/entry_table_base.py:285
+#: core/gui/entry_table_base.py:286
 msgid "Previous Balance"
 msgstr "Vorig saldo"
 
-#: core/gui/entry_table_base.py:300 core/gui/transaction_table.py:257
+#: core/gui/entry_table_base.py:301 core/gui/transaction_table.py:260
 msgid "TOTAL"
 msgstr "TOTAAL"
 
@@ -293,19 +293,19 @@ msgstr "TOTAAL"
 msgid "General Ledger from {start_date} to {end_date}"
 msgstr "Grootboek vanaf {start_date} tot {end_date}"
 
-#: core/gui/general_ledger_view.py:52
+#: core/gui/general_ledger_view.py:54
 msgid "{0} out of {1} selected. Debit: {2} Credit: {3}"
 msgstr "{0} van {1} geselecteerd. Bij: {2} Af: {3}"
 
-#: core/gui/income_statement.py:66
+#: core/gui/income_statement.py:67
 msgid "INCOME"
 msgstr "INKOMSTEN"
 
-#: core/gui/income_statement.py:67
+#: core/gui/income_statement.py:68
 msgid "EXPENSES"
 msgstr "UITGAVEN"
 
-#: core/gui/income_statement.py:68
+#: core/gui/income_statement.py:69
 msgid "NET INCOME"
 msgstr "NETTO INKOMSTEN"
 
@@ -313,7 +313,7 @@ msgstr "NETTO INKOMSTEN"
 msgid "Net Worth"
 msgstr "Vermogen"
 
-#: core/gui/main_window.py:50 core/gui/profit_graph.py:42
+#: core/gui/main_window.py:50 core/gui/profit_graph.py:41
 msgid "Profit & Loss"
 msgstr "Winst / Verlies"
 
@@ -345,7 +345,7 @@ msgstr "Nieuw Tabblad"
 msgid "Net Worth at {end_date}, starting from {start_date}"
 msgstr "Vermogen op {end_date}, beginnend op {start_date}"
 
-#: core/gui/pie_chart.py:158
+#: core/gui/pie_chart.py:174
 msgid "Others"
 msgstr "Andere"
 
@@ -365,43 +365,43 @@ msgstr "TOTAAL "
 msgid "The account '{0}' already exists."
 msgstr "Rekening '{0}' Bestaat al."
 
-#: core/gui/schedule_panel.py:24
+#: core/gui/schedule_panel.py:26
 msgid "day"
 msgstr "dag"
 
-#: core/gui/schedule_panel.py:25
+#: core/gui/schedule_panel.py:27
 msgid "week"
 msgstr "week"
 
-#: core/gui/schedule_panel.py:26 core/gui/schedule_panel.py:28
-#: core/gui/schedule_panel.py:29
+#: core/gui/schedule_panel.py:28 core/gui/schedule_panel.py:30
+#: core/gui/schedule_panel.py:31
 msgid "month"
 msgstr "maand"
 
-#: core/gui/schedule_panel.py:27
+#: core/gui/schedule_panel.py:29
 msgid "year"
 msgstr "jaar"
 
-#: core/gui/schedule_panel.py:33
+#: core/gui/schedule_panel.py:35
 msgid "days"
 msgstr "dagen"
 
-#: core/gui/schedule_panel.py:34
+#: core/gui/schedule_panel.py:36
 msgid "weeks"
 msgstr "weken"
 
-#: core/gui/schedule_panel.py:35 core/gui/schedule_panel.py:37
-#: core/gui/schedule_panel.py:38
+#: core/gui/schedule_panel.py:37 core/gui/schedule_panel.py:39
+#: core/gui/schedule_panel.py:40
 msgid "months"
 msgstr "maanden"
 
-#: core/gui/schedule_panel.py:36
+#: core/gui/schedule_panel.py:38
 msgid "years"
 msgstr "jaren"
 
-#: core/gui/schedule_table.py:82 core/gui/schedule_table.py:84
-#: core/gui/transaction_print.py:28 core/gui/transaction_table.py:154
-#: core/gui/transaction_table.py:157
+#: core/gui/schedule_table.py:84 core/gui/schedule_table.py:86
+#: core/gui/transaction_print.py:28 core/gui/transaction_table.py:155
+#: core/gui/transaction_table.py:158
 msgid "Unassigned"
 msgstr "Niet toegewezen"
 
@@ -417,16 +417,16 @@ msgstr "Transacties vanaf {start_date} tot {end_date}"
 msgid "{0} out of {1} selected. Amount: {2}"
 msgstr "{0} van {1} geselecteerd. Bedrag: {2}"
 
-#: core/loader/csv.py:118
+#: core/loader/csv.py:121
 msgid "The Date column has been set on a column that doesn't contain dates."
 msgstr "Datum is ingesteld op een kolom die geen datums bevat."
 
-#: core/loader/csv.py:131
+#: core/loader/csv.py:134
 msgid ""
 "The Amount column has been set on a column that doesn't contain amounts."
 msgstr "Bedrag is ingesteld op een kolom die geen bedragen bevat."
 
-#: core/loader/csv.py:150
+#: core/loader/csv.py:153
 msgid "The Date and Amount columns must be set."
 msgstr "De kolommen Datum en Bedrag moeten gevuld zijn."
 
@@ -442,59 +442,59 @@ msgstr "{0} - Vandaag"
 msgid "Running year ({0} - {1})"
 msgstr "Huidig jaar ({0} - {1})"
 
-#: core/model/date.py:393
+#: core/model/date.py:394
 msgid "All Transactions"
 msgstr "Alle Transacties"
 
-#: core/model/recurrence.py:191
+#: core/model/recurrence.py:192
 msgid "Daily"
 msgstr "Dagelijks"
 
-#: core/model/recurrence.py:192
+#: core/model/recurrence.py:193
 msgid "Weekly"
 msgstr "Wekelijks"
 
-#: core/model/recurrence.py:193
+#: core/model/recurrence.py:194
 msgid "Monthly"
 msgstr "Maandelijks"
 
-#: core/model/recurrence.py:194
+#: core/model/recurrence.py:195
 msgid "Yearly"
 msgstr "Jaarlijks"
 
-#: core/model/recurrence.py:233
+#: core/model/recurrence.py:234
 msgid "fifth"
 msgstr "vijfde"
 
-#: core/model/recurrence.py:233
+#: core/model/recurrence.py:234
 msgid "first"
 msgstr "eerste"
 
-#: core/model/recurrence.py:233
+#: core/model/recurrence.py:234
 msgid "fourth"
 msgstr "vierde"
 
-#: core/model/recurrence.py:233
+#: core/model/recurrence.py:234
 msgid "second"
 msgstr "tweede"
 
-#: core/model/recurrence.py:233
+#: core/model/recurrence.py:234
 msgid "third"
 msgstr "derde"
 
-#: core/model/recurrence.py:234
+#: core/model/recurrence.py:235
 msgid "Every %s %s of the month"
 msgstr "Elke %s %s van de maand"
 
-#: core/model/recurrence.py:237
+#: core/model/recurrence.py:238
 msgid "Every last %s of the month"
 msgstr "Elke laatste %s van de maand"
 
-#: core/gui/import_window.py:150
+#: core/gui/import_window.py:153
 msgid "Description <--> Payee"
 msgstr "Omschrijving <--> Ontvanger"
 
-#: core/gui/import_window.py:151
+#: core/gui/import_window.py:154
 msgid "Invert Amounts"
 msgstr "Bedrag omkeren"
 
@@ -502,6 +502,6 @@ msgstr "Bedrag omkeren"
 msgid "Assets & Liabilities"
 msgstr ""
 
-#: core/gui/account_pie_chart.py:85
+#: core/gui/account_pie_chart.py:88
 msgid "Income & Expenses"
 msgstr ""

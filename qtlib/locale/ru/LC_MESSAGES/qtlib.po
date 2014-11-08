@@ -98,7 +98,7 @@ msgstr "Очистить список"
 msgid "Search..."
 msgstr ""
 
-#: qtlib/about_box.py:55
+#: qtlib/about_box.py:52
 msgid "Copyright Hardcoded Software 2014"
 msgstr ""
 

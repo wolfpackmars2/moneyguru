@@ -100,7 +100,7 @@ msgstr "Limpar Lista"
 msgid "Search..."
 msgstr "Buscar…"
 
-#: qtlib/about_box.py:55
+#: qtlib/about_box.py:52
 msgid "Copyright Hardcoded Software 2014"
 msgstr "Direitos Autorais Hardcoded Software 2014"
 
