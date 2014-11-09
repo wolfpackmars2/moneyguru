@@ -31,6 +31,11 @@ from core.model.date import clean_format
 
 # Force to collect modules normally missing by the dependencies collector.
 import xml.etree.ElementTree
+# needed by plugins
+import core.plugin
+import runpy
+import urllib
+import urllib.request
 
 class PyMoneyGuruApp(PyBaseApp):
     def __init__(self):
