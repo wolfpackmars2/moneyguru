@@ -1,3 +1,18 @@
+=== 2.8.0 (2014-11-09)
+
+* Make amount fields prettier. Thanks Nelson Brown! [Windows, Linux] (#14 #15)
+* In sheets, make totals' currency explicit when in multi-currency context. (#392)
+* Add "Assign imbalance" button to the Transaction panel. (#398)
+* Fix glitch in sheets expanded nodes restoration. [Mac] (#388)
+* Fix a QIF transaction matching bug.
+* Fix account selection glitch causing the account to lose focus. [Windows, Linux]
+* Fix IndexError on file switching. [Windows, Linux] (#393)
+* Remove Cashculator integration. It was broken anyway. [Mac]
+* Greatly improve developer documentation.
+* Minimum OS X version is now Lion (10.7).
+* Minimum Windows version is now Windows 7. 64-bit required.
+* Minimum Ubuntu version is now 14.04.
+
 === 2.7.2 (2014-01-25)
 
 * Fixed amount parsing issue. (#379)
