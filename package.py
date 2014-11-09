@@ -141,7 +141,7 @@ def main():
                 package_arch()
             else:
                 print("Packaging for Ubuntu")
-                for distribution in ['precise', 'quantal', 'raring', 'saucy']:
+                for distribution in ['precise', 'quantal', 'raring', 'saucy', 'trusty']:
                     package_debian(distribution)
         else:
             print("Qt packaging only works under Windows or Linux.")
