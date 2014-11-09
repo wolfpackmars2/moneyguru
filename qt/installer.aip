@@ -21,8 +21,10 @@
     <ROW Property="UpgradeCode" Value="{B4690D0A-13C8-452E-92D5-0A861384D92D}"/>
     <ROW Property="WindowsType9X" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
     <ROW Property="WindowsType9XDisplay" MultiBuildValue="DefaultBuild:Windows 9x/ME" ValueLocId="-"/>
-    <ROW Property="WindowsTypeNT" MultiBuildValue="DefaultBuild:Windows NT 4.0, Windows NT 4.0 Service Pack 1, Windows NT 4.0 Service Pack 2, Windows NT 4.0 Service Pack 3, Windows NT 4.0 Service Pack 4, Windows NT 4.0 Service Pack 5, Windows NT 4.0 Service Pack 6" ValueLocId="-"/>
-    <ROW Property="WindowsTypeNTDisplay" MultiBuildValue="DefaultBuild:Windows NT 4.0" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT" MultiBuildValue="DefaultBuild:Windows NT/2k/XP/Vista/Windows7 x86" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT64" MultiBuildValue="DefaultBuild:Windows XP x64, Windows XP x64 ServicePack 1, Windows XP x64 ServicePack 2, Windows Server 2003 x64, Windows Server 2003 x64 Service Pack 1, Windows Server 2003 x64 Service pack 2" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNT64Display" MultiBuildValue="DefaultBuild:Windows XP x64, Windows Server 2003 x64" ValueLocId="-"/>
+    <ROW Property="WindowsTypeNTDisplay" MultiBuildValue="DefaultBuild:Windows NT/2k/XP/Vista/Windows7 x86" ValueLocId="-"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiDirsComponent">
     <ROW Directory="APPDIR" Directory_Parent="TARGETDIR" DefaultDir="APPDIR:." IsPseudoRoot="1"/>
@@ -34,18 +36,16 @@
     <ROW Component="CurrentVersion" ComponentId="{6834C6EB-599F-40EE-8997-C17991E8AE50}" Directory_="APPDIR" Attributes="4" KeyPath="CurrentVersion"/>
     <ROW Component="SHORTCUTDIR" ComponentId="{EF2CF329-F1BC-4943-9044-6DE97993C044}" Directory_="SHORTCUTDIR" Attributes="0"/>
     <ROW Component="moneyGuru.exe" ComponentId="{24AA2C91-D1BC-46C6-85DE-2DEB060AF841}" Directory_="APPDIR" Attributes="0" KeyPath="moneyGuru.exe"/>
-    <ROW Component="updater.exe" ComponentId="{E112C4D6-18A9-4EB0-B690-388D66E4B628}" Directory_="APPDIR" Attributes="0" KeyPath="updater.exe"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFeatsComponent">
-    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="moneyGuru.exe SHORTCUTDIR updater.exe CurrentVersion"/>
+    <ROW Feature="MainFeature" Title="MainFeature" Description="Description" Display="1" Level="1" Directory_="APPDIR" Attributes="0" Components="moneyGuru.exe SHORTCUTDIR CurrentVersion"/>
     <ATTRIBUTE name="CurrentFeature" value="MainFeature"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiFilesComponent">
     <ROW File="moneyGuru.exe" Component_="moneyGuru.exe" FileName="moneyG~1.exe|moneyGuru.exe" Version="65535.65535.65535.65535" Attributes="0" SourcePath="dist\moneyGuru.exe" SelfReg="false" Sequence="1"/>
-    <ROW File="updater.exe" Component_="updater.exe" FileName="updater.exe" Attributes="0" SourcePath="&lt;AI_STUBS&gt;updater.exe" SelfReg="false" Sequence="2" DigSign="true"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.BuildComponent">
-    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageFolder="install" PackageFileName="moneyguru_win_[|ProductVersion]" Languages="en" InstallationType="4" CreateMd5="true" ExtUI="true"/>
+    <ROW BuildKey="DefaultBuild" BuildName="DefaultBuild" BuildOrder="1" BuildType="0" PackageFolder="install" PackageFileName="moneyguru_win64_[|ProductVersion]" Languages="en" InstallationType="4" CreateMd5="true" ExtUI="true" MsiPackageType="x64"/>
     <ATTRIBUTE name="CurrentBuild" value="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.DictionaryComponent">
@@ -97,8 +97,7 @@
     <ROW Action="AI_RESTORE_LOCATION" Type="65" Source="aicustact.dll" Target="RestoreLocation"/>
     <ROW Action="AI_ResolveKnownFolders" Type="1" Source="aicustact.dll" Target="AI_ResolveKnownFolders"/>
     <ROW Action="AI_STORE_LOCATION" Type="51" Source="ARPINSTALLLOCATION" Target="[APPDIR]"/>
-    <ROW Action="AI_UPDATER_UNINSTALL" Type="18" Source="updater.exe" Target="/clean silent"/>
-    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]"/>
+    <ROW Action="SET_APPDIR" Type="307" Source="APPDIR" Target="[ProgramFilesFolder][Manufacturer]\[ProductName]" MultiBuildTarget="DefaultBuild:[ProgramFiles64Folder][Manufacturer]\[ProductName]"/>
     <ROW Action="SET_SHORTCUTDIR" Type="307" Source="SHORTCUTDIR" Target="[ProgramMenuFolder][ProductName]"/>
     <ROW Action="SET_TARGETDIR_TO_APPDIR" Type="51" Source="TARGETDIR" Target="[APPDIR]"/>
   </COMPONENT>
@@ -109,21 +108,11 @@
     <ROW Name="SystemFolder_msiexec.exe" SourcePath="&lt;AI_RES&gt;uninstall.ico" Index="0"/>
     <ROW Name="controlPanelIcon.exe" SourcePath="dist\moneyGuru.exe" Index="0"/>
   </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.MsiIniFileComponent">
-    <ROW IniFile="AppDir" FileName="updater.ini" DirProperty="APPDIR" Section="General" Key="AppDir" Value="[APPDIR]" Action="0" Component_="updater.exe"/>
-    <ROW IniFile="ApplicationName" FileName="updater.ini" DirProperty="APPDIR" Section="General" Key="ApplicationName" Value="[ProductName]" Action="0" Component_="updater.exe"/>
-    <ROW IniFile="CheckFrequency" FileName="updater.ini" DirProperty="APPDIR" Section="General" Key="CheckFrequency" Value="2" Action="0" Component_="updater.exe"/>
-    <ROW IniFile="CompanyName" FileName="updater.ini" DirProperty="APPDIR" Section="General" Key="CompanyName" Value="[Manufacturer]" Action="0" Component_="updater.exe"/>
-    <ROW IniFile="DownloadsFolder" FileName="updater.ini" DirProperty="APPDIR" Section="General" Key="DownloadsFolder" Value="[AppDataFolder][Manufacturer]\[ProductName]\updates\" Action="0" Component_="updater.exe"/>
-    <ROW IniFile="ID" FileName="updater.ini" DirProperty="APPDIR" Section="General" Key="ID" Value="[UpgradeCode]" Action="0" Component_="updater.exe"/>
-    <ROW IniFile="URL" FileName="updater.ini" DirProperty="APPDIR" Section="General" Key="URL" Value="http://www.hardcoded.net/updates/moneyguru.aiu" Action="0" Component_="updater.exe"/>
-  </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstExSeqComponent">
     <ROW Action="AI_DOWNGRADE" Condition="AI_NEWERPRODUCTFOUND AND (UILevel &lt;&gt; 5)" Sequence="210"/>
     <ROW Action="AI_RESTORE_LOCATION" Condition="APPDIR=&quot;&quot;" Sequence="740"/>
     <ROW Action="AI_STORE_LOCATION" Condition="Not Installed" Sequence="1545"/>
     <ROW Action="AI_PREPARE_UPGRADE" Condition="AI_UPGRADE=&quot;No&quot; AND (Not Installed)" Sequence="1300"/>
-    <ROW Action="AI_UPDATER_UNINSTALL" Condition="($updater.exe = 2) AND (?updater.exe = 3) AND NOT (UPGRADINGPRODUCTCODE)" Sequence="1547"/>
     <ROW Action="AI_ResolveKnownFolders" Sequence="51"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiInstallUISequenceComponent">
@@ -131,7 +120,8 @@
     <ROW Action="AI_ResolveKnownFolders" Sequence="51"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiLaunchConditionsComponent">
-    <ROW Condition="( Version9X OR VersionNT64 OR ( VersionNT AND ((VersionNT &lt;&gt; 400) OR ((VersionNT = 400) AND (ServicePackLevel &gt;= 1))) AND ((VersionNT &lt;&gt; 400) OR ((VersionNT = 400) AND (ServicePackLevel &lt;&gt; 1))) AND ((VersionNT &lt;&gt; 400) OR ((VersionNT = 400) AND (ServicePackLevel &lt;&gt; 2))) AND ((VersionNT &lt;&gt; 400) OR ((VersionNT = 400) AND (ServicePackLevel &lt;&gt; 3))) AND ((VersionNT &lt;&gt; 400) OR ((VersionNT = 400) AND (ServicePackLevel &lt;&gt; 4))) AND ((VersionNT &lt;&gt; 400) OR ((VersionNT = 400) AND (ServicePackLevel &lt;&gt; 5))) AND ((VersionNT &lt;&gt; 400) OR ((VersionNT = 400) AND (ServicePackLevel &lt;&gt; 6))) ) )" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNTDisplay]" DescriptionLocId="AI.LaunchCondition.NoSpecificNT" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="( Version9X OR ( NOT VersionNT64 ) OR ( VersionNT64 AND ((VersionNT64 &lt;&gt; 502) OR (((VersionNT64 = 502) AND (ServicePackLevel &gt;= 1)) OR (MsiNTProductType &lt;&gt; 1))) AND ((VersionNT64 &lt;&gt; 502) OR (((VersionNT64 = 502) AND (ServicePackLevel &lt;&gt; 1)) OR (MsiNTProductType &lt;&gt; 1))) AND ((VersionNT64 &lt;&gt; 502) OR (((VersionNT64 = 502) AND (ServicePackLevel &lt;&gt; 2)) OR (MsiNTProductType &lt;&gt; 1))) AND ((VersionNT64 &lt;&gt; 502) OR ((VersionNT64 = 502) AND ((MsiNTProductType = 1) OR (ServicePackLevel &gt;= 1)))) AND ((VersionNT64 &lt;&gt; 502) OR ((VersionNT64 = 502) AND ((MsiNTProductType = 1) OR (ServicePackLevel &lt;&gt; 1)))) AND ((VersionNT64 &lt;&gt; 502) OR ((VersionNT64 = 502) AND ((MsiNTProductType = 1) OR (ServicePackLevel &lt;&gt; 2)))) ) )" Description="[ProductName] cannot be installed on the following Windows versions: [WindowsTypeNT64Display]" DescriptionLocId="AI.LaunchCondition.NoSpecificNT64" IsPredefined="true" Builds="DefaultBuild"/>
+    <ROW Condition="( Version9X OR VersionNT64 )" Description="[ProductName] cannot be installed on [WindowsTypeNTDisplay]" DescriptionLocId="AI.LaunchCondition.NoNT" IsPredefined="true" Builds="DefaultBuild"/>
     <ROW Condition="VersionNT" Description="[ProductName] cannot be installed on [WindowsType9XDisplay]" DescriptionLocId="AI.LaunchCondition.No9X" IsPredefined="true" Builds="DefaultBuild"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiProgIdComponent">
@@ -141,7 +131,6 @@
     <ROW Registry="CurrentVersion" Root="-1" Key="Software\[Manufacturer]\[ProductName]" Name="CurrentVersion" Value="[ProductVersion]" Component_="CurrentVersion"/>
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.MsiShortsComponent">
-    <ROW Shortcut="Check_for_Update" Directory_="SHORTCUTDIR" Name="Checkf~1|Check for Update" Component_="updater.exe" Target="[#updater.exe]" Arguments="/checknow" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="Uninstall_moneyGuru" Directory_="SHORTCUTDIR" Name="Uninst~1|Uninstall moneyGuru" Component_="SHORTCUTDIR" Target="[SystemFolder]msiexec.exe" Arguments="/x [ProductCode]" Hotkey="0" Icon_="SystemFolder_msiexec.exe" IconIndex="0" ShowCmd="1"/>
     <ROW Shortcut="moneyGuru.exe" Directory_="SHORTCUTDIR" Name="moneyG~1|moneyGuru" Component_="moneyGuru.exe" Target="[#moneyGuru.exe]" Description="moneyGuru" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
     <ROW Shortcut="moneyGuru.exe_1" Directory_="DesktopFolder" Name="moneyG~1|moneyGuru" Component_="moneyGuru.exe" Target="[#moneyGuru.exe]" Description="moneyGuru" Hotkey="0" IconIndex="0" ShowCmd="1" WkDir="APPDIR"/>
@@ -158,8 +147,5 @@
   </COMPONENT>
   <COMPONENT cid="caphyon.advinst.msicomp.SynchronizedFolderComponent">
     <ROW Directory_="APPDIR" SourcePath="dist" Feature="MainFeature" ExcludePattern="*~|#*#|%*%|._|CVS|.cvsignore|SCCS|vssver.scc|mssccprj.scc|vssver2.scc|.svn|.DS_Store" ExcludeFlags="6"/>
-  </COMPONENT>
-  <COMPONENT cid="caphyon.advinst.msicomp.UpdaterComponent">
-    <ROW Updater="updater.exe" URL="URL" SearchFreq="CheckFrequency" DownloadsFolder="DownloadsFolder" ID="ID" TargetDir="AppDir" AppName="ApplicationName" CompanyName="CompanyName" UnistallCASeq="AI_UPDATER_UNINSTALL"/>
   </COMPONENT>
 </DOCUMENT>

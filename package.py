@@ -20,7 +20,6 @@ from hscommon.build import (
     copy_packages, build_debian_changelog, copy_qt_plugins, print_and_do,
     move, copy_all, setup_package_argparser, package_cocoa_app_in_dmg
 )
-from hscommon.util import find_in_path
 
 def parse_args():
     parser = ArgumentParser()
@@ -28,12 +27,40 @@ def parse_args():
     return parser.parse_args()
 
 def package_windows(dev):
-    if op.exists('dist'):
-        shutil.rmtree('dist')
+    if not ISWINDOWS:
+        print("Qt packaging only works under Windows.")
+        return
+    from cx_Freeze import setup, Executable
+    distdir = 'dist'
+    if op.exists(distdir):
+        shutil.rmtree(distdir)
 
-    is64bit = platform.architecture()[0] == '64bit'
-    cmd = 'cxfreeze --base-name Win32GUI --target-name "moneyGuru.exe" --icon images\\main_icon.ico run.py'
-    print_and_do(cmd)
+    options = {
+        'build_exe': {
+            'includes': 'atexit',
+            'excludes': ['tkinter'],
+            'icon': 'images\\main_icon.ico',
+            'include_msvcr': True,
+        },
+        'install_exe': {
+            'install_dir': distdir,
+        }
+    }
+
+    executables = [
+        Executable(
+            'run.py',
+            base='Win32GUI',
+            targetDir=distdir,
+            targetName='moneyGuru.exe',
+        )
+    ]
+
+    setup(
+        script_args=['install'],
+        options=options,
+        executables=executables
+    )
 
     if not dev:
         # Copy qt plugins
@@ -41,24 +68,14 @@ def package_windows(dev):
         plugin_names = ['accessible', 'codecs', 'iconengines', 'imageformats']
         copy_qt_plugins(plugin_names, plugin_dest)
 
-        # Compress with UPX
-        if not is64bit: # UPX doesn't work on 64 bit
-            libs = [name for name in os.listdir('dist') if op.splitext(name)[1] in ('.pyd', '.dll', '.exe')]
-            for lib in libs:
-                print_and_do("upx --best \"dist\\{0}\"".format(lib))
-
     shutil.copytree('build\\help', 'dist\\help')
     shutil.copytree('build\\locale', 'dist\\locale')
     shutil.copytree('plugin_examples', 'dist\\plugin_examples')
 
-    shutil.copy(find_in_path('msvcr100.dll'), 'dist')
-    shutil.copy(find_in_path('msvcp100.dll'), 'dist')
-
     if not dev:
         # AdvancedInstaller.com has to be in your PATH
         # this is so we don'a have to re-commit installer.aip at every version change
-        installer_file = 'qt\\installer64.aip' if is64bit else 'qt\\installer.aip'
-        shutil.copy(installer_file, 'installer_tmp.aip')
+        shutil.copy('qt\\installer.aip', 'installer_tmp.aip')
         print_and_do('AdvancedInstaller.com /edit installer_tmp.aip /SetVersion %s' % MoneyGuru.VERSION)
         print_and_do('AdvancedInstaller.com /build installer_tmp.aip -force')
         os.remove('installer_tmp.aip')
