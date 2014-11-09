@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2010-07-11
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 # This unit is required to make tests work with py.test. When running
@@ -24,7 +24,7 @@ def pytest_configure(config):
         ratesdb = RatesDB(':memory:', async=False)
         # We register no rate provider
         Currency.set_rates_db(ratesdb)
-    
+
     global global_monkeypatch
     monkeypatch = config.pluginmanager.getplugin('monkeypatch')
     global_monkeypatch = monkeypatch.monkeypatch()
@@ -35,7 +35,11 @@ def pytest_configure(config):
     # Avoid false test failures caused by timezones messing up our date fakeries.
     # See http://stackoverflow.com/questions/9915058/pythons-fromtimestamp-does-a-discrete-jump
     os.environ['TZ'] = 'UTC'
-    time.tzset()
+    try:
+        time.tzset()
+    except AttributeError:
+        # We're on Windows. Oh, well...
+        pass
 
 def pytest_unconfigure(config):
     global global_monkeypatch
@@ -44,3 +48,4 @@ def pytest_unconfigure(config):
 def pytest_funcarg__monkeypatch(request):
     monkeyplus = request.getfuncargvalue('monkeyplus')
     return monkeyplus
+
