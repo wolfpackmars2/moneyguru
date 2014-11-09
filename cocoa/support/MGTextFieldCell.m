@@ -142,7 +142,7 @@ http://www.hardcoded.net/licenses/bsd_license
     }    
 }
 
-- (NSCellHitResult)hitTestForEvent:(NSEvent *)event inRect:(NSRect)cellFrame ofView:(NSView *)controlView
+- (NSUInteger)hitTestForEvent:(NSEvent *)event inRect:(NSRect)cellFrame ofView:(NSView *)controlView
 {
     NSPoint point = [controlView convertPoint:[event locationInWindow] fromView:nil];
     if (hasArrow) {
