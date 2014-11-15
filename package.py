@@ -18,7 +18,8 @@ from core.app import Application as MoneyGuru
 from hscommon.plat import ISWINDOWS, ISLINUX
 from hscommon.build import (
     copy_packages, build_debian_changelog, copy_qt_plugins, print_and_do,
-    move, copy_all, setup_package_argparser, package_cocoa_app_in_dmg
+    move, copy_all, setup_package_argparser, package_cocoa_app_in_dmg,
+    find_in_path
 )
 
 def parse_args():
@@ -68,6 +69,9 @@ def package_windows(dev):
         plugin_names = ['accessible', 'codecs', 'iconengines', 'imageformats']
         copy_qt_plugins(plugin_names, plugin_dest)
 
+    print("Copying forgotten DLLs")
+    shutil.copy(find_in_path('msvcp110.dll'), distdir)
+    print("Copying the rest")
     shutil.copytree('build\\help', 'dist\\help')
     shutil.copytree('build\\locale', 'dist\\locale')
     shutil.copytree('plugin_examples', 'dist\\plugin_examples')
