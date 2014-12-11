@@ -8,7 +8,7 @@
 
 from PyQt4.QtGui import QFontMetrics
 
-from qtlib.table import Table as TableBase, ItemFlags
+from qtlib.table import Table as TableBase
 
 from ..support.completable_edit import DescriptionEdit, PayeeEdit, AccountEdit
 from ..support.column_view import AmountPainter
@@ -79,10 +79,5 @@ class Table(TableBase):
         # in the custom drawing for the amount field.
         self.view.resize(self.view.sizeHint())
 
-    def _getFlags(self, row, column):
-        has_painter = ItemFlags.ItemHasValuePainter if column.painter else 0
-        return TableBase._getFlags(self, row, column) | has_painter
-
     def appPrefsChanged(self):
         self._updateFontSize()
-    

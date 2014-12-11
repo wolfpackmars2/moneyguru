@@ -119,15 +119,8 @@ class ItemDelegate(QStyledItemDelegate):
             option.decorationSize = QSize(decorationWidth, decorationHeight)
             option.features |= QStyleOptionViewItemV4.HasDecoration
         self._prepare_paint_options(option, index)
-        QStyledItemDelegate.paint(self, painter, option, index)
+
         xOffset = 0
-        for dec in decorations:
-            pixmap = dec.pixmap
-            x = option.rect.right() - pixmap.width() - xOffset
-            y = option.rect.center().y() - (pixmap.height() // 2)
-            rect = QRect(x, y, pixmap.width(), pixmap.height())
-            painter.drawPixmap(rect, pixmap)
-            xOffset += pixmap.width()
         # First added for #15, the painting of custom amount information.  This can
         # be used as a pattern for painting any column of information.
         value_painter = self._get_value_painter(index)
@@ -137,6 +130,17 @@ class ItemDelegate(QStyledItemDelegate):
             rect = QRect(rect.left(), rect.top(), rect.width() - xOffset, rect.height())
             value_option.rect = rect
             value_painter.paint(painter, value_option, index)
+        else:
+            QStyledItemDelegate.paint(self, painter, option, index)
+
+        for dec in decorations:
+            pixmap = dec.pixmap
+            x = option.rect.right() - pixmap.width() - xOffset
+            y = option.rect.center().y() - (pixmap.height() // 2)
+            rect = QRect(x, y, pixmap.width(), pixmap.height())
+            painter.drawPixmap(rect, pixmap)
+            xOffset += pixmap.width()
+
     
     def setModelData(self, editor, model, index):
         # This call below is to give a chance to the editor to tweak its content a little bit before
