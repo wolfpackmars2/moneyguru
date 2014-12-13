@@ -1,9 +1,9 @@
 # Created By: Eric Mc Sween
 # Created On: 2008-07-06
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from hscommon.trans import tr, trget
@@ -18,7 +18,7 @@ class EntryTableColumns(Columns):
         marked = self.column_is_visible('debit')
         items.append((tr("Debit/Credit"), marked))
         return items
-    
+
     def toggle_menu_item(self, index):
         if index == len(self._optional_columns()):
             debit_visible = self.column_is_visible('debit')
@@ -45,14 +45,14 @@ class EntryTable(EntryTableBase):
         Column('credit', display=trcol("Credit"), visible=False),
         Column('balance', display=trcol("Balance")),
     ]
-    
+
     def __init__(self, account_view):
         EntryTableBase.__init__(self, account_view)
         self.columns = EntryTableColumns(self, prefaccess=account_view.document, savename=self.SAVENAME)
         self.account = account_view.account
         self.completable_edit.account = self.account
         self._reconciliation_mode = False
-    
+
     #--- Override
     def _fill(self):
         account = self.account
@@ -72,18 +72,20 @@ class EntryTable(EntryTableBase):
         balance_visible = account.is_balance_sheet_account()
         self.columns.set_column_visible('balance', balance_visible)
         self._restore_from_explicit_selection()
-    
+
     def _get_current_account(self):
         return self.account
-    
+
     def _get_totals_currency(self):
         return self._get_current_account().currency
-    
+
     #--- Public
-    def show_transfer_account(self):
-        if not self.selected_entries:
-            return
-        entry = self.selected_entries[0]
+    def show_transfer_account(self, row_index=None):
+        if row_index is None:
+            if not self.selected_entries:
+                return
+            row_index = self.selected_index
+        entry = self[row_index].entry
         splits = entry.transaction.splits
         accounts = [split.account for split in splits if split.account is not None]
         if len(accounts) < 2:
@@ -94,24 +96,24 @@ class EntryTable(EntryTableBase):
         else:
             account_to_show = accounts[0]
         self.mainwindow.open_account(account_to_show)
-    
+
     def toggle_reconciled(self):
         """Toggle the reconcile flag of selected entries"""
         entries = [row.entry for row in self.selected_rows if row.can_reconcile()]
         self.document.toggle_entries_reconciled(entries)
-    
+
     #--- Properties
     @property
     def reconciliation_mode(self):
         return self._reconciliation_mode
-    
+
     @reconciliation_mode.setter
     def reconciliation_mode(self, value):
         if value == self._reconciliation_mode:
             return
         self._reconciliation_mode = value
         self.refresh()
-    
+
     #--- Event Handlers
     def date_range_changed(self):
         date_range = self.document.date_range
@@ -122,23 +124,23 @@ class EntryTable(EntryTableBase):
         self.view.refresh()
         self.view.show_selected_row()
         self.mainwindow.selected_transactions = self.selected_transactions
-    
+
     def date_range_will_change(self):
         date_range = self.document.date_range
         transactions = self.selected_transactions
         date = transactions[0].date if transactions else date_range.end
         delta = date - date_range.start
         self._delta_before_change = delta
-    
+
     def transaction_changed(self):
         EntryTableBase.transaction_changed(self)
         # It's possible that because of the change, the selected txn has been removed, so we have
         # to update document selection.
         self._update_selection()
-    
+
     def transactions_imported(self):
         self.refresh(refresh_view=False)
         self.mainwindow.selected_transactions = self.selected_transactions
         self.view.refresh()
         self.view.show_selected_row()
-    
+

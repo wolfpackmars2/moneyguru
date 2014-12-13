@@ -1,7 +1,7 @@
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 import csv
@@ -25,14 +25,14 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
     SAVENAME = ''
     COLUMNS = []
     INVALIDATING_MESSAGES = MESSAGES_DOCUMENT_CHANGED | {'accounts_excluded', 'date_range_changed'}
-    
+
     def __init__(self, parent_view):
         RestorableChild.__init__(self, parent_view)
         tree.Tree.__init__(self)
         self.columns = Columns(self, prefaccess=parent_view.document, savename=self.SAVENAME)
         self.edited = None
         self._expanded_paths = {(0, ), (1, )}
-    
+
     #--- Override
     def _do_restore_view(self):
         if not self.document.can_restore_from_prefs():
@@ -44,29 +44,29 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
             self.view.refresh_expanded_paths()
         self.columns.restore_columns()
         return True
-    
+
     def _revalidate(self):
         self.refresh(refresh_view=False)
         self._update_selection()
         self.view.refresh()
         self.restore_view()
-    
+
     #--- Virtual
     def _compute_account_node(self, node):
         pass
-    
+
     def _make_node(self, name):
         node = Node(name)
         node.account_number = ''
         return node
-    
+
     def _refresh(self):
         pass
-    
+
     #--- Protected
     def _node_of_account(self, account):
         return self.find(lambda n: getattr(n, 'account', None) is account)
-    
+
     def _prune_invalid_expanded_paths(self):
         newpaths = set()
         for path in self._expanded_paths:
@@ -77,17 +77,17 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
             except IndexError:
                 pass
         self._expanded_paths = newpaths
-    
+
     def _select_first(self):
         for type_node in self:
             if len(type_node) > 2: # total + blank
                 self.selected = type_node[0]
                 break
-    
+
     def _update_selection(self):
         if not (isinstance(self.selected, Node) and self.selected.is_account):
-            self._select_first()        
-    
+            self._select_first()
+
     #--- Public
     def add_account(self):
         self.view.stop_editing()
@@ -110,7 +110,7 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
         self.selected = self._node_of_account(account)
         self.view.update_selection()
         self.view.start_editing()
-    
+
     def add_account_group(self):
         self.view.stop_editing()
         self.save_edits()
@@ -126,11 +126,11 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
         self.selected = self.find(lambda n: getattr(n, 'group', None) is group)
         self.view.update_selection()
         self.view.start_editing()
-    
+
     def can_delete(self):
         node = self.selected
         return isinstance(node, Node) and (node.is_account or node.is_group)
-    
+
     def can_move(self, source_paths, dest_path):
         """Returns whether it's possible to move the nodes at 'source_paths' under the node at
         'dest_path'.
@@ -148,7 +148,7 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
             if source_node.parent is dest_node:  # Don't move under the same node
                 return False
         return True
-    
+
     def cancel_edits(self):
         node = self.edited
         if node is None:
@@ -156,12 +156,12 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
         assert node.is_account or node.is_group
         node.name = node.account.name if node.is_account else node.group.name
         self.edited = None
-    
+
     def collapse_node(self, node):
         self._expanded_paths.discard(tuple(node.path))
         if node.is_group:
             self.parent_view.collapse_group(node.group)
-    
+
     def delete(self):
         if not self.can_delete():
             return
@@ -178,12 +178,12 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
                 self.mainwindow.account_reassign_panel.load(accounts)
             else:
                 self.document.delete_accounts(accounts)
-    
+
     def expand_node(self, node):
         self._expanded_paths.add(tuple(node.path))
         if node.is_group:
             self.parent_view.expand_group(node.group)
-    
+
     def make_account_node(self, account):
         node = self._make_node(account.name)
         node.account = account
@@ -193,7 +193,7 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
         if not node.is_excluded:
             self._compute_account_node(node)
         return node
-    
+
     def make_blank_node(self):
         node = self._make_node(None)
         node.is_blank = True
@@ -241,7 +241,7 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
             self.document.change_accounts(accounts, group=None, type=dest_node.type)
         elif dest_node.is_group:
             self.document.change_accounts(accounts, group=dest_node.group, type=dest_node.group.type)
-    
+
     def refresh(self, refresh_view=True):
         selected_accounts = self.selected_accounts
         selected_paths = self.selected_paths
@@ -258,7 +258,7 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
         self._prune_invalid_expanded_paths()
         if refresh_view:
             self.view.refresh()
-    
+
     def save_edits(self):
         node = self.edited
         if node is None:
@@ -275,13 +275,13 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
             # we use _name because we don't want to change self.edited
             node._name = node.account.name if node.is_account else node.group.name
             self.mainwindow.show_message(msg)
-    
+
     def save_preferences(self):
         # Save node expansion state
         prefname = '{}.ExpandedPaths'.format(self.SAVENAME)
         self.document.set_default(prefname, self.expanded_paths)
         self.columns.save_columns()
-    
+
     def selection_as_csv(self):
         csvrows = []
         columns = (self.columns.coldata[colname] for colname in self.columns.colnames)
@@ -298,10 +298,14 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
         csv.writer(fp, delimiter='\t', quotechar='"').writerows(csvrows)
         fp.seek(0)
         return fp.read()
-    
+
     def show_selected_account(self):
         self.mainwindow.open_account(self.selected_account)
-    
+
+    def show_account(self, path):
+        node = self.get_node(path)
+        self.mainwindow.open_account(node.account)
+
     def toggle_excluded(self):
         nodes = self.selected_nodes
         affected_accounts = set()
@@ -314,14 +318,14 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
                 affected_accounts.add(node.account)
         if affected_accounts:
             self.document.toggle_accounts_exclusion(affected_accounts)
-    
+
     #--- Event handlers
     def account_added(self):
         self.refresh()
-    
+
     def account_changed(self):
         self.refresh()
-    
+
     def account_deleted(self):
         selected_path = self.selected_path
         self.refresh(refresh_view=False)
@@ -332,47 +336,47 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
                 selected_path = selected_path[:-1]
         self.selected_path = selected_path
         self.view.refresh()
-    
+
     def accounts_excluded(self):
         self.refresh()
-    
+
     def date_range_changed(self):
         self.refresh()
-    
+
     document_restoring_preferences = RestorableChild.restore_view
-    
+
     def edition_must_stop(self):
         self.view.stop_editing()
         self.save_edits()
-    
+
     # account might have been auto-created during import
     def transactions_imported(self):
         self.refresh(refresh_view=False)
         self._select_first()
         self.view.refresh()
-    
+
     def document_changed(self):
         self.refresh(refresh_view=False)
         self._select_first()
         self.view.refresh()
-    
+
     def performed_undo_or_redo(self):
         self.refresh()
-    
+
     #--- Properties
     @property
     def can_show_selected_account(self):
         return self.selected_account is not None
-    
+
     @property
     def expanded_paths(self):
         paths = list(self._expanded_paths)
         # We want the paths in orthe of length so that the paths are correctly expanded in the gui.
         paths.sort(key=lambda p: (len(p), ) + p)
         return paths
-    
+
     selected = tree.Tree.selected_node
-    
+
     @property
     def selected_account(self):
         accounts = self.selected_accounts
@@ -380,12 +384,12 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
             return accounts[0]
         else:
             return None
-    
+
     @property
     def selected_accounts(self):
         nodes = self.selected_nodes
         return [node.account for node in nodes if node.is_account]
-    
+
 
 class Node(tree.Node):
     def __init__(self, name):
@@ -396,11 +400,11 @@ class Node(tree.Node):
         self.is_total = False
         self.is_type = False
         self.is_excluded = False
-    
+
     @property
     def is_expanded(self):
         return tuple(self.path) in self.root._expanded_paths
-    
+
     @property
     def is_subtotal(self):
         if not (self.is_account or self.is_group):
@@ -416,11 +420,11 @@ class Node(tree.Node):
             return next_node.is_total
         except IndexError:
             return False
-    
+
     @property
     def can_edit_name(self):
         return self.is_account or self.is_group
-    
+
     @tree.Node.name.setter
     def name(self, value):
         root = self.root
@@ -429,4 +433,4 @@ class Node(tree.Node):
             return
         self._name = value
         root.edited = self
-    
+

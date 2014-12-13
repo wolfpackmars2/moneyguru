@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-11-01
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4.QtCore import Qt
@@ -19,16 +19,19 @@ class EntryTableDelegate(TableDelegate):
         TableDelegate.__init__(self, model)
         arrow = QPixmap(':/right_arrow_gray_12')
         arrowSelected = QPixmap(':/right_arrow_white_12')
-        self._decoArrow = ItemDecoration(arrow, self._model.show_transfer_account)
-        self._decoArrowSelected = ItemDecoration(arrowSelected, self._model.show_transfer_account)
-    
+        self._decoArrow = ItemDecoration(arrow, self.show_transfer_account)
+        self._decoArrowSelected = ItemDecoration(arrowSelected, self.show_transfer_account)
+
+    def show_transfer_account(self, index):
+        self._model.show_transfer_account(row_index=index.row())
+
     def _get_decorations(self, index, isSelected):
         column = self._model.columns.column_by_index(index.column())
         if column.name == 'transfer':
             return [self._decoArrowSelected if isSelected else self._decoArrow]
         else:
             return []
-    
+
 
 class EntryTable(TableWithTransactions):
     COLUMNS = [
@@ -45,7 +48,7 @@ class EntryTable(TableWithTransactions):
         Column('credit', 95, alignment=Qt.AlignRight, cantTruncate=True),
         Column('balance', 110, alignment=Qt.AlignRight, cantTruncate=True),
     ]
-    
+
     def __init__(self, model, view):
         TableWithTransactions.__init__(self, model, view)
         self.tableDelegate = EntryTableDelegate(self.model)
@@ -54,7 +57,7 @@ class EntryTable(TableWithTransactions):
         self.view.clicked.connect(self.cellClicked)
         self.view.spacePressed.connect(self.model.toggle_reconciled)
         self.view.deletePressed.connect(self.model.delete)
-    
+
     #--- Data methods override
     def _getStatusData(self, row, role):
         # DecorationRole is handled in TableWithTransactions
@@ -65,14 +68,14 @@ class EntryTable(TableWithTransactions):
                 return None
         else:
             return TableWithTransactions._getStatusData(self, row, role)
-    
+
     def _getFlags(self, row, column):
         flags = TableWithTransactions._getFlags(self, row, column)
         if column.name == 'status':
             if row.can_reconcile() and not row.reconciled:
                 flags |= Qt.ItemIsUserCheckable
         return flags
-    
+
     def _setData(self, row, column, value, role):
         if column.name == 'status':
             if role == Qt.CheckStateRole:
@@ -82,7 +85,7 @@ class EntryTable(TableWithTransactions):
                 return False
         else:
             return TableWithTransactions._setData(self, row, column, value, role)
-    
+
     #--- Event Handling
     def cellClicked(self, index):
         column = self.model.columns.column_by_index(index.column())
@@ -91,4 +94,4 @@ class EntryTable(TableWithTransactions):
             row = self.model[index.row()]
             if row.can_reconcile() and row.reconciled:
                 row.toggle_reconciled()
-    
+

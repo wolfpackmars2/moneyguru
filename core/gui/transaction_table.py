@@ -63,11 +63,13 @@ class TransactionTable(TransactionTableBase):
         self._restore_from_explicit_selection()
 
     #--- Private
-    def _show_account(self, use_to_column=False):
+    def _show_account(self, row_index=None, use_to_column=False):
         # if `use_to_column` is True, use the To column, else, use the From column
-        if not self.selected_transactions:
-            return
-        txn = self.selected_transactions[0]
+        if row_index is None:
+            if not self.selected_transactions:
+                return
+            row_index = self.selected_index
+        txn = self[row_index].transaction
         froms, tos = txn.splitted_splits()
         splits = tos if use_to_column else froms
         account_to_show = splits[0].account
@@ -79,11 +81,11 @@ class TransactionTable(TransactionTableBase):
         if self and not self.selected_indexes:
             self.selected_indexes = [len(self) - 1]
 
-    def show_from_account(self):
-        self._show_account(use_to_column=False)
+    def show_from_account(self, row_index=None):
+        self._show_account(row_index, use_to_column=False)
 
-    def show_to_account(self):
-        self._show_account(use_to_column=True)
+    def show_to_account(self, row_index=None):
+        self._show_account(row_index, use_to_column=True)
 
     #--- Properties
     @property

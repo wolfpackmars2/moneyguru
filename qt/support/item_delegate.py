@@ -12,6 +12,7 @@ from collections import namedtuple
 from PyQt4.QtCore import QRect, QSize
 from PyQt4.QtGui import QStyledItemDelegate, QStyleOptionViewItemV4, QStyle
 
+# onClickCallable has the signature f(clicked_row_index: int).
 ItemDecoration = namedtuple('ItemDecoration', 'pixmap onClickCallable')
 
 class ItemDelegate(QStyledItemDelegate):
@@ -51,7 +52,7 @@ class ItemDelegate(QStyledItemDelegate):
 
         """
         return None
-    
+
     def _prepare_paint_options(self, option, index):
         # Don't set option directly in `paint` but here. This way, there won't be any trouble with
         # option being overwritten.
@@ -91,7 +92,7 @@ class ItemDelegate(QStyledItemDelegate):
         for dec in decorations:
             pixmap = dec.pixmap
             if pos.x() >= currentRight - pixmap.width():
-                dec.onClickCallable()
+                dec.onClickCallable(index)
                 return True
             currentRight -= pixmap.width()
         return False
@@ -141,7 +142,6 @@ class ItemDelegate(QStyledItemDelegate):
             painter.drawPixmap(rect, pixmap)
             xOffset += pixmap.width()
 
-    
     def setModelData(self, editor, model, index):
         # This call below is to give a chance to the editor to tweak its content a little bit before
         # we send it to the model.

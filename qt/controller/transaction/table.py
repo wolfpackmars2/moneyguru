@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-10-31
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4.QtCore import Qt
@@ -20,11 +20,17 @@ class TransactionTableDelegate(TableDelegate):
         TableDelegate.__init__(self, model)
         arrow = QPixmap(':/right_arrow_gray_12')
         arrowSelected = QPixmap(':/right_arrow_white_12')
-        self._decoFromArrow = ItemDecoration(arrow, self._model.show_from_account)
-        self._decoFromArrowSelected = ItemDecoration(arrowSelected, self._model.show_from_account)
-        self._decoToArrow = ItemDecoration(arrow, self._model.show_to_account)
-        self._decoToArrowSelected = ItemDecoration(arrowSelected, self._model.show_to_account)
-    
+        self._decoFromArrow = ItemDecoration(arrow, self.show_from_account)
+        self._decoFromArrowSelected = ItemDecoration(arrowSelected, self.show_from_account)
+        self._decoToArrow = ItemDecoration(arrow, self.show_to_account)
+        self._decoToArrowSelected = ItemDecoration(arrowSelected, self.show_to_account)
+
+    def show_from_account(self, index):
+        self._model.show_from_account(row_index=index.row())
+
+    def show_to_account(self, index):
+        self._model.show_to_account(row_index=index.row())
+
     def _get_decorations(self, index, isSelected):
         column = self._model.columns.column_by_index(index.column())
         if column.name == 'from':
@@ -47,7 +53,7 @@ class TransactionTable(TableWithTransactions):
         Column('amount', 100, alignment=Qt.AlignRight, cantTruncate=True, painter=AMOUNT_PAINTER, resizeToFit=True),
         Column('mtime', 140),
     ]
-    
+
     def __init__(self, model, view):
         TableWithTransactions.__init__(self, model, view)
         self.tableDelegate = TransactionTableDelegate(self.model)

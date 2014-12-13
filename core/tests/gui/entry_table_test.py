@@ -1,9 +1,9 @@
 # Created By: Eric Mc Sween
 # Created On: 2008-07-12
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from hscommon.testutil import eq_
@@ -416,8 +416,8 @@ def app_two_entries():
     app = TestApp()
     app.add_account()
     app.show_account()
-    app.add_entry('11/07/2008', 'first', increase='42')
-    app.add_entry('12/07/2008', 'second', decrease='12')
+    app.add_entry('11/07/2008', 'first', transfer='account1', increase='42')
+    app.add_entry('12/07/2008', 'second', transfer='account2', decrease='12')
     app.clear_gui_calls()
     return app
 
@@ -466,6 +466,20 @@ def test_total_row(app):
     eq_(row.decrease, '12.00')
     eq_(row.balance, '+30.00')
     assert row.is_bold
+
+@with_app(app_two_entries)
+def test_show_transfer_specify_index(app):
+    # When a row index is specified in show_transfer(), we use this index instead of the selected
+    # row. second row is selected now.
+    app.etable.show_transfer_account(row_index=0)
+    app.check_current_pane(PaneType.Account, account_name='account1')
+
+@with_app(app_two_entries)
+def test_show_transfer_specify_index_nothing_selected(app):
+    # An empty selection doesn't prevent show_transfer_account from working with a specified row.
+    app.etable.select([])
+    app.etable.show_transfer_account(row_index=0)
+    app.check_current_pane(PaneType.Account, account_name='account1')
 
 #--- Entry in previous range
 def app_entry_in_previous_range():
@@ -608,7 +622,7 @@ def app_split_transaction():
     app.stable.save_edits()
     app.tpanel.save()
     return app
-    
+
 def test_autofill():
     # when the entry is part of a split, don't autofill the transfer
     app = app_split_transaction()
@@ -729,11 +743,11 @@ def test_amount_of_selected_entry():
     def check(app, expected_increase, expected_decrease):
         eq_(app.etable.selected_row.increase, expected_increase)
         eq_(app.etable.selected_row.decrease, expected_decrease)
-    
+
     # The amount correctly stays in the decrease column
     app = app_entry_with_decrease()
     yield check, app, '', '42.00'
-    
+
     # The amount correctly stays in the increase column, even though it's a credit
     app = app_entry_in_liability()
     yield check, app, '10.00', ''
@@ -741,19 +755,19 @@ def test_amount_of_selected_entry():
 def test_should_show_balance_column():
     def check(app, expected):
         eq_(app.etable.columns.column_is_visible('balance'), expected)
-    
+
     # When a liability account is selected, we show the balance column.
     app = app_with_account_of_type(AccountType.Liability)
     yield check, app, True
-    
+
     # When an income account is selected, we don't show the balance column.
     app = app_with_account_of_type(AccountType.Income)
     yield check, app, False
-    
+
     # When an expense account is selected, we don't show the balance column.
     app = app_with_account_of_type(AccountType.Expense)
     yield check, app, False
-    
+
     # When an asset account is selected, we show the balance column.
     app = app_with_account_of_type(AccountType.Asset)
     yield check, app, True

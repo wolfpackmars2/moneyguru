@@ -38,10 +38,10 @@ class AccountSheetDelegate(ItemDelegate):
         arrowSelected = QPixmap(':/right_arrow_white_12')
         accountOut = QPixmap(':/account_out_12')
         accountIn = QPixmap(':/account_in_12')
-        self._decoArrow = ItemDecoration(arrow, self._model.model.show_selected_account)
-        self._decoArrowSelected = ItemDecoration(arrowSelected, self._model.model.show_selected_account)
-        self._decoAccountOut = ItemDecoration(accountOut, self._model.model.toggle_excluded)
-        self._decoAccountIn = ItemDecoration(accountIn, self._model.model.toggle_excluded)
+        self._decoArrow = ItemDecoration(arrow, self.show_clicked_account)
+        self._decoArrowSelected = ItemDecoration(arrowSelected, self.show_clicked_account)
+        self._decoAccountOut = ItemDecoration(accountOut, self.toggle_excluded)
+        self._decoAccountIn = ItemDecoration(accountIn, self.toggle_excluded)
 
     def _get_decorations(self, index, isSelected):
         column = self._model.model.columns.column_by_index(index.column())
@@ -66,6 +66,14 @@ class AccountSheetDelegate(ItemDelegate):
         indentationOffset = self._model.data(index, INDENTATION_OFFSET_ROLE)
         if indentationOffset:
             option.rect.setLeft(option.rect.left()+indentationOffset)
+
+    def show_clicked_account(self, index):
+        path = self._model.pathForIndex(index)
+        self._model.model.show_account(path)
+
+    def toggle_excluded(self, index):
+        # We ignore clicked index: we always toggle currently selected nodes.
+        self._model.model.toggle_excluded()
 
     def paint(self, painter, option, index):
         ItemDelegate.paint(self, painter, option, index)

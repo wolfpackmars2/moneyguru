@@ -244,6 +244,12 @@ def test_show_selected_account(app):
     # no show_line_graph because it was already selected in the etable view before
     app.check_current_pane(PaneType.Account, account_name='Bank 1')
 
+@with_app(app_account_hierarchy)
+def test_show_account(app):
+    # show_account() switches to the account view.
+    app.bsheet.show_account([0, 0, 0])
+    app.check_current_pane(PaneType.Account, account_name='Bank 1')
+
 #--- One account
 def app_one_account():
     app = TestApp()
