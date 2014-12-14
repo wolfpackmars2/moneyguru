@@ -1,3 +1,9 @@
+=== 2.8.1 (2014-12-14)
+
+* Fix amount deletion bug on drag & drop transaction re-ordering. [Linux, Windows] (#402)
+* Fix bug where clicking account-jumping arrows would lead to the wrong place.
+  [Linux, Windows] (#404)
+
 === 2.8.0 (2014-11-09)
 
 * Make amount fields prettier. Thanks Nelson Brown! [Windows, Linux] (#14 #15)
