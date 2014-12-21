@@ -11,7 +11,7 @@ __author__ = 'nelson'
 from collections import namedtuple
 
 from PyQt4.QtCore import QRectF, QSize, Qt
-from PyQt4.QtGui import QStyleOptionViewItemV4, QStyle, QTextOption
+from PyQt4.QtGui import QStyleOptionViewItemV4, QStyle, QTextOption, QPalette
 
 import re
 import logging
@@ -138,9 +138,12 @@ class AmountPainter:
         is_selected = bool(option.state & QStyle.State_Selected)
         is_active = bool(option.state & QStyle.State_Active)
         if is_selected and is_active:
-            painter.setPen(Qt.white)
+            painter.setPen(option.palette.color(QPalette.Active, QPalette.HighlightedText))
+            painter.setBrush(option.palette.brush(QPalette.Active, QPalette.Highlight))
         else:
-            painter.setPen(Qt.black)
+            painter.setPen(option.palette.color(QPalette.Active, QPalette.Text))
+            painter.setBrush(option.palette.brush(QPalette.Active, QPalette.Base))
+        painter.fillRect(option.rect, painter.brush())
         if do_paint_currency:
             painter.drawText(QRectF(4+option.rect.left(),
                                     option.rect.top(),
