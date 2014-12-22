@@ -289,6 +289,9 @@ setenv /x64 /release
 set DISTUTILS_USE_SDK=1
 set MSSdk=1
 4. Try the build command again.
+If the above fails and you are testing locally for a non-production release,
+then you can pass a --no-ext option to this build script to skip the extension
+module which will then use pure python reference implementations.
         """)
     exts = []
     exts.append(Extension(
