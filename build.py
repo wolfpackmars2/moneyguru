@@ -59,6 +59,10 @@ def parse_args():
         help="Build only ext modules"
     )
     parser.add_argument(
+        '--no-ext', action='store_true', dest='no_ext',
+        help="Do not build ext modules."
+    )
+    parser.add_argument(
         '--cocoa-compile', action='store_true', dest='cocoa_compile',
         help="Build only Cocoa executable"
     )
@@ -374,9 +378,10 @@ def build_cocoa_bridging_interfaces():
     import mg_const
     objp.const.generate_objc_code(mg_const, 'cocoa/autogen/PyConst.h')
 
-def build_normal(ui, dev):
+def build_normal(ui, dev, do_build_ext=True):
     build_localizations(ui)
-    build_ext()
+    if do_build_ext:
+        build_ext()
     if ui == 'cocoa':
         build_cocoa(dev)
     elif ui == 'qt':
@@ -416,7 +421,7 @@ def main():
         build_cocoalib_xibless()
         build_xibless()
     else:
-        build_normal(ui, dev)
+        build_normal(ui, dev, not args.no_ext)
 
 if __name__ == '__main__':
     main()
