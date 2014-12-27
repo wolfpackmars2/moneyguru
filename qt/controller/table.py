@@ -15,6 +15,7 @@ from ..support.column_view import AmountPainter
 from ..support.date_edit import DateEdit
 from ..support.item_delegate import ItemDelegate
 
+NO_EDIT = 'no_edit'
 DATE_EDIT = 'date_edit'
 DESCRIPTION_EDIT = 'description_edit'
 PAYEE_EDIT = 'payee_edit'
@@ -51,6 +52,8 @@ class TableDelegate(ItemDelegate):
         editType = column.editor
         if editType is None:
             return ItemDelegate.createEditor(self, parent, option, index)
+        elif editType == NO_EDIT:
+            return None
         elif editType == DATE_EDIT:
             return DateEdit(parent)
         elif editType in EDIT_TYPE2COMPLETABLE_EDIT:

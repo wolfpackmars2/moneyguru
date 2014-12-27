@@ -10,13 +10,13 @@ from PyQt4.QtCore import Qt, QMimeData, QByteArray
 from PyQt4.QtGui import QPixmap
 
 from qtlib.column import Column
-from ..table import Table
+from ..table import Table, NO_EDIT
 
 MIME_INDEXES = 'application/moneyguru.rowindexes'
 
 class ImportTable(Table):
     COLUMNS = [
-        Column('will_import', 20),
+        Column('will_import', 20, editor=NO_EDIT),
         Column('date', 80),
         Column('description', 90),
         Column('amount', 90, alignment=Qt.AlignRight),
