@@ -56,7 +56,7 @@ On Ubuntu, the apt-get command to install all pre-requisites is:
 
 On Arch, it's:
 
-    $ pacman -S python-pyqt5
+    $ pacman -S python-pyqt4
 
 ## Setting up the virtual environment
 
