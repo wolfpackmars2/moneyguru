@@ -16,6 +16,11 @@ from PyQt4.QtGui import QStyledItemDelegate, QStyleOptionViewItemV4, QStyle
 ItemDecoration = namedtuple('ItemDecoration', 'pixmap onClickCallable')
 
 class ItemDelegate(QStyledItemDelegate):
+
+    def __init__(self, *args, **kwargs):
+        QStyledItemDelegate.__init__(self, *args, **kwargs)
+        self._display_text = True
+
     #--- Virtual
     def _get_decorations(self, index, isSelected):
         """Returns a list of ItemDecorations which are drawn during the paint event.
@@ -59,6 +64,11 @@ class ItemDelegate(QStyledItemDelegate):
         pass
 
     #--- Overrides
+
+    def displayText(self, p_object, locale):
+        if self._display_text:
+            return QStyledItemDelegate.displayText(self, p_object, locale)
+        return ""
 
     def sizeHint(self, option, index):
         """Returns a QSize bounding box of the area required to paint the data in the model at the index.
@@ -125,14 +135,14 @@ class ItemDelegate(QStyledItemDelegate):
         # First added for #15, the painting of custom amount information.  This can
         # be used as a pattern for painting any column of information.
         value_painter = self._get_value_painter(index)
+        self._display_text = value_painter is None
+        QStyledItemDelegate.paint(self, painter, option, index)
         if value_painter is not None:
             value_option = QStyleOptionViewItemV4(option)
             rect = value_option.rect
             rect = QRect(rect.left(), rect.top(), rect.width() - xOffset, rect.height())
             value_option.rect = rect
             value_painter.paint(painter, value_option, index)
-        else:
-            QStyledItemDelegate.paint(self, painter, option, index)
 
         for dec in decorations:
             pixmap = dec.pixmap

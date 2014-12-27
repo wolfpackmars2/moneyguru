@@ -137,13 +137,11 @@ class AmountPainter:
         do_paint_currency = cur_width > 0
         is_selected = bool(option.state & QStyle.State_Selected)
         is_active = bool(option.state & QStyle.State_Active)
-        if is_selected and is_active:
-            painter.setPen(option.palette.color(QPalette.Active, QPalette.HighlightedText))
-            painter.setBrush(option.palette.brush(QPalette.Active, QPalette.Highlight))
-        else:
-            painter.setPen(option.palette.color(QPalette.Active, QPalette.Text))
-            painter.setBrush(option.palette.brush(QPalette.Active, QPalette.Base))
-        painter.fillRect(option.rect, painter.brush())
+        palette_active = QPalette.Active if is_active else QPalette.Inactive
+        palette_text = QPalette.HighlightedText if is_selected else QPalette.Text
+        pen_color = option.palette.color(palette_active, palette_text)
+        painter.setPen(pen_color)
+
         if do_paint_currency:
             painter.drawText(QRectF(4+option.rect.left(),
                                     option.rect.top(),
