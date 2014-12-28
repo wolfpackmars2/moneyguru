@@ -100,21 +100,21 @@ class AccountSheet(TreeModel):
     def __init__(self, model, view):
         TreeModel.__init__(self)
         self.view = view
+        from ..app import APP_PREFS
+        self._updateFontSize(prefs=APP_PREFS)
+        APP_PREFS.prefsChanged.connect(self.appPrefsChanged)
         self.model = model
         self.model.view = self
         self.view.setModel(self)
         self.columns = Columns(self.model.columns, self.COLUMNS, view.header())
         self.accountSheetDelegate = AccountSheetDelegate(self)
         self.view.setItemDelegate(self.accountSheetDelegate)
-        self._updateFontSize()
 
         self.view.selectionModel().selectionChanged[(QItemSelection, QItemSelection)].connect(self.selectionChanged)
         self.view.collapsed.connect(self.nodeCollapsed)
         self.view.expanded.connect(self.nodeExpanded)
         self.view.deletePressed.connect(self.model.delete)
         self.view.doubleClicked.connect(self.model.show_selected_account)
-        from ..app import APP_INSTANCE
-        APP_INSTANCE.prefsChanged.connect(self.appPrefsChanged)
 
     #--- TreeModel overrides
     def _createNode(self, ref, row):
@@ -133,10 +133,10 @@ class AccountSheet(TreeModel):
         self.view.clearSelection()
         self.view.setCurrentIndex(modelIndex)
 
-    def _updateFontSize(self):
-        from ..app import APP_INSTANCE
+    def _updateFontSize(self, prefs):
         font = self.view.font()
-        font.setPointSize(APP_INSTANCE.prefs.tableFontSize)
+        font.setPointSize(prefs.tableFontSize)
+        self.font = font
         self.view.setFont(font)
 
     #--- Data Model methods
@@ -262,7 +262,7 @@ class AccountSheet(TreeModel):
 
     #--- Events
     def appPrefsChanged(self):
-        self._updateFontSize()
+        self._updateFontSize(prefs=self.sender())
 
     def selectionChanged(self, selected, deselected):
         newNodes = [modelIndex.internalPointer().ref for modelIndex in self.view.selectionModel().selectedRows()]
@@ -281,6 +281,7 @@ class AccountSheet(TreeModel):
         self.reset()
         self.refresh_expanded_paths()
         self._updateViewSelection()
+        self.view.setFont(self.font)
 
     def refresh_expanded_paths(self):
         for path in self.model.expanded_paths:

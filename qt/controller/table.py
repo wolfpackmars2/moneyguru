@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-11-01
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from PyQt4.QtGui import QFontMetrics
@@ -46,7 +46,7 @@ class TableDelegate(ItemDelegate):
 
         if column.name in self._column_painters:
             return self._column_painters[column.name]
-    
+
     def createEditor(self, parent, option, index):
         column = self._model.columns.column_by_index(index.column())
         editType = column.editor
@@ -65,14 +65,13 @@ class Table(TableBase):
         TableBase.__init__(self, model, view)
         self.tableDelegate = TableDelegate(self.model)
         self.view.setItemDelegate(self.tableDelegate)
-        self._updateFontSize()
-        from ..app import APP_INSTANCE
-        APP_INSTANCE.prefsChanged.connect(self.appPrefsChanged)
+        from ..app import APP_PREFS
+        self._updateFontSize(prefs=APP_PREFS)
+        APP_PREFS.prefsChanged.connect(self.appPrefsChanged)
 
-    def _updateFontSize(self):
-        from ..app import APP_INSTANCE
+    def _updateFontSize(self, prefs):
         font = self.view.font()
-        font.setPointSize(APP_INSTANCE.prefs.tableFontSize)
+        font.setPointSize(prefs.tableFontSize)
         self.view.setFont(font)
         fm = QFontMetrics(font)
         self.view.verticalHeader().setDefaultSectionSize(fm.height()+2)
@@ -83,4 +82,5 @@ class Table(TableBase):
         self.view.resize(self.view.sizeHint())
 
     def appPrefsChanged(self):
-        self._updateFontSize()
+        self._updateFontSize(prefs=self.sender())
+

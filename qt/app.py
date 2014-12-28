@@ -31,10 +31,10 @@ class MoneyGuru(ApplicationBase):
 
     def __init__(self):
         ApplicationBase.__init__(self)
-        global APP_INSTANCE
-        APP_INSTANCE = self
         self.prefs = Preferences()
         self.prefs.load()
+        global APP_PREFS
+        APP_PREFS = self.prefs
         locale = QLocale.system()
         dateFormat = self.prefs.dateFormat
         decimalSep = locale.decimalPoint()
@@ -62,8 +62,6 @@ class MoneyGuru(ApplicationBase):
         self.connect(self, SIGNAL('applicationFinishedLaunching()'), self.applicationFinishedLaunching)
         QCoreApplication.instance().aboutToQuit.connect(self.applicationWillTerminate)
 
-        self.prefsChanged.emit()
-
     #--- Public
     def showAboutBox(self):
         self.aboutBox.show()
@@ -76,7 +74,7 @@ class MoneyGuru(ApplicationBase):
         self.preferencesPanel.load()
         if self.preferencesPanel.exec_() == QDialog.Accepted:
             self.preferencesPanel.save()
-            self.prefsChanged.emit()
+            self.prefs.prefsChanged.emit()
 
     #--- Event Handling
     def applicationFinishedLaunching(self):
@@ -93,7 +91,6 @@ class MoneyGuru(ApplicationBase):
         self.model.shutdown()
 
     #--- Signals
-    prefsChanged = pyqtSignal()
     willSavePrefs = pyqtSignal()
 
     #--- model --> view
