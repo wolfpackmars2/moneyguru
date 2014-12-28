@@ -53,7 +53,7 @@ def main(argv):
     from qt.app import MoneyGuru
     app.setApplicationVersion(MoneyGuru.VERSION)
     mgapp = MoneyGuru()
-    install_excepthook()
+    install_excepthook('https://github.com/hsoft/moneyguru/issues')
     exec_result = app.exec_()
     del mgapp
     # Since PyQt 4.7.2, I had crashes on exit, and from reading the mailing list, it seems to be
