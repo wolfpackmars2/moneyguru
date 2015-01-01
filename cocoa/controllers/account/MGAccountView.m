@@ -68,7 +68,9 @@ http://www.hardcoded.net/licenses/bsd_license
 {
     if ([self.model graphHeightToRestore] > 0) {
         [splitView setPosition:NSHeight([splitView frame])-[self.model graphHeightToRestore] ofDividerAtIndex:0];
+        graphCollapsed = NO;
     }
+    [self updateVisibility];
 }
 
 /* Private */

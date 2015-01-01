@@ -37,10 +37,13 @@ http://www.hardcoded.net/licenses/bsd_license
 {
     if ([self.model graphHeightToRestore] > 0) {
         [mainSplitView setPosition:NSHeight([mainSplitView frame])-[self.model graphHeightToRestore] ofDividerAtIndex:0];
+        graphCollapsed = NO;
     }
     if ([self.model pieWidthToRestore] > 0) {
         [subSplitView setPosition:NSWidth([subSplitView frame])-[self.model pieWidthToRestore] ofDividerAtIndex:0];
+        pieCollapsed = NO;
     }
+    [self updateVisibility];
 }
 
 /* Delegate */
