@@ -1,3 +1,11 @@
+=== 2.8.2 (2015-01-02)
+
+* Fix amount cell painting which didn't work properly. [Windows] (#407)
+* Fix import window's checkbox cell which would sometimes wrongly go in edit mode.
+  [Linux, Windows] (#406)
+* Fix chart visibility glitch in account view. [Mac] (#357)
+* Add a ``--no-ext`` build option. (#408)
+
 === 2.8.1 (2014-12-14)
 
 * Fix amount deletion bug on drag & drop transaction re-ordering. [Linux, Windows] (#402)
