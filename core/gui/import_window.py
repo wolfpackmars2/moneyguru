@@ -2,9 +2,9 @@
 # Created On: 2008-08-07
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
 #
-# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
-# http://www.hardcoded.net/licenses/bsd_license
+# http://www.gnu.org/licenses/gpl-3.0.html
 
 # To avoid clashing with "first" in the "first/second" pattern being all over the place in this
 # unit, we rename our imported first() function here
