@@ -10,9 +10,11 @@ from datetime import date
 
 from hscommon.testutil import eq_
 
-from ..base import TestApp, with_app, DictLoader, testdata
+from ..base import TestApp, with_app, DictLoader, testdata, app_with_plugins
 from ...model.date import YearRange
 from ...gui.import_window import SwapType
+
+from core.model.transaction import Split
 
 #--- No setup
 
@@ -508,3 +510,163 @@ def test_switch_description_payee_with_common_txn(app):
     app.iwin.perform_swap(apply_to_all=True)
     eq_(app.itable[0].description_import, 'bar')
     eq_(app.itable[0].payee_import, 'foo')
+
+
+class ChangeStructure(ImportActionPlugin):
+    NAME = "Structure Change Import Plugin"
+    ACTION_NAME = "Structure change import"
+
+    def perform_action(self, import_document, transactions, panes, selected_rows=None):
+
+        imbalance_account = import_document.accounts.find('imbalance account', AccountType.Asset)
+
+        for transaction in transactions:
+            txn_copy = transaction.replicate()
+            if len(txn_copy.splits) == 2:
+                txn_copy.splits[0].amount += 1
+                txn_copy.splits.append(Split(txn_copy, imbalance_account, -1.))
+                import_document.change_transaction(transaction, txn_copy)
+
+class ChangeTransfer(ImportActionPlugin):
+    """
+    The point of this plugin is to change any transfer with the
+    phrase 'automatic' to a checking account.
+    """
+
+    def always_perform_action(self):
+        return True
+
+    def perform_action(self, import_document, transactions, panes):
+        auto_pays = []
+
+        # We go through all of our transactions searching for the keyword
+        # automatic.
+        for txn in transactions:
+            for split in txn.splits:
+                if 'automatic' in split.account_name.lower():
+                    # We collect up the actual account names marked for transfer
+                    auto_pays.append(split.account_name)
+
+        if not auto_pays:
+            return
+
+        checking = import_document.accounts.find('checking')
+
+        if checking is None:
+            # Create a checking account if no checking account is present
+            # in our current list of transactions
+            checking = import_document.new_account(AccountType.Asset, None)  # No group
+            import_document.accounts.set_account_name(checking, 'checking')
+
+        # Reassign our transfers to checking
+        auto_pay_accounts = [import_document.accounts.find(ap) for ap in auto_pays]
+        import_document.delete_accounts(auto_pay_accounts, checking)
+
+def app_with_structure_change_import_plugin():
+
+    app = app_with_plugins([ChangeStructure])
+
+    txns = [
+        {
+            'date': '01/13/2014',
+            'transfer': 'x',
+            'description': 'foo',
+            'payee': 'bar',
+            'amount': '-1.00'
+        },
+        {
+            'date': '12/10/2014',
+            'transfer': 'x',
+            'description': 'bar',
+            'payee': 'bar',
+            'amount': '0.00'
+        },
+        {
+            'date': '12/10/2014',
+            'transfer': 'x',
+            'description': 'baz',
+            'payee': 'bar',
+            'amount': '1.00'
+        }
+    ]
+
+    loader = DictLoader(app.doc.default_currency, 'first', txns)
+    loader.start_account()
+    loader.account_info.name = 'second'
+    loader.flush_account()
+    loader.load()
+    app.mw.loader = loader
+    app.iwin.show()
+    return app
+
+@with_app(app_with_structure_change_import_plugin)
+def test_change_split_structure(app):
+    # same as with dates: don't switch twice
+    swap_list = app.iwin.swap_type_list
+    eq_(app.iwin.swap_type_list[-1], ChangeStructure.ACTION_NAME)
+    swap_list.select(-1)
+    eq_(app.itable[0].transfer_import, 'x')
+    eq_(app.itable[0].amount_import, '-1.0')
+    eq_(app.itable[1].transfer_import, 'x')
+    eq_(app.itable[1].amount_import, '0.0')
+    eq_(app.itable[2].transfer_import, 'x')
+    eq_(app.itable[1].amount_import, '1.0')
+    app.iwin.perform_swap(apply=True)
+    eq_(app.itable[0].transfer_import, 'x')
+    eq_(app.itable[0].amount_import, '0.0')
+    eq_(app.itable[1].transfer_import, 'imbalance_account')
+    eq_(app.itable[1].amount_import, '-1.0')
+    eq_(app.itable[2].transfer_import, 'x')
+    eq_(app.itable[2].amount_import, '1.0')
+    eq_(app.itable[3].transfer_import, 'imbalance_account')
+    eq_(app.itable[3].amount_import, '-1.0')
+    eq_(app.itable[4].transfer_import, 'x')
+    eq_(app.itable[4].amount_import, '2.0')
+    eq_(app.itable[5].transfer_import, 'imbalance_account')
+    eq_(app.itable[5].amount_import, '-1.0')
+
+
+def app_with_transfer_change_import_plugin():
+
+    app = app_with_plugins([ChangeTransfer])
+
+    txns = [
+        {
+            'date': '12/09/2014',
+            'transfer': 'AUTOMATIC PAYMENT - THANK YOU',
+            'description': 'foo',
+            'payee': 'bar',
+            'amount': '-3.21'
+        },
+        {
+            'date': '12/10/2014',
+            'transfer': 'PAYMENT AUTOMATICALLY RECEIVED',
+            'description': 'foo',
+            'payee': 'bar',
+            'amount': '-20.22'
+        },
+        {
+            'date': '12/10/2014',
+            'transfer': 'GAS',
+            'description': 'foo',
+            'payee': 'bar',
+            'amount': '20.23'
+        }
+    ]
+
+    loader = DictLoader(app.doc.default_currency, 'first', txns)
+    loader.start_account()
+    loader.account_info.name = 'second'
+    loader.flush_account()
+    loader.load()
+    app.mw.loader = loader
+    app.iwin.show()
+    return app
+
+@with_app(app_with_transfer_change_import_plugin)
+def test_switch_transfer_accounts(app):
+    # Our action name is not manually selectable (since it is an always_perform)
+    assert ChangeTransfer.ACTION_NAME not in app.iwin.swap_type_list
+    eq_(app.itable[0].transfer_import, 'checking')
+    eq_(app.itable[1].transfer_import, 'checking')
+    eq_(app.itable[2].transfer_import, 'GAS')

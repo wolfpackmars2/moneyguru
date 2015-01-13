@@ -689,3 +689,10 @@ def print_table(table, extra_attrs=[]):
     for row in table:
         print('|'.join(getval(row, attrname) for attrname in attrs))
     print("--- Row Count: {} ---".format(len(table)))
+
+def app_with_plugins(plugins):
+    class CustomPluginsApp(Application):
+        def _load_plugins(self, plugin_path):
+            self.plugins = plugins
+
+    return TestApp(app=CustomPluginsApp(ApplicationGUI()))
