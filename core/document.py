@@ -15,7 +15,7 @@ import os.path as op
 from functools import wraps
 
 from hscommon.currency import Currency
-from hscommon.notify import Repeater
+from hscommon.notify import Repeater, Broadcaster
 from hscommon.util import nonone, allsame, dedupe, extract, first
 from hscommon.trans import tr
 from hscommon.gui.base import GUIObject
@@ -83,30 +83,12 @@ def handle_abort(method):
 
     return wrapper
 
-class Document(Repeater, GUIObject):
-    """Manages everything (including views) about an opened document.
+class BaseDocument(Repeater):
 
-    If there's one core class in moneyGuru, this is it. It represents a new or opened document and
-    holds all model instances associated to it (accounts, transactions, etc.). The ``Document`` is
-    also responsible for notifying all gui instances of changes. While it's OK for GUI instances to
-    directly access models (through :attr:`transactions` and :attr:`accounts`, for example), any
-    modification to those models have to go through ``Document``'s public methods.
-
-    Another important role of the ``Document`` is to manage undo points. For undo to work properly,
-    every mutative action must be properly recorded, and that's what the ``Document`` does.
-
-    When calling methods that take "hard values" (dates, descriptions, etc..), it is expected that
-    these values have already been parsed (it's the role of the GUI instances to parse data). So
-    dates are ``datetime.date`` instances, amounts are :class:`Amount` instances, indexes are
-    ``int``.
-
-    Subclasses :class:`hscommon.notify.Repeater` and :class:`hscommon.gui.base.GUIObject`.
-    """
-    REPEATED_NOTIFICATIONS = {'saved_custom_ranges_changed'}
+    REPEATED_NOTIFICATIONS = set()
 
     def __init__(self, app):
         Repeater.__init__(self, app)
-        GUIObject.__init__(self)
         self.app = app
         self._properties = {
             'first_weekday': 0,
@@ -127,144 +109,9 @@ class Document(Repeater, GUIObject):
         self.schedules = []
         self.budgets = BudgetList()
         self.oven = Oven(self.accounts, self.transactions, self.schedules, self.budgets)
-        self._undoer = Undoer(self.accounts, self.groups, self.transactions, self.schedules, self.budgets)
+        self._document_id = None
         self._date_range = YearRange(datetime.date.today())
-        self._filter_string = ''
-        self._filter_type = None
-        self._document_id = None
-        self._dirty_flag = False
         self._restore_preferences()
-
-    #--- Private
-    def _adjust_date_range(self, new_date):
-        new_date_range = self.date_range.adjusted(new_date)
-        if new_date_range is None:
-            return False
-        # We have to manually set the date range and send notifications because ENTRY_CHANGED
-        # must happen between DATE_RANGE_WILL_CHANGE and DATE_RANGE_CHANGED
-        # Note that there are no tests for this, as the current doesn't really allow to test
-        # for the order of the gui calls (and this exception doesn't mean that we should).
-        self.notify('date_range_will_change')
-        self._date_range = new_date_range
-        self.oven.continue_cooking(new_date_range.end)
-        self.notify('transaction_changed')
-        self.notify('date_range_changed')
-        return True
-
-    def _async_autosave(self):
-        # Because this method is called asynchronously, it's possible that, if unlucky, it happens
-        # exactly as the user is commiting a change. In these cases, the autosaved file might be a
-        # save of the data in a quite weird state. I think this risk is acceptable. The alternative
-        # is to put locks everywhere, which would complexify the application.
-        existing_names = [name for name in os.listdir(self.app.cache_path) if name.startswith('autosave')]
-        existing_names.sort()
-        timestamp = int(time.time())
-        autosave_name = 'autosave{0}.moneyguru'.format(timestamp)
-        while autosave_name in existing_names:
-            timestamp += 1
-            autosave_name = 'autosave{0}.moneyguru'.format(timestamp)
-        self.save_to_xml(op.join(self.app.cache_path, autosave_name), autosave=True)
-        if len(existing_names) >= AUTOSAVE_BUFFER_COUNT:
-            os.remove(op.join(self.app.cache_path, existing_names[0]))
-
-    def _change_transaction(
-            self, transaction, date=NOEDIT, description=NOEDIT, payee=NOEDIT,
-            checkno=NOEDIT, from_=NOEDIT, to=NOEDIT, amount=NOEDIT, currency=NOEDIT,
-            notes=NOEDIT, global_scope=False):
-        date_changed = date is not NOEDIT and date != transaction.date
-        transaction.change(
-            date=date, description=description, payee=payee, checkno=checkno,
-            from_=from_, to=to, amount=amount, currency=currency, notes=notes
-        )
-        if isinstance(transaction, Spawn):
-            if global_scope:
-                transaction.recurrence.change_globally(transaction)
-            else:
-                transaction.recurrence.delete(transaction)
-                materialized = transaction.replicate()
-                self.transactions.add(materialized)
-        else:
-            if transaction not in self.transactions:
-                self.transactions.add(transaction)
-            elif date_changed:
-                self.transactions.move_last(transaction)
-        self.transactions.clear_cache()
-
-    def _clean_empty_categories(self, from_account=None):
-        for account in list(self.accounts.auto_created):
-            if account is from_account:
-                continue
-            if not account.entries:
-                self.accounts.remove(account)
-
-    def _clear(self):
-        self._document_id = None
-        self.accounts.clear()
-        self.transactions.clear()
-        self.groups.clear()
-        del self.schedules[:]
-        del self.budgets[:]
-        self._undoer.clear()
-        self._dirty_flag = False
-        self._cook()
-
-    def _cook(self, from_date=None):
-        self.oven.cook(from_date=from_date, until_date=self.date_range.end)
-
-    def _get_action_from_changed_transactions(self, transactions, global_scope=False):
-        if len(transactions) == 1 and not isinstance(transactions[0], Spawn) \
-                and transactions[0] not in self.transactions:
-            action = Action(tr('Add transaction'))
-            action.added_transactions.add(transactions[0])
-        else:
-            action = Action(tr('Change transaction'))
-            action.change_transactions(transactions)
-        if global_scope:
-            spawns, txns = extract(lambda x: isinstance(x, Spawn), transactions)
-            for schedule in {spawn.recurrence for spawn in spawns}:
-                action.change_schedule(schedule)
-        return action
-
-    def _query_for_scope_if_needed(self, transactions):
-        """Queries the UI for change scope if there's any Spawn among transactions.
-
-        Returns whether the chosen scope is global
-        Raises OperationAborted if the user cancels the operation.
-        """
-        if any(isinstance(txn, Spawn) for txn in transactions):
-            scope = self.view.query_for_schedule_scope()
-            if scope == ScheduleScope.Cancel:
-                raise OperationAborted()
-            return scope == ScheduleScope.Global
-        else:
-            return False
-
-    def _reconcile_spawn_split(self, split, reconciliation_date):
-        # returns a reference to the corresponding materialized split
-        split.transaction.recurrence.delete(split.transaction)
-        materialized = split.transaction.replicate()
-        self.transactions.add(materialized)
-        split_index = split.transaction.splits.index(split)
-        materialized_split = materialized.splits[split_index]
-        materialized_split.reconciliation_date = reconciliation_date
-        return materialized_split
-
-    def _refresh_date_range(self):
-        """Refreshes the date range to make sure that it's in accordance with the current date
-        range related preference (year start and ahead months). Call this when these prefs changed.
-        """
-        if isinstance(self.date_range, RunningYearRange):
-            self.select_running_year_range()
-        elif isinstance(self.date_range, AllTransactionsRange):
-            self.select_all_transactions_range()
-        elif isinstance(self.date_range, YearRange):
-            if datetime.date.today() in self.date_range:
-                starting_point = datetime.date.today()
-            else:
-                starting_point = self.date_range
-            self.select_year_range(starting_point=starting_point)
-        elif isinstance(self.date_range, YearToDateRange):
-            self.select_year_to_date_range()
 
     def _restore_preferences(self):
         start_date = self.app.get_default(SELECTED_DATE_RANGE_START_PREFERENCE)
@@ -320,7 +167,90 @@ class Document(Repeater, GUIObject):
         excluded_account_names = [a.name for a in self.excluded_accounts]
         self.set_default(EXCLUDED_ACCOUNTS_PREFERENCE, excluded_account_names)
 
-    #--- Account
+    def _change_transaction(
+            self, transaction, date=NOEDIT, description=NOEDIT, payee=NOEDIT,
+            checkno=NOEDIT, from_=NOEDIT, to=NOEDIT, amount=NOEDIT, currency=NOEDIT,
+            notes=NOEDIT, global_scope=False):
+        date_changed = date is not NOEDIT and date != transaction.date
+        transaction.change(
+            date=date, description=description, payee=payee, checkno=checkno,
+            from_=from_, to=to, amount=amount, currency=currency, notes=notes
+        )
+        if isinstance(transaction, Spawn):
+            if global_scope:
+                transaction.recurrence.change_globally(transaction)
+            else:
+                transaction.recurrence.delete(transaction)
+                materialized = transaction.replicate()
+                self.transactions.add(materialized)
+        else:
+            if transaction not in self.transactions:
+                self.transactions.add(transaction)
+            elif date_changed:
+                self.transactions.move_last(transaction)
+        self.transactions.clear_cache()
+
+    def _clean_empty_categories(self, from_account=None):
+        for account in list(self.accounts.auto_created):
+            if account is from_account:
+                continue
+            if not account.entries:
+                self.accounts.remove(account)
+
+    def _clear(self):
+        self._document_id = None
+        self.accounts.clear()
+        self.transactions.clear()
+        self.groups.clear()
+        del self.schedules[:]
+        del self.budgets[:]
+        self._cook()
+
+    def _cook(self, from_date=None):
+        self.oven.cook(from_date=from_date, until_date=self.date_range.end)
+
+    def _reconcile_spawn_split(self, split, reconciliation_date):
+        # returns a reference to the corresponding materialized split
+        split.transaction.recurrence.delete(split.transaction)
+        materialized = split.transaction.replicate()
+        self.transactions.add(materialized)
+        split_index = split.transaction.splits.index(split)
+        materialized_split = materialized.splits[split_index]
+        materialized_split.reconciliation_date = reconciliation_date
+        return materialized_split
+
+    def _refresh_date_range(self):
+        """Refreshes the date range to make sure that it's in accordance with the current date
+        range related preference (year start and ahead months). Call this when these prefs changed.
+        """
+        if isinstance(self.date_range, RunningYearRange):
+            self.select_running_year_range()
+        elif isinstance(self.date_range, AllTransactionsRange):
+            self.select_all_transactions_range()
+        elif isinstance(self.date_range, YearRange):
+            if datetime.date.today() in self.date_range:
+                starting_point = datetime.date.today()
+            else:
+                starting_point = self.date_range
+            self.select_year_range(starting_point=starting_point)
+        elif isinstance(self.date_range, YearToDateRange):
+            self.select_year_to_date_range()
+
+    def _adjust_date_range(self, new_date):
+        new_date_range = self.date_range.adjusted(new_date)
+        if new_date_range is None:
+            return False
+        # We have to manually set the date range and send notifications because ENTRY_CHANGED
+        # must happen between DATE_RANGE_WILL_CHANGE and DATE_RANGE_CHANGED
+        # Note that there are no tests for this, as the current doesn't really allow to test
+        # for the order of the gui calls (and this exception doesn't mean that we should).
+        self.notify('date_range_will_change')
+        self._date_range = new_date_range
+        self.oven.continue_cooking(new_date_range.end)
+        self.notify('transaction_changed')
+        self.notify('date_range_changed')
+        return True
+
     def change_accounts(
             self, accounts, name=NOEDIT, type=NOEDIT, currency=NOEDIT, group=NOEDIT,
             account_number=NOEDIT, notes=NOEDIT):
@@ -336,9 +266,6 @@ class Document(Repeater, GUIObject):
         :param group: :class:`.Group`
         :param account_number: ``str``
         """
-        assert all(a is not None for a in accounts)
-        action = Action(tr('Change account'))
-        action.change_accounts(accounts)
         for account in accounts:
             if name is not NOEDIT:
                 self.accounts.set_account_name(account, name)
@@ -354,11 +281,18 @@ class Document(Repeater, GUIObject):
                 account.account_number = account_number
             if notes is not NOEDIT:
                 account.notes = notes
-        self._undoer.record(action)
         self._cook()
         self.notify('account_changed')
 
-    def delete_accounts(self, accounts, reassign_to=None):
+    def _get_affected_recurrences(self, accounts):
+
+        affected_schedules = [s for s in self.schedules if accounts & s.affected_accounts()]
+        affected_budgets = [b for account in accounts
+                            for b in self.budgets
+                            if b.account is account or b.target is account]
+        return affected_schedules, affected_budgets
+
+    def delete_accounts(self, accounts, reassign_to=None, affected_schedules=None, affected_budgets=None):
         """Removes ``accounts`` from the document.
 
         If the account has entries assigned to it, these entries will be reassigned to the
@@ -367,20 +301,11 @@ class Document(Repeater, GUIObject):
         :param accounts: List of :class:`.Account` to be removed.
         :param accounts: :class:`.Account` to use for reassignment.
         """
-        action = Action(tr('Remove account'))
-        accounts = set(accounts)
-        action.delete_accounts(accounts)
-        affected_schedules = [s for s in self.schedules if accounts & s.affected_accounts()]
-        for schedule in affected_schedules:
-            action.change_schedule(schedule)
-        for account in accounts:
-            affected_budgets = [b for b in self.budgets if b.account is account or b.target is account]
-            if account.is_income_statement_account() and reassign_to is None:
-                action.deleted_budgets |= set(affected_budgets)
-            else:
-                for budget in affected_budgets:
-                    action.change_budget(budget)
-        self._undoer.record(action)
+        if None in (affected_budgets, affected_schedules):
+            calc_affected_budgets, calc_affected_schedules = self._get_affected_recurrences(accounts)
+            affected_schedules = nonone(affected_schedules, calc_affected_schedules)
+            affected_budgets = nonone(affected_budgets, calc_affected_budgets)
+
         for account in accounts:
             self.transactions.reassign_account(account, reassign_to)
             for schedule in affected_schedules:
@@ -412,9 +337,6 @@ class Document(Repeater, GUIObject):
         name = self.accounts.new_name(tr('New account'))
         account = Account(name, self.default_currency, type)
         account.group = group
-        action = Action(tr('Add account'))
-        action.added_accounts.add(account)
-        self._undoer.record(action)
         self.accounts.add(account)
         self.notify('account_added')
         return account
@@ -434,7 +356,7 @@ class Document(Repeater, GUIObject):
             self.excluded_accounts |= accounts
         self.notify('accounts_excluded')
 
-    #--- Group
+
     def change_group(self, group, name=NOEDIT):
         """Properly sets properties for ``group``.
 
@@ -445,12 +367,132 @@ class Document(Repeater, GUIObject):
         :param name: ``str``
         """
         assert group is not None
-        action = Action(tr('Change group'))
-        action.change_groups([group])
         if name is not NOEDIT:
             self.groups.set_group_name(group, name)
-        self._undoer.record(action)
         self.notify('account_changed')
+
+
+
+class Document(BaseDocument, GUIObject):
+    """Manages everything (including views) about an opened document.
+
+    If there's one core class in moneyGuru, this is it. It represents a new or opened document and
+    holds all model instances associated to it (accounts, transactions, etc.). The ``Document`` is
+    also responsible for notifying all gui instances of changes. While it's OK for GUI instances to
+    directly access models (through :attr:`transactions` and :attr:`accounts`, for example), any
+    modification to those models have to go through ``Document``'s public methods.
+
+    Another important role of the ``Document`` is to manage undo points. For undo to work properly,
+    every mutative action must be properly recorded, and that's what the ``Document`` does.
+
+    When calling methods that take "hard values" (dates, descriptions, etc..), it is expected that
+    these values have already been parsed (it's the role of the GUI instances to parse data). So
+    dates are ``datetime.date`` instances, amounts are :class:`Amount` instances, indexes are
+    ``int``.
+
+    Subclasses :class:`hscommon.notify.Repeater` and :class:`hscommon.gui.base.GUIObject`.
+    """
+    REPEATED_NOTIFICATIONS = {'saved_custom_ranges_changed'}
+
+    def __init__(self, app):
+        BaseDocument.__init__(self, app)
+        GUIObject.__init__(self)
+
+        self._undoer = Undoer(self.accounts, self.groups, self.transactions, self.schedules, self.budgets)
+        self._filter_string = ''
+        self._filter_type = None
+        self._dirty_flag = False
+
+    #--- Private
+
+    def _async_autosave(self):
+        # Because this method is called asynchronously, it's possible that, if unlucky, it happens
+        # exactly as the user is commiting a change. In these cases, the autosaved file might be a
+        # save of the data in a quite weird state. I think this risk is acceptable. The alternative
+        # is to put locks everywhere, which would complexify the application.
+        existing_names = [name for name in os.listdir(self.app.cache_path) if name.startswith('autosave')]
+        existing_names.sort()
+        timestamp = int(time.time())
+        autosave_name = 'autosave{0}.moneyguru'.format(timestamp)
+        while autosave_name in existing_names:
+            timestamp += 1
+            autosave_name = 'autosave{0}.moneyguru'.format(timestamp)
+        self.save_to_xml(op.join(self.app.cache_path, autosave_name), autosave=True)
+        if len(existing_names) >= AUTOSAVE_BUFFER_COUNT:
+            os.remove(op.join(self.app.cache_path, existing_names[0]))
+
+    def _clear(self):
+        BaseDocument._clear(self)
+        self._undoer.clear()
+        self._dirty_flag = False
+
+    def _get_action_from_changed_transactions(self, transactions, global_scope=False):
+        if len(transactions) == 1 and not isinstance(transactions[0], Spawn) \
+                and transactions[0] not in self.transactions:
+            action = Action(tr('Add transaction'))
+            action.added_transactions.add(transactions[0])
+        else:
+            action = Action(tr('Change transaction'))
+            action.change_transactions(transactions)
+        if global_scope:
+            spawns, txns = extract(lambda x: isinstance(x, Spawn), transactions)
+            for schedule in {spawn.recurrence for spawn in spawns}:
+                action.change_schedule(schedule)
+        return action
+
+    def _query_for_scope_if_needed(self, transactions):
+        """Queries the UI for change scope if there's any Spawn among transactions.
+
+        Returns whether the chosen scope is global
+        Raises OperationAborted if the user cancels the operation.
+        """
+        if any(isinstance(txn, Spawn) for txn in transactions):
+            scope = self.view.query_for_schedule_scope()
+            if scope == ScheduleScope.Cancel:
+                raise OperationAborted()
+            return scope == ScheduleScope.Global
+        else:
+            return False
+
+    #--- Account
+    def change_accounts(self, accounts, reassign_to=None, **kwargs):
+        assert all(a is not None for a in accounts)
+        action = Action(tr('Change account'))
+        action.change_accounts(accounts)
+        BaseDocument.change_accounts(self, accounts, **kwargs)
+        self._undoer.record(action)
+
+
+    def delete_accounts(self, accounts, reassign_to=None):
+        action = Action(tr('Remove account'))
+        accounts = set(accounts)
+        action.delete_accounts(accounts)
+        affected_schedules, affected_budgets = self._get_affected_recurrences(accounts)
+        for schedule in affected_schedules:
+            action.change_schedule(schedule)
+
+        for budget in affected_budgets:
+            if budget.account in accounts and reassign_to is None:
+                action.deleted_budgets |= set(affected_budgets)
+            else:
+                action.change_budget(budget)
+        self._undoer.record(action)
+        BaseDocument.delete_accounts(self, accounts, reassign_to, affected_schedules, affected_budgets)
+
+    def new_account(self, type, group):
+        account = BaseDocument.new_account(self, type, group)
+        action = Action(tr('Add account'))
+        action.added_accounts.add(account)
+        self._undoer.record(action)
+        return account
+
+    #--- Group
+    def change_group(self, group, name=NOEDIT):
+        assert group is not None
+        action = Action(tr('Change group'))
+        action.change_groups([group])
+        BaseDocument.change_group(self, group, name)
+        self._undoer.record(action)
 
     def delete_groups(self, groups):
         """Removes ``groups`` from the document.
