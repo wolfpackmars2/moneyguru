@@ -292,15 +292,8 @@ class BaseDocument(Repeater):
                             if b.account is account or b.target is account]
         return affected_schedules, affected_budgets
 
-    def delete_accounts(self, accounts, reassign_to=None, affected_schedules=None, affected_budgets=None):
-        """Removes ``accounts`` from the document.
-
-        If the account has entries assigned to it, these entries will be reassigned to the
-        ``reassign_to`` account.
-
-        :param accounts: List of :class:`.Account` to be removed.
-        :param accounts: :class:`.Account` to use for reassignment.
-        """
+    def _delete_accounts(self, accounts, reassign_to=None, affected_schedules=None, affected_budgets=None):
+        """Private version of delete_accounts, allowing cached parameters without exposing to public."""
         if None in (affected_budgets, affected_schedules):
             calc_affected_budgets, calc_affected_schedules = self._get_affected_recurrences(accounts)
             affected_schedules = nonone(affected_schedules, calc_affected_schedules)
@@ -321,6 +314,18 @@ class BaseDocument(Repeater):
             self.accounts.remove(account)
         self._cook()
         self.notify('account_deleted')
+
+    def delete_accounts(self, accounts, reassign_to=None):
+        """Removes ``accounts`` from the document.
+
+        If the account has entries assigned to it, these entries will be reassigned to the
+        ``reassign_to`` account.
+
+        :param accounts: List of :class:`.Account` to be removed.
+        :param accounts: :class:`.Account` to use for reassignment.
+        """
+        self._delete_accounts(accounts, reassign_to)
+
 
     def new_account(self, type, group):
         """Create a new account in the document.
@@ -477,7 +482,7 @@ class Document(BaseDocument, GUIObject):
             else:
                 action.change_budget(budget)
         self._undoer.record(action)
-        BaseDocument.delete_accounts(self, accounts, reassign_to, affected_schedules, affected_budgets)
+        BaseDocument._delete_accounts(self, accounts, reassign_to, affected_schedules, affected_budgets)
 
     def new_account(self, type, group):
         account = BaseDocument.new_account(self, type, group)
