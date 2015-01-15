@@ -84,6 +84,21 @@ def handle_abort(method):
     return wrapper
 
 class BaseDocument(Repeater):
+    """Manages everything about an opened document.
+
+    If there's one core class in moneyGuru, this is it. It represents a new or opened document and
+    holds all model instances associated to it (accounts, transactions, etc.). The ``Document`` is
+    also responsible for notifying all interested objects changes. While it's OK for objects to
+    directly access models (through :attr:`transactions` and :attr:`accounts`, for example), any
+    modification to those models have to go through ``BaseDocument``'s public methods.
+
+    When calling methods that take "hard values" (dates, descriptions, etc..), it is expected that
+    these values have already been parsed (it's the role of the GUI instances to parse data). So
+    dates are ``datetime.date`` instances, amounts are :class:`Amount` instances, indexes are
+    ``int``.
+
+    Subclasses :class:`hscommon.notify.Repeater` and :class:`hscommon.gui.base.GUIObject`.
+    """
 
     REPEATED_NOTIFICATIONS = set()
 
@@ -111,6 +126,7 @@ class BaseDocument(Repeater):
         self.oven = Oven(self.accounts, self.transactions, self.schedules, self.budgets)
         self._document_id = None
         self._date_range = YearRange(datetime.date.today())
+        self._use_global_scope = False
         self._restore_preferences()
 
     def _restore_preferences(self):
@@ -166,6 +182,16 @@ class BaseDocument(Repeater):
         self.app.set_default(SELECTED_DATE_RANGE_END_PREFERENCE, str_end_date)
         excluded_account_names = [a.name for a in self.excluded_accounts]
         self.set_default(EXCLUDED_ACCOUNTS_PREFERENCE, excluded_account_names)
+
+    def _query_for_scope_if_needed(self, transactions):
+        """Returns global scope setting if there's any Spawn among transactions.
+
+        Returns whether the chosen scope is global.
+        """
+        if any(isinstance(txn, Spawn) for txn in transactions):
+            return self.global_scope
+        else:
+            return False
 
     def _change_transaction(
             self, transaction, date=NOEDIT, description=NOEDIT, payee=NOEDIT,
@@ -292,6 +318,18 @@ class BaseDocument(Repeater):
                             if b.account is account or b.target is account]
         return affected_schedules, affected_budgets
 
+    def _get_affected_accounts(self, groups):
+        return [a for a in self.accounts if a.group in groups]
+
+    def _contains_schedules(self, transactions):
+        # There is a bit of duplication here between the subclass Document
+        # action code and this code.  But it should be a responsibility of
+        # the base document to do non-gui specific notifications (change_schedules).
+        for txn in transactions:
+            if isinstance(txn, Spawn) and txn.recurrence:
+                return True
+        return False
+
     def _delete_accounts(self, accounts, reassign_to=None, affected_schedules=None, affected_budgets=None):
         """Private version of delete_accounts, allowing cached parameters without exposing to public."""
         if None in (affected_budgets, affected_schedules):
@@ -362,6 +400,7 @@ class BaseDocument(Repeater):
         self.notify('accounts_excluded')
 
 
+    # -- Groups
     def change_group(self, group, name=NOEDIT):
         """Properly sets properties for ``group``.
 
@@ -376,26 +415,462 @@ class BaseDocument(Repeater):
             self.groups.set_group_name(group, name)
         self.notify('account_changed')
 
+    def _delete_groups(self, groups, accounts=None):
+        if not accounts:
+            accounts = self._get_affected_accounts(groups)
+        for group in groups:
+            self.groups.remove(group)
+        for account in accounts:
+            account.group = None
+        self.notify('account_deleted')
+
+    def delete_groups(self, groups):
+        """Removes ``groups`` from the document.
+
+        Removes ``groups`` from the group list and broadcasts ``account_deleted``. All accounts
+        belonging to the deleted group have their :attr:`.Account.group` attribute set to ``None``.
+
+        :param groups: list of :class:`.Group`
+        """
+        self._delete_groups(groups)
+
+    def new_group(self, type):
+        """Creates a new group of type ``type``.
+
+        The new group will have a unique name based on the string "New Group" (if it exists, a
+        unique number will be appended to it). Once created, the group is added to the group list,
+        and ``account_added`` is broadcasted.
+
+        :param type: :class:`.AccountType`
+        :rtype: :class:`.Group`
+        """
+        name = self.groups.new_name(tr('New group'), type)
+        group = Group(name, type)
+        self.groups.append(group)
+        self.notify('account_added')
+        return group
+
+    # -- Transactions
+
+    @property
+    def global_scope(self):
+        return self._use_global_scope
+
+    @global_scope.setter
+    def global_scope(self, value):
+        self._use_global_scope = True if value else False
+
+    def can_move_transactions(self, transactions, before, after):
+        """Returns whether ``transactions`` can be be moved (re-ordered).
+
+        Transactions can only be moved when all transactions are of the same date, and that the date
+        of those transaction is between the date of ``before`` and ``after``. When ``before`` or
+        ``after`` is ``None``, it means that it's the end or beginning of the list.
+
+        :param transactions: a collection of :class:`Transaction`
+        :param before: :class:`Transaction`
+        :param after: :class:`Transaction`
+        :rtype: ``bool``
+        """
+        assert transactions
+        if any(isinstance(txn, Spawn) for txn in transactions):
+            return False
+        if not allsame(txn.date for txn in transactions):
+            return False
+        from_date = transactions[0].date
+        before_date = before.date if before else None
+        after_date = after.date if after else None
+        return from_date in (before_date, after_date)
+
+    def change_transaction(self, original, new):
+        """Changes the attributes of ``original`` so that they match those of ``new``.
+
+        This is used by the :class:`.TransactionPanel`, and ``new`` is originally a copy of
+        ``original`` which has been changed. Accounts linked to splits in ``new`` don't have to be
+        accounts that are part of the document. This method will automatically internalize accounts
+        linked to splits (and create new accounts if necessary).
+
+        If ``new``'s date is outside of the current date range, the date range will automatically be
+        changed so that it contains ``new``.
+
+        If ``original`` is a schedule :class:`.Spawn`, the UI will be queried for a scope, which
+        might result in the change being aborted.
+
+        After the transaction change, ``transaction_changed`` is broadcasted.
+
+        :param original: :class:`.Transaction`
+        :param new: :class:`.Transaction`, a modified copy of ``original``.
+        """
+        global_scope = self._query_for_scope_if_needed([original])
+
+        # don't forget that account up here is an external instance. Even if an account of
+        # the same name exists in self.accounts, it's not gonna be the same instance.
+        for split in new.splits:
+            if split.account is not None:
+                split.account = self.accounts.find(split.account.name, split.account.type)
+        original.set_splits(new.splits)
+        min_date = min(original.date, new.date)
+        self._change_transaction(
+            original, date=new.date, description=new.description,
+            payee=new.payee, checkno=new.checkno, notes=new.notes, global_scope=global_scope
+        )
+        self._cook(from_date=min_date)
+        self._clean_empty_categories()
+        if not self._adjust_date_range(original.date):
+            self.notify('transaction_changed')
+
+    def _change_transactions(
+            self, transactions, date=NOEDIT, description=NOEDIT, payee=NOEDIT, checkno=NOEDIT,
+            from_=NOEDIT, to=NOEDIT, amount=NOEDIT, currency=NOEDIT, global_scope=None):
+        global_scope = nonone(global_scope, self.global_scope)
+
+        if from_ is not NOEDIT:
+            from_ = self.accounts.find(from_, AccountType.Income) if from_ else None
+        if to is not NOEDIT:
+            to = self.accounts.find(to, AccountType.Expense) if to else None
+        if date is not NOEDIT and amount is not NOEDIT and amount != 0:
+            currencies_to_ensure = [amount.currency.code, self.default_currency.code]
+            Currency.get_rates_db().ensure_rates(date, currencies_to_ensure)
+
+        min_date = date if date is not NOEDIT else datetime.date.max
+        for transaction in transactions:
+            min_date = min(min_date, transaction.date)
+            self._change_transaction(
+                transaction, date=date, description=description, payee=payee, checkno=checkno,
+                from_=from_, to=to, amount=amount, currency=currency, global_scope=global_scope
+            )
+        self._cook(from_date=min_date)
+        self._clean_empty_categories()
+        if not self._adjust_date_range(transaction.date):
+            self.notify('transaction_changed')
+        if global_scope and self._contains_schedules(transactions):
+            self.notify('schedule_changed')
+
+    def change_transactions(
+            self, transactions, date=NOEDIT, description=NOEDIT, payee=NOEDIT, checkno=NOEDIT,
+            from_=NOEDIT, to=NOEDIT, amount=NOEDIT, currency=NOEDIT):
+        """Properly sets properties for ``transactions``.
+
+        Changes the attributes of every transaction in ``transactions`` to the values specified in
+        the arguments (arguments left to ``NOEDIT`` have no effect).
+
+        ``from_`` and ``to`` are account **names** rather than being :class:`.Account` instances. If
+        the names don't exist, they'll automatically be created.
+
+        If any transaction in ``transactions`` is a schedule :class:`.Spawn`, the UI will be queried
+        for a scope, which might result in the change being aborted.
+
+        After the transaction change, ``transaction_changed`` is broadcasted.
+
+        :param date: ``datetime.date``
+        :param description: ``str``
+        :param payee: ``str``
+        :param checkno: ``str``
+        :param from_: ``str`` (account name)
+        :param to: ``str`` (account name)
+        :param amount: :class:`.Amount`
+        :param currency: :class:`.Currency`
+        """
+        self._change_transactions(transactions,
+                                  date=date,
+                                  description=description,
+                                  payee=payee,
+                                  checkno=checkno,
+                                  from_=from_,
+                                  to=to,
+                                  amount=amount,
+                                  currency=currency)
+
+    def _delete_transactions(self, transactions, from_account=None, global_scope=None):
+        global_scope = nonone(global_scope, self.global_scope)
+        for txn in transactions:
+            if isinstance(txn, Spawn):
+                if global_scope:
+                    txn.recurrence.stop_before(txn)
+                else:
+                    txn.recurrence.delete(txn)
+            else:
+                self.transactions.remove(txn)
+        min_date = min(t.date for t in transactions)
+        self._cook(from_date=min_date)
+        self._clean_empty_categories(from_account=from_account)
+        self.notify('transaction_deleted')
+        if self._contains_schedules(transactions):
+            self.notify('schedule_changed')
+
+    def delete_transactions(self, transactions, from_account=None):
+        """Removes every transaction in ``transactions`` from the document.
+
+        If any transaction in ``transactions`` is a schedule :class:`.Spawn`, the UI will be queried
+        for a scope, which might result in the deletion being aborted.
+
+        After the transaction deletion, ``transaction_deleted`` is broadcasted.
+
+        ``from_account`` represents, in the UI, the account from which this deletion was triggered.
+        By specifying it, you will prevent it from being automatically purged by
+        :meth:`_clean_empty_categories` (we don't want to delete an account that is actively being
+        worked on by the user).
+
+        :param transactions: a collection of :class:`.Transaction`.
+        :param from_account: the :class:`.Account` from which the operation takes place, if any.
+        """
+        self._delete_transactions(transactions, from_account)
+
+    def _duplicate_transactions(self, transactions, duplicated=None):
+        if not transactions:
+            return
+
+        if duplicated is None:
+            duplicated = [txn.replicate() for txn in transactions]
+
+        for txn in duplicated:
+            self.transactions.add(txn)
+        min_date = min(t.date for t in transactions)
+        self._cook(from_date=min_date)
+        self.notify('transaction_changed')
+
+    def duplicate_transactions(self, transactions):
+        """Create copies of ``transactions`` in the document.
+
+        For each transaction in ``transactions``, add a new transaction with the same attributes to
+        the document.
+
+        After the operation, ``transaction_changed`` is broadcasted.
+
+        :param transactions: a collection of :class:`.Transaction` to duplicate.
+        """
+        self._duplicate_transactions(transactions)
+
+    def move_transactions(self, transactions, to_transaction):
+        """Re-orders ``transactions`` so that they are right before ``to_transaction``.
+
+        If ``to_transaction`` is ``None``, it means that we move transactions at the end of the
+        list.
+
+        Make sure your move is legal by calling :meth:`can_move_transactions` first.
+
+        After the move, ``transaction_changed`` is broadcasted.
+
+        :param transactions: a collection of :class:`.Transaction` to move.
+        :param to_transaction: target :class:`.Transaction` to move to.
+        """
+        for transaction in transactions:
+            self.transactions.move_before(transaction, to_transaction)
+        self._cook()
+        self.notify('transaction_changed')
+
+    # -- Entries
+
+    def _change_entry(
+            self, entry, date=NOEDIT, reconciliation_date=NOEDIT, description=NOEDIT, payee=NOEDIT,
+            checkno=NOEDIT, transfer=NOEDIT, amount=NOEDIT, global_scope=None, action=None):
+        assert entry is not None
+
+        if global_scope is None and reconciliation_date is NOEDIT:
+            global_scope = self._query_for_scope_if_needed([entry.transaction])
+        elif global_scope is None:
+            global_scope = False
+
+        if date is not NOEDIT and amount is not NOEDIT and amount != 0:
+            Currency.get_rates_db().ensure_rates(date, [amount.currency.code, entry.account.currency.code])
+
+        candidate_dates = [entry.date, date, reconciliation_date, entry.reconciliation_date]
+        min_date = min(d for d in candidate_dates if d is not NOEDIT and d is not None)
+        if reconciliation_date is not NOEDIT:
+            if isinstance(entry.split.transaction, Spawn):
+                # At this point we have to hijack the entry so we modify the materialized transaction
+                # It's a little hackish, but well... it takes what it takes
+                entry.split = self._reconcile_spawn_split(entry.split, reconciliation_date)
+                # And, one more quick hack, because the recording of the action has to be done between
+                # the creation of the action and the cook.  So we pass the action as a parameter, even
+                # though the base document should not keep track of actions...
+                if action:
+                    action.added_transactions.add(entry.split.transaction)
+            else:
+                entry.split.reconciliation_date = reconciliation_date
+        if (amount is not NOEDIT) and (len(entry.splits) == 1):
+            entry.change_amount(amount)
+        if (transfer is not NOEDIT) and (len(entry.splits) == 1) and (transfer != entry.transfer):
+            auto_create_type = AccountType.Expense if entry.split.amount < 0 else AccountType.Income
+            transfer_account = self.accounts.find(transfer, auto_create_type) if transfer else None
+            entry.splits[0].account = transfer_account
+        self._change_transaction(
+            entry.transaction, date=date, description=description,
+            payee=payee, checkno=checkno, global_scope=global_scope
+        )
+        self._cook(from_date=min_date)
+        self._clean_empty_categories()
+        if not self._adjust_date_range(entry.date):
+            self.notify('transaction_changed')
+
+    def change_entry(
+            self, entry, date=NOEDIT, reconciliation_date=NOEDIT, description=NOEDIT, payee=NOEDIT,
+            checkno=NOEDIT, transfer=NOEDIT, amount=NOEDIT):
+        """Properly sets properties for ``entry``.
+
+        Changes the attributes of ``entry`` (and the transaction in which ``entry`` is) to specified
+        values and then post a ``transaction_changed`` notification. Attributes with ``NOEDIT``
+        values are not touched.
+
+        ``transfer`` is the name of the transfer to assign the entry to. If it's not found, a new
+        account will be created.
+
+        :param entry: :class:`.Entry`
+        :param date: ``datetime.date``
+        :param reconciliation_date: ``datetime.date``
+        :param description: ``str``
+        :param payee: ``str``
+        :param checkno: ``str``
+        :param transfer: ``str`` (name of account)
+        :param amount: :class:`.Amount`
+        """
+        self._change_entry(entry,
+                           date=date,
+                           reconciliation_date=reconciliation_date,
+                           description=description,
+                           payee=payee,
+                           checkno=checkno,
+                           transfer=transfer,
+                           amount=amount)
+
+
+
+    def delete_entries(self, entries):
+        """Remove transactions in which ``entries`` belong from the document's transaction list.
+
+        :param entries: list of :class:`.Entry`
+        """
+        from_account = first(entries).account
+        transactions = dedupe(e.transaction for e in entries)
+        self.delete_transactions(transactions, from_account=from_account)
+
+
+    def _toggle_entries_reconciled(self, entries, splits=None, spawns=None, action=None):
+        if not entries:
+            return
+
+        if None in (splits, spawns):
+            splits = [e.split for e in entries]
+            splits, spawns = extract(lambda s: isinstance(s.transaction, Spawn), splits)
+
+        all_reconciled = not entries or all(entry.reconciled for entry in entries)
+        newvalue = not all_reconciled
+        min_date = min(entry.date for entry in entries)
+
+        if newvalue:
+            for split in splits:
+                split.reconciliation_date = split.transaction.date
+            for spawn in spawns:
+                #XXX update transaction selection
+                materialized_split = self._reconcile_spawn_split(spawn, spawn.transaction.date)
+                if action:
+                    action.added_transactions.add(materialized_split.transaction)
+        else:
+            for split in splits:
+                split.reconciliation_date = None
+        self._cook(from_date=min_date)
+        self.notify('transaction_changed')
+
+    def toggle_entries_reconciled(self, entries):
+        """Toggle the reconcile flag of `entries`.
+
+        Sets the ``reconciliation_date`` to entries' date, or unset it when turning the flag off.
+
+        :param entries: list of :class:`.Entry`
+        """
+        self._toggle_entries_reconciled(self, entries)
+
+    # -- Budgets
+    def budgeted_amount_for_target(self, target, date_range, filter_excluded=True):
+        """Returns the amount budgeted for **all** budgets targeting ``target``.
+
+        The amount is pro-rated according to ``date_range``.
+
+        The currency of the result is ``target``'s currency. The result is normalized (reverted if
+        target is a liability).
+
+        If target is ``None``, all accounts are used.
+
+        If ``filter_excluded`` is true, we ignore accounts in "excluded" state.
+
+        :param target: :class:`.Account`
+        :param date_range: ``datetime.date``
+        :param filter_excluded: ``bool``
+        :rtype: :class:`.Amount`
+        """
+        if target is None:
+            budgets = self.budgets[:]
+            currency = self.default_currency
+        else:
+            budgets = self.budgets.budgets_for_target(target)
+            currency = target.currency
+        if filter_excluded:
+            # we must remove any budget touching an excluded account.
+            is_not_excluded = lambda b: (b.account not in self.excluded_accounts)\
+                and (b.target not in self.excluded_accounts)
+            budgets = list(filter(is_not_excluded, budgets))
+        if not budgets:
+            return 0
+        budgeted_amount = sum(-b.amount_for_date_range(date_range, currency=currency) for b in budgets)
+        if target is not None:
+            budgeted_amount = target.normalize_amount(budgeted_amount)
+        return budgeted_amount
+
+    def change_budget(self, original, new):
+        """Changes the attributes of ``original`` so that they match those of ``new``.
+
+        This is used by the :class:`.BudgetPanel`, and ``new`` is originally a copy of ``original``
+        which has been changed.
+
+        :param original: :class:`.Budget`
+        :param new: :class:`.Budget`
+        """
+        min_date = min(original.start_date, new.start_date)
+        original.start_date = new.start_date
+        original.repeat_type = new.repeat_type
+        original.repeat_every = new.repeat_every
+        original.stop_date = new.stop_date
+        original.account = new.account
+        original.target = new.target
+        original.amount = new.amount
+        original.notes = new.notes
+        original.reset_spawn_cache()
+        if original not in self.budgets:
+            self.budgets.append(original)
+        self._cook(from_date=min_date)
+        self.notify('budget_changed')
+
+    def delete_budgets(self, budgets):
+        """Removes ``budgets`` from the document.
+
+        :param budgets: list of :class:`.Budget`
+        """
+        if not budgets:
+            return
+        for budget in budgets:
+            self.budgets.remove(budget)
+        min_date = min(b.start_date for b in budgets)
+        self._cook(from_date=min_date)
+        self.notify('budget_deleted')
+
+
+
+def samedoc(member_function, super_class=BaseDocument):
+    """Assigns the same document string to member_function as the super class."""
+    member_function.__doc__ = getattr(super_class, member_function.__name__).__doc__
+    return member_function
 
 
 class Document(BaseDocument, GUIObject):
     """Manages everything (including views) about an opened document.
 
-    If there's one core class in moneyGuru, this is it. It represents a new or opened document and
-    holds all model instances associated to it (accounts, transactions, etc.). The ``Document`` is
-    also responsible for notifying all gui instances of changes. While it's OK for GUI instances to
-    directly access models (through :attr:`transactions` and :attr:`accounts`, for example), any
-    modification to those models have to go through ``Document``'s public methods.
+    Does everything described in the ``BaseDocument`` superclass, and also manages views.
 
     Another important role of the ``Document`` is to manage undo points. For undo to work properly,
     every mutative action must be properly recorded, and that's what the ``Document`` does.
 
-    When calling methods that take "hard values" (dates, descriptions, etc..), it is expected that
-    these values have already been parsed (it's the role of the GUI instances to parse data). So
-    dates are ``datetime.date`` instances, amounts are :class:`Amount` instances, indexes are
-    ``int``.
 
-    Subclasses :class:`hscommon.notify.Repeater` and :class:`hscommon.gui.base.GUIObject`.
+    Subclasses :class:`core.document.BaseDocument` and :class:`hscommon.gui.base.GUIObject`.
     """
     REPEATED_NOTIFICATIONS = {'saved_custom_ranges_changed'}
 
@@ -460,6 +935,7 @@ class Document(BaseDocument, GUIObject):
             return False
 
     #--- Account
+    @samedoc
     def change_accounts(self, accounts, reassign_to=None, **kwargs):
         assert all(a is not None for a in accounts)
         action = Action(tr('Change account'))
@@ -467,7 +943,7 @@ class Document(BaseDocument, GUIObject):
         BaseDocument.change_accounts(self, accounts, **kwargs)
         self._undoer.record(action)
 
-
+    @samedoc
     def delete_accounts(self, accounts, reassign_to=None):
         action = Action(tr('Remove account'))
         accounts = set(accounts)
@@ -484,6 +960,7 @@ class Document(BaseDocument, GUIObject):
         self._undoer.record(action)
         BaseDocument._delete_accounts(self, accounts, reassign_to, affected_schedules, affected_budgets)
 
+    @samedoc
     def new_account(self, type, group):
         account = BaseDocument.new_account(self, type, group)
         action = Action(tr('Add account'))
@@ -492,6 +969,7 @@ class Document(BaseDocument, GUIObject):
         return account
 
     #--- Group
+    @samedoc
     def change_group(self, group, name=NOEDIT):
         assert group is not None
         action = Action(tr('Change group'))
@@ -499,142 +977,39 @@ class Document(BaseDocument, GUIObject):
         BaseDocument.change_group(self, group, name)
         self._undoer.record(action)
 
+    @samedoc
     def delete_groups(self, groups):
-        """Removes ``groups`` from the document.
-
-        Removes ``groups`` from the group list and broadcasts ``account_deleted``. All accounts
-        belonging to the deleted group have their :attr:`.Account.group` attribute set to ``None``.
-
-        :param groups: list of :class:`.Group`
-        """
         groups = set(groups)
-        accounts = [a for a in self.accounts if a.group in groups]
+        accounts = self._get_affected_accounts(groups=groups)
         action = Action(tr('Remove group'))
         action.deleted_groups |= groups
         action.change_accounts(accounts)
         self._undoer.record(action)
-        for group in groups:
-            self.groups.remove(group)
-        for account in accounts:
-            account.group = None
-        self.notify('account_deleted')
+        BaseDocument._delete_groups(self, groups, accounts=accounts)
 
+    @samedoc
     def new_group(self, type):
-        """Creates a new group of type ``type``.
-
-        The new group will have a unique name based on the string "New Group" (if it exists, a
-        unique number will be appended to it). Once created, the group is added to the group list,
-        and ``account_added`` is broadcasted.
-
-        :param type: :class:`.AccountType`
-        :rtype: :class:`.Group`
-        """
-        name = self.groups.new_name(tr('New group'), type)
-        group = Group(name, type)
+        group = BaseDocument.new_group(self, type)
         action = Action(tr('Add group'))
         action.added_groups.add(group)
         self._undoer.record(action)
-        self.groups.append(group)
-        self.notify('account_added')
         return group
 
     #--- Transaction
-    def can_move_transactions(self, transactions, before, after):
-        """Returns whether ``transactions`` can be be moved (re-ordered).
-
-        Transactions can only be moved when all transactions are of the same date, and that the date
-        of those transaction is between the date of ``before`` and ``after``. When ``before`` or
-        ``after`` is ``None``, it means that it's the end or beginning of the list.
-
-        :param transactions: a collection of :class:`Transaction`
-        :param before: :class:`Transaction`
-        :param after: :class:`Transaction`
-        :rtype: ``bool``
-        """
-        assert transactions
-        if any(isinstance(txn, Spawn) for txn in transactions):
-            return False
-        if not allsame(txn.date for txn in transactions):
-            return False
-        from_date = transactions[0].date
-        before_date = before.date if before else None
-        after_date = after.date if after else None
-        return from_date in (before_date, after_date)
 
     @handle_abort
+    @samedoc
     def change_transaction(self, original, new):
-        """Changes the attributes of ``original`` so that they match those of ``new``.
-
-        This is used by the :class:`.TransactionPanel`, and ``new`` is originally a copy of
-        ``original`` which has been changed. Accounts linked to splits in ``new`` don't have to be
-        accounts that are part of the document. This method will automatically internalize accounts
-        linked to splits (and create new accounts if necessary).
-
-        If ``new``'s date is outside of the current date range, the date range will automatically be
-        changed so that it contains ``new``.
-
-        If ``original`` is a schedule :class:`.Spawn`, the UI will be queried for a scope, which
-        might result in the change being aborted.
-
-        After the transaction change, ``transaction_changed`` is broadcasted.
-
-        :param original: :class:`.Transaction`
-        :param new: :class:`.Transaction`, a modified copy of ``original``.
-        """
-        global_scope = self._query_for_scope_if_needed([original])
         action = Action(tr('Change transaction'))
         action.change_transactions([original])
         self._undoer.record(action)
-
-        # don't forget that account up here is an external instance. Even if an account of
-        # the same name exists in self.accounts, it's not gonna be the same instance.
-        for split in new.splits:
-            if split.account is not None:
-                split.account = self.accounts.find(split.account.name, split.account.type)
-        original.set_splits(new.splits)
-        min_date = min(original.date, new.date)
-        self._change_transaction(
-            original, date=new.date, description=new.description,
-            payee=new.payee, checkno=new.checkno, notes=new.notes, global_scope=global_scope
-        )
-        self._cook(from_date=min_date)
-        self._clean_empty_categories()
-        if not self._adjust_date_range(original.date):
-            self.notify('transaction_changed')
+        BaseDocument.change_transaction(self, original, new)
 
     @handle_abort
+    @samedoc
     def change_transactions(
             self, transactions, date=NOEDIT, description=NOEDIT, payee=NOEDIT, checkno=NOEDIT,
             from_=NOEDIT, to=NOEDIT, amount=NOEDIT, currency=NOEDIT):
-        """Properly sets properties for ``transactions``.
-
-        Changes the attributes of every transaction in ``transactions`` to the values specified in
-        the arguments (arguments left to ``NOEDIT`` have no effect).
-
-        ``from_`` and ``to`` are account **names** rather than being :class:`.Account` instances. If
-        the names don't exist, they'll automatically be created.
-
-        If any transaction in ``transactions`` is a schedule :class:`.Spawn`, the UI will be queried
-        for a scope, which might result in the change being aborted.
-
-        After the transaction change, ``transaction_changed`` is broadcasted.
-
-        :param date: ``datetime.date``
-        :param description: ``str``
-        :param payee: ``str``
-        :param checkno: ``str``
-        :param from_: ``str`` (account name)
-        :param to: ``str`` (account name)
-        :param amount: :class:`.Amount`
-        :param currency: :class:`.Currency`
-        """
-        if from_ is not NOEDIT:
-            from_ = self.accounts.find(from_, AccountType.Income) if from_ else None
-        if to is not NOEDIT:
-            to = self.accounts.find(to, AccountType.Expense) if to else None
-        if date is not NOEDIT and amount is not NOEDIT and amount != 0:
-            currencies_to_ensure = [amount.currency.code, self.default_currency.code]
-            Currency.get_rates_db().ensure_rates(date, currencies_to_ensure)
         if len(transactions) == 1:
             global_scope = self._query_for_scope_if_needed(transactions)
         else:
@@ -642,37 +1017,21 @@ class Document(BaseDocument, GUIObject):
         action = self._get_action_from_changed_transactions(transactions, global_scope)
         self._undoer.record(action)
 
-        min_date = date if date is not NOEDIT else datetime.date.max
-        for transaction in transactions:
-            min_date = min(min_date, transaction.date)
-            self._change_transaction(
-                transaction, date=date, description=description, payee=payee, checkno=checkno,
-                from_=from_, to=to, amount=amount, currency=currency, global_scope=global_scope
-            )
-        self._cook(from_date=min_date)
-        self._clean_empty_categories()
-        if not self._adjust_date_range(transaction.date):
-            self.notify('transaction_changed')
-        if action.changed_schedules:
-            self.notify('schedule_changed')
+        BaseDocument._change_transactions(self,
+                                          transactions,
+                                          date=date,
+                                          description=description,
+                                          payee=payee,
+                                          checkno=checkno,
+                                          from_=from_,
+                                          to=to,
+                                          amount=amount,
+                                          currency=currency,
+                                          global_scope=global_scope)
 
     @handle_abort
+    @samedoc
     def delete_transactions(self, transactions, from_account=None):
-        """Removes every transaction in ``transactions`` from the document.
-
-        If any transaction in ``transactions`` is a schedule :class:`.Spawn`, the UI will be queried
-        for a scope, which might result in the deletion being aborted.
-
-        After the transaction deletion, ``transaction_deleted`` is broadcasted.
-
-        ``from_account`` represents, in the UI, the account from which this deletion was triggered.
-        By specifying it, you will prevent it from being automatically purged by
-        :meth:`_clean_empty_categories` (we don't want to delete an account that is actively being
-        worked on by the user).
-
-        :param transactions: a collection of :class:`.Transaction`.
-        :param from_account: the :class:`.Account` from which the operation takes place, if any.
-        """
         action = Action(tr('Remove transaction'))
         spawns, txns = extract(lambda x: isinstance(x, Spawn), transactions)
         global_scope = self._query_for_scope_if_needed(spawns)
@@ -682,213 +1041,72 @@ class Document(BaseDocument, GUIObject):
             action.change_schedule(schedule)
         self._undoer.record(action)
 
-        for txn in transactions:
-            if isinstance(txn, Spawn):
-                if global_scope:
-                    txn.recurrence.stop_before(txn)
-                else:
-                    txn.recurrence.delete(txn)
-            else:
-                self.transactions.remove(txn)
-        min_date = min(t.date for t in transactions)
-        self._cook(from_date=min_date)
-        self._clean_empty_categories(from_account=from_account)
-        self.notify('transaction_deleted')
-        if action.changed_schedules:
-            self.notify('schedule_changed')
+        BaseDocument._delete_transactions(self, transactions, from_account, global_scope)
 
+    @samedoc
     def duplicate_transactions(self, transactions):
-        """Create copies of ``transactions`` in the document.
-
-        For each transaction in ``transactions``, add a new transaction with the same attributes to
-        the document.
-
-        After the operation, ``transaction_changed`` is broadcasted.
-
-        :param transactions: a collection of :class:`.Transaction` to duplicate.
-        """
         if not transactions:
             return
         action = Action(tr('Duplicate transactions'))
         duplicated = [txn.replicate() for txn in transactions]
         action.added_transactions |= set(duplicated)
         self._undoer.record(action)
+        BaseDocument._duplicate_transactions(self, transactions, duplicated)
 
-        for txn in duplicated:
-            self.transactions.add(txn)
-        min_date = min(t.date for t in transactions)
-        self._cook(from_date=min_date)
-        self.notify('transaction_changed')
-
+    @samedoc
     def move_transactions(self, transactions, to_transaction):
-        """Re-orders ``transactions`` so that they are right before ``to_transaction``.
-
-        If ``to_transaction`` is ``None``, it means that we move transactions at the end of the
-        list.
-
-        Make sure your move is legal by calling :meth:`can_move_transactions` first.
-
-        After the move, ``transaction_changed`` is broadcasted.
-
-        :param transactions: a collection of :class:`.Transaction` to move.
-        :param to_transaction: target :class:`.Transaction` to move to.
-        """
         affected = set(transactions)
         affected_date = transactions[0].date
         affected |= set(self.transactions.transactions_at_date(affected_date))
         action = Action(tr('Move transaction'))
         action.change_transactions(affected)
         self._undoer.record(action)
-
-        for transaction in transactions:
-            self.transactions.move_before(transaction, to_transaction)
-        self._cook()
-        self.notify('transaction_changed')
+        BaseDocument.move_transactions(self, transactions, to_transaction)
 
     #--- Entry
     @handle_abort
+    @samedoc
     def change_entry(
             self, entry, date=NOEDIT, reconciliation_date=NOEDIT, description=NOEDIT, payee=NOEDIT,
             checkno=NOEDIT, transfer=NOEDIT, amount=NOEDIT):
-        """Properly sets properties for ``entry``.
-
-        Changes the attributes of ``entry`` (and the transaction in which ``entry`` is) to specified
-        values and then post a ``transaction_changed`` notification. Attributes with ``NOEDIT``
-        values are not touched.
-
-        ``transfer`` is the name of the transfer to assign the entry to. If it's not found, a new
-        account will be created.
-
-        :param entry: :class:`.Entry`
-        :param date: ``datetime.date``
-        :param reconciliation_date: ``datetime.date``
-        :param description: ``str``
-        :param payee: ``str``
-        :param checkno: ``str``
-        :param transfer: ``str`` (name of account)
-        :param amount: :class:`.Amount`
-        """
         assert entry is not None
-        if date is not NOEDIT and amount is not NOEDIT and amount != 0:
-            Currency.get_rates_db().ensure_rates(date, [amount.currency.code, entry.account.currency.code])
+
         if reconciliation_date is NOEDIT:
             global_scope = self._query_for_scope_if_needed([entry.transaction])
         else:
-            global_scope = False # It doesn't make sense to set a reconciliation date globally
+            global_scope = False  # It doesn't make sense to set a reconciliation date globally
         action = self._get_action_from_changed_transactions([entry.transaction], global_scope)
         self._undoer.record(action)
 
-        candidate_dates = [entry.date, date, reconciliation_date, entry.reconciliation_date]
-        min_date = min(d for d in candidate_dates if d is not NOEDIT and d is not None)
-        if reconciliation_date is not NOEDIT:
-            if isinstance(entry.split.transaction, Spawn):
-                # At this point we have to hijack the entry so we modify the materialized transaction
-                # It's a little hackish, but well... it takes what it takes
-                entry.split = self._reconcile_spawn_split(entry.split, reconciliation_date)
-                action.added_transactions.add(entry.split.transaction)
-            else:
-                entry.split.reconciliation_date = reconciliation_date
-        if (amount is not NOEDIT) and (len(entry.splits) == 1):
-            entry.change_amount(amount)
-        if (transfer is not NOEDIT) and (len(entry.splits) == 1) and (transfer != entry.transfer):
-            auto_create_type = AccountType.Expense if entry.split.amount < 0 else AccountType.Income
-            transfer_account = self.accounts.find(transfer, auto_create_type) if transfer else None
-            entry.splits[0].account = transfer_account
-        self._change_transaction(
-            entry.transaction, date=date, description=description,
-            payee=payee, checkno=checkno, global_scope=global_scope
-        )
-        self._cook(from_date=min_date)
-        self._clean_empty_categories()
-        if not self._adjust_date_range(entry.date):
-            self.notify('transaction_changed')
+        self._change_entry(entry,
+                           date=date,
+                           reconciliation_date=reconciliation_date,
+                           description=description,
+                           payee=payee,
+                           checkno=checkno,
+                           transfer=transfer,
+                           amount=amount,
+                           global_scope=global_scope,
+                           action=action)
 
-    def delete_entries(self, entries):
-        """Remove transactions in which ``entries`` belong from the document's transaction list.
-
-        :param entries: list of :class:`.Entry`
-        """
-        from_account = first(entries).account
-        transactions = dedupe(e.transaction for e in entries)
-        self.delete_transactions(transactions, from_account=from_account)
-
+    @samedoc
     def toggle_entries_reconciled(self, entries):
-        """Toggle the reconcile flag of `entries`.
-
-        Sets the ``reconciliation_date`` to entries' date, or unset it when turning the flag off.
-
-        :param entries: list of :class:`.Entry`
-        """
         if not entries:
             return
-        all_reconciled = not entries or all(entry.reconciled for entry in entries)
-        newvalue = not all_reconciled
+
         action = Action(tr('Change reconciliation'))
-        action.change_splits([e.split for e in entries])
-        min_date = min(entry.date for entry in entries)
         splits = [entry.split for entry in entries]
+        action.change_splits(splits)
         spawns, splits = extract(lambda s: isinstance(s.transaction, Spawn), splits)
         for spawn in spawns:
             action.change_schedule(spawn.transaction.recurrence)
         self._undoer.record(action)
-        if newvalue:
-            for split in splits:
-                split.reconciliation_date = split.transaction.date
-            for spawn in spawns:
-                #XXX update transaction selection
-                materialized_split = self._reconcile_spawn_split(spawn, spawn.transaction.date)
-                action.added_transactions.add(materialized_split.transaction)
-        else:
-            for split in splits:
-                split.reconciliation_date = None
-        self._cook(from_date=min_date)
-        self.notify('transaction_changed')
+
+        BaseDocument._toggle_entries_reconciled(self, entries, splits=splits, spawns=spawns, action=action)
 
     #--- Budget
-    def budgeted_amount_for_target(self, target, date_range, filter_excluded=True):
-        """Returns the amount budgeted for **all** budgets targeting ``target``.
-
-        The amount is pro-rated according to ``date_range``.
-
-        The currency of the result is ``target``'s currency. The result is normalized (reverted if
-        target is a liability).
-
-        If target is ``None``, all accounts are used.
-
-        If ``filter_excluded`` is true, we ignore accounts in "excluded" state.
-
-        :param target: :class:`.Account`
-        :param date_range: ``datetime.date``
-        :param filter_excluded: ``bool``
-        :rtype: :class:`.Amount`
-        """
-        if target is None:
-            budgets = self.budgets[:]
-            currency = self.default_currency
-        else:
-            budgets = self.budgets.budgets_for_target(target)
-            currency = target.currency
-        if filter_excluded:
-            # we must remove any budget touching an excluded account.
-            is_not_excluded = lambda b: (b.account not in self.excluded_accounts)\
-                and (b.target not in self.excluded_accounts)
-            budgets = list(filter(is_not_excluded, budgets))
-        if not budgets:
-            return 0
-        budgeted_amount = sum(-b.amount_for_date_range(date_range, currency=currency) for b in budgets)
-        if target is not None:
-            budgeted_amount = target.normalize_amount(budgeted_amount)
-        return budgeted_amount
-
+    @samedoc
     def change_budget(self, original, new):
-        """Changes the attributes of ``original`` so that they match those of ``new``.
-
-        This is used by the :class:`.BudgetPanel`, and ``new`` is originally a copy of ``original``
-        which has been changed.
-
-        :param original: :class:`.Budget`
-        :param new: :class:`.Budget`
-        """
         if original in self.budgets:
             action = Action(tr('Change Budget'))
             action.change_budget(original)
@@ -896,36 +1114,16 @@ class Document(BaseDocument, GUIObject):
             action = Action(tr('Add Budget'))
             action.added_budgets.add(original)
         self._undoer.record(action)
-        min_date = min(original.start_date, new.start_date)
-        original.start_date = new.start_date
-        original.repeat_type = new.repeat_type
-        original.repeat_every = new.repeat_every
-        original.stop_date = new.stop_date
-        original.account = new.account
-        original.target = new.target
-        original.amount = new.amount
-        original.notes = new.notes
-        original.reset_spawn_cache()
-        if original not in self.budgets:
-            self.budgets.append(original)
-        self._cook(from_date=min_date)
-        self.notify('budget_changed')
+        BaseDocument.change_budget(self, original, new)
 
+    @samedoc
     def delete_budgets(self, budgets):
-        """Removes ``budgets`` from the document.
-
-        :param budgets: list of :class:`.Budget`
-        """
         if not budgets:
             return
         action = Action(tr('Remove Budget'))
         action.deleted_budgets |= set(budgets)
         self._undoer.record(action)
-        for budget in budgets:
-            self.budgets.remove(budget)
-        min_date = min(b.start_date for b in budgets)
-        self._cook(from_date=min_date)
-        self.notify('budget_deleted')
+        BaseDocument.delete_budgets(self, budgets)
 
     #--- Schedule
     def change_schedule(self, schedule, new_ref, repeat_type, repeat_every, stop_date):

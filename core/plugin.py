@@ -236,3 +236,5 @@ class CurrencyProviderPlugin(Plugin):
         """
         raise NotImplementedError()
 
+class ImportActionPlugin(Plugin):
+    pass

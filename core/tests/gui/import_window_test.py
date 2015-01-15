@@ -15,6 +15,7 @@ from ...model.date import YearRange
 from ...gui.import_window import SwapType
 
 from core.model.transaction import Split
+from core.plugin import ImportActionPlugin
 
 #--- No setup
 
