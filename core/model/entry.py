@@ -41,7 +41,15 @@ class Entry:
         #: ``int``. Index in the EntryList. Set by :meth:`EntryList.add_entry` and used as a tie
         #: breaker in case we have more than one entry from the same transaction.
         self.index = -1
-    
+
+    def __eq__(self, other):
+        if other is None:
+            return False
+        return self.split.uid == other.split.uid
+
+    def __hash__(self):
+        return hash(self.split.uid)
+
     def __repr__(self):
         return '<Entry %r %r>' % (self.date, self.description)
     
@@ -109,7 +117,7 @@ class Entry:
     @property
     def splits(self):
         """*readonly*. A list of all other splits in :attr:`transaction` except the one we wrap."""
-        return [x for x in self.split.transaction.splits if x is not self.split]
+        return [s for s in self.split.transaction.splits if s.uid != self.split.uid]
     
     @property
     def transaction(self):

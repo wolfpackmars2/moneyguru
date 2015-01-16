@@ -10,6 +10,7 @@ import time
 from collections import defaultdict
 from copy import copy
 import datetime
+from uuid import uuid4
 
 from hscommon.util import allsame, first, nonone, stripfalse
 
@@ -51,9 +52,14 @@ class Transaction:
         #: Timestamp of the last modification. Used in the UI to let the user sort his transactions.
         #: This is useful for finding a mistake that we know was introduced recently.
         self.mtime = 0
+        self._uid = uuid4().hex
 
     def __repr__(self):
         return '<%s %r %r>' % (self.__class__.__name__, self.date, self.description)
+
+    @property
+    def uid(self):
+        return self._uid
 
     @classmethod
     def from_transaction(cls, transaction):
@@ -474,11 +480,22 @@ class Split:
         self.reconciliation_date = None
         #: Unique reference from an external source.
         self.reference = None
+        self._uid = uuid4().hex
 
     def __repr__(self):
         return '<Split %r %s>' % (self.account_name, self.amount)
 
+    def __eq__(self, other):
+       return self.uid == other.uid
+
+    def __hash__(self):
+        return hash(self.uid)
+
     #--- Public
+    @property
+    def uid(self):
+        return self._uid
+
     def is_on_same_side(self, other_split):
         return (self.amount >= 0) == (other_split.amount >= 0)
 
