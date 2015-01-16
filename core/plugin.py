@@ -24,6 +24,7 @@ from datetime import date
 from hscommon.gui.column import Column # noqa
 from hscommon.currency import Currency, CurrencyNotSupportedException
 
+from hscommon.notify import Broadcaster
 from .gui.base import BaseView
 from .gui.table import GUITable, Row
 from .const import PaneType
@@ -236,5 +237,29 @@ class CurrencyProviderPlugin(Plugin):
         """
         raise NotImplementedError()
 
-class ImportActionPlugin(Plugin):
-    pass
+class ImportActionPlugin(Plugin, Broadcaster):
+    """
+    Plugin allowing certain kinds of actions to be performed on import.
+    By subclassing this plugin, you can add new currencies to moneyGuru and also add a new source
+    to fetch those currencies' exchange rates.
+    Subclasses :class:`Plugin`, :class:`Broadcaster`
+    """
+
+    # Signal to the import window to change the name in our drop down list
+    action_name_changed = 'action_name_changed'
+
+    # The name that appears in our drop down list
+    ACTION_NAME = None
+
+    def on_selected_pane_changed(self, selected_pane):
+        """This method is called whenever the import window has changed it's selected pane."""
+        pass
+
+    def always_perform_action(self):
+        return False
+
+    def can_perform_action(self, import_document, transactions, panes, selected_rows=None):
+        return True
+
+    def perform_action(self, import_document, transactions, panes, selected_rows=None):
+        pass
