@@ -1710,6 +1710,8 @@ class Document(BaseDocument, GUIObject):
         self.set_dirty()
 
     def _set_ahead_months(self, value):
+        if value == self._properties['ahead_months']:
+            return
         BaseDocument._set_ahead_months(self, value)
         self.set_dirty()
 
