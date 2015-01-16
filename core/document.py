@@ -132,10 +132,10 @@ class BaseDocument(Repeater):
     def _restore_preferences(self):
         start_date = self.app.get_default(SELECTED_DATE_RANGE_START_PREFERENCE)
         if start_date:
-            start_date = datetime.datetime.strptime(start_date, DATE_FORMAT_FOR_PREFERENCES).date()
+            start_date = datetime.datetime.strptime(start_date, self._get_dateformat()).date()
         end_date = self.app.get_default(SELECTED_DATE_RANGE_END_PREFERENCE)
         if end_date:
-            end_date = datetime.datetime.strptime(end_date, DATE_FORMAT_FOR_PREFERENCES).date()
+            end_date = datetime.datetime.strptime(end_date, self._get_dateformat()).date()
         selected_range = self.app.get_default(SELECTED_DATE_RANGE_PREFERENCE)
         if selected_range == DATE_RANGE_MONTH:
             self.select_month_range(start_date)
@@ -176,9 +176,9 @@ class BaseDocument(Repeater):
         elif isinstance(dr, CustomDateRange):
             selected_range = DATE_RANGE_CUSTOM
         self.app.set_default(SELECTED_DATE_RANGE_PREFERENCE, selected_range)
-        str_start_date = dr.start.strftime(DATE_FORMAT_FOR_PREFERENCES)
+        str_start_date = dr.start.strftime(self._get_dateformat())
         self.app.set_default(SELECTED_DATE_RANGE_START_PREFERENCE, str_start_date)
-        str_end_date = dr.end.strftime(DATE_FORMAT_FOR_PREFERENCES)
+        str_end_date = dr.end.strftime(self._get_dateformat())
         self.app.set_default(SELECTED_DATE_RANGE_END_PREFERENCE, str_end_date)
         excluded_account_names = [a.name for a in self.excluded_accounts]
         self.set_default(EXCLUDED_ACCOUNTS_PREFERENCE, excluded_account_names)
@@ -1043,6 +1043,10 @@ class BaseDocument(Repeater):
         self._import_entries(self, target_account, ref_account, matches)
 
     #--- Date Range
+
+    def _get_dateformat(self):
+        return DATE_FORMAT_FOR_PREFERENCES
+
     def select_month_range(self, starting_point):
         """Sets :attr:`date_range` to a :class:`.MonthRange`.
 
@@ -1733,3 +1737,47 @@ class Document(BaseDocument, GUIObject):
         # this is called async
         self._async_autosave()
 
+class ImportDocument(BaseDocument):
+    """A document used to as a segregation area to operate on core model data before importing.
+
+     Inherits all capabilities of the ``BaseDocument`` superclass with some small modifications
+     pertinent to the importing of data.
+
+
+    Subclasses :class:`core.document.BaseDocument`.
+    """
+
+    def __init__(self, app):
+        self.parsing_date_format = None
+        self.exported_accounts = dict()
+        self.cached_transactions = dict()
+        self.cook_flag = False
+        BaseDocument.__init__(self, app)
+
+    @property
+    def ahead_months(self):
+        return 0
+
+    def _get_dateformat(self):
+
+        # We sometimes want to utilize the parsing date format
+        # vs the application date format, so this method was added
+        # to override that default behavior in document.
+        if self.parsing_date_format is None:
+            return BaseDocument._get_dateformat(self)
+        else:
+            return self.parsing_date_format
+
+    def cook(self):
+        """Refresh account entries for the purpose of importing.
+        Unlike the main document, the import document sometimes has specific actions
+        it performs.  We don't want to cook after every action, but at select points
+        in the import cycle. This requires the import window to be able to tell it
+        to re-do it's account entries.
+        """
+        self.cook_flag = True
+        self.select_all_transactions_range()
+        self.oven.cook(from_date=None, until_date=None)
+
+    def _cook(self, from_date=None):
+        pass
