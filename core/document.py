@@ -853,6 +853,390 @@ class BaseDocument(Repeater):
         self._cook(from_date=min_date)
         self.notify('budget_deleted')
 
+    #--- Schedule
+    def change_schedule(self, schedule, new_ref, repeat_type, repeat_every, stop_date):
+        """Change attributes of ``schedule``.
+
+        ``new_ref`` is a reference transaction that the schedule is going to repeat.
+
+        :param schedule: :class:`.Schedule`
+        :param new_ref: :class:`.Transaction`
+        :param repeat_type: :class:`.RepeatType`
+        :param stop_date: ``datetime.date``
+        """
+        original = schedule.ref
+        min_date = min(original.date, new_ref.date)
+        original.set_splits(new_ref.splits)
+        original.change(
+            description=new_ref.description, payee=new_ref.payee,
+            checkno=new_ref.checkno, notes=new_ref.notes
+        )
+        schedule.start_date = new_ref.date
+        schedule.repeat_type = repeat_type
+        schedule.repeat_every = repeat_every
+        schedule.stop_date = stop_date
+        schedule.reset_spawn_cache()
+        if schedule not in self.schedules:
+            self.schedules.append(schedule)
+        self._cook(from_date=min_date)
+        self.notify('schedule_changed')
+
+    def delete_schedules(self, schedules):
+        """Removes ``schedules`` from the document.
+
+        :param schedules: list of :class:`.Schedule`
+        """
+        if not schedules:
+            return
+        for schedule in schedules:
+            self.schedules.remove(schedule)
+        min_date = min(s.ref.date for s in schedules)
+        self._cook(from_date=min_date)
+        self.notify('schedule_deleted')
+
+    def load_from_xml(self, filename):
+        """Clears the document and loads data from ``filename``.
+
+        ``filename`` must be a path to a moneyGuru XML document.
+
+        :param filename: ``str``
+        """
+        loader = native.Loader(self.default_currency)
+        try:
+            loader.parse(filename)
+        except FileFormatError:
+            raise FileFormatError(tr('"%s" is not a moneyGuru file') % filename)
+        loader.load()
+        self._clear()
+        self._document_id = loader.document_id
+        for propname in self._properties:
+            if propname in loader.properties:
+                self._properties[propname] = loader.properties[propname]
+        for group in loader.groups:
+            self.groups.append(group)
+        for account in loader.accounts:
+            self.accounts.add(account)
+        for transaction in loader.transactions:
+            self.transactions.add(transaction, position=transaction.position)
+        for recurrence in loader.schedules:
+            self.schedules.append(recurrence)
+        for budget in loader.budgets:
+            self.budgets.append(budget)
+        self.accounts.default_currency = self.default_currency
+        self._cook()
+        self._restore_preferences_after_load()
+        self.notify('document_changed')
+        self._refresh_date_range()
+
+    def clear(self):
+        """Removes all data from the document (transactions, accounts, schedules, etc.)."""
+        self._clear()
+        self.notify('document_changed')
+
+    def save_to_xml(self, filename):
+        """Saves the document to ``filename``.
+
+        ``filename`` must be a path to a moneyGuru XML document.
+
+        If ``autosave`` is true, the operation will not affect the document's modified state and
+        will not make editing stop, if editing there is (like it normally does without the autosave
+        flag to make sure that the input being currently done by the user is saved).
+
+        :param filename: ``str``
+        :param autosave: ``bool``
+        """
+        if self._document_id is None:
+            self._document_id = uuid.uuid4().hex
+        save_native(
+            filename, self._document_id, self._properties, self.accounts, self.groups,
+            self.transactions, self.schedules, self.budgets
+        )
+
+    def _preprocess_import(self, target_account, ref_account, matches):
+        # PREPARATION
+        # We have to look which transactions are added, which are changed. We have to see which
+        # accounts will be added. Those with a name clash must be replaced (in the splits).
+        added_transactions = set()
+        added_accounts = set()
+        to_unreconcile = set()
+        if target_account is ref_account and target_account not in self.accounts:
+            added_accounts.add(target_account)
+        for entry, ref in matches:
+            if ref is not None:
+                for split in ref.transaction.splits:
+                    to_unreconcile.add(split)
+            else:
+                if entry.transaction not in self.transactions:
+                    added_transactions.add(entry.transaction)
+                    entry.transaction.mtime = time.time()
+            for split in entry.splits:
+                if split.account is None:
+                    continue
+                account = self.accounts.find(split.account.name)
+                if account is None:
+                    added_accounts.add(split.account)
+                else:
+                    split.account = account
+            if target_account is not ref_account:
+                entry.split.account = target_account
+        return added_transactions, added_accounts, to_unreconcile
+
+
+    def _import_entries(self,
+                        target_account, ref_account, matches,
+                        added_transactions=None, added_accounts=None, to_unreconcile=None):
+        """Imports entries in ``mathes`` into ``target_account``.
+
+        ``target_account`` can be either an existing account in the document or not.
+
+        ``ref_account`` is a reference to the temporary :class:`.Account` created by the loader.
+
+        ``matches`` is a list of tuples ``(entry, ref)`` with ``entry`` being the entry being
+        imported and ``ref`` being an existing entry in the ``target_account`` bound to ``entry``.
+        ``ref`` can be ``None`` and it's only possible to have a ``ref`` side when the target
+        account already exists in the document.
+        """
+        # Matches is a list of 2 sized tuples (entry, ref), ref being the existing entry that 'entry'
+        # has been matched with. 'ref' can be None
+
+        if None in (added_transactions, added_accounts, to_unreconcile):
+            added_transactions, added_accounts, to_unreconcile = self._preprocess_import(target_account,
+                                                                                         ref_account,
+                                                                                         matches)
+
+        for split in to_unreconcile:
+            split.reconciliation_date = None
+        for account in added_accounts:
+            # we don't import groups, and we don't want them to mess our document
+            account.group = None
+            account.name = self.accounts.new_name(account.name)
+            self.accounts.add(account)
+        if target_account is not ref_account and ref_account.reference is not None:
+            target_account.reference = ref_account.reference
+        for entry, ref in matches:
+            if ref is not None:
+                ref.transaction.date = entry.date
+                ref.split.amount = entry.split.amount
+                ref.transaction.balance(strong_split=ref.split, keep_two_splits=True)
+                ref.split.reference = entry.split.reference
+            else:
+                if entry.transaction not in self.transactions:
+                    self.transactions.add(entry.transaction)
+        self._cook()
+        self.notify('transactions_imported')
+
+    def import_entries(self, target_account, ref_account, matches):
+        """Imports entries in ``mathes`` into ``target_account``.
+
+        ``target_account`` can be either an existing account in the document or not.
+
+        ``ref_account`` is a reference to the temporary :class:`.Account` created by the loader.
+
+        ``matches`` is a list of tuples ``(entry, ref)`` with ``entry`` being the entry being
+        imported and ``ref`` being an existing entry in the ``target_account`` bound to ``entry``.
+        ``ref`` can be ``None`` and it's only possible to have a ``ref`` side when the target
+        account already exists in the document.
+        """
+        # Matches is a list of 2 sized tuples (entry, ref), ref being the existing entry that 'entry'
+        # has been matched with. 'ref' can be None
+
+        self._import_entries(self, target_account, ref_account, matches)
+
+    #--- Date Range
+    def select_month_range(self, starting_point):
+        """Sets :attr:`date_range` to a :class:`.MonthRange`.
+
+        :param starting_point: ``datetime.date`` around which to wrap the range.
+        """
+        self.date_range = MonthRange(starting_point)
+
+    def select_quarter_range(self, starting_point):
+        """Sets :attr:`date_range` to a :class:`.QuarterRange`.
+
+        :param starting_point: ``datetime.date`` around which to wrap the range.
+        """
+        self.date_range = QuarterRange(starting_point)
+
+    def select_year_range(self, starting_point):
+        """Sets :attr:`date_range` to a :class:`.YearRange`.
+
+        :param starting_point: ``datetime.date`` around which to wrap the range.
+        """
+        self.date_range = YearRange(starting_point, year_start_month=self.year_start_month)
+
+    def select_year_to_date_range(self):
+        """Sets :attr:`date_range` to a :class:`.YearToDateRange`."""
+        self.date_range = YearToDateRange(year_start_month=self.year_start_month)
+
+    def select_running_year_range(self):
+        """Sets :attr:`date_range` to a :class:`.RunningYearRange`."""
+        self.date_range = RunningYearRange(ahead_months=self.ahead_months)
+
+    def select_all_transactions_range(self):
+        """Sets :attr:`date_range` to a :class:`.AllTransactionsRange`."""
+        if not self.transactions:
+            return
+        first_date = self.transactions[0].date
+        last_date = self.transactions[-1].date
+        self.date_range = AllTransactionsRange(
+            first_date=first_date, last_date=last_date,
+            ahead_months=self.ahead_months
+        )
+
+    def select_custom_date_range(self, start_date=None, end_date=None):
+        """Sets :attr:`date_range` to a :class:`.CustomDateRange`.
+
+        :param start_date: ``datetime.date``
+        :param end_date: ``datetime.date``
+        """
+        if start_date is not None and end_date is not None:
+            self.date_range = CustomDateRange(start_date, end_date, self.app.format_date)
+        else: # summon the panel
+            self.notify('custom_date_range_selected')
+
+    def select_prev_date_range(self):
+        """If the current date range is navigable, select the previous range."""
+        if self.date_range.can_navigate:
+            self.date_range = self.date_range.prev()
+
+    def select_next_date_range(self):
+        """If the current date range is navigable, select the next range."""
+        if self.date_range.can_navigate:
+            self.date_range = self.date_range.next()
+
+    def select_today_date_range(self):
+        """If the current date range is navigable, select the range containing today."""
+        if self.date_range.can_navigate:
+            self.date_range = self.date_range.around(datetime.date.today())
+
+    @property
+    def date_range(self):
+        """*get/set*. Current date range of the document.
+
+        The date range is very influential of how data is displayed in the UI. For transaction and
+        entry list, it tells which are shown and which are not. For reports (net worth, profit),
+        it tells the scope of it (we want a net worth report for... this month? this year?
+        last year?).
+        """
+        return self._date_range
+
+    def _set_date_range(self, date_range):
+        if date_range == self._date_range:
+            return
+        self.notify('date_range_will_change')
+        self._date_range = date_range
+        self.oven.continue_cooking(date_range.end)
+        self.notify('date_range_changed')
+
+    @date_range.setter
+    def date_range(self, date_range):
+        self._set_date_range(date_range)
+
+    #--- Misc
+    def close(self):
+        """Cleanup the document and close it.
+
+        Saves preferences and tells GUI elements about the document closing (so that they can save
+        their own preferences if needed).
+        """
+        self._save_preferences()
+        self.notify('document_will_close')
+
+    def can_restore_from_prefs(self):
+        """Returns whether the document has preferences to restore from.
+
+        In other words, returns whether we have a document ID.
+        """
+        return self._document_id is not None
+
+    def get_default(self, key, fallback_value=None):
+        if self._document_id is None:
+            return fallback_value
+        key = 'Doc{0}.{1}'.format(self._document_id, key)
+        return self.app.get_default(key, fallback_value=fallback_value)
+
+    def set_default(self, key, value):
+        if self._document_id is None:
+            return
+        key = 'Doc{0}.{1}'.format(self._document_id, key)
+        self.app.set_default(key, value)
+
+    def format_amount(self, amount, force_explicit_currency=False, **kwargs):
+        if force_explicit_currency:
+            default_currency = None
+        else:
+            default_currency = self.default_currency
+        return format_amount(
+            amount, default_currency, decimal_sep=self.app._decimal_sep,
+            grouping_sep=self.app._grouping_sep, **kwargs
+        )
+
+    def parse_amount(self, amount, default_currency=None):
+        if default_currency is None:
+            default_currency = self.default_currency
+        return parse_amount(amount, default_currency, auto_decimal_place=self.app._auto_decimal_place)
+
+    def _set_first_weekday(self, value):
+        if value == self._properties['first_weekday']:
+            return
+        self._properties['first_weekday'] = value
+        self.notify('first_weekday_changed')
+
+    # 0=monday 6=sunday
+    @property
+    def first_weekday(self):
+        return self._properties['first_weekday']
+
+    @first_weekday.setter
+    def first_weekday(self, value):
+        self._set_first_weekday(value)
+
+    def _set_ahead_months(self, value):
+        assert 0 <= value <= 11
+        if value == self._properties['ahead_months']:
+            return
+        self._properties['ahead_months'] = value
+        self._refresh_date_range()
+
+    @property
+    def ahead_months(self):
+        return self._properties['ahead_months']
+
+    @ahead_months.setter
+    def ahead_months(self, value):
+        self._set_ahead_months(value)
+
+    def _set_year_start_month(self, value):
+        assert 1 <= value <= 12
+        if value == self._properties['year_start_month']:
+            return
+        self._properties['year_start_month'] = value
+        self._refresh_date_range()
+
+    @property
+    def year_start_month(self):
+        return self._properties['year_start_month']
+
+    @year_start_month.setter
+    def year_start_month(self, value):
+        self._set_year_start_month(value)
+
+    def _set_default_currency(self, value):
+        if value == self._properties['default_currency']:
+            return
+        self._properties['default_currency'] = value
+        self.accounts.default_currency = value
+        self.notify('document_changed')
+
+    @property
+    def default_currency(self):
+        return self._properties['default_currency']
+
+    @default_currency.setter
+    def default_currency(self, value):
+        self._set_default_currency(value)
+
+
 
 
 def samedoc(member_function, super_class=BaseDocument):
@@ -1126,16 +1510,8 @@ class Document(BaseDocument, GUIObject):
         BaseDocument.delete_budgets(self, budgets)
 
     #--- Schedule
+    @samedoc
     def change_schedule(self, schedule, new_ref, repeat_type, repeat_every, stop_date):
-        """Change attributes of ``schedule``.
-
-        ``new_ref`` is a reference transaction that the schedule is going to repeat.
-
-        :param schedule: :class:`.Schedule`
-        :param new_ref: :class:`.Transaction`
-        :param repeat_type: :class:`.RepeatType`
-        :param stop_date: ``datetime.date``
-        """
         for split in new_ref.splits:
             if split.account is not None:
                 # same as in change_transaction()
@@ -1147,38 +1523,16 @@ class Document(BaseDocument, GUIObject):
             action = Action(tr('Add Schedule'))
             action.added_schedules.add(schedule)
         self._undoer.record(action)
-        original = schedule.ref
-        min_date = min(original.date, new_ref.date)
-        original.set_splits(new_ref.splits)
-        original.change(
-            description=new_ref.description, payee=new_ref.payee,
-            checkno=new_ref.checkno, notes=new_ref.notes
-        )
-        schedule.start_date = new_ref.date
-        schedule.repeat_type = repeat_type
-        schedule.repeat_every = repeat_every
-        schedule.stop_date = stop_date
-        schedule.reset_spawn_cache()
-        if schedule not in self.schedules:
-            self.schedules.append(schedule)
-        self._cook(from_date=min_date)
-        self.notify('schedule_changed')
+        BaseDocument.change_schedule(self, schedule, new_ref, repeat_type, repeat_every, stop_date)
 
+    @samedoc
     def delete_schedules(self, schedules):
-        """Removes ``schedules`` from the document.
-
-        :param schedules: list of :class:`.Schedule`
-        """
         if not schedules:
             return
         action = Action(tr('Remove Schedule'))
         action.deleted_schedules |= set(schedules)
         self._undoer.record(action)
-        for schedule in schedules:
-            self.schedules.remove(schedule)
-        min_date = min(s.ref.date for s in schedules)
-        self._cook(from_date=min_date)
-        self.notify('schedule_deleted')
+        BaseDocument.delete_schedules(self, schedules)
 
     #--- Load / Save / Import
     def adjust_example_file(self):
@@ -1223,138 +1577,39 @@ class Document(BaseDocument, GUIObject):
         self._cook()
         self.notify('document_changed') # do it again to refresh the guis
 
-    def clear(self):
-        """Removes all data from the document (transactions, accounts, schedules, etc.)."""
-        self._clear()
-        self.notify('document_changed')
-
+    @samedoc
     def load_from_xml(self, filename):
-        """Clears the document and loads data from ``filename``.
-
-        ``filename`` must be a path to a moneyGuru XML document.
-
-        :param filename: ``str``
-        """
-        loader = native.Loader(self.default_currency)
-        try:
-            loader.parse(filename)
-        except FileFormatError:
-            raise FileFormatError(tr('"%s" is not a moneyGuru file') % filename)
-        loader.load()
-        self._clear()
-        self._document_id = loader.document_id
-        for propname in self._properties:
-            if propname in loader.properties:
-                self._properties[propname] = loader.properties[propname]
-        for group in loader.groups:
-            self.groups.append(group)
-        for account in loader.accounts:
-            self.accounts.add(account)
-        for transaction in loader.transactions:
-            self.transactions.add(transaction, position=transaction.position)
-        for recurrence in loader.schedules:
-            self.schedules.append(recurrence)
-        for budget in loader.budgets:
-            self.budgets.append(budget)
-        self.accounts.default_currency = self.default_currency
-        self._cook()
-        self._restore_preferences_after_load()
-        self.notify('document_changed')
+        BaseDocument.load_from_xml(self, filename)
         self._undoer.set_save_point()
-        self._refresh_date_range()
 
+    @samedoc
     def save_to_xml(self, filename, autosave=False):
-        """Saves the document to ``filename``.
-
-        ``filename`` must be a path to a moneyGuru XML document.
-
-        If ``autosave`` is true, the operation will not affect the document's modified state and
-        will not make editing stop, if editing there is (like it normally does without the autosave
-        flag to make sure that the input being currently done by the user is saved).
-
-        :param filename: ``str``
-        :param autosave: ``bool``
-        """
         # When called from _async_autosave, it should not disrupt the user: no stop edition, no
         # change in the save state.
         if not autosave:
             self.stop_edition()
-        if self._document_id is None:
-            self._document_id = uuid.uuid4().hex
-        save_native(
-            filename, self._document_id, self._properties, self.accounts, self.groups,
-            self.transactions, self.schedules, self.budgets
-        )
+        BaseDocument.save_to_xml(self, filename)
         if not autosave:
             self._undoer.set_save_point()
             self._dirty_flag = False
 
+    @samedoc
     def import_entries(self, target_account, ref_account, matches):
-        """Imports entries in ``mathes`` into ``target_account``.
-
-        ``target_account`` can be either an existing account in the document or not.
-
-        ``ref_account`` is a reference to the temporary :class:`.Account` created by the loader.
-
-        ``matches`` is a list of tuples ``(entry, ref)`` with ``entry`` being the entry being
-        imported and ``ref`` being an existing entry in the ``target_account`` bound to ``entry``.
-        ``ref`` can be ``None`` and it's only possible to have a ``ref`` side when the target
-        account already exists in the document.
-        """
-        # Matches is a list of 2 sized tuples (entry, ref), ref being the existing entry that 'entry'
-        # has been matched with. 'ref' can be None
-        # PREPARATION
-        # We have to look which transactions are added, which are changed. We have to see which
-        # accounts will be added. Those with a name clash must be replaced (in the splits).
-        added_transactions = set()
-        added_accounts = set()
-        to_unreconcile = set()
-        if target_account is ref_account and target_account not in self.accounts:
-            added_accounts.add(target_account)
-        for entry, ref in matches:
-            if ref is not None:
-                for split in ref.transaction.splits:
-                    to_unreconcile.add(split)
-            else:
-                if entry.transaction not in self.transactions:
-                    added_transactions.add(entry.transaction)
-                    entry.transaction.mtime = time.time()
-            for split in entry.splits:
-                if split.account is None:
-                    continue
-                account = self.accounts.find(split.account.name)
-                if account is None:
-                    added_accounts.add(split.account)
-                else:
-                    split.account = account
-            if target_account is not ref_account:
-                entry.split.account = target_account
+        added_transactions, added_accounts, to_unreconcile = self._preprocess_import(target_account,
+                                                                                     ref_account,
+                                                                                     matches)
         action = Action(tr('Import'))
         action.added_accounts |= added_accounts
         action.added_transactions |= added_transactions
         action.change_splits(to_unreconcile)
         self._undoer.record(action)
-
-        for split in to_unreconcile:
-            split.reconciliation_date = None
-        for account in added_accounts:
-            # we don't import groups, and we don't want them to mess our document
-            account.group = None
-            account.name = self.accounts.new_name(account.name)
-            self.accounts.add(account)
-        if target_account is not ref_account and ref_account.reference is not None:
-            target_account.reference = ref_account.reference
-        for entry, ref in matches:
-            if ref is not None:
-                ref.transaction.date = entry.date
-                ref.split.amount = entry.split.amount
-                ref.transaction.balance(strong_split=ref.split, keep_two_splits=True)
-                ref.split.reference = entry.split.reference
-            else:
-                if entry.transaction not in self.transactions:
-                    self.transactions.add(entry.transaction)
-        self._cook()
-        self.notify('transactions_imported')
+        BaseDocument._import_entries(self,
+                                     target_account,
+                                     ref_account,
+                                     matches,
+                                     added_transactions,
+                                     added_accounts,
+                                     to_unreconcile)
 
     def is_dirty(self):
         """Returns whether the document has been modified since the last time it was saved."""
@@ -1366,93 +1621,11 @@ class Document(BaseDocument, GUIObject):
         # flag is for.
         self._dirty_flag = True
 
-    #--- Date Range
-    def select_month_range(self, starting_point):
-        """Sets :attr:`date_range` to a :class:`.MonthRange`.
-
-        :param starting_point: ``datetime.date`` around which to wrap the range.
-        """
-        self.date_range = MonthRange(starting_point)
-
-    def select_quarter_range(self, starting_point):
-        """Sets :attr:`date_range` to a :class:`.QuarterRange`.
-
-        :param starting_point: ``datetime.date`` around which to wrap the range.
-        """
-        self.date_range = QuarterRange(starting_point)
-
-    def select_year_range(self, starting_point):
-        """Sets :attr:`date_range` to a :class:`.YearRange`.
-
-        :param starting_point: ``datetime.date`` around which to wrap the range.
-        """
-        self.date_range = YearRange(starting_point, year_start_month=self.year_start_month)
-
-    def select_year_to_date_range(self):
-        """Sets :attr:`date_range` to a :class:`.YearToDateRange`."""
-        self.date_range = YearToDateRange(year_start_month=self.year_start_month)
-
-    def select_running_year_range(self):
-        """Sets :attr:`date_range` to a :class:`.RunningYearRange`."""
-        self.date_range = RunningYearRange(ahead_months=self.ahead_months)
-
-    def select_all_transactions_range(self):
-        """Sets :attr:`date_range` to a :class:`.AllTransactionsRange`."""
-        if not self.transactions:
-            return
-        first_date = self.transactions[0].date
-        last_date = self.transactions[-1].date
-        self.date_range = AllTransactionsRange(
-            first_date=first_date, last_date=last_date,
-            ahead_months=self.ahead_months
-        )
-
-    def select_custom_date_range(self, start_date=None, end_date=None):
-        """Sets :attr:`date_range` to a :class:`.CustomDateRange`.
-
-        :param start_date: ``datetime.date``
-        :param end_date: ``datetime.date``
-        """
-        if start_date is not None and end_date is not None:
-            self.date_range = CustomDateRange(start_date, end_date, self.app.format_date)
-        else: # summon the panel
-            self.notify('custom_date_range_selected')
-
-    def select_prev_date_range(self):
-        """If the current date range is navigable, select the previous range."""
-        if self.date_range.can_navigate:
-            self.date_range = self.date_range.prev()
-
-    def select_next_date_range(self):
-        """If the current date range is navigable, select the next range."""
-        if self.date_range.can_navigate:
-            self.date_range = self.date_range.next()
-
-    def select_today_date_range(self):
-        """If the current date range is navigable, select the range containing today."""
-        if self.date_range.can_navigate:
-            self.date_range = self.date_range.around(datetime.date.today())
-
-    @property
-    def date_range(self):
-        """*get/set*. Current date range of the document.
-
-        The date range is very influential of how data is displayed in the UI. For transaction and
-        entry list, it tells which are shown and which are not. For reports (net worth, profit),
-        it tells the scope of it (we want a net worth report for... this month? this year?
-        last year?).
-        """
-        return self._date_range
-
-    @date_range.setter
-    def date_range(self, date_range):
+    def _set_date_range(self, date_range):
         if date_range == self._date_range:
             return
         self.stop_edition()
-        self.notify('date_range_will_change')
-        self._date_range = date_range
-        self.oven.continue_cooking(date_range.end)
-        self.notify('date_range_changed')
+        BaseDocument._set_date_range(self, date_range)
 
     #--- Undo
     def can_undo(self):
@@ -1486,54 +1659,12 @@ class Document(BaseDocument, GUIObject):
         self.notify('performed_undo_or_redo')
 
     #--- Misc
-    def close(self):
-        """Cleanup the document and close it.
-
-        Saves preferences and tells GUI elements about the document closing (so that they can save
-        their own preferences if needed).
-        """
-        self._save_preferences()
-        self.notify('document_will_close')
 
     def stop_edition(self):
         """Call this when some operation (such as a panel loading) requires the other GUIs to save
         their edits and stop edition.
         """
         self.notify('edition_must_stop')
-
-    def can_restore_from_prefs(self):
-        """Returns whether the document has preferences to restore from.
-
-        In other words, returns whether we have a document ID.
-        """
-        return self._document_id is not None
-
-    def get_default(self, key, fallback_value=None):
-        if self._document_id is None:
-            return fallback_value
-        key = 'Doc{0}.{1}'.format(self._document_id, key)
-        return self.app.get_default(key, fallback_value=fallback_value)
-
-    def set_default(self, key, value):
-        if self._document_id is None:
-            return
-        key = 'Doc{0}.{1}'.format(self._document_id, key)
-        self.app.set_default(key, value)
-
-    def format_amount(self, amount, force_explicit_currency=False, **kwargs):
-        if force_explicit_currency:
-            default_currency = None
-        else:
-            default_currency = self.default_currency
-        return format_amount(
-            amount, default_currency, decimal_sep=self.app._decimal_sep,
-            grouping_sep=self.app._grouping_sep, **kwargs
-        )
-
-    def parse_amount(self, amount, default_currency=None):
-        if default_currency is None:
-            default_currency = self.default_currency
-        return parse_amount(amount, default_currency, auto_decimal_place=self.app._auto_decimal_place)
 
     #--- Properties
     @property
@@ -1572,57 +1703,28 @@ class Document(BaseDocument, GUIObject):
         self._filter_type = value
         self.notify('filter_applied')
 
-    # 0=monday 6=sunday
-    @property
-    def first_weekday(self):
-        return self._properties['first_weekday']
-
-    @first_weekday.setter
-    def first_weekday(self, value):
+    def _set_first_weekday(self, value):
         if value == self._properties['first_weekday']:
-            return
-        self._properties['first_weekday'] = value
+                return
+        BaseDocument._set_first_weekday(self, value)
         self.set_dirty()
-        self.notify('first_weekday_changed')
 
-    @property
-    def ahead_months(self):
-        return self._properties['ahead_months']
-
-    @ahead_months.setter
-    def ahead_months(self, value):
-        assert 0 <= value <= 11
-        if value == self._properties['ahead_months']:
-            return
-        self._properties['ahead_months'] = value
+    def _set_ahead_months(self, value):
+        BaseDocument._set_ahead_months(self, value)
         self.set_dirty()
-        self._refresh_date_range()
 
-    @property
-    def year_start_month(self):
-        return self._properties['year_start_month']
-
-    @year_start_month.setter
-    def year_start_month(self, value):
+    def _set_year_start_month(self, value):
         assert 1 <= value <= 12
         if value == self._properties['year_start_month']:
             return
-        self._properties['year_start_month'] = value
+        BaseDocument._set_year_start_month(self, value)
         self.set_dirty()
-        self._refresh_date_range()
 
-    @property
-    def default_currency(self):
-        return self._properties['default_currency']
-
-    @default_currency.setter
-    def default_currency(self, value):
+    def _set_default_currency(self, value):
         if value == self._properties['default_currency']:
             return
-        self._properties['default_currency'] = value
+        BaseDocument._set_default_currency(self, value)
         self.set_dirty()
-        self.accounts.default_currency = value
-        self.notify('document_changed')
 
     #--- Events
     def must_autosave(self):
