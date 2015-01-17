@@ -24,6 +24,8 @@ from datetime import date
 from hscommon.gui.column import Column # noqa
 from hscommon.currency import Currency, CurrencyNotSupportedException
 
+from collections import namedtuple
+
 from hscommon.notify import Broadcaster
 from .gui.base import BaseView
 from .gui.table import GUITable, Row
@@ -263,3 +265,19 @@ class ImportActionPlugin(Plugin, Broadcaster):
 
     def perform_action(self, import_document, transactions, panes, selected_rows=None):
         pass
+
+EntryMatch = namedtuple('EntryProbability', 'existing imported will_import weight')
+
+class EntryMatch:
+
+    def __init__(self, existing, imported, will_import, weight):
+        self.existing = existing
+        self.imported = imported
+        self.will_import = will_import
+        self.weight = weight
+
+class ImportBindPlugin(Plugin):
+
+    def match_entries(self, target_account, document, import_document, existing_entries, imported_entries):
+        # Returns a list of EntryMatch objects.
+        return []

@@ -1754,6 +1754,15 @@ class ImportDocument(BaseDocument):
         self.cook_flag = False
         BaseDocument.__init__(self, app)
 
+    def reset_from_loader(self, loader, parsing_date_format):
+        self.clear()
+        self.parsing_date_format = parsing_date_format
+        self.accounts = loader.accounts
+        self.transactions = loader.transactions
+        self.schedules = loader.schedules
+        self.budgets = loader.budgets
+        self.oven = loader.oven
+
     @property
     def ahead_months(self):
         return 0
