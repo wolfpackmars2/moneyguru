@@ -123,12 +123,12 @@ class ItemDelegate(QStyledItemDelegate):
             option - QStyleOptionViewItemV4
             index - QModelIndex
         """
-        QStyledItemDelegate.paint(self, painter, option, index)
         xOffset = 0
         # First added for #15, the painting of custom amount information.  This can
         # be used as a pattern for painting any column of information.
         value_painter = self._get_value_painter(index)
         self._display_text = value_painter is None
+        QStyledItemDelegate.paint(self, painter, option, index)
         if value_painter is not None:
             value_option = QStyleOptionViewItemV4(option)
             rect = value_option.rect
