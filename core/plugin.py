@@ -253,6 +253,10 @@ class ImportActionPlugin(Plugin, Broadcaster):
     # The name that appears in our drop down list
     ACTION_NAME = None
 
+    def __init__(self):
+        Plugin.__init__(self)
+        Broadcaster.__init__(self)
+
     def on_selected_pane_changed(self, selected_pane):
         """This method is called whenever the import window has changed it's selected pane."""
         pass

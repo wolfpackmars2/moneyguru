@@ -89,6 +89,9 @@ class InvertAmountsPlugin(ImportActionPlugin):
 
 class BaseSwapFields(ImportActionPlugin):
 
+    def __init__(self):
+        ImportActionPlugin.__init__(self)
+
     def _switch_function(self, transaction):
         pass
 
@@ -111,7 +114,7 @@ class SwapDescriptionPayeeAction(BaseSwapFields):
 class BaseSwapDateFields(BaseSwapFields):
 
     def __init__(self):
-        super().__init__()
+        BaseSwapFields.__init__(self)
         self._first_field = None
         self._second_field = None
 
@@ -153,7 +156,7 @@ class SwapDayMonth(BaseSwapDateFields):
     NAME = "Swap Day and Month Import Action Plugin"
 
     def __init__(self):
-        super().__init__()
+        BaseSwapDateFields.__init__(self)
         self._first_field = DAY
         self._second_field = MONTH
 
@@ -165,7 +168,7 @@ class SwapDayYear(BaseSwapDateFields):
     NAME = "Swap Day and Year Import Action Plugin"
 
     def __init__(self):
-        super().__init__()
+        BaseSwapDateFields.__init__(self)
         self._first_field = DAY
         self._second_field = YEAR
 
@@ -177,7 +180,7 @@ class SwapMonthYear(BaseSwapDateFields):
     NAME = "Swap Month and Year Import Action Plugin"
 
     def __init__(self):
-        super().__init__()
+        BaseSwapDateFields.__init__(self)
         self._first_field = MONTH
         self._second_field = YEAR
 
