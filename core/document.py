@@ -15,7 +15,7 @@ import os.path as op
 from functools import wraps
 
 from hscommon.currency import Currency
-from hscommon.notify import Repeater, Broadcaster
+from hscommon.notify import Repeater
 from hscommon.util import nonone, allsame, dedupe, extract, first
 from hscommon.trans import tr
 from hscommon.gui.base import GUIObject
