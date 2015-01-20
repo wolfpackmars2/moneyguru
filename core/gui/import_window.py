@@ -444,7 +444,6 @@ class ImportWindow(MainWindowGUIObject):
 
         self._import_action_listeners = []
         self._add_plugin_listeners(self._import_action_plugins)
-        print("receiving plugins")
         self._recieve_plugins(self.app.plugins)
 
         def setfunc(index):
