@@ -569,17 +569,12 @@ class ChangeTransfer(ImportActionPlugin):
         if not auto_pays:
             return
 
-        checking = import_document.accounts.find('checking')
-
-        if checking is None:
-            # Create a checking account if no checking account is present
-            # in our current list of transactions
-            checking = import_document.new_account(AccountType.Asset, None)  # No group
-            import_document.accounts.set_account_name(checking, 'checking')
+        checking = import_document.accounts.find('checking', AccountType.Asset)
 
         # Reassign our transfers to checking
         auto_pay_accounts = [import_document.accounts.find(ap) for ap in auto_pays]
-        import_document.delete_accounts(auto_pay_accounts, checking)
+        for account in auto_pay_accounts:
+            import_document.transactions.reassign_account(account, checking)
 
 def app_with_structure_change_import_plugin():
 

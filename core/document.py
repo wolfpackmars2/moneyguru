@@ -1446,3 +1446,52 @@ class Document(BaseDocument, Repeater, GUIObject):
         # this is called async
         self._async_autosave()
 
+class ImportDocument(BaseDocument):
+    """A document used to as a segregation area to operate on core model data before importing.
+     Inherits all capabilities of the ``BaseDocument`` superclass with some small modifications
+     pertinent to the importing of data.
+    Subclasses :class:`core.document.BaseDocument`.
+    """
+
+    def __init__(self, app):
+        self.parsing_date_format = None
+        self.exported_accounts = dict()
+        self.cached_transactions = dict()
+        self.cook_flag = False
+        BaseDocument.__init__(self, app)
+
+    def reset_from_loader(self, loader, parsing_date_format):
+        self.clear()
+        self.parsing_date_format = parsing_date_format
+        self.accounts = loader.accounts
+        self.transactions = loader.transactions
+        self.schedules = loader.schedules
+        self.budgets = loader.budgets
+        self.oven = loader.oven
+
+    @property
+    def ahead_months(self):
+        return 0
+
+    def _get_dateformat(self):
+
+        # We sometimes want to utilize the parsing date format
+        # vs the application date format, so this method was added
+        # to override that default behavior in document.
+        if self.parsing_date_format is None:
+            return BaseDocument._get_dateformat(self)
+        else:
+            return self.parsing_date_format
+
+    def cook(self):
+        """Refresh account entries for the purpose of importing.
+        Unlike the main document, the import document sometimes has specific actions
+        it performs.  We don't want to cook after every action, but at select points
+        in the import cycle. This requires the import window to be able to tell it
+        to re-do it's account entries.
+        """
+        self.cook_flag = True
+        self.oven.cook(from_date=None, until_date=None)
+
+    def _cook(self, from_date=None):
+        pass
