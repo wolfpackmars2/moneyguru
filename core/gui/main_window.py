@@ -679,4 +679,4 @@ class MainWindow(Repeater, GUIObject):
         self._close_irrelevant_account_panes() # after an auto-clean
         self.view.refresh_undo_actions()
 
-    transaction_imported = _undo_stack_changed
+    transactions_imported = _undo_stack_changed
