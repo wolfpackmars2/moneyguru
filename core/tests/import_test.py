@@ -95,6 +95,13 @@ def test_qif_import_tries_native_dateformat_first():
     # We parsed "01/02/03" with mm/dd/yy
     eq_(app.itable[0].date_import, '02/01/03')
 
+@with_app(TestApp)
+def test_import_updates_undo_description(app):
+    # When importing, make sure that appropriate undo-refreshing callbacks are triggered on the UI
+    # side. See #418.
+    importall(app, testdata.filepath('qif', 'checkbook.qif'))
+    app.mw.view.check_gui_calls_partial(['refresh_undo_actions'])
+
 #---
 def app_qif_import():
     # One account named 'Account 1' and then an parse_file_for_import() call for the 'checkbook.qif' test file.
