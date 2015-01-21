@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-05-29
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from datetime import date
@@ -47,7 +47,7 @@ def test_import_inexistant(app, tmpdir):
 
 @with_app(TestApp)
 def test_import_invalid_qif(app):
-    # Raise a FileFormatError if the file does not have the right format (for now, a valid 
+    # Raise a FileFormatError if the file does not have the right format (for now, a valid
     # file is a file that starts with a '!Account' line)
     filename = testdata.filepath('qif', 'invalid.qif')
     with raises(FileFormatError):
@@ -62,7 +62,7 @@ def test_import_moneyguru_file(app):
     eq_(app.bsheet.assets.children_count, 4)
     app.show_pview()
     eq_(app.istatement.expenses.children_count, 3)
-    # No need to test further, we already test moneyguru file loading, which is basically the 
+    # No need to test further, we already test moneyguru file loading, which is basically the
     # same thing.
 
 @with_app(TestApp)
@@ -107,15 +107,15 @@ def app_qif_import():
     app.bsheet.selected = app.bsheet.assets[0]
     app.show_account()
     return app
-    
+
 @with_app(app_qif_import)
 def test_asset_names_after_qif_import(app):
-    # All accounts are added despite name collisions. Name collision for 'Account 1' is 
+    # All accounts are added despite name collisions. Name collision for 'Account 1' is
     # resolved by appending ' 1', and that collision thereafter is resolved by appending ' 2'
     # instead.
     expected = ['Account 1', 'Account 1 1', 'Account 1 2', 'Account 2', 'Interest', 'Salary', 'Cash', 'Utilities']
     actual = app.account_names()
-    eq_(actual, expected) 
+    eq_(actual, expected)
 
 @with_app(app_qif_import)
 def test_default_account_currency_after_qif_import(app):
@@ -135,7 +135,7 @@ def test_default_entry_currency_after_qif_import(app):
     app.apanel.currency = CAD
     app.apanel.save()
     app.show_account()
-    eq_(app.etable[0].increase, '42.32')    
+    eq_(app.etable[0].increase, '42.32')
 
 @with_app(app_qif_import)
 def test_imported_txns_have_mtime(app):
@@ -153,7 +153,7 @@ class TestOFXImport:
         app.bsheet.selected = app.bsheet.assets[0]
         app.show_account()
         return app
-    
+
     @with_app(do_setup)
     def test_account_names(self, app):
         # Checks that the import was done
@@ -161,7 +161,7 @@ class TestOFXImport:
         # This test only checks the account names.  More precise tests are in
         # ofx_test.py
         eq_(app.account_names(), ['815-30219-11111-EOP', '815-30219-12345-EOP'])
-    
+
     @with_app(do_setup)
     def test_add_referenceless_entries_to_reference_account(self, app):
         # It's possible to add more than one referenceless entries to a referenced account
@@ -170,12 +170,12 @@ class TestOFXImport:
         app.add_entry()
         app.add_entry()
         eq_(app.etable_count(), 3)
-    
+
     @with_app(do_setup)
     def test_modified(self, app):
         # The app is marked as modified.
         assert app.doc.is_dirty()
-    
+
 
 class TestDoubleOFXImport:
     # Importing two OFX files that have accounts in common. The edition of an entry that is in both
@@ -196,13 +196,13 @@ class TestDoubleOFXImport:
         app.etable.save_edits()
         importall(app, testdata.filepath('ofx', 'desjardins2.ofx'))
         return app
-    
+
     @with_app(do_setup)
     def test_account_names(self, app):
         # Non-empty accounts from both files are imported
         expected = ['815-30219-11111-EOP', '815-30219-12345-EOP', 'Cash']
         eq_(app.account_names(), expected)
-    
+
     @with_app(do_setup)
     def test_double_import_attributes(self, app):
         # When importing an entry that is already in moneyguru, only overwrite the date and the amount
@@ -211,7 +211,7 @@ class TestDoubleOFXImport:
         eq_(app.etable[2].decrease, '2600.00') # overwritten
         eq_(app.etable[2].description, 'Cash pour super party chez untel') # kept
         eq_(app.etable[2].transfer, 'Cash') # kept
-    
+
 
 class TestDoubleOFXImportAcrossSessions:
     # Importing two OFX files across sessions.
@@ -230,12 +230,12 @@ class TestDoubleOFXImportAcrossSessions:
         app.doc.load_from_xml(filename)
         importall(app, testdata.filepath('ofx', 'desjardins2.ofx'))
         return app
-    
+
     @with_app(do_setup)
     def test_account_names(self, app):
         # Non-empty accounts from both files are imported
         eq_(app.account_names(), ['815-30219-12345-EOP', 'Desjardins EOP'])
-    
+
 
 class TestAnotherDoubleOFXImport:
     # Importing two OFX files that contain transactions with the same FIT ID, but a different account ID.
@@ -245,12 +245,12 @@ class TestAnotherDoubleOFXImport:
         importall(app, testdata.filepath('ofx', 'desjardins2.ofx'))
         importall(app, testdata.filepath('ofx', 'desjardins3.ofx'))
         return app
-    
+
     @with_app(do_setup)
     def test_account_names(self, app):
         # All non-empty accounts have been imported.
         eq_(app.account_names(), ['815-30219-11111-EOP', 'NEW_ACCOUNT'])
-    
+
     @with_app(do_setup)
     def test_entries_counts(self, app):
         # All accounts have the appropriate number of entries.
@@ -262,7 +262,7 @@ class TestAnotherDoubleOFXImport:
         app.bsheet.selected = app.bsheet.assets[1]
         app.show_account()
         eq_(app.etable_count(), 1)
-    
+
 
 class TestTripleOFXImportAcrossSessions:
     # Import the same OFX 3 times
@@ -276,7 +276,7 @@ class TestTripleOFXImportAcrossSessions:
         app.doc.load_from_xml(filename)
         importall(app, testdata.filepath('ofx', 'desjardins.ofx'))
         return app
-    
+
     @with_app(do_setup)
     def test_entry_count(self, app):
         # The number of entries is the same as if the import was made once
@@ -285,7 +285,7 @@ class TestTripleOFXImportAcrossSessions:
         app.bsheet.selected = app.bsheet.assets[0]
         app.show_account()
         eq_(app.etable_count(), 3)
-    
+
 
 #--- Double OFX import with split in the middle
 # Import an OFX, change one entry into a split, and then re-import.
@@ -321,12 +321,12 @@ class TestImportAccountInGroup:
         importall(app, testdata.filepath('moneyguru', 'account_in_group.moneyguru'))
         app.show_nwview()
         return app
-    
+
     @with_app(do_setup)
     def test_account_was_imported(self, app):
         # The fact that the account was in a group didn't prevent it from being imported.
         eq_(app.bsheet.assets[0].name, 'Some Asset')
-    
+
 
 class TestTwoEntriesInRangeSaveThenLoad:
     # Two entries having the same date, in range. The app saves to a file then loads the same file.
@@ -345,7 +345,7 @@ class TestTwoEntriesInRangeSaveThenLoad:
         app.show_account()
         app.etable.select([0])
         return app
-    
+
     @with_app(do_setup)
     def test_editing_an_entry_doesnt_change_the_order(self, app):
         # Editing the first entry doesn't change its position
@@ -353,7 +353,7 @@ class TestTwoEntriesInRangeSaveThenLoad:
         row.increase = '42'
         app.etable.save_edits()
         eq_(app.etable[0].description, 'first')
-    
+
 #---
 def app_transfer_between_two_referenced_accounts():
     app = TestApp()
@@ -408,7 +408,7 @@ class TestImportFileWithMultipleTransferReferences:
         app.doc.date_range = MonthRange(date(2008, 2, 1))
         importall(app, testdata.filepath('moneyguru', 'multiple_transfer_references.moneyguru'))
         return app
-    
+
     @with_app(do_setup)
     def test_account_names_are_correct(self, app):
         # the account names for the transfers are correctly imported. Previously, new_name() was
@@ -416,7 +416,7 @@ class TestImportFileWithMultipleTransferReferences:
         app.show_pview()
         eq_(app.istatement.income[0].name, 'income')
         eq_(app.istatement.expenses[0].name, 'expense')
-    
+
 
 
 def test_date_format_guessing(tmpdir):
@@ -428,7 +428,7 @@ def test_date_format_guessing(tmpdir):
         open(filepath, 'wt', encoding='utf-8').write(contents)
         app.mw.parse_file_for_import(filepath)
         eq_(app.itable[0].date_import, expected_date)
-    
+
     check('12/20/2010', '20/12/2010')
     check('28/Jun/2010', '28/06/2010')
     check('12/Jan/10', '12/01/2010')
@@ -436,3 +436,4 @@ def test_date_format_guessing(tmpdir):
     # and we go for the last resort: using the last two digits and adding 2000 to it.
     check('01/01/0211', '01/01/2011')
     check('03 APR 2012', '03/04/2012')
+
