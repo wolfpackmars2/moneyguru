@@ -1,18 +1,18 @@
 # Created By: Virgil Dupras
 # Created On: 2008-08-08
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 from datetime import date
 
 from hscommon.testutil import eq_
 
-from ..base import TestApp, with_app, DictLoader, testdata, app_with_plugins
+from ..base import TestApp, with_app, DictLoader, testdata
 from ...model.date import YearRange
-from ...gui.import_window import SwapType
+from ...gui.import_window import SwapType, ActionSelectionOptions
 
 from core.model.transaction import Split
 from core.model.account import AccountType
@@ -359,7 +359,7 @@ def test_empty_account_dont_end_up_in_account_tabs(app):
     eq_(len(app.iwin.panes), 2)
     eq_(app.iwin.panes[0].name, 'Account 1')
     eq_(app.iwin.panes[1].name, 'Account 2')
-    
+
 
 LOW_DATE_FIELDS = [
     {'date': '5/11/2008', 'amount': '1'},
@@ -522,6 +522,7 @@ def test_switch_description_payee_with_common_txn(app):
     eq_(app.itable[0].payee_import, 'foo')
 
 
+#---
 class ChangeStructure(ImportActionPlugin):
     NAME = "Structure Change Import Plugin"
     ACTION_NAME = "Structure change import"
@@ -576,9 +577,10 @@ class ChangeTransfer(ImportActionPlugin):
         for account in auto_pay_accounts:
             import_document.transactions.reassign_account(account, checking)
 
+#---
 def app_with_structure_change_import_plugin():
-
-    app = app_with_plugins([ChangeStructure])
+    app = TestApp()
+    app.set_plugins([ChangeStructure])
 
     txns = [
         {
@@ -634,9 +636,28 @@ def test_change_split_structure(app):
     eq_(app.itable[2].amount_import, '2.00')
 
 
-def app_with_transfer_change_import_plugin():
+#---
+def app_import_checkbook_qif_with_existing_txns_and_change_import_plugin():
+    app = app_import_checkbook_qif_with_existing_txns()
+    app.set_plugins([ChangeStructure])
+    return app
 
-    app = app_with_plugins([ChangeTransfer])
+@with_app(app_import_checkbook_qif_with_existing_txns_and_change_import_plugin)
+def test_match_then_run_plugin_that_calls_change_transaction(app):
+    # We do the exact same thing as in test_match_then_import, but we run a plugin that calls
+    # change_transaction() first to verify that we don't break the bindings.
+    eq_(app.itable.row_count, 6) # we start with 6 lines
+    app.itable.bind(2, 5)
+    eq_(app.itable.row_count, 5) # because of the binding, we have 5 lines
+    app.iwin.swap_type_list.select(-1)
+    app.iwin.perform_swap(apply=ActionSelectionOptions.ApplyToAll)
+    eq_(app.itable.row_count, 5) # we still have 5 lines because the binding wasn't broken.
+
+
+#---
+def app_with_transfer_change_import_plugin():
+    app = TestApp()
+    app.set_plugins([ChangeTransfer])
 
     txns = [
         {
@@ -678,3 +699,4 @@ def test_switch_transfer_accounts(app):
     eq_(app.itable[0].transfer_import, 'checking')
     eq_(app.itable[1].transfer_import, 'checking')
     eq_(app.itable[2].transfer_import, 'GAS')
+

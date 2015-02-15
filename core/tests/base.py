@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-06-04
 # Copyright 2014 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "BSD" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "BSD" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.hardcoded.net/licenses/bsd_license
 
 import os.path as op
@@ -33,7 +33,7 @@ def log(method):
         result = method(self, *args, **kw)
         self.calls.append(method.__name__)
         return result
-    
+
     return wrapper
 
 class ApplicationGUI(CallLogger):
@@ -41,42 +41,42 @@ class ApplicationGUI(CallLogger):
         CallLogger.__init__(self)
         # We don't want the autosave thread to mess up with testunits
         self.defaults = {PreferenceNames.AutoSaveInterval: 0}
-    
+
     def get_default(self, key): # We don't want to log this one. It disturbs other test and is pointless to log
         return self.defaults.get(key)
-    
+
     @log
     def set_default(self, key, value):
         self.defaults[key] = value
-    
+
 
 class DocumentGUI(CallLogger):
     def __init__(self):
         CallLogger.__init__(self)
         self.query_for_schedule_scope_result = ScheduleScope.Local
-    
+
     @log
     def query_for_schedule_scope(self):
         return self.query_for_schedule_scope_result
-    
+
 
 class MainWindowGUI(CallLogger):
     def __init__(self, testapp):
         CallLogger.__init__(self)
         self.messages = []
         self.testapp = testapp
-    
+
     @log
     def show_message(self, message):
         self.messages.append(message)
-    
+
     # Link the view of lazily loaded elements.
     @log
     def refresh_panes(self):
         app = self.testapp
         for i in range(app.mw.pane_count):
             app.link_gui(app.mw.pane_view(i))
-    
+
 
 class DictLoader(base.Loader):
     """Used for fake_import"""
@@ -86,10 +86,10 @@ class DictLoader(base.Loader):
         self.transaction_dicts = transactions
         str_dates = [txn['date'] for txn in transactions]
         self.parsing_date_format = self.guess_date_format(str_dates)
-    
+
     def _parse(self, infile):
         pass
-    
+
     def _load(self):
         self.account_info.name = self.account_name
         for txn in self.transaction_dicts:
@@ -149,7 +149,7 @@ class TestApp(TestAppBase):
         self.mw.view = self.make_logger(MainWindowGUI, self)
         self.mainwindow_gui = self.mw.view
         self.mw.connect()
-    
+
     def link_gui(self, gui):
         if gui.view is None:
             gui.view = self.make_logger()
@@ -160,12 +160,12 @@ class TestApp(TestAppBase):
             if isinstance(elem, GUIObject) and elem.view is None:
                 self.link_gui(elem)
         return gui
-    
+
     def tmppath(self):
         if self._tmppath is None:
             self._tmppath = Path(str(pytest.ensuretemp('mgtest')))
         return self._tmppath
-    
+
     def check_current_pane(self, pane_type, account_name=None):
         """Asserts that the currently selecte pane in the main window is of the specified type and,
         optionally, shows the correct account.
@@ -176,15 +176,15 @@ class TestApp(TestAppBase):
             # This method is a little flimsy (testing account name through pane label), but it works
             # for now.
             eq_(self.mw.pane_label(index), account_name)
-    
+
     @staticmethod
     def check_gui_calls(gui, *args, **kwargs):
         gui.check_gui_calls(*args, **kwargs)
-    
+
     @staticmethod
     def check_gui_calls_partial(gui, *args, **kwargs):
         gui.check_gui_calls_partial(*args, **kwargs)
-    
+
     def add_account(self, name=None, currency=None, account_type=AccountType.Asset, group_name=None,
             account_number=None):
         # This method simulates what a user would do to add an account with the specified attributes
@@ -221,12 +221,12 @@ class TestApp(TestAppBase):
         elif name is not None:
             sheet.selected.name = name
             sheet.save_edits()
-    
+
     def add_accounts(self, *names):
         # add a serie of simple accounts, *names being names for each account
         for name in names:
             self.add_account(name)
-    
+
     def add_budget(self, account_name, target_name, str_amount, start_date=None, repeat_type_index=2,
             repeat_every=1, stop_date=None):
         # if no target, set target_name to None
@@ -245,8 +245,8 @@ class TestApp(TestAppBase):
         self.bpanel.target_list.select(target_index)
         self.bpanel.amount = str_amount
         self.bpanel.save()
-    
-    def add_entry(self, date=None, description=None, payee=None, transfer=None, increase=None, 
+
+    def add_entry(self, date=None, description=None, payee=None, transfer=None, increase=None,
             decrease=None, checkno=None, reconciliation_date=None):
         # This whole "if not None" thing allows to simulate a user tabbing over fields leaving the
         # default value.
@@ -269,12 +269,12 @@ class TestApp(TestAppBase):
         if reconciliation_date is not None:
             row.reconciliation_date = reconciliation_date
         self.etable.save_edits()
-    
+
     def add_group(self, name=None, account_type=AccountType.Asset):
         group = self.doc.new_group(account_type)
         if name is not None:
             self.doc.change_group(group, name=name)
-    
+
     def add_schedule(self, start_date=None, description='', account=None, amount='0',
             repeat_type_index=0, repeat_every=1, stop_date=None):
         if start_date is None:
@@ -296,7 +296,7 @@ class TestApp(TestAppBase):
                 self.scsplittable.edited.credit = amount
             self.scsplittable.save_edits()
         self.scpanel.save()
-    
+
     def add_txn(self, date=None, description=None, payee=None, from_=None, to=None, amount=None,
             checkno=None):
         self.show_tview()
@@ -317,9 +317,9 @@ class TestApp(TestAppBase):
         if checkno is not None:
             row.checkno = checkno
         self.ttable.save_edits()
-    
+
     def add_txn_with_splits(self, splits, date=None, description=None, payee=None, checkno=None):
-        # If splits is not None, additional splits will be added to the txn. The format of the 
+        # If splits is not None, additional splits will be added to the txn. The format of the
         # splits argument is [(account_name, memo, debit, credit)]. Don't forget that if they don't
         # balance, you end up with an imbalance split.
         self.add_txn(date=date, description=description, payee=payee, checkno=checkno)
@@ -334,7 +334,7 @@ class TestApp(TestAppBase):
             row.credit = credit
             self.stable.save_edits()
         self.tpanel.save()
-    
+
     def account_names(self):
         account_sort = {
             AccountType.Asset:0,
@@ -345,16 +345,16 @@ class TestApp(TestAppBase):
         accounts = list(self.doc.accounts)
         accounts.sort(key=lambda a: (account_sort[a.type], a))
         return [a.name for a in accounts]
-    
+
     def account_node_subaccount_count(self, node):
         # In the balance sheet and the income statement testing for emptyness becomes cumbersome
         # because of the 2 total nodes (1 total, 1 blank) that are always there, even if empty. To
         # avoid putting a comment next to each len() test, just use this method.
         return len(node) - 2
-    
+
     def balances(self):
         return [self.etable[i].balance for i in range(len(self.etable))]
-    
+
     def bar_graph_data(self):
         result = []
         xoffset = self.bargraph._xoffset
@@ -366,26 +366,26 @@ class TestApp(TestAppBase):
             convert = lambda i: date.fromordinal(i+xoffset).strftime('%d/%m/%Y')
             result.append((convert(x1), convert(x2), '%2.2f' % y1, '%2.2f' % y2))
         return result
-    
+
     def close_and_load(self):
         self.doc.close()
         app = Application(self.app_gui)
         doc = Document(self.app)
         doc.view = self.doc_gui
         return TestApp(app=app, doc=doc)
-    
+
     def completable_edit(self, attrname):
         ce = CompletableEdit(self.mw)
         ce.view = self.make_logger()
         ce.attrname = attrname
         return ce
-    
+
     def do_test_save_load(self):
         newapp = self.save_and_load()
         newapp.doc.date_range = self.doc.date_range
         newapp.doc._cook()
         compare_apps(self.doc, newapp.doc)
-    
+
     def do_test_qif_export_import(self):
         filepath = str(self.tmppath() + 'foo.qif')
         self.mainwindow.export()
@@ -400,16 +400,16 @@ class TestApp(TestAppBase):
         except FileFormatError:
             pass
         compare_apps(self.doc, app.doc, qif_mode=True)
-    
+
     def entry_descriptions(self):
         return [self.etable[i].description for i in range(len(self.etable))]
-    
+
     def etable_count(self):
         # Now that the entry table has a total row, it messes up all tests that check the length
         # of etable. Rather than having confusing expected numbers with a comment explaining why we
         # add one to the expected count, we use this method that subtract 1 to the len of etable.
-        return len(self.etable) - 1 
-    
+        return len(self.etable) - 1
+
     def fake_import(self, account_name, transactions):
         # When you want to test the post-parsing import process, rather than going through the hoops,
         # use this methods. 'transactions' is a list of dicts, the dicts being attribute values.
@@ -419,28 +419,28 @@ class TestApp(TestAppBase):
             default_date_format=default_date_format)
         self.mw.loader.load()
         self.iwin.show()
-    
+
     def graph_data(self):
         xoffset = self.balgraph._xoffset
         convert = lambda i: date.fromordinal(i+xoffset).strftime('%d/%m/%Y')
         return [(convert(x), '%2.2f' % y) for x, y in self.balgraph.data]
-    
+
     def navigate_to_date(self, year, month, day):
         # navigate the current date range until target_date is in it. We use year month day to avoid
         # having to import datetime.date in tests.
         assert self.doc.date_range.can_navigate
         self.doc.date_range = self.doc.date_range.around(date(year, month, day))
-    
+
     def new_app_same_prefs(self):
         # Returns a new TestApp() but with the same app_gui as before, thus preserving preferences.
         app = Application(self.app_gui)
         return TestApp(app=app)
-    
+
     def nw_graph_data(self):
         xoffset = self.nwgraph._xoffset
         convert = lambda i: date.fromordinal(i+xoffset).strftime('%d/%m/%Y')
         return [(convert(x), '%2.2f' % y) for x, y in self.nwgraph.data]
-    
+
     def save_and_load(self):
         # saves the current document and returns a new app with that document loaded
         filepath = self.tmppath() + 'foo.xml'
@@ -449,12 +449,12 @@ class TestApp(TestAppBase):
         newapp = TestApp(app=self.app)
         newapp.doc.load_from_xml(str(filepath))
         return newapp
-    
+
     def save_file(self):
         filename = str(self.tmppath() + 'foo.xml')
         self.doc.save_to_xml(filename) # reset the dirty flag
         return filename
-    
+
     def select_account(self, account_name):
         # Selects the account with `account_name` in the appropriate sheet
         predicate = lambda node: getattr(node, 'is_account', False) and node.name == account_name
@@ -470,7 +470,7 @@ class TestApp(TestAppBase):
             return
         else:
             raise LookupError("Trying to show an account that doesn't exist")
-        
+
     def show_account(self, account_name=None):
         # Selects the account with `account_name` in the appropriate sheet and calls show_selected_account()
         # If account_name is None, we simply show the currently selected account.
@@ -479,7 +479,7 @@ class TestApp(TestAppBase):
         self.mw.show_account()
         self.link_aview()
         return self.current_view()
-    
+
     def set_column_visible(self, colname, visible):
         # Toggling column from the UI is rather simple for a human, but not for a program. The
         # column menu is filled with display names and colname is an identifier.
@@ -498,18 +498,24 @@ class TestApp(TestAppBase):
         marked = items[index][1]
         if marked != visible:
             self.mw.toggle_column_menu_item(index)
-    
+
     def transaction_descriptions(self):
         return [row.description for row in self.ttable.rows]
-    
+
+    def set_plugins(self, plugins):
+        # Changes the list of currently active plugins in `self.app` to `plugins`.
+        self.app.plugins = plugins
+        self.app._hook_currency_plugins()
+        self.iwin._receive_plugins(plugins)
+
     #--- Shortcut for selecting a view type.
     def current_view(self):
         return self.mw.pane_view(self.mw.current_pane_index)
-    
+
     def new_tab(self):
         self.mw.new_tab()
         return self.current_view()
-    
+
     def link_aview(self):
         # Unlike other views, we constantly overwrite our aview-based GUI's here because we have
         # one view per opened account, but many legacy tests were designed with one account view in
@@ -525,7 +531,7 @@ class TestApp(TestAppBase):
         self.bargraph = self.link_gui(self.aview.bargraph)
         self.bargraph_gui = self.bargraph.view
         self.efbar = self.link_gui(self.aview.filter_bar)
-    
+
     def show_nwview(self):
         self.mw.select_pane_of_type(PaneType.NetWorth)
         if not hasattr(self, 'nwview'):
@@ -535,7 +541,7 @@ class TestApp(TestAppBase):
             self.bsheet = self.link_gui(self.nwview.bsheet)
             self.bsheet_gui = self.bsheet.view
         return self.current_view()
-    
+
     def show_pview(self):
         self.mw.select_pane_of_type(PaneType.Profit)
         if not hasattr(self, 'pview'):
@@ -544,7 +550,7 @@ class TestApp(TestAppBase):
             self.istatement = self.link_gui(self.pview.istatement)
             self.istatement_gui = self.istatement.view
         return self.current_view()
-    
+
     def show_tview(self):
         self.mw.select_pane_of_type(PaneType.Transaction)
         if not hasattr(self, 'tview'):
@@ -553,38 +559,38 @@ class TestApp(TestAppBase):
             self.ttable_gui = self.ttable.view
             self.tfbar = self.link_gui(self.tview.filter_bar)
         return self.current_view()
-    
+
     def show_aview(self):
         # We don do GUI linking here because that method cannot be called unless the pane has
         # already been brought up by a specific account-opening method. Call link_aview()
         self.mw.select_pane_of_type(PaneType.Account)
         return self.current_view()
-    
+
     def show_bview(self):
         self.mw.select_pane_of_type(PaneType.Budget)
         if not hasattr(self, 'bview'):
             self.bview = self.link_gui(self.current_view())
             self.btable = self.link_gui(self.bview.table)
         return self.current_view()
-    
+
     def show_scview(self):
         self.mw.select_pane_of_type(PaneType.Schedule)
         if not hasattr(self, 'scview'):
             self.scview = self.link_gui(self.current_view())
             self.sctable = self.link_gui(self.scview.table)
         return self.current_view()
-    
+
     def show_glview(self):
         self.mw.select_pane_of_type(PaneType.GeneralLedger)
         if not hasattr(self, 'glview'):
             self.glview = self.link_gui(self.current_view())
             self.gltable = self.link_gui(self.glview.gltable)
         return self.current_view()
-    
+
     def show_dpview(self):
         self.mw.select_pane_of_type(PaneType.DocProps)
         return self.current_view()
-    
+
 
 def compare_apps(first, second, qif_mode=False):
     def compare_txns(txn1, txn2):
@@ -618,7 +624,7 @@ def compare_apps(first, second, qif_mode=False):
                 eq_(split1.reconciled, split2.reconciled)
             except AssertionError:
                 raise
-    
+
     eq_(len(first.groups), len(second.groups))
     group_pairs = list(zip(sorted(first.groups, key=attrgetter('name')),
         sorted(second.groups, key=attrgetter('name'))))
@@ -683,16 +689,10 @@ def print_table(table, extra_attrs=[]):
             return str(row.get_cell_value(attrname))
         except AttributeError:
             return 'N/A'
-    
+
     attrs = table.columns.colnames + extra_attrs
     print('|'.join(attrs))
     for row in table:
         print('|'.join(getval(row, attrname) for attrname in attrs))
     print("--- Row Count: {} ---".format(len(table)))
 
-def app_with_plugins(plugins):
-    class CustomPluginsApp(Application):
-        def _load_plugins(self, plugin_path):
-            self.plugins = plugins
-
-    return TestApp(app=CustomPluginsApp(ApplicationGUI()))
