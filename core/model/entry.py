@@ -117,7 +117,7 @@ class Entry:
     @property
     def splits(self):
         """*readonly*. A list of all other splits in :attr:`transaction` except the one we wrap."""
-        return [s for s in self.split.transaction.splits if s.uid != self.split.uid]
+        return [s for s in self.split.transaction.splits if s is not self.split]
 
     @property
     def transaction(self):

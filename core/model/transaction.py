@@ -10,7 +10,6 @@ import time
 from collections import defaultdict
 from copy import copy
 import datetime
-from uuid import uuid4
 
 from hscommon.util import allsame, first, nonone, stripfalse
 
@@ -52,14 +51,9 @@ class Transaction:
         #: Timestamp of the last modification. Used in the UI to let the user sort his transactions.
         #: This is useful for finding a mistake that we know was introduced recently.
         self.mtime = 0
-        self._uid = uuid4().hex
 
     def __repr__(self):
         return '<%s %r %r>' % (self.__class__.__name__, self.date, self.description)
-
-    @property
-    def uid(self):
-        return self._uid
 
     @classmethod
     def from_transaction(cls, transaction):
@@ -380,13 +374,30 @@ class Transaction:
         """Returns a copy of self using :meth:`from_transaction`."""
         return Transaction.from_transaction(self)
 
-    def set_splits(self, splits):
-        """Sets :attr:`splits` to copies of splits in ``splits``."""
-        self.splits = []
-        for split in splits:
-            newsplit = copy(split)
-            newsplit.transaction = self
-            self.splits.append(newsplit)
+    def set_splits(self, splits, preserve_instances=False):
+        """Sets :attr:`splits` to copies of splits in ``splits``.
+
+        :param bool preserve_instances: Try to "recycle" split instances as much as possible. This
+        is because in certain places, notable in the import window, there's an entry binding
+        mechanism and entry identity is based on split instances, so it breaks if we don't keep
+        instances there. However, we don't want to preserve instances in all cases. For example,
+        when spawning transactions from recurrences, we want fresh instances.
+        """
+        if preserve_instances:
+            if len(splits) < len(self.splits):
+                del self.splits[len(splits):]
+            for split, newsplit in zip(self.splits, splits):
+                split.__dict__.update(newsplit.__dict__)
+                split.transaction = self
+            for split in splits[len(self.splits):]:
+                split.transaction = self
+                self.splits.append(split)
+        else:
+            self.splits = []
+            for split in splits:
+                newsplit = copy(split)
+                newsplit.transaction = self
+                self.splits.append(newsplit)
 
     def splitted_splits(self):
         """Returns :attr:`splits` separated in two groups ("froms" and "tos").
@@ -480,22 +491,11 @@ class Split:
         self.reconciliation_date = None
         #: Unique reference from an external source.
         self.reference = None
-        self._uid = uuid4().hex
 
     def __repr__(self):
         return '<Split %r %s>' % (self.account_name, self.amount)
 
-    def __eq__(self, other):
-       return self.uid == other.uid
-
-    def __hash__(self):
-        return hash(self.uid)
-
     #--- Public
-    @property
-    def uid(self):
-        return self._uid
-
     def is_on_same_side(self, other_split):
         return (self.amount >= 0) == (other_split.amount >= 0)
 

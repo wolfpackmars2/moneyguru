@@ -164,7 +164,7 @@ class BaseDocument:
         for split in new.splits:
             if split.account is not None:
                 split.account = self.accounts.find(split.account.name, split.account.type)
-        original.set_splits(new.splits)
+        original.set_splits(new.splits, preserve_instances=True)
         min_date = min(original.date, new.date)
         self._change_transaction(
             original, date=new.date, description=new.description,
@@ -1495,3 +1495,4 @@ class ImportDocument(BaseDocument):
 
     def _cook(self, from_date=None):
         pass
+

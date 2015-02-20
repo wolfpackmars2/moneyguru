@@ -667,7 +667,7 @@ class ImportWindow(MainWindowGUIObject):
 
             for (e, ref) in matches:
                 for indx, s in enumerate(e.transaction.splits):
-                    if e.split.uid == s.uid:
+                    if e.split is s:
                         split_indx = indx
                         break
                 transaction = copy_transaction(e.transaction)
