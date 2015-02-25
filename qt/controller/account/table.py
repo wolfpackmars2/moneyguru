@@ -54,7 +54,6 @@ class EntryTable(TableWithTransactions):
         self.tableDelegate = EntryTableDelegate(self.model)
         self.view.setItemDelegate(self.tableDelegate)
         self.view.sortByColumn(1, Qt.AscendingOrder) # sorted by date by default
-        self.view.clicked.connect(self.cellClicked)
         self.view.spacePressed.connect(self.model.toggle_reconciled)
         self.view.deletePressed.connect(self.model.delete)
 
@@ -72,7 +71,7 @@ class EntryTable(TableWithTransactions):
     def _getFlags(self, row, column):
         flags = TableWithTransactions._getFlags(self, row, column)
         if column.name == 'status':
-            if row.can_reconcile() and not row.reconciled:
+            if row.can_reconcile():
                 flags |= Qt.ItemIsUserCheckable
         return flags
 
@@ -86,12 +85,4 @@ class EntryTable(TableWithTransactions):
         else:
             return TableWithTransactions._setData(self, row, column, value, role)
 
-    #--- Event Handling
-    def cellClicked(self, index):
-        column = self.model.columns.column_by_index(index.column())
-        rowattr = column.name
-        if rowattr == 'status':
-            row = self.model[index.row()]
-            if row.can_reconcile() and row.reconciled:
-                row.toggle_reconciled()
 
