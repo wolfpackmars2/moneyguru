@@ -79,6 +79,7 @@ class EntryTable(TableWithTransactions):
         if column.name == 'status':
             if role == Qt.CheckStateRole:
                 row.toggle_reconciled()
+                self._overrideNextSelectionUpdate()
                 return True
             else:
                 return False

@@ -63,11 +63,33 @@ class TableDelegate(ItemDelegate):
 class Table(TableBase):
     def __init__(self, model, view):
         TableBase.__init__(self, model, view)
+        self._selectionUpdateOverrideFlag = False
         self.tableDelegate = TableDelegate(self.model)
         self.view.setItemDelegate(self.tableDelegate)
         from ..app import APP_PREFS
         self._updateFontSize(prefs=APP_PREFS)
         APP_PREFS.prefsChanged.connect(self.appPrefsChanged)
+
+    def _overrideNextSelectionUpdate(self):
+        """Cancel the next selection update coming from Qt.
+
+        This is a hackish way to go around a mild annoyance: click-induced selection clearing. By
+        default, when clicking on a checkbox in a table, Qt *clears* the selection afterwards,
+        which leaves us without selection at all. It's not very user-friendly for our needs, so we
+        go around it.
+
+        By calling this method, you set a flag and the next time that a selection update trying to
+        make its way to the model arrives, it's shorted. This happens only once.
+        """
+        self._selectionUpdateOverrideFlag = True
+
+    def _updateModelSelection(self):
+        if self._selectionUpdateOverrideFlag:
+            self._selectionUpdateOverrideFlag = False
+            # We still probably need, however, to refresh the model's selection on the Qt side.
+            self._updateViewSelection()
+        else:
+            TableBase._updateModelSelection(self)
 
     def _updateFontSize(self, prefs):
         font = self.view.font()
