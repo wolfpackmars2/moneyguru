@@ -33,7 +33,7 @@ class ImportTable(GUITable, TransactionSelectionMixin):
         GUITable.__init__(self, document=import_window.document)
         self.window = import_window
         self._is_two_sided = False
-        self._explicitly_selected_transactions = []
+        self.__last_explicitly_selected = []
     
     #--- Override
     def select_transactions(self, transactions):
@@ -49,8 +49,12 @@ class ImportTable(GUITable, TransactionSelectionMixin):
         return [row.imported.transaction if row.imported
                 else row.entry.transaction for row in self.selected_rows]
 
+    @property
+    def _explicitly_selected_transactions(self):
+        return self.__last_explicitly_selected
+
     def _update_selection(self):
-        self._explicitly_selected_transactions = self.selected_transactions
+        self.__last_explicitly_selected = self.selected_transactions
 
     def _fill(self):
         self._is_two_sided = False

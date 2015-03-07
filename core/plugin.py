@@ -270,7 +270,6 @@ class ImportActionPlugin(Plugin, Broadcaster):
     def perform_action(self, import_document, transactions, panes, selected_rows=None):
         pass
 
-EntryMatch = namedtuple('EntryProbability', 'existing imported will_import weight')
 
 class EntryMatch:
 
@@ -279,6 +278,10 @@ class EntryMatch:
         self.imported = imported
         self.will_import = will_import
         self.weight = weight
+
+    def __iter__(self):
+        return iter((self.existing, self.imported, self.will_import, self.weight))
+
 
 class ImportBindPlugin(Plugin):
 

@@ -76,8 +76,11 @@ def swap_format_elements(format, first, second):
 
 class InvertAmountsPlugin(ImportActionPlugin):
 
-    NAME = "Invert Amounts Import Action Plugin"
-    ACTION_NAME = "Invert Amount"
+    # TODO: Do we want to translate plugin names as well?
+    # Why would we want to?  In case we have a plugin list one day in a UI
+    # element.
+    NAME = tr("Invert Amounts Import Action Plugin")
+    ACTION_NAME = tr("Invert Amount")
 
     def perform_action(self, import_document, transactions, panes, selected_rows=None):
         for transaction in transactions:
@@ -104,8 +107,9 @@ class BaseSwapFields(ImportActionPlugin):
 
 class SwapDescriptionPayeeAction(BaseSwapFields):
 
+    NAME = tr("Swap Description Payee Import Action Plugin")
     ACTION_NAME = tr("Description <--> Payee")
-    NAME = "Swap Description Payee Import Action Plugin"
+
 
     def _switch_function(self, txn):
         txn.description, txn.payee = txn.payee, txn.description
@@ -151,9 +155,8 @@ class BaseSwapDateFields(BaseSwapFields):
 
 class SwapDayMonth(BaseSwapDateFields):
 
-    ACTION_NAME = "<placeholder> Day <--> Month"
-
-    NAME = "Swap Day and Month Import Action Plugin"
+    NAME = tr("Swap Day and Month Import Action Plugin")
+    ACTION_NAME = tr("<placeholder> Day <--> Month")
 
     def __init__(self):
         BaseSwapDateFields.__init__(self)
@@ -163,9 +166,8 @@ class SwapDayMonth(BaseSwapDateFields):
 
 class SwapDayYear(BaseSwapDateFields):
 
-    ACTION_NAME = "<placeholder> Day <--> Year"
-
-    NAME = "Swap Day and Year Import Action Plugin"
+    NAME = tr("Swap Day and Year Import Action Plugin")
+    ACTION_NAME = tr("<placeholder> Day <--> Year")
 
     def __init__(self):
         BaseSwapDateFields.__init__(self)
@@ -175,9 +177,8 @@ class SwapDayYear(BaseSwapDateFields):
 
 class SwapMonthYear(BaseSwapDateFields):
 
-    ACTION_NAME = "<placeholder> Month <--> Year"
-
-    NAME = "Swap Month and Year Import Action Plugin"
+    NAME = tr("Swap Month and Year Import Action Plugin")
+    ACTION_NAME = tr("<placeholder> Month <--> Year")
 
     def __init__(self):
         BaseSwapDateFields.__init__(self)
@@ -210,9 +211,9 @@ class ReferenceBind(ImportBindPlugin):
                 import_entry = None
 
             if import_entry is not None:
-                matches.append((existing_entry, import_entry, will_import, 0.99))
+                matches.append(EntryMatch(existing_entry, import_entry, will_import, 0.99))
             elif not will_import:
-                matches.append((existing_entry, import_entry, will_import, 0.99))
+                matches.append(EntryMatch(existing_entry, import_entry, will_import, 0.99))
 
 
         return matches
@@ -230,10 +231,9 @@ class AccountPane:
         self.matches = [] # [[ref, imported]]
         self.max_day = 31
         self.max_month = 12
-        self.max_year = 99 # 2 digits
+        self.max_year = 99  # 2 digits
         self._match_entries = dict()
         self._user_binds = dict()  # tracks binds / unbinds as indicated by the user.
-        self._match_probabilties = dict()
         self.to_import = dict()
         self.match_flag = False
         self.match_entries()
@@ -253,15 +253,14 @@ class AccountPane:
 
         # Take existing entry that is recommended to be mapped to an import entry
         for existing_entry, imported_entry, will_import, weight in matches:
-            import_key = self._get_matching_key(imported_entry)
             check_better(existing_entry, weight)
-            check_better(import_key, weight)
+            check_better(imported_entry, weight)
 
             if (existing_entry not in self._match_entries and
-                import_key not in self._match_entries):
-                new_match = EntryMatch(existing_entry, import_key, will_import, weight)
+                imported_entry not in self._match_entries):
+                new_match = EntryMatch(existing_entry, imported_entry, will_import, weight)
                 self._match_entries[existing_entry] = new_match
-                self._match_entries[import_key] = new_match
+                self._match_entries[imported_entry] = new_match
 
 
     def _convert_matches(self):
@@ -277,12 +276,10 @@ class AccountPane:
 
         def append_entry(entry, is_import):
 
-            if (((is_import and self._get_matching_key(entry) in processed) or
-                 entry in processed)):
+            if entry in processed:
                 return
 
-            key = self._get_matching_key(entry) if is_import else entry
-            match_entry = self._match_entries.get(key, None)
+            match_entry = self._match_entries.get(entry, None)
 
             if (match_entry and
                   match_entry.existing not in processed and
@@ -291,7 +288,7 @@ class AccountPane:
                     self.matches.append([match_entry.existing, entry])
                 else:
                     [import_entry] = [e for e in import_entries
-                                      if self._get_matching_key(e) == match_entry.imported]
+                                      if e == match_entry.imported]
                     self.matches.append([entry, import_entry])
                 processed.add(match_entry.existing)
                 processed.add(match_entry.imported)
@@ -306,7 +303,7 @@ class AccountPane:
             elif not entry.reconciled:
                 self.matches.append([entry, None])
 
-            processed.add(key)
+            processed.add(entry)
 
         user_binds = list(self._user_binds.items())
         for (existing_entry, import_entry), bound in user_binds:
@@ -380,9 +377,6 @@ class AccountPane:
             return return_date, t[0] is None
 
         self.matches.sort(key=key_func)
-
-    def _get_matching_key(self, entry):
-        return entry
 
     def bind(self, existing, imported):
         self._user_binds[(existing, imported)] = True  # Bind
