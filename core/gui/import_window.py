@@ -245,6 +245,7 @@ class AccountPane:
             del self._match_entries[match.imported]
 
     def _determine_best_matches(self, matches):
+        """Given the provided list of ``EntryMatch`` objects, use the best match by weight."""
 
         def check_better(key, weight):
             conflict = self._match_entries.get(key, None)
@@ -253,51 +254,83 @@ class AccountPane:
 
         # Take existing entry that is recommended to be mapped to an import entry
         for existing_entry, imported_entry, will_import, weight in matches:
+            # If there is a better mapping for existing entries, use it.
             check_better(existing_entry, weight)
+            # if there is a better mapping for imported entries, use it.
             check_better(imported_entry, weight)
 
             if (existing_entry not in self._match_entries and
                 imported_entry not in self._match_entries):
+                # If no other recommendations for the existing or imported entries existed,
+                # then this is the first recommendation and we will use it.
                 new_match = EntryMatch(existing_entry, imported_entry, will_import, weight)
                 self._match_entries[existing_entry] = new_match
                 self._match_entries[imported_entry] = new_match
 
 
     def _convert_matches(self):
+        """Take the best matches from plugins and override with user entered matches.
+
+        Takes the ``_match_entries``, ``import_entries``, and ``existing_entries`` data structures
+        and determines the best matches given the matches provided in ``_user_binds``.
+
+        """
 
         import_entries = self.import_entries
 
         existing_entries = self.existing_entries
 
+        # ``matches`` is our final set of matches between existing and imported entries.
+        # If the user pressed the import button, this is the structure that is iterated over.
+        # Other structures, like ``_user_binds``, ``_match_entires``, etc exist to build
+        # the contents of this structure.
+
         self.matches.clear()
+        # The ``to_import`` map holds references from the ``matches`` set to a boolean value that
+        # indicates which import entries are to be passed to the
+        # ``Document.import_entries`` method.
         self.to_import.clear()
 
         processed = set()
 
         def append_entry(entry, is_import):
 
+
+            # If we have already looked at this entry before, continue.
             if entry in processed:
                 return
 
+            # Find a recommendation for a match provided by a plugin.
             match_entry = self._match_entries.get(entry, None)
 
+            # If there is a recommendations
             if (match_entry and
                   match_entry.existing not in processed and
                   match_entry.imported not in processed):
                 if is_import:
+                    # If it's an import entry, we don't need to "refresh" the existing
+                    # entry because it is not recooked.
                     self.matches.append([match_entry.existing, entry])
                 else:
+                    # Otherwise, we have to search through our import entries based on equality
+                    # because the reference will have changed between cooks.
                     [import_entry] = [e for e in import_entries
                                       if e == match_entry.imported]
                     self.matches.append([entry, import_entry])
+
+                # Add both items to our processed set.
                 processed.add(match_entry.existing)
                 processed.add(match_entry.imported)
 
                 if match_entry.will_import:
+                    # ``EntryMatch`` objects have a ``will_import`` attribute, which indicate
+                    # the preference of the plugin on whether or not this entry should be imported.
                     self.to_import[match_entry.imported] = match_entry.will_import
                 elif match_entry.existing.reconciled:
+                    # If the existing entry is already reconciled, then we don't want to import it.
                     self.to_import[match_entry.imported] = False
 
+            # And from here down is simply adding those entries without recommendation.
             elif is_import:
                 self.matches.append([None, entry])
             elif not entry.reconciled:
@@ -305,24 +338,40 @@ class AccountPane:
 
             processed.add(entry)
 
+
+        # This has four loops to ensure that we have matched each import entry correctly
+
+        # First, we must put in our user binds.
         user_binds = list(self._user_binds.items())
         for (existing_entry, import_entry), bound in user_binds:
             new_import_entry = self._get_matching_entry(import_entry, import_entries)
             if new_import_entry is None:
+                # If a plugin has modified our imports such that the imported entry
+                # no longer exists, then clean up that record in ``_user_binds``.
                 del self._user_binds[(existing_entry, import_entry)]
                 continue
             if bound:
+                # If there is a recommendation by a plugin about an import entry, then
+                # adding the user chosen bind to our processed list will ignore the
+                # plugin's recommendation.
                 self.matches.append([existing_entry, import_entry])
                 processed.add(existing_entry)
                 processed.add(import_entry)
 
-
+        # Then we put in all the recommendations for existing entries.
         for existing_entry in existing_entries:
             append_entry(existing_entry, False)
 
+        # And all recommendations for imported entries.
         for import_entry in import_entries:
             append_entry(import_entry, True)
 
+        # By this point, we should have iterated over all existing and imported entries, and
+        # they should all be matched (or the fact that no match exists annotated in the ``matches``
+        # set.
+
+        # So our last step is to ensure that if a plugin has made a recommendation about a match
+        # that the user has indicated was incorrect, we must make sure that match is broken.
         for (existing_entry, import_entry), bound in self._user_binds.items():
             if not bound:
                 import_entry = self._get_matching_entry(import_entry, import_entries)
@@ -334,7 +383,9 @@ class AccountPane:
                     self.matches.remove([e, i])
                 else:
                     continue
-                #if not e.reconciled?
+                # if not e.reconciled?
+                # So here, the end effect is that if the entry is reconciled the existing
+                # entry disappears when the bind is broken.
                 self.matches.append([e, None])
                 self.matches.append([None, i])
 
@@ -346,6 +397,10 @@ class AccountPane:
         return None
 
     def match_entries(self, binding_plugins=None, import_entries=None):
+        """Match existing to imported entries.
+
+        This is called by the owning ``ImportWindow`` class.
+        """
         self.account = self.import_document.accounts.find(self.name)
         import_entries = self.account.entries[:] if not import_entries else import_entries
         existing_entries = self.existing_entries
@@ -354,24 +409,32 @@ class AccountPane:
         binding_plugins = [self.reference_plugin]
 
         for plugin in binding_plugins:
+            # Each matching plugin makes it's own recommendations
             matches = plugin.match_entries(self.selected_target,
                                            None,
                                            self.import_document,
                                            existing_entries,
                                            import_entries)
 
+            # The best is chosen by weight
             self._determine_best_matches(matches)
 
+        # And mixed in
         self._convert_matches()
         self._sort_matches()
         self.match_flag = True
 
     def _sort_matches(self):
         def key_func(t):
+
+            # Sort by import date, existing entry date,
+            # and secondary sort by if there is no import-to-existing
+            # bind.
+
             if None not in t:
                 return_date = t[1].date
             elif t[0]:
-                return_date =t[0].date
+                return_date = t[0].date
             else:
                 return_date = t[1].date
             return return_date, t[0] is None
@@ -620,16 +683,41 @@ class ImportWindow(MainWindowGUIObject):
             self._update_selected_pane()
 
     def import_selected_pane(self):
+        """Import the selected pane into the ``Document`` via ``Document.import_entries`` method."""
         pane = self.selected_pane
         matches = []
+        # Iterate over the pane's matches filtering out those items unncessary to the import
         for ref, e in pane.matches:
+
+            # If the import entry is None, we don't bother to add it.
             if e is None:
                 continue
 
+            # Otherwise, we have to check if this entry will be imported.
+            # We assume an __will__ be imported if it does not occur in
+            # the map.  Also, we use the mapped boolean value as another
+            # hint about whether or not to
             if e in pane.to_import and not pane.to_import[e]:
                 continue
 
+            # And the ``Document.import_entries`` takes import then existing reference
+            # entry (rather than reference then import as it is stored in the ``pane.matches``
+            # structure.
             matches.append((e, ref))
+
+
+        # It was evident in some early testing that accounts that were imported through
+        # references in the imported ``Entry``/``Transaction``/``Split`` objects were
+        # being modified in the ``Document`` when changed in ``ImportDocument.  So we actually
+        # have to ensure that what is passed to the ``Document`` object is not a reference
+        # to a account that lives in the ``ImportDocument`` which is achieved by copying.
+
+        # I think that some of that was done in the ``Document.import_entries`` method,
+        # but not to the degree that was necessary (and which never became evident because
+        # the accounts from the loader were effectively read only after load).
+
+        # The remainder of the code is ensure the separation of the ``Document`` and
+        # ``ImportDocument``.
 
         name2account = pane.import_document.exported_accounts
         cached_txn = pane.import_document.cached_transactions
@@ -677,7 +765,7 @@ class ImportWindow(MainWindowGUIObject):
                 # We import in an existing account, adjust all the transactions accordingly
                 target_account = pane.selected_target
             else:
-                target_account = pane_account # pane.account == new account
+                target_account = pane_account  # pane.account == new account
 
             self.document.import_entries(target_account, pane_account, new_matches)
 
@@ -703,11 +791,7 @@ class ImportWindow(MainWindowGUIObject):
         if not hasattr(self.mainwindow, 'loader'):
             return
 
-        # there are ramifications here to think about in terms of expected behavior.
-        # old behavior is to store accounts without importing segregated by their respective
-        # loader account lists...
-        # self.import_document.clear()
-
+        # Each loader gets it's own ``ImportDocument`` class.
         import_document = ImportDocument(self.app)
 
         self.refresh_targets()
