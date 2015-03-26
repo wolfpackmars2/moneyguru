@@ -13,7 +13,7 @@ from PyQt4.QtCore import Qt, QProcess, QUrl, QRect, QSize
 from PyQt4.QtGui import (
     QMainWindow, QPrintDialog, QMessageBox, QIcon, QPixmap, QDesktopServices, QTabBar, QSizePolicy,
     QHBoxLayout, QPushButton, QMenu, QAction, QMenuBar, QShortcut, QKeySequence, QFileDialog,
-    QApplication
+    QApplication, QToolButton
 )
 
 from qtlib.recent import Recent
@@ -329,6 +329,7 @@ class MainWindow(QMainWindow):
         setAccelKeys(self.menubar)
         self.tabBar.setMovable(True)
         self.tabBar.setTabsClosable(True)
+        self.tabBar.setExpanding(False)
 
         seq = QKeySequence(Qt.CTRL + Qt.SHIFT + Qt.Key_Right)
         self._shortcutNextTab = QShortcut(seq, self)
@@ -647,6 +648,9 @@ class MainWindow(QMainWindow):
         self._setTabIndex(self.model.current_pane_index)
 
     def refresh_panes(self):
+        # Always remove the "new tab" tab
+        if self.tabBar.count() > 0:
+            self.tabBar.removeTab(self.tabBar.count()-1)
         while self.tabBar.count() < self.model.pane_count:
             self.tabBar.addTab('')
         for i in range(self.model.pane_count):
@@ -678,6 +682,13 @@ class MainWindow(QMainWindow):
         while self.tabBar.count() > self.model.pane_count:
             self.tabBar.removeTab(self.tabBar.count()-1)
         self.tabBar.setTabsClosable(self.model.pane_count > 1)
+        # Add the "new tab" tab
+        last_tab_index = self.tabBar.addTab('')
+        self.tabBar.setTabEnabled(last_tab_index, False)
+        newTabButton = QToolButton()
+        newTabButton.setText("+")
+        newTabButton.clicked.connect(self.model.new_tab)
+        self.tabBar.setTabButton(last_tab_index, QTabBar.RightSide, newTabButton)
 
     def refresh_status_line(self):
         self.statusLabel.setText(self.model.status_line)
