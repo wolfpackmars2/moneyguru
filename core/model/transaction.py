@@ -374,13 +374,30 @@ class Transaction:
         """Returns a copy of self using :meth:`from_transaction`."""
         return Transaction.from_transaction(self)
 
-    def set_splits(self, splits):
-        """Sets :attr:`splits` to copies of splits in ``splits``."""
-        self.splits = []
-        for split in splits:
-            newsplit = copy(split)
-            newsplit.transaction = self
-            self.splits.append(newsplit)
+    def set_splits(self, splits, preserve_instances=False):
+        """Sets :attr:`splits` to copies of splits in ``splits``.
+
+        :param bool preserve_instances: Try to "recycle" split instances as much as possible. This
+        is because in certain places, notable in the import window, there's an entry binding
+        mechanism and entry identity is based on split instances, so it breaks if we don't keep
+        instances there. However, we don't want to preserve instances in all cases. For example,
+        when spawning transactions from recurrences, we want fresh instances.
+        """
+        if preserve_instances:
+            if len(splits) < len(self.splits):
+                del self.splits[len(splits):]
+            for split, newsplit in zip(self.splits, splits):
+                split.__dict__.update(newsplit.__dict__)
+                split.transaction = self
+            for split in splits[len(self.splits):]:
+                split.transaction = self
+                self.splits.append(split)
+        else:
+            self.splits = []
+            for split in splits:
+                newsplit = copy(split)
+                newsplit.transaction = self
+                self.splits.append(newsplit)
 
     def splitted_splits(self):
         """Returns :attr:`splits` separated in two groups ("froms" and "tos").

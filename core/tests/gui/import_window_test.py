@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-08-08
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from datetime import date
@@ -12,7 +12,12 @@ from hscommon.testutil import eq_
 
 from ..base import TestApp, with_app, DictLoader, testdata
 from ...model.date import YearRange
-from ...gui.import_window import SwapType
+from ...gui.import_window import SwapType, ActionSelectionOptions
+
+from core.model.transaction import Split
+from core.model.account import AccountType
+from core.model.amount import Amount
+from core.plugin import ImportActionPlugin
 
 #--- No setup
 
@@ -209,7 +214,7 @@ def test_import_again(app):
 @with_app(app_import_checkbook_qif_twice)
 def test_switch_description_payee_apply_to_all(app):
     app.iwin.swap_type_list.select(SwapType.DescriptionPayee)
-    app.iwin.perform_swap(apply_to_all=True)
+    app.iwin.perform_swap(apply=True)
     # the 4th entry is the Hydro Quebec entry
     app.iwin.selected_pane_index = 2
     eq_(app.itable[3].description_import, 'Hydro-Quebec')
@@ -354,7 +359,7 @@ def test_empty_account_dont_end_up_in_account_tabs(app):
     eq_(len(app.iwin.panes), 2)
     eq_(app.iwin.panes[0].name, 'Account 1')
     eq_(app.iwin.panes[1].name, 'Account 2')
-    
+
 
 LOW_DATE_FIELDS = [
     {'date': '5/11/2008', 'amount': '1'},
@@ -392,17 +397,24 @@ def test_can_switch_fields_on_low_day(app):
 def test_switch_day_month(app):
     app.iwin.swap_type_list.select(SwapType.DayMonth)
     app.iwin.perform_swap()
+    # Dates are sorted after swap
+    # Note: This is day/month/year
     eq_(app.itable[0].date_import, '11/05/2008')
-    eq_(app.itable[1].date_import, '01/12/2009')
-    eq_(app.itable[2].date_import, '02/01/2009')
+    eq_(app.itable[1].date_import, '02/01/2009')
+    eq_(app.itable[2].date_import, '01/12/2009')
+
 
 @with_app(app_import_txns_with_low_day_fields)
 def test_switch_day_year(app):
     app.iwin.swap_type_list.select(SwapType.DayYear)
     app.iwin.perform_swap()
-    eq_(app.itable[0].date_import, '08/11/2005')
-    eq_(app.itable[1].date_import, '09/01/2012')
-    eq_(app.itable[2].date_import, '09/02/2001')
+    # Dates are sorted after swap
+    # Note: This is day/month/year
+    eq_(app.itable[0].date_import, '09/02/2001')
+    eq_(app.itable[1].date_import, '08/11/2005')
+    eq_(app.itable[2].date_import, '09/01/2012')
+
+
 
 
 #---
@@ -464,9 +476,9 @@ def app_three_imports_two_of_them_with_low_date():
 
 @with_app(app_three_imports_two_of_them_with_low_date)
 def test_switch_apply_to_all(app):
-    # when the 'apply_to_all' argument is passed, the swucth happens in all applicable accounts
+    # when the 'apply' argument is passed, the swucth happens in all applicable accounts
     app.iwin.swap_type_list.select(SwapType.DayMonth)
-    app.iwin.perform_swap(apply_to_all=True)
+    app.iwin.perform_swap(apply=True)
     app.iwin.selected_pane_index = 1
     eq_(app.itable[0].date_import, '11/05/2008') # switched
     app.iwin.selected_pane_index = 2
@@ -498,13 +510,193 @@ def app_two_accounts_with_common_txn():
 def test_switch_date_with_common_txn(app):
     # the transaction in the 2 accounts is the same. *don't* switch it twice!
     app.iwin.swap_type_list.select(SwapType.DayMonth)
-    app.iwin.perform_swap(apply_to_all=True)
+    app.iwin.perform_swap(apply=True)
     eq_(app.itable[0].date_import, '11/05/2008')
 
 @with_app(app_two_accounts_with_common_txn)
 def test_switch_description_payee_with_common_txn(app):
     # same as with dates: don't switch twice
     app.iwin.swap_type_list.select(SwapType.DescriptionPayee)
-    app.iwin.perform_swap(apply_to_all=True)
+    app.iwin.perform_swap(apply=True)
     eq_(app.itable[0].description_import, 'bar')
     eq_(app.itable[0].payee_import, 'foo')
+
+
+#---
+class ChangeStructure(ImportActionPlugin):
+    NAME = "Structure Change Import Plugin"
+    ACTION_NAME = "Structure change import"
+
+    def perform_action(self, import_document, transactions, panes, selected_rows=None):
+
+        imbalance_account = import_document.accounts.find('imbalance account', AccountType.Expense)
+
+        for transaction in transactions:
+            if len(transaction.splits) == 2:
+                # Wow, this was actually something pretty hard to do...
+                txn_copy = transaction.replicate()
+                if txn_copy.splits[0].amount == 0:  # If an amount is zero, it's an int...
+                    amount_value = 0
+                    amount_currency = import_document.default_currency
+                else:
+                    amount_value = txn_copy.splits[0].amount.value
+                    amount_currency = txn_copy.splits[0].amount.currency
+                first_split_new_amount = Amount(amount_value+1, amount_currency)
+                new_split_amount = Amount(-1.0, amount_currency)
+                txn_copy.splits[0].amount = first_split_new_amount
+                txn_copy.splits.append(Split(txn_copy, imbalance_account, new_split_amount))
+                import_document.change_transaction(transaction, txn_copy)
+
+class ChangeTransfer(ImportActionPlugin):
+    """
+    The point of this plugin is to change any transfer with the
+    phrase 'automatic' to a checking account.
+    """
+
+    def always_perform_action(self):
+        return True
+
+    def perform_action(self, import_document, transactions, panes):
+        auto_pays = []
+
+        # We go through all of our transactions searching for the keyword
+        # automatic.
+        for txn in transactions:
+            for split in txn.splits:
+                if 'automatic' in split.account_name.lower():
+                    # We collect up the actual account names marked for transfer
+                    auto_pays.append(split.account_name)
+
+        if not auto_pays:
+            return
+
+        checking = import_document.accounts.find('checking', AccountType.Asset)
+
+        # Reassign our transfers to checking
+        auto_pay_accounts = [import_document.accounts.find(ap) for ap in auto_pays]
+        for account in auto_pay_accounts:
+            import_document.transactions.reassign_account(account, checking)
+
+#---
+def app_with_structure_change_import_plugin():
+    app = TestApp()
+    app.set_plugins([ChangeStructure])
+
+    txns = [
+        {
+            'date': '01/13/2014',
+            'transfer': 'x',
+            'description': 'foo',
+            'payee': 'bar',
+            'amount': '-1.00'
+        },
+        {
+            'date': '12/10/2014',
+            'transfer': 'x',
+            'description': 'bar',
+            'payee': 'bar',
+            'amount': '0.00'
+        },
+        {
+            'date': '12/10/2014',
+            'transfer': 'x',
+            'description': 'baz',
+            'payee': 'bar',
+            'amount': '1.00'
+        }
+    ]
+
+    loader = DictLoader(app.doc.default_currency, 'first', txns)
+    loader.start_account()
+    loader.account_info.name = 'second'
+    loader.flush_account()
+    loader.load()
+    app.mw.loader = loader
+    app.iwin.show()
+    return app
+
+@with_app(app_with_structure_change_import_plugin)
+def test_change_split_structure(app):
+    # same as with dates: don't switch twice
+    swap_list = app.iwin.swap_type_list
+    eq_(app.iwin.swap_type_list[-1], ChangeStructure.ACTION_NAME)
+    swap_list.select(-1)
+    eq_(app.itable[0].transfer_import, 'x')
+    eq_(app.itable[0].amount_import, '-1.00')
+    eq_(app.itable[1].transfer_import, 'x')
+    eq_(app.itable[1].amount_import, '0.00')
+    eq_(app.itable[2].transfer_import, 'x')
+    eq_(app.itable[2].amount_import, '1.00')
+    app.iwin.perform_swap(apply=True)
+    eq_(app.itable[0].transfer_import, 'x, imbalance account')
+    eq_(app.itable[0].amount_import, '0.00')
+    eq_(app.itable[1].transfer_import, 'x, imbalance account')
+    eq_(app.itable[1].amount_import, '1.00')
+    eq_(app.itable[2].transfer_import, 'x, imbalance account')
+    eq_(app.itable[2].amount_import, '2.00')
+
+
+#---
+def app_import_checkbook_qif_with_existing_txns_and_change_import_plugin():
+    app = app_import_checkbook_qif_with_existing_txns()
+    app.set_plugins([ChangeStructure])
+    return app
+
+@with_app(app_import_checkbook_qif_with_existing_txns_and_change_import_plugin)
+def test_match_then_run_plugin_that_calls_change_transaction(app):
+    # We do the exact same thing as in test_match_then_import, but we run a plugin that calls
+    # change_transaction() first to verify that we don't break the bindings.
+    eq_(app.itable.row_count, 6) # we start with 6 lines
+    app.itable.bind(2, 5)
+    eq_(app.itable.row_count, 5) # because of the binding, we have 5 lines
+    app.iwin.swap_type_list.select(-1)
+    app.iwin.perform_swap(apply=ActionSelectionOptions.ApplyToAll)
+    eq_(app.itable.row_count, 5) # we still have 5 lines because the binding wasn't broken.
+
+
+#---
+def app_with_transfer_change_import_plugin():
+    app = TestApp()
+    app.set_plugins([ChangeTransfer])
+
+    txns = [
+        {
+            'date': '12/09/2014',
+            'transfer': 'AUTOMATIC PAYMENT - THANK YOU',
+            'description': 'foo',
+            'payee': 'bar',
+            'amount': '-3.21'
+        },
+        {
+            'date': '12/10/2014',
+            'transfer': 'PAYMENT AUTOMATICALLY RECEIVED',
+            'description': 'foo',
+            'payee': 'bar',
+            'amount': '-20.22'
+        },
+        {
+            'date': '12/10/2014',
+            'transfer': 'GAS',
+            'description': 'foo',
+            'payee': 'bar',
+            'amount': '20.23'
+        }
+    ]
+
+    loader = DictLoader(app.doc.default_currency, 'first', txns)
+    loader.start_account()
+    loader.account_info.name = 'second'
+    loader.flush_account()
+    loader.load()
+    app.mw.loader = loader
+    app.iwin.show()
+    return app
+
+@with_app(app_with_transfer_change_import_plugin)
+def test_switch_transfer_accounts(app):
+    # Our action name is not manually selectable (since it is an always_perform)
+    assert ChangeTransfer.ACTION_NAME not in app.iwin.swap_type_list
+    eq_(app.itable[0].transfer_import, 'checking')
+    eq_(app.itable[1].transfer_import, 'checking')
+    eq_(app.itable[2].transfer_import, 'GAS')
+

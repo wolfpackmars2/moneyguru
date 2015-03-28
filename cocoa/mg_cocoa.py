@@ -1212,7 +1212,7 @@ class PyImportWindow(PyGUIObject):
         return len(self.model.panes)
 
     def performSwap_(self, applyToAll: bool):
-        self.model.perform_swap(apply_to_all=applyToAll)
+        self.model.perform_swap(apply=applyToAll)
 
     def selectedTargetAccountIndex(self) -> int:
         return self.model.selected_target_account_index
