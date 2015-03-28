@@ -6,5 +6,6 @@ core.document
     
     .. autosummary::
         
+        BaseDocument
         Document
         FilterType

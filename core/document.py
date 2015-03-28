@@ -84,6 +84,18 @@ def handle_abort(method):
     return wrapper
 
 class BaseDocument:
+    """Provides a common base for :class:`Document` and :class:`ImportDocument`.
+
+    Those two classes have a large subset of common behavior but still differ significantly, hence
+    the class split.
+
+    Unlike :class:`Document`, this class doesn't manage:
+
+    * UI management (no ``view`` attribute)
+    * Global scope querying
+    * Date range filtering
+    * Undo actions
+    """
     def __init__(self, app):
         self.app = app
         self._properties = {
@@ -159,6 +171,25 @@ class BaseDocument:
 
     #--- Public
     def change_transaction(self, original, new, global_scope=False):
+        """Changes the attributes of ``original`` so that they match those of ``new``.
+
+        This is used by the :class:`.TransactionPanel`, and ``new`` is originally a copy of
+        ``original`` which has been changed. Accounts linked to splits in ``new`` don't have to be
+        accounts that are part of the document. This method will automatically internalize accounts
+        linked to splits (and create new accounts if necessary).
+
+        If ``new``'s date is outside of the current date range, the date range will automatically be
+        changed so that it contains ``new``.
+
+        If ``original`` is a schedule :class:`.Spawn`, the UI will be queried for a scope, which
+        might result in the change being aborted.
+
+        After the transaction change, ``transaction_changed`` is broadcasted.
+
+        :param original: :class:`.Transaction`
+        :param new: :class:`.Transaction`, a modified copy of ``original``.
+        :param bool global_scope: Whether this changes affect the whole recurrence (if applicable)
+        """
         # don't forget that account up here is an external instance. Even if an account of
         # the same name exists in self.accounts, it's not gonna be the same instance.
         for split in new.splits:
@@ -176,6 +207,29 @@ class BaseDocument:
     def change_transactions(
             self, transactions, date=NOEDIT, description=NOEDIT, payee=NOEDIT, checkno=NOEDIT,
             from_=NOEDIT, to=NOEDIT, amount=NOEDIT, currency=NOEDIT, global_scope=False):
+        """Properly sets properties for ``transactions``.
+
+        Changes the attributes of every transaction in ``transactions`` to the values specified in
+        the arguments (arguments left to ``NOEDIT`` have no effect).
+
+        ``from_`` and ``to`` are account **names** rather than being :class:`.Account` instances. If
+        the names don't exist, they'll automatically be created.
+
+        If any transaction in ``transactions`` is a schedule :class:`.Spawn`, the UI will be queried
+        for a scope, which might result in the change being aborted.
+
+        After the transaction change, ``transaction_changed`` is broadcasted.
+
+        :param date: ``datetime.date``
+        :param description: ``str``
+        :param payee: ``str``
+        :param checkno: ``str``
+        :param from_: ``str`` (account name)
+        :param to: ``str`` (account name)
+        :param amount: :class:`.Amount`
+        :param currency: :class:`.Currency`
+        :param bool global_scope: Whether this changes affect the whole recurrence (if applicable)
+        """
         if from_ is not NOEDIT:
             from_ = self.accounts.find(from_, AccountType.Income) if from_ else None
         if to is not NOEDIT:
@@ -195,6 +249,22 @@ class BaseDocument:
         self._clean_empty_categories()
 
     def delete_transactions(self, transactions, from_account=None, global_scope=False):
+        """Removes every transaction in ``transactions`` from the document.
+
+        If any transaction in ``transactions`` is a schedule :class:`.Spawn`, the UI will be queried
+        for a scope, which might result in the deletion being aborted.
+
+        After the transaction deletion, ``transaction_deleted`` is broadcasted.
+
+        ``from_account`` represents, in the UI, the account from which this deletion was triggered.
+        By specifying it, you will prevent it from being automatically purged by
+        :meth:`_clean_empty_categories` (we don't want to delete an account that is actively being
+        worked on by the user).
+
+        :param transactions: a collection of :class:`.Transaction`.
+        :param from_account: the :class:`.Account` from which the operation takes place, if any.
+        :param bool global_scope: Whether this changes affect the whole recurrence (if applicable)
+        """
         for txn in transactions:
             if isinstance(txn, Spawn):
                 if global_scope:
@@ -208,10 +278,31 @@ class BaseDocument:
         self._clean_empty_categories(from_account=from_account)
 
     def duplicate_transactions(self, transactions):
+        """Create copies of ``transactions`` in the document.
+
+        For each transaction in ``transactions``, add a new transaction with the same attributes to
+        the document.
+
+        After the operation, ``transaction_changed`` is broadcasted.
+
+        :param transactions: a collection of :class:`.Transaction` to duplicate.
+        """
         duplicated = [txn.replicate() for txn in transactions]
         self._add_transactions(duplicated)
 
     def move_transactions(self, transactions, to_transaction):
+        """Re-orders ``transactions`` so that they are right before ``to_transaction``.
+
+        If ``to_transaction`` is ``None``, it means that we move transactions at the end of the
+        list.
+
+        Make sure your move is legal by calling :meth:`can_move_transactions` first.
+
+        After the move, ``transaction_changed`` is broadcasted.
+
+        :param transactions: a collection of :class:`.Transaction` to move.
+        :param to_transaction: target :class:`.Transaction` to move to.
+        """
         for transaction in transactions:
             self.transactions.move_before(transaction, to_transaction)
         self._cook()
@@ -219,6 +310,25 @@ class BaseDocument:
     def change_entry(
             self, entry, date=NOEDIT, reconciliation_date=NOEDIT, description=NOEDIT, payee=NOEDIT,
             checkno=NOEDIT, transfer=NOEDIT, amount=NOEDIT, global_scope=False):
+        """Properly sets properties for ``entry``.
+
+        Changes the attributes of ``entry`` (and the transaction in which ``entry`` is) to specified
+        values and then post a ``transaction_changed`` notification. Attributes with ``NOEDIT``
+        values are not touched.
+
+        ``transfer`` is the name of the transfer to assign the entry to. If it's not found, a new
+        account will be created.
+
+        :param entry: :class:`.Entry`
+        :param date: ``datetime.date``
+        :param reconciliation_date: ``datetime.date``
+        :param description: ``str``
+        :param payee: ``str``
+        :param checkno: ``str``
+        :param transfer: ``str`` (name of account)
+        :param amount: :class:`.Amount`
+        :param bool global_scope: Whether this changes affect the whole recurrence (if applicable)
+        """
         assert entry is not None
         if date is not NOEDIT and amount is not NOEDIT and amount != 0:
             Currency.get_rates_db().ensure_rates(date, [amount.currency.code, entry.account.currency.code])
@@ -249,6 +359,7 @@ class BaseDocument:
         self.delete_transactions(transactions, from_account=from_account)
 
     def clear(self):
+        """Removes all data from the document (transactions, accounts, schedules, etc.)."""
         self._clear()
 
     def format_amount(self, amount, force_explicit_currency=False, **kwargs):
@@ -289,7 +400,8 @@ class Document(BaseDocument, Repeater, GUIObject):
     dates are ``datetime.date`` instances, amounts are :class:`Amount` instances, indexes are
     ``int``.
 
-    Subclasses :class:`hscommon.notify.Repeater` and :class:`hscommon.gui.base.GUIObject`.
+    Subclasses :class:`BaseDocument`, :class:`hscommon.notify.Repeater` and
+    :class:`hscommon.gui.base.GUIObject`.
     """
     REPEATED_NOTIFICATIONS = {'saved_custom_ranges_changed'}
 
@@ -665,18 +777,9 @@ class Document(BaseDocument, Repeater, GUIObject):
     def change_transaction(self, original, new):
         """Changes the attributes of ``original`` so that they match those of ``new``.
 
-        This is used by the :class:`.TransactionPanel`, and ``new`` is originally a copy of
-        ``original`` which has been changed. Accounts linked to splits in ``new`` don't have to be
-        accounts that are part of the document. This method will automatically internalize accounts
-        linked to splits (and create new accounts if necessary).
+        Overrides :meth:`BaseDocument.change_transaction`.
 
-        If ``new``'s date is outside of the current date range, the date range will automatically be
-        changed so that it contains ``new``.
-
-        If ``original`` is a schedule :class:`.Spawn`, the UI will be queried for a scope, which
-        might result in the change being aborted.
-
-        After the transaction change, ``transaction_changed`` is broadcasted.
+        Adds undo recording, global scope querying, date range adjustments and UI triggers.
 
         :param original: :class:`.Transaction`
         :param new: :class:`.Transaction`, a modified copy of ``original``.
@@ -695,16 +798,9 @@ class Document(BaseDocument, Repeater, GUIObject):
             from_=NOEDIT, to=NOEDIT, amount=NOEDIT, currency=NOEDIT):
         """Properly sets properties for ``transactions``.
 
-        Changes the attributes of every transaction in ``transactions`` to the values specified in
-        the arguments (arguments left to ``NOEDIT`` have no effect).
+        Overrides :meth:`BaseDocument.change_transactions`.
 
-        ``from_`` and ``to`` are account **names** rather than being :class:`.Account` instances. If
-        the names don't exist, they'll automatically be created.
-
-        If any transaction in ``transactions`` is a schedule :class:`.Spawn`, the UI will be queried
-        for a scope, which might result in the change being aborted.
-
-        After the transaction change, ``transaction_changed`` is broadcasted.
+        Adds undo recording, global scope querying, date range adjustments and UI triggers.
 
         :param date: ``datetime.date``
         :param description: ``str``
@@ -734,15 +830,9 @@ class Document(BaseDocument, Repeater, GUIObject):
     def delete_transactions(self, transactions, from_account=None):
         """Removes every transaction in ``transactions`` from the document.
 
-        If any transaction in ``transactions`` is a schedule :class:`.Spawn`, the UI will be queried
-        for a scope, which might result in the deletion being aborted.
+        Overrides :meth:`BaseDocument.delete_transactions`.
 
-        After the transaction deletion, ``transaction_deleted`` is broadcasted.
-
-        ``from_account`` represents, in the UI, the account from which this deletion was triggered.
-        By specifying it, you will prevent it from being automatically purged by
-        :meth:`_clean_empty_categories` (we don't want to delete an account that is actively being
-        worked on by the user).
+        Adds undo recording, global scope querying, date range adjustments and UI triggers.
 
         :param transactions: a collection of :class:`.Transaction`.
         :param from_account: the :class:`.Account` from which the operation takes place, if any.
@@ -765,10 +855,9 @@ class Document(BaseDocument, Repeater, GUIObject):
     def duplicate_transactions(self, transactions):
         """Create copies of ``transactions`` in the document.
 
-        For each transaction in ``transactions``, add a new transaction with the same attributes to
-        the document.
+        Overrides :meth:`BaseDocument.duplicate_transactions`.
 
-        After the operation, ``transaction_changed`` is broadcasted.
+        Adds undo recording and UI triggers.
 
         :param transactions: a collection of :class:`.Transaction` to duplicate.
         """
@@ -784,12 +873,9 @@ class Document(BaseDocument, Repeater, GUIObject):
     def move_transactions(self, transactions, to_transaction):
         """Re-orders ``transactions`` so that they are right before ``to_transaction``.
 
-        If ``to_transaction`` is ``None``, it means that we move transactions at the end of the
-        list.
+        Overrides :meth:`BaseDocument.move_transactions`.
 
-        Make sure your move is legal by calling :meth:`can_move_transactions` first.
-
-        After the move, ``transaction_changed`` is broadcasted.
+        Adds undo recording and UI triggers.
 
         :param transactions: a collection of :class:`.Transaction` to move.
         :param to_transaction: target :class:`.Transaction` to move to.
@@ -810,12 +896,9 @@ class Document(BaseDocument, Repeater, GUIObject):
             checkno=NOEDIT, transfer=NOEDIT, amount=NOEDIT):
         """Properly sets properties for ``entry``.
 
-        Changes the attributes of ``entry`` (and the transaction in which ``entry`` is) to specified
-        values and then post a ``transaction_changed`` notification. Attributes with ``NOEDIT``
-        values are not touched.
+        Overrides :meth:`BaseDocument.change_entry`.
 
-        ``transfer`` is the name of the transfer to assign the entry to. If it's not found, a new
-        account will be created.
+        Adds undo recording, global scope querying, date range adjustments and UI triggers.
 
         :param entry: :class:`.Entry`
         :param date: ``datetime.date``
