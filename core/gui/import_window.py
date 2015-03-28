@@ -260,7 +260,7 @@ class AccountPane:
             check_better(imported_entry, weight)
 
             if (existing_entry not in self._match_entries and
-                imported_entry not in self._match_entries):
+                    imported_entry not in self._match_entries):
                 # If no other recommendations for the existing or imported entries existed,
                 # then this is the first recommendation and we will use it.
                 new_match = EntryMatch(existing_entry, imported_entry, will_import, weight)
@@ -305,8 +305,8 @@ class AccountPane:
 
             # If there is a recommendations
             if (match_entry and
-                  match_entry.existing not in processed and
-                  match_entry.imported not in processed):
+                    match_entry.existing not in processed and
+                    match_entry.imported not in processed):
                 if is_import:
                     # If it's an import entry, we don't need to "refresh" the existing
                     # entry because it is not recooked.
