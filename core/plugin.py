@@ -271,16 +271,7 @@ class ImportActionPlugin(Plugin, Broadcaster):
         pass
 
 
-class EntryMatch:
-
-    def __init__(self, existing, imported, will_import, weight):
-        self.existing = existing
-        self.imported = imported
-        self.will_import = will_import
-        self.weight = weight
-
-    def __iter__(self):
-        return iter((self.existing, self.imported, self.will_import, self.weight))
+EntryMatch = namedtuple('EntryProbability', 'existing imported will_import weight')
 
 
 class ImportBindPlugin(Plugin):
@@ -288,3 +279,4 @@ class ImportBindPlugin(Plugin):
     def match_entries(self, target_account, document, import_document, existing_entries, imported_entries):
         # Returns a list of EntryMatch objects.
         return []
+
