@@ -45,7 +45,7 @@ class SwapType:
 
 class ActionSelectionOptions:
     ApplyToPane = 0
-    ApplyToAll = 1  # Ordering is important to respect legacy code (0/1 : False/True comparisons)
+    ApplyToAll = 1
     ApplyToSelection = 2
 
 

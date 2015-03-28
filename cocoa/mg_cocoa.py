@@ -24,6 +24,7 @@ from core.exception import FileFormatError
 from core.gui.csv_options import FIELD_ORDER as CSV_FIELD_ORDER, \
     SUPPORTED_ENCODINGS as CSV_SUPPORTED_ENCODINGS
 from core.gui.date_widget import DateWidget
+from core.gui.import_window import ActionSelectionOptions
 from core.gui.main_window import MainWindow
 from core.gui.print_view import PrintView
 from core.gui.transaction_print import TransactionPrint, EntryPrint
@@ -1212,7 +1213,8 @@ class PyImportWindow(PyGUIObject):
         return len(self.model.panes)
 
     def performSwap_(self, applyToAll: bool):
-        self.model.perform_swap(apply=applyToAll)
+        apply = ActionSelectionOptions.ApplyToAll if applyToAll else ActionSelectionOptions.ApplyToPane
+        self.model.perform_swap(apply=apply)
 
     def selectedTargetAccountIndex(self) -> int:
         return self.model.selected_target_account_index

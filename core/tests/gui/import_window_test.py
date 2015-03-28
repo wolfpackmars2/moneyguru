@@ -214,7 +214,7 @@ def test_import_again(app):
 @with_app(app_import_checkbook_qif_twice)
 def test_switch_description_payee_apply_to_all(app):
     app.iwin.swap_type_list.select(SwapType.DescriptionPayee)
-    app.iwin.perform_swap(apply=True)
+    app.iwin.perform_swap(apply=ActionSelectionOptions.ApplyToAll)
     # the 4th entry is the Hydro Quebec entry
     app.iwin.selected_pane_index = 2
     eq_(app.itable[3].description_import, 'Hydro-Quebec')
@@ -478,7 +478,7 @@ def app_three_imports_two_of_them_with_low_date():
 def test_switch_apply_to_all(app):
     # when the 'apply' argument is passed, the swucth happens in all applicable accounts
     app.iwin.swap_type_list.select(SwapType.DayMonth)
-    app.iwin.perform_swap(apply=True)
+    app.iwin.perform_swap(apply=ActionSelectionOptions.ApplyToAll)
     app.iwin.selected_pane_index = 1
     eq_(app.itable[0].date_import, '11/05/2008') # switched
     app.iwin.selected_pane_index = 2
@@ -510,14 +510,14 @@ def app_two_accounts_with_common_txn():
 def test_switch_date_with_common_txn(app):
     # the transaction in the 2 accounts is the same. *don't* switch it twice!
     app.iwin.swap_type_list.select(SwapType.DayMonth)
-    app.iwin.perform_swap(apply=True)
+    app.iwin.perform_swap(apply=ActionSelectionOptions.ApplyToAll)
     eq_(app.itable[0].date_import, '11/05/2008')
 
 @with_app(app_two_accounts_with_common_txn)
 def test_switch_description_payee_with_common_txn(app):
     # same as with dates: don't switch twice
     app.iwin.swap_type_list.select(SwapType.DescriptionPayee)
-    app.iwin.perform_swap(apply=True)
+    app.iwin.perform_swap(apply=ActionSelectionOptions.ApplyToAll)
     eq_(app.itable[0].description_import, 'bar')
     eq_(app.itable[0].payee_import, 'foo')
 
@@ -627,7 +627,7 @@ def test_change_split_structure(app):
     eq_(app.itable[1].amount_import, '0.00')
     eq_(app.itable[2].transfer_import, 'x')
     eq_(app.itable[2].amount_import, '1.00')
-    app.iwin.perform_swap(apply=True)
+    app.iwin.perform_swap(apply=ActionSelectionOptions.ApplyToAll)
     eq_(app.itable[0].transfer_import, 'x, imbalance account')
     eq_(app.itable[0].amount_import, '0.00')
     eq_(app.itable[1].transfer_import, 'x, imbalance account')
