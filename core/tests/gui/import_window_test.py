@@ -12,12 +12,24 @@ from hscommon.testutil import eq_
 
 from ..base import TestApp, with_app, DictLoader, testdata
 from ...model.date import YearRange
-from ...gui.import_window import SwapType, ActionSelectionOptions
+from ...gui.import_window import ActionSelectionOptions
 
 from core.model.transaction import Split
 from core.model.account import AccountType
 from core.model.amount import Amount
 from core.plugin import ImportActionPlugin
+
+# Legacy structure
+# This used to list the possible swap operations. Since the introduction of import plugins, this
+# structure no longer makes sense. Because old tests are built around it, we keep it around, but
+# only here.
+class SwapType:
+    DayMonth = 0
+    MonthYear = 1
+    DayYear = 2
+    DescriptionPayee = 3
+    InvertAmount = 4
+
 
 #--- No setup
 

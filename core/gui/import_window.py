@@ -35,14 +35,6 @@ def unique_groups(lst, keyfunc):
         results[keyfunc(itm)].append(itm)
     return results.values()
 
-class SwapType:
-    DayMonth = 0
-    MonthYear = 1
-    DayYear = 2
-    DescriptionPayee = 3
-    InvertAmount = 4
-
-
 class ActionSelectionOptions:
     ApplyToPane = 0
     ApplyToAll = 1
@@ -508,7 +500,7 @@ class ImportWindow(MainWindowGUIObject):
         self.swap_type_list = LinkedSelectableList(items=[
             plugin.ACTION_NAME for plugin in self._import_action_plugins
         ], setfunc=setfunc)
-        self.swap_type_list.selected_index = SwapType.DayMonth
+        self.swap_type_list.selected_index = 0
         self.panes = []
         self.import_table = ImportTable(self)
 
