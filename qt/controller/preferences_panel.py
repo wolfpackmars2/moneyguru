@@ -19,7 +19,7 @@ from core.model.date import clean_format
 
 tr = trget('ui')
 
-SUPPORTED_LANGUAGES = ['en', 'fr', 'de', 'it', 'cs', 'nl', 'es']
+SUPPORTED_LANGUAGES = ['en', 'fr', 'de', 'it', 'cs', 'nl', 'es', 'ru']
 
 class PreferencesPanel(QDialog):
     def __init__(self, parent, app):

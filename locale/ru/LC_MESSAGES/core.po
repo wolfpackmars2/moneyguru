@@ -1,0 +1,513 @@
+# 
+# Translators:
+# Igor Fokusov <igor@fokusov.com>, 2015
+msgid ""
+msgstr ""
+"Project-Id-Version: moneyGuru\n"
+"PO-Revision-Date: 2015-04-13 18:07+0000\n"
+"Last-Translator: Igor Fokusov <igor@fokusov.com>\n"
+"Language-Team: Russian (http://www.transifex.com/projects/p/moneyguru/language/ru/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
+"Content-Transfer-Encoding: utf-8\n"
+"Language: ru\n"
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: core/document.py:212
+msgid "Add transaction"
+msgstr "Добавить транзакцию"
+
+#: core/document.py:215 core/document.py:533
+msgid "Change transaction"
+msgstr "Изменить транзакцию"
+
+#: core/document.py:335
+msgid "Change account"
+msgstr "Изменить счет"
+
+#: core/document.py:365
+msgid "Remove account"
+msgstr "Удалить счет"
+
+#: core/document.py:407
+msgid "New account"
+msgstr "Новый счет"
+
+#: core/document.py:410
+msgid "Add account"
+msgstr "Добавить счет"
+
+#: core/document.py:443
+msgid "Change group"
+msgstr "Изменить группу"
+
+#: core/document.py:460
+msgid "Remove group"
+msgstr "Удалить группу"
+
+#: core/document.py:480
+msgid "New group"
+msgstr "Новая группа"
+
+#: core/document.py:482
+msgid "Add group"
+msgstr "Добавить группу"
+
+#: core/document.py:621
+msgid "Remove transaction"
+msgstr "Удалить транзакцию"
+
+#: core/document.py:657
+msgid "Duplicate transactions"
+msgstr "Дублировать транзакции"
+
+#: core/document.py:684
+msgid "Move transaction"
+msgstr "Переместить транзакцию"
+
+#: core/document.py:769
+msgid "Change reconciliation"
+msgstr "Изменить сверку"
+
+#: core/document.py:836
+msgid "Change Budget"
+msgstr "Изменить бюджет"
+
+#: core/document.py:839
+msgid "Add Budget"
+msgstr "Добавить бюджет"
+
+#: core/document.py:864
+msgid "Remove Budget"
+msgstr "Удалить бюджет"
+
+#: core/document.py:889
+msgid "Change Schedule"
+msgstr "Изменить расписание"
+
+#: core/document.py:892
+msgid "Add Schedule"
+msgstr "Добавить расписание"
+
+#: core/document.py:917
+msgid "Remove Schedule"
+msgstr "Удалить расписание"
+
+#: core/document.py:985
+msgid "\"%s\" is not a moneyGuru file"
+msgstr "\"%s\" это не файл moneyGuru"
+
+#: core/document.py:1073
+msgid "Import"
+msgstr "Импорт"
+
+#: core/gui/account_panel.py:18
+msgid "Asset"
+msgstr "Актив"
+
+#: core/gui/account_panel.py:19
+msgid "Liability"
+msgstr "Обязательство"
+
+#: core/gui/account_panel.py:20
+msgid "Income"
+msgstr "Доход"
+
+#: core/gui/account_panel.py:21
+msgid "Expense"
+msgstr "Расход"
+
+#: core/gui/account_pie_chart.py:64
+msgid "Assets & Liabilities"
+msgstr "Активы и обязательства"
+
+#: core/gui/account_pie_chart.py:85
+msgid "Income & Expenses"
+msgstr "Доходы и расходы"
+
+#: core/gui/account_reassign_panel.py:26
+msgid "No Account"
+msgstr "Нет счета"
+
+#: core/gui/account_view.py:20
+msgid ""
+"{account_name}\n"
+"Entries from {start_date} to {end_date}"
+msgstr "{account_name}\nЗаписи с {start_date} по {end_date}"
+
+#: core/gui/account_view.py:56
+msgid "{0} out of {1} selected. Increase: {2} Decrease: {3}"
+msgstr "{0} из {1} выделены. Доход: {2} Расход: {3}"
+
+#: core/gui/balance_sheet.py:72
+msgid "ASSETS"
+msgstr "АКТИВЫ"
+
+#: core/gui/balance_sheet.py:73
+msgid "LIABILITIES"
+msgstr "ОБЯЗАТЕЛЬСТВА"
+
+#: core/gui/balance_sheet.py:74
+msgid "NET WORTH"
+msgstr "ЧИСТАЯ СТОИМОСТЬ"
+
+#: core/gui/budget_panel.py:45 core/gui/csv_options.py:20
+msgid "None"
+msgstr "Не выбрано"
+
+#: core/gui/budget_panel.py:76
+msgid "Income/Expense accounts must be created before budgets can be set."
+msgstr "Перед тем как настроить бюджет, нужно создать счета доходов/расходов"
+
+#: core/gui/budget_view.py:16
+msgid "Budgets from {start_date} to {end_date}"
+msgstr "Бюджеты с {start_date} по {end_date}"
+
+#: core/gui/csv_options.py:21
+msgid "Date"
+msgstr "Дата"
+
+#: core/gui/csv_options.py:22
+msgid "Description"
+msgstr "Описание"
+
+#: core/gui/csv_options.py:23
+msgid "Payee"
+msgstr "Контрагент"
+
+#: core/gui/csv_options.py:24
+msgid "Check #"
+msgstr "Номер чека"
+
+#: core/gui/csv_options.py:25
+msgid "Transfer"
+msgstr "Перевод"
+
+#: core/gui/csv_options.py:26
+msgid "Amount"
+msgstr "Сумма"
+
+#: core/gui/csv_options.py:27
+msgid "Increase"
+msgstr "Увеличение"
+
+#: core/gui/csv_options.py:28
+msgid "Decrease"
+msgstr "Уменьшение"
+
+#: core/gui/csv_options.py:29
+msgid "Currency"
+msgstr "Валюта"
+
+#: core/gui/csv_options.py:30
+msgid "Transaction ID"
+msgstr "ID транзакции"
+
+#: core/gui/csv_options.py:102 core/gui/csv_options.py:207
+#: core/gui/csv_options.py:241
+msgid "Default"
+msgstr "По-умолчанию"
+
+#: core/gui/csv_options.py:257 core/gui/import_window.py:364
+msgid "< New Account >"
+msgstr "< Новый счет >"
+
+#: core/gui/docprops_view.py:21
+msgid "Monday"
+msgstr "Понедельник"
+
+#: core/gui/docprops_view.py:22
+msgid "Tuesday"
+msgstr "Вторник"
+
+#: core/gui/docprops_view.py:23
+msgid "Wednesday"
+msgstr "Среда"
+
+#: core/gui/docprops_view.py:24
+msgid "Thursday"
+msgstr "Четверг"
+
+#: core/gui/docprops_view.py:25
+msgid "Friday"
+msgstr "Пятница"
+
+#: core/gui/docprops_view.py:26
+msgid "Saturday"
+msgstr "Суббота"
+
+#: core/gui/docprops_view.py:27
+msgid "Sunday"
+msgstr "Воскресенье"
+
+#: core/gui/docprops_view.py:36
+msgid "January"
+msgstr "Январь"
+
+#: core/gui/docprops_view.py:37
+msgid "February"
+msgstr "Февраль"
+
+#: core/gui/docprops_view.py:38
+msgid "March"
+msgstr "Март"
+
+#: core/gui/docprops_view.py:39
+msgid "April"
+msgstr "Апрель"
+
+#: core/gui/docprops_view.py:40
+msgid "May"
+msgstr "Май"
+
+#: core/gui/docprops_view.py:41
+msgid "June"
+msgstr "Июнь"
+
+#: core/gui/docprops_view.py:42
+msgid "July"
+msgstr "Июль"
+
+#: core/gui/docprops_view.py:43
+msgid "August"
+msgstr "Август"
+
+#: core/gui/docprops_view.py:44
+msgid "September"
+msgstr "Сентябрь"
+
+#: core/gui/docprops_view.py:45
+msgid "October"
+msgstr "Октябрь"
+
+#: core/gui/docprops_view.py:46
+msgid "November"
+msgstr "Ноябрь"
+
+#: core/gui/docprops_view.py:47
+msgid "December"
+msgstr "Декабрь"
+
+#: core/gui/entry_table.py:19
+msgid "Debit/Credit"
+msgstr "Дебет/Кредит"
+
+#: core/gui/entry_table_base.py:285
+msgid "Previous Balance"
+msgstr "Предыдущий баланс"
+
+#: core/gui/entry_table_base.py:300 core/gui/transaction_table.py:257
+msgid "TOTAL"
+msgstr "ВСЕГО"
+
+#: core/gui/general_ledger_view.py:17
+msgid "General Ledger from {start_date} to {end_date}"
+msgstr "Главная книга с {start_date} по {end_date}"
+
+#: core/gui/general_ledger_view.py:52
+msgid "{0} out of {1} selected. Debit: {2} Credit: {3}"
+msgstr "{0} из {1} выделены. Дебет: {2} Кредит: {3}"
+
+#: core/gui/import_window.py:150
+msgid "Description <--> Payee"
+msgstr "Описание <--> Контрагент"
+
+#: core/gui/import_window.py:151
+msgid "Invert Amounts"
+msgstr "Сменить знак Суммы"
+
+#: core/gui/income_statement.py:66
+msgid "INCOME"
+msgstr "ДОХОД"
+
+#: core/gui/income_statement.py:67
+msgid "EXPENSES"
+msgstr "РАСХОДЫ"
+
+#: core/gui/income_statement.py:68
+msgid "NET INCOME"
+msgstr "ЧИСТЫЙ ДОХОД"
+
+#: core/gui/main_window.py:49 core/gui/net_worth_graph.py:40
+msgid "Net Worth"
+msgstr "Чистая стоимость"
+
+#: core/gui/main_window.py:50 core/gui/profit_graph.py:42
+msgid "Profit & Loss"
+msgstr "Прибыли / Убытки"
+
+#: core/gui/main_window.py:51
+msgid "Transactions"
+msgstr "Транзакции"
+
+#: core/gui/main_window.py:52
+msgid "Schedules"
+msgstr "Расписания"
+
+#: core/gui/main_window.py:53
+msgid "Budgets"
+msgstr "Бюджеты"
+
+#: core/gui/main_window.py:54
+msgid "General Ledger"
+msgstr "Главная книга"
+
+#: core/gui/main_window.py:55
+msgid "Document Properties"
+msgstr "Свойства документа"
+
+#: core/gui/main_window.py:56
+msgid "New Tab"
+msgstr "Новая вкладка"
+
+#: core/gui/main_window.py:472
+msgid "%s is of an unknown format."
+msgstr "%s - неизвестный формат."
+
+#: core/gui/networth_view.py:19
+msgid "Net Worth at {end_date}, starting from {start_date}"
+msgstr "Чистая стоимость на {end_date}, начиная с {start_date}"
+
+#: core/gui/pie_chart.py:158
+msgid "Others"
+msgstr "Другие"
+
+#: core/gui/profit_view.py:19
+msgid "Profit and Loss from {start_date} to {end_date}"
+msgstr "Прибыли / Убытки с {start_date} по {end_date}"
+
+#: core/gui/report.py:211
+msgid "Total "
+msgstr "Всего"
+
+#: core/gui/report.py:231
+msgid "TOTAL "
+msgstr "ВСЕГО"
+
+#: core/gui/report.py:274
+msgid "The account '{0}' already exists."
+msgstr "Счет '{0}' уже существует."
+
+#: core/gui/schedule_panel.py:24
+msgid "day"
+msgstr "день"
+
+#: core/gui/schedule_panel.py:25
+msgid "week"
+msgstr "неделя"
+
+#: core/gui/schedule_panel.py:26 core/gui/schedule_panel.py:28
+#: core/gui/schedule_panel.py:29
+msgid "month"
+msgstr "месяц"
+
+#: core/gui/schedule_panel.py:27
+msgid "year"
+msgstr "год"
+
+#: core/gui/schedule_panel.py:33
+msgid "days"
+msgstr "дней"
+
+#: core/gui/schedule_panel.py:34
+msgid "weeks"
+msgstr "недель"
+
+#: core/gui/schedule_panel.py:35 core/gui/schedule_panel.py:37
+#: core/gui/schedule_panel.py:38
+msgid "months"
+msgstr "месяцев"
+
+#: core/gui/schedule_panel.py:36
+msgid "years"
+msgstr "лет"
+
+#: core/gui/schedule_table.py:82 core/gui/schedule_table.py:84
+#: core/gui/transaction_print.py:28 core/gui/transaction_table.py:154
+#: core/gui/transaction_table.py:157
+msgid "Unassigned"
+msgstr "Не назначено"
+
+#: core/gui/schedule_view.py:16
+msgid "Schedules from {start_date} to {end_date}"
+msgstr "Расписания с {start_date} по {end_date}"
+
+#: core/gui/transaction_view.py:21
+msgid "Transactions from {start_date} to {end_date}"
+msgstr "Транзакции с {start_date} по {end_date}"
+
+#: core/gui/transaction_view.py:50
+msgid "{0} out of {1} selected. Amount: {2}"
+msgstr "{0} из {1} выбрано. Сумма: {2}"
+
+#: core/loader/csv.py:118
+msgid "The Date column has been set on a column that doesn't contain dates."
+msgstr "Колонка Дата назначена, при этом ни одной даты не обнаружено."
+
+#: core/loader/csv.py:131
+msgid ""
+"The Amount column has been set on a column that doesn't contain amounts."
+msgstr "Колонка Сумма назначена, при этом ни одной суммы не обнаружено."
+
+#: core/loader/csv.py:150
+msgid "The Date and Amount columns must be set."
+msgstr "Необходимо выбрать как минимум колонки Дата и Сумма."
+
+#: core/model/date.py:250
+msgid "Q{0} {1}"
+msgstr "Кв{0} {1}"
+
+#: core/model/date.py:318
+msgid "{0} - Now"
+msgstr "{0} - Сейчас"
+
+#: core/model/date.py:361
+msgid "Running year ({0} - {1})"
+msgstr "Текущий год ({0} - {1})"
+
+#: core/model/date.py:393
+msgid "All Transactions"
+msgstr "Все транзакции"
+
+#: core/model/recurrence.py:191
+msgid "Daily"
+msgstr "Ежедневно"
+
+#: core/model/recurrence.py:192
+msgid "Weekly"
+msgstr "Еженедельно"
+
+#: core/model/recurrence.py:193
+msgid "Monthly"
+msgstr "Ежемесячно"
+
+#: core/model/recurrence.py:194
+msgid "Yearly"
+msgstr "Ежегодно"
+
+#: core/model/recurrence.py:233
+msgid "fifth"
+msgstr "пятый"
+
+#: core/model/recurrence.py:233
+msgid "first"
+msgstr "первый"
+
+#: core/model/recurrence.py:233
+msgid "fourth"
+msgstr "четвертый"
+
+#: core/model/recurrence.py:233
+msgid "second"
+msgstr "второй"
+
+#: core/model/recurrence.py:233
+msgid "third"
+msgstr "третий"
+
+#: core/model/recurrence.py:234
+msgid "Every %s %s of the month"
+msgstr "Каждый %s %s месяца"
+
+#: core/model/recurrence.py:237
+msgid "Every last %s of the month"
+msgstr "Каждый последний %s месяца"
