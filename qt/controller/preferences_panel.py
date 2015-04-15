@@ -13,13 +13,13 @@ from PyQt4.QtGui import (
 )
 
 from hscommon.trans import trget
-from qtlib.preferences import LANGNAMES
+from qtlib.preferences import get_langnames
 from qtlib.util import verticalSpacer, horizontalWrap
 from core.model.date import clean_format
 
 tr = trget('ui')
 
-SUPPORTED_LANGUAGES = ['en', 'fr', 'de', 'it', 'cs', 'nl', 'es']
+SUPPORTED_LANGUAGES = ['en', 'fr', 'de', 'it', 'cs', 'nl', 'es', 'ru']
 
 class PreferencesPanel(QDialog):
     def __init__(self, parent, app):
@@ -56,6 +56,7 @@ class PreferencesPanel(QDialog):
         self.formLayout.addRow(tr("Font size:"), self.fontSizeSpinBox)
 
         self.languageComboBox = QComboBox(self)
+        LANGNAMES = get_langnames()
         for lang in SUPPORTED_LANGUAGES:
             self.languageComboBox.addItem(LANGNAMES[lang])
         self.languageComboBox.setMaximumSize(QSize(140, 0xffffff))
