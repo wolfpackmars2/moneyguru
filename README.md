@@ -7,6 +7,18 @@ reports which you have to configure (or find out which pre-configured report is 
 important financial data (net worth, profit) is constantly up-to-date and "in your face". This
 allows you to constantly make informed decision rather than doing so periodically.
 
+# Current status: People wanted
+
+moneyGuru has currently only one maintainer, me. This is a dangerous situation that needs to be
+corrected.
+
+The goal is to eventually have another active maintainer, but before we can get there, the project
+needs more contributors.
+
+Whatever your skills, if you are remotely interestested in being a contributor, I'm interested in
+mentoring you. If that's the case, please refer to [the open ticket on the subject][contrib-issue]
+and let's get started.
+
 # Contents of this folder
 
 This package contains the source for moneyGuru. Its documentation is
@@ -106,6 +118,7 @@ section in the english version of the main documentation. This documentation is 
 and is also [available online][documentation].
 
 [moneyguru]: http://www.hardcoded.net/moneyguru/
+[contrib-issue]: https://github.com/hsoft/moneyguru/issues/425
 [documentation]: http://www.hardcoded.net/moneyguru/help/en/
 [python]: http://www.python.org/
 [pyqt]: http://www.riverbankcomputing.com
