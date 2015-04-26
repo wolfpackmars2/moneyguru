@@ -4,13 +4,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: moneyGuru\n"
-"PO-Revision-Date: 2015-04-13 18:03+0000\n"
+"PO-Revision-Date: 2015-04-18 21:14+0000\n"
 "Last-Translator: Igor Fokusov <igor@fokusov.com>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/moneyguru/language/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: utf-8\n"
 "Language: ru\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: core/gui/balance_sheet.py:21 core/gui/budget_table.py:25
 #: core/gui/export_account_table.py:18 core/gui/income_statement.py:17
@@ -137,11 +137,11 @@ msgstr "Прошлый"
 
 #: core/gui/schedule_table.py:28 core/gui/transaction_table.py:30
 msgid "From"
-msgstr "Из"
+msgstr "Откуда"
 
 #: core/gui/schedule_table.py:29 core/gui/transaction_table.py:31
 msgid "To"
-msgstr "в"
+msgstr "Куда"
 
 #: core/gui/split_table.py:18
 msgid "Memo"

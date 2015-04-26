@@ -4,13 +4,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: moneyGuru\n"
-"PO-Revision-Date: 2015-04-13 21:20+0000\n"
+"PO-Revision-Date: 2015-04-25 21:12+0000\n"
 "Last-Translator: Igor Fokusov <igor@fokusov.com>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/moneyguru/language/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: utf-8\n"
 "Language: ru\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: qt/controller/account/filter_bar.py:18 qt/controller/export_panel.py:48
 #: qt/controller/transaction/filter_bar.py:18
@@ -87,7 +87,7 @@ msgstr "Переназначить счет"
 msgid ""
 "You're about to delete a non-empty account. Select an account to re-assign "
 "its transactions to."
-msgstr "Вы хотите удалить непустой счет. Выберите другой счет для перемещения транзакций с него."
+msgstr "Вы хотите удалить счет с записями. Выберите другой счет для перемещения транзакций с него."
 
 #: qt/controller/account_reassign_panel.py:57
 #: qt/controller/import_/csv_options.py:93
@@ -419,7 +419,7 @@ msgstr "Открыть..."
 
 #: qt/controller/main_window.py:195 cocoa/en.lproj/Localizable.strings:0
 msgid "Net Worth"
-msgstr "Чистая стоимость"
+msgstr "Чистая прибыль"
 
 #: qt/controller/main_window.py:198 cocoa/en.lproj/Localizable.strings:0
 msgid "Profit & Loss"
@@ -663,11 +663,11 @@ msgstr "Выберите вид вкладки:"
 
 #: qt/controller/new_view.py:51
 msgid "1. Net Worth"
-msgstr "1. Чистая стоимость"
+msgstr "1. Чистая прибыль"
 
 #: qt/controller/new_view.py:54
 msgid "2. Profit && Loss"
-msgstr "2. Прибыли / Убытки"
+msgstr "2. Прибыли и Убытки"
 
 #: qt/controller/new_view.py:57
 msgid "3. Transactions"
@@ -723,7 +723,7 @@ msgstr "Показывать диалог выбора периода при р�
 
 #: qt/controller/preferences_panel.py:63 cocoa/en.lproj/Localizable.strings:0
 msgid "Automatically place decimals when typing"
-msgstr "Подставлять цифры при наборе автоматически"
+msgstr "Автоматически помещать десятичные числа при вводе"
 
 #: qt/controller/preferences_panel.py:65 cocoa/en.lproj/Localizable.strings:0
 msgid "Debug mode (restart required)"
@@ -1119,7 +1119,7 @@ msgstr "В"
 
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Today's Date Range"
-msgstr "Сегодняшний диапазон дат"
+msgstr "Текущий диапазон дат"
 
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Toggle Columns"
