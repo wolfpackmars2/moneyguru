@@ -3,6 +3,7 @@
 
 Эта справка также доступна на других языках:
 
+* `На английском <http://www.hardcoded.net/moneyguru/help/en>`__
 * `На французском <http://www.hardcoded.net/moneyguru/help/fr>`__
 * `На немецком <http://www.hardcoded.net/moneyguru/help/de>`__
 * `На итальянском <http://www.hardcoded.net/moneyguru/help/it>`__
