@@ -4,13 +4,13 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: moneyGuru\n"
-"PO-Revision-Date: 2015-04-13 18:07+0000\n"
+"PO-Revision-Date: 2015-04-18 20:46+0000\n"
 "Last-Translator: Igor Fokusov <igor@fokusov.com>\n"
 "Language-Team: Russian (http://www.transifex.com/projects/p/moneyguru/language/ru/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: utf-8\n"
 "Language: ru\n"
-"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || (n%100>=11 && n%100<=14)? 2 : 3);\n"
 
 #: core/document.py:212
 msgid "Add transaction"
@@ -148,7 +148,7 @@ msgstr "ОБЯЗАТЕЛЬСТВА"
 
 #: core/gui/balance_sheet.py:74
 msgid "NET WORTH"
-msgstr "ЧИСТАЯ СТОИМОСТЬ"
+msgstr "ЧИСТАЯ ПРИБЫЛЬ"
 
 #: core/gui/budget_panel.py:45 core/gui/csv_options.py:20
 msgid "None"
@@ -297,7 +297,7 @@ msgstr "Предыдущий баланс"
 
 #: core/gui/entry_table_base.py:300 core/gui/transaction_table.py:257
 msgid "TOTAL"
-msgstr "ВСЕГО"
+msgstr "ВСЕГО "
 
 #: core/gui/general_ledger_view.py:17
 msgid "General Ledger from {start_date} to {end_date}"
@@ -329,11 +329,11 @@ msgstr "ЧИСТЫЙ ДОХОД"
 
 #: core/gui/main_window.py:49 core/gui/net_worth_graph.py:40
 msgid "Net Worth"
-msgstr "Чистая стоимость"
+msgstr "Чистая прибыль"
 
 #: core/gui/main_window.py:50 core/gui/profit_graph.py:42
 msgid "Profit & Loss"
-msgstr "Прибыли / Убытки"
+msgstr "Прибыли и Убытки"
 
 #: core/gui/main_window.py:51
 msgid "Transactions"
@@ -365,7 +365,7 @@ msgstr "%s - неизвестный формат."
 
 #: core/gui/networth_view.py:19
 msgid "Net Worth at {end_date}, starting from {start_date}"
-msgstr "Чистая стоимость на {end_date}, начиная с {start_date}"
+msgstr "Чистая прибыль на {end_date}, начиная с {start_date}"
 
 #: core/gui/pie_chart.py:158
 msgid "Others"
@@ -373,15 +373,15 @@ msgstr "Другие"
 
 #: core/gui/profit_view.py:19
 msgid "Profit and Loss from {start_date} to {end_date}"
-msgstr "Прибыли / Убытки с {start_date} по {end_date}"
+msgstr "Прибыли и Убытки с {start_date} по {end_date}"
 
 #: core/gui/report.py:211
 msgid "Total "
-msgstr "Всего"
+msgstr "Всего "
 
 #: core/gui/report.py:231
 msgid "TOTAL "
-msgstr "ВСЕГО"
+msgstr "ВСЕГО "
 
 #: core/gui/report.py:274
 msgid "The account '{0}' already exists."
