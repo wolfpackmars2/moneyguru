@@ -16,6 +16,8 @@
 
 | **Arnold Huzen, Dutch localization**
 
+| **Igor Fokusov, Russian localization** (`Github profile <https://github.com/fokusov>`__)
+
 | **Python, Programming language** (`Website <http://www.python.org>`__)
 | The bestest of the bests
 
