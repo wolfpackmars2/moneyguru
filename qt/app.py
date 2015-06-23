@@ -23,7 +23,7 @@ from .controller.main_window import MainWindow
 from .controller.preferences_panel import PreferencesPanel
 from .support.date_edit import DateEdit
 from .preferences import Preferences
-from .plat import HELP_PATH, BASE_PATH
+from .plat import HELP_PATH
 
 class MoneyGuru(ApplicationBase):
     VERSION = MoneyGuruModel.VERSION
@@ -41,12 +41,10 @@ class MoneyGuru(ApplicationBase):
         groupingSep = locale.groupSeparator()
         cachePath = QDesktopServices.storageLocation(QDesktopServices.CacheLocation)
         appdata = getAppData()
-        plugin_model_path = op.join(BASE_PATH, 'plugin_examples')
         DateEdit.DATE_FORMAT = dateFormat
         self.model = MoneyGuruModel(
             view=self, date_format=dateFormat, decimal_sep=decimalSep,
             grouping_sep=groupingSep, cache_path=cachePath, appdata_path=appdata,
-            plugin_model_path=plugin_model_path
         )
         # on the Qt side, we're single document based, so it's one doc per app.
         self.doc = Document(app=self)

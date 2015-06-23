@@ -20,16 +20,14 @@ the list of classes you can subclass:
 
 from datetime import date
 
-# Column is not used in this unit, but is imported to allow plugins to easily be able to import it.
-from hscommon.gui.column import Column # noqa
 from hscommon.currency import Currency, CurrencyNotSupportedException
 
 from collections import namedtuple
 
 from hscommon.notify import Broadcaster
-from .gui.base import BaseView
-from .gui.table import GUITable, Row
-from .const import PaneType
+from ..gui.base import BaseView
+from ..gui.table import GUITable, Row
+from ..const import PaneType
 
 class Plugin:
     """Base class for all plugins.

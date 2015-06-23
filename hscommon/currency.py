@@ -2,8 +2,8 @@
 # Created On: 2008-04-20
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 """This module facilitates currencies management. It exposes :class:`Currency` which lets you
@@ -20,9 +20,15 @@ from queue import Queue, Empty
 from .path import Path
 from .util import iterdaterange
 
+class CurrencyNotSupportedException(Exception):
+    """The current exchange rate provider doesn't support the requested currency."""
+
+class RateProviderUnavailable(Exception):
+    """The rate provider is temporarily unavailable."""
+
 class Currency:
     """Represents a currency and allow easy exchange rate lookups.
-    
+
     A ``Currency`` instance is created with either a 3-letter ISO code or with a full name. If it's
     present in the database, an instance will be returned. If not, ``ValueError`` is raised. The
     easiest way to access a currency instance, however, if by using module-level constants. For
@@ -57,10 +63,10 @@ class Currency:
 
     def __getnewargs__(self):
         return (self.code,)
- 
+
     def __getstate__(self):
         return None
-  
+
     def __setstate__(self, state):
         pass
 
@@ -70,7 +76,8 @@ class Currency:
     @staticmethod
     def register(code, name, exponent=2, start_date=None, start_rate=1, stop_date=None, latest_rate=1):
         """Registers a new currency and returns it."""
-        assert code not in Currency.by_code
+        if code in Currency.by_code:
+            return Currency.by_code[code]
         assert name not in Currency.by_name
         currency = object.__new__(Currency)
         currency.code = code
@@ -111,7 +118,7 @@ class Currency:
             return self.latest_rate
         else:
             return self.get_rates_db().get_rate(date, self.code, currency.code)
-    
+
     def set_CAD_value(self, value, date):
         """Sets the currency's value in CAD on the given date."""
         self.get_rates_db().set_CAD_value(date, self.code, value)
@@ -291,18 +298,12 @@ CAD = Currency(code='CAD')
 USD = Currency(code='USD')
 EUR = Currency(code='EUR')
 
-class CurrencyNotSupportedException(Exception):
-    """The current exchange rate provider doesn't support the requested currency."""
-
-class RateProviderUnavailable(Exception):
-    """The rate provider is temporarily unavailable."""
-
 def date2str(date):
     return '%d%02d%02d' % (date.year, date.month, date.day)
 
 class RatesDB:
     """Stores exchange rates for currencies.
-    
+
     The currencies are identified with ISO 4217 code (USD, CAD, EUR, etc.).
     The rates are represented as float and represent the value of the currency in CAD.
     """
@@ -318,7 +319,7 @@ class RatesDB:
         self.async = async
         self._fetched_values = Queue()
         self._fetched_ranges = {} # a currency --> (start, end) map
-    
+
     def _execute(self, *args, **kwargs):
         def create_tables():
             # date is stored as a TEXT YYYYMMDD
@@ -326,7 +327,7 @@ class RatesDB:
             self.con.execute(sql)
             sql = "create unique index idx_rate on rates (date, currency)"
             self.con.execute(sql)
-        
+
         try:
             return self.con.execute(*args, **kwargs)
         except sqlite.OperationalError: # new db, or other problems
@@ -347,7 +348,7 @@ class RatesDB:
                 self.con = sqlite.connect(':memory:')
             create_tables()
         return self.con.execute(*args, **kwargs) # try again
-    
+
     def _seek_value_in_CAD(self, str_date, currency_code):
         if currency_code == 'CAD':
             return 1
@@ -358,10 +359,10 @@ class RatesDB:
             if row:
                 return row[0]
         return seek('<=', 'desc') or seek('>=', '') or Currency(currency_code).latest_rate
-    
+
     def _ensure_filled(self, date_start, date_end, currency_code):
         """Make sure that the cache contains *something* for each of the dates in the range.
-        
+
         Sometimes, our provider doesn't return us the range we sought. When it does, it usually
         means that it never will and to avoid repeatedly querying those ranges forever, we have to
         fill them. We use the closest rate for this.
@@ -377,7 +378,7 @@ class RatesDB:
                 nearby_rate = self._seek_value_in_CAD(date2str(curdate), currency_code)
                 self.set_CAD_value(curdate, currency_code, nearby_rate)
                 logging.debug("Filled currency void for %s at %s (value: %2.2f)", currency_code, curdate, nearby_rate)
-                
+
     def _save_fetched_rates(self):
         while True:
             try:
@@ -390,13 +391,13 @@ class RatesDB:
                 logging.debug("Finished saving rates for currency %s", currency)
             except Empty:
                 break
-    
+
     def clear_cache(self):
         self._cache = {}
-    
+
     def date_range(self, currency_code):
         """Returns (start, end) of the cached rates for currency.
-        
+
         Returns a tuple ``(start_date, end_date)`` representing dates covered in the database for
         currency ``currency_code``. If there are gaps, they are not accounted for (subclasses that
         automatically update themselves are not supposed to introduce gaps in the db).
@@ -409,10 +410,10 @@ class RatesDB:
             return convert(start), convert(end)
         else:
             return None
-    
+
     def get_rate(self, date, currency1_code, currency2_code):
         """Returns the exchange rate between currency1 and currency2 for date.
-        
+
         The rate returned means '1 unit of currency1 is worth X units of currency2'.
         The rate of the nearest date that is smaller than 'date' is returned. If
         there is none, a seek for a rate with a higher date will be made.
@@ -440,7 +441,7 @@ class RatesDB:
                 value2 = self._seek_value_in_CAD(str_date, currency2_code)
                 self._cache[(date, currency2_code)] = value2
         return value1 / value2
-    
+
     def set_CAD_value(self, date, currency_code, value):
         """Sets the daily value in CAD for currency at date"""
         # we must clear the whole cache because there might be other dates affected by this change
@@ -450,28 +451,28 @@ class RatesDB:
         sql = "replace into rates(date, currency, rate) values(?, ?, ?)"
         self._execute(sql, [str_date, currency_code, value])
         self.con.commit()
-    
+
     def register_rate_provider(self, rate_provider):
         """Adds `rate_provider` to the list of providers supported by this DB.
-        
+
         A provider if a function(currency, start_date, end_date) that returns a list of
         (rate_date, float_rate) as a result. This function will be called asyncronously, so it's ok
         if it takes a long time to return.
-        
+
         The rates returned must be the value of 1 `currency` in CAD (Canadian Dollars) at the
         specified date.
-        
+
         The provider can be asked for any currency. If it doesn't support it, it has to raise
         CurrencyNotSupportedException.
-        
+
         If we support the currency but that there is no rate available for the specified range,
         simply return an empty list or None.
         """
         self._rate_providers.append(rate_provider)
-    
+
     def ensure_rates(self, start_date, currencies):
         """Ensures that the DB has all the rates it needs for 'currencies' between 'start_date' and today
-        
+
         If there is any rate missing, a request will be made to the currency server. The requests
         are made asynchronously.
         """
@@ -498,7 +499,7 @@ class RatesDB:
                         break
                 else:
                     logging.debug("Fetching failed!")
-        
+
         currencies_and_range = []
         for currency in currencies:
             if currency == 'CAD':
@@ -530,4 +531,4 @@ class RatesDB:
             threading.Thread(target=do).start()
         else:
             do()
-    
+

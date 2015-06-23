@@ -504,7 +504,12 @@ class TestApp(TestAppBase):
 
     def set_plugins(self, plugins):
         # Changes the list of currently active plugins in `self.app` to `plugins`.
-        self.app.plugins = plugins
+        class bag: pass
+        fakemod = bag()
+        for index, plugin in enumerate(plugins):
+            setattr(fakemod, 'plugin%d' % index, plugin)
+        self.app.plugins = []
+        self.app._load_plugin_module(fakemod)
         self.app._hook_currency_plugins()
         self.iwin._receive_plugins(plugins)
 

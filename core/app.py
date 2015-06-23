@@ -9,7 +9,6 @@
 import sys
 import os
 import os.path as op
-import shutil
 import logging
 import datetime
 import threading
@@ -25,7 +24,7 @@ from .const import DATE_FORMAT_FOR_PREFERENCES
 from .model import currency
 from .model.amount import parse_amount, format_amount
 from .model.date import parse_date, format_date
-from .plugin import Plugin, CurrencyProviderPlugin
+from .plugin import Plugin, CurrencyProviderPlugin, get_all_core_plugin_modules
 
 class PreferenceNames:
     """Holds a list of preference key constants used in moneyGuru.
@@ -133,7 +132,6 @@ class Application(Broadcaster):
     :param str appdata_path: Path in which we put user-specific files we need for moneyGuru to work
                              well, but that don't qualify as "cache". For now, it's where we put
                              the plugins. If ``None``, plugins are disabled.
-    :param str plugin_model_path: The path where moneyGuru's builtin plugins are located.
     """
 
     APP_NAME = "moneyGuru"
@@ -143,7 +141,7 @@ class Application(Broadcaster):
 
     def __init__(
             self, view, date_format='dd/MM/yyyy', decimal_sep='.', grouping_sep='',
-            default_currency=USD, cache_path=None, appdata_path=None, plugin_model_path=None):
+            default_currency=USD, cache_path=None, appdata_path=None):
         Broadcaster.__init__(self)
         self.view = view
         self.cache_path = cache_path
@@ -170,7 +168,9 @@ class Application(Broadcaster):
         self._show_schedule_scope_dialog = self.get_default(PreferenceNames.ShowScheduleScopeDialog, True)
         self.saved_custom_ranges = [None] * 3
         self._load_custom_ranges()
-        self._load_plugins(plugin_model_path)
+        self.plugins = []
+        self._load_core_plugins()
+        self._load_user_plugins()
         self._hook_currency_plugins()
         self._update_autosave_timer()
 
@@ -203,13 +203,25 @@ class Application(Broadcaster):
             else:
                 self.saved_custom_ranges[index] = None
 
-    def _load_plugins(self, plugin_model_path):
-        self.plugins = []
+    def _load_plugin_module(self, plugin_module):
+        for x in vars(plugin_module).values():
+            try:
+                if issubclass(x, Plugin) and x.NAME:
+                    if all(p.NAME != x.NAME for p in self.plugins):
+                        self.plugins.append(x)
+            except TypeError: # not a class, we don't care and ignore
+                pass
+
+    def _load_core_plugins(self):
+        for mod in get_all_core_plugin_modules():
+            self._load_plugin_module(mod)
+
+    def _load_user_plugins(self):
         if not self.appdata_path:
             return
         plpath = op.join(self.appdata_path, 'moneyguru_plugins')
         if not op.exists(plpath):
-            shutil.copytree(plugin_model_path, plpath)
+            os.mkdir(plpath)
         modulenames = [fn[:-3] for fn in os.listdir(plpath) if fn.endswith('.py') and fn != '__init__.py']
         sys.path.insert(0, self.appdata_path)
         for modulename in modulenames:
@@ -217,12 +229,8 @@ class Application(Broadcaster):
                 mod = importlib.import_module('moneyguru_plugins.'+modulename)
             except ImportError:
                 logging.warning("Couldn't import plugin %s", modulename)
-            for x in vars(mod).values():
-                try:
-                    if issubclass(x, Plugin) and x.NAME:
-                        self.plugins.append(x)
-                except TypeError: # not a class, we don't care and ignore
-                    pass
+            else:
+                self._load_plugin_module(mod)
         del sys.path[0]
 
     def _hook_currency_plugins(self):

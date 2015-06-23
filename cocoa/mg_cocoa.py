@@ -47,7 +47,6 @@ class PyMoneyGuruApp(PyBaseApp):
         logging.debug('started in debug mode')
         cache_path = op.join(proxy.getCachePath(), 'moneyGuru')
         appdata_path = op.join(proxy.getAppdataPath(), 'moneyGuru')
-        plugin_model_path = op.join(proxy.getResourcePath(), 'plugin_examples')
         currency_code = nonone(proxy.systemCurrency(), 'USD')
         logging.info('Currency code: {0}'.format(currency_code))
         try:
@@ -64,7 +63,7 @@ class PyMoneyGuruApp(PyBaseApp):
         logging.info('System numeric separators: %s and %s' % (grouping_sep, decimal_sep))
         model = Application(self, date_format=date_format, decimal_sep=decimal_sep,
             grouping_sep=grouping_sep, default_currency=system_currency, cache_path=cache_path,
-            appdata_path=appdata_path, plugin_model_path=plugin_model_path)
+            appdata_path=appdata_path)
         PyBaseApp.__init__(self, model)
 
     #--- Public
