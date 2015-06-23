@@ -12,20 +12,21 @@ from core.plugin import ReadOnlyTablePlugin, Column
 
 class CurrencyRatesPlugin(ReadOnlyTablePlugin):
     NAME = 'Currency Rates'
-    
+
     # The columns that will be present in our table. For each column we add here, we have to set
     # a field value in each row we'll add in fill_table().
     COLUMNS = [
         Column('name', "Currency"),
         Column('rate', "(will change dynamically)"),
+        Column('fetchdate', "Latest rate date"),
     ]
-    
+
     def __init__(self, mainwindow):
         ReadOnlyTablePlugin.__init__(self, mainwindow)
         native_currency = self.document.default_currency
         # A little hack to dynamically change our column title
         self.table.columns.column_by_name('rate').display = "Value in " + native_currency.code
-    
+
     def fill_table(self):
         native_currency = self.document.default_currency
         # Create a list of all splits so that we can access all our amounts.
@@ -39,4 +40,10 @@ class CurrencyRatesPlugin(ReadOnlyTablePlugin):
             # at the given date as a float value.
             exchange_rate = currency.value_in(native_currency, date.today())
             row.set_field('rate', '%0.4f' % exchange_rate, sort_value=exchange_rate)
-    
+            try:
+                _, max_date = currency.rates_db.date_range(currency.code)
+                value = self.mainwindow.app.format_date(max_date)
+            except TypeError: # result is None
+                value = "N/A"
+            row.set_field('fetchdate', value)
+
