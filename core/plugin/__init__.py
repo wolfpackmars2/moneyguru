@@ -12,7 +12,27 @@ from .api import ( # noqa
     CurrencyProviderPlugin, ImportActionPlugin, ImportBindPlugin, EntryMatch
 )
 
+def get_plugins_from_mod(mod):
+    result = []
+    for x in vars(mod).values():
+        try:
+            if issubclass(x, Plugin) and x.NAME:
+                result.append(x)
+        except TypeError: # not a class, we don't care and ignore
+            pass
+    return sorted(result, key=lambda x: x.PRIORITY)
+
 def get_all_core_plugin_modules():
-    from . import account_list, currency_rates, payee_breakdown, yahoo_currency_provider
-    return [account_list, currency_rates, payee_breakdown, yahoo_currency_provider]
+    from . import (
+        account_list, currency_rates, payee_breakdown, yahoo_currency_provider,
+        base_import_actions, base_import_bind,
+    )
+    return [
+        account_list,
+        currency_rates,
+        payee_breakdown,
+        yahoo_currency_provider,
+        base_import_actions,
+        base_import_bind,
+    ]
 

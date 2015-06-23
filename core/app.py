@@ -24,7 +24,7 @@ from .const import DATE_FORMAT_FOR_PREFERENCES
 from .model import currency
 from .model.amount import parse_amount, format_amount
 from .model.date import parse_date, format_date
-from .plugin import Plugin, CurrencyProviderPlugin, get_all_core_plugin_modules
+from .plugin import CurrencyProviderPlugin, get_all_core_plugin_modules, get_plugins_from_mod
 
 class PreferenceNames:
     """Holds a list of preference key constants used in moneyGuru.
@@ -204,13 +204,9 @@ class Application(Broadcaster):
                 self.saved_custom_ranges[index] = None
 
     def _load_plugin_module(self, plugin_module):
-        for x in vars(plugin_module).values():
-            try:
-                if issubclass(x, Plugin) and x.NAME:
-                    if all(p.NAME != x.NAME for p in self.plugins):
-                        self.plugins.append(x)
-            except TypeError: # not a class, we don't care and ignore
-                pass
+        for x in get_plugins_from_mod(plugin_module):
+            if all(p.NAME != x.NAME for p in self.plugins):
+                self.plugins.append(x)
 
     def _load_core_plugins(self):
         for mod in get_all_core_plugin_modules():

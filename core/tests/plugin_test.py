@@ -19,11 +19,13 @@ def test_dont_crash_with_duplicate_currency_register(app):
     # currencies shortly to fix this.
     class FooCurrencyProvider(CurrencyProviderPlugin):
         NAME = "Foo currency fetcher"
+        PRIORITY = 1
         def register_currencies(self):
             return [('XXX', "Foo", 2, 1)]
 
     class BarCurrencyProvider(CurrencyProviderPlugin):
         NAME = "Bar currency fetcher"
+        PRIORITY = 2
         def register_currencies(self):
             return [('XXX', "Bar", 2, 1)]
 

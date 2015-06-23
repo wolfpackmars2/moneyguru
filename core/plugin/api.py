@@ -37,6 +37,8 @@ class Plugin:
     """
     #: Display name of the plugin (for when we list plugins and stuff)
     NAME = ''
+    #: Determines the loading order of the plugins. Lower priorities are loaded first.
+    PRIORITY = 0
     #: Whether this plugin is a View, and thus should be in the plugin section of the New View tab.
     IS_VIEW = False
 
