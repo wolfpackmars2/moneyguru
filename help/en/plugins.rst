@@ -17,10 +17,16 @@ malicious code. Only install plugins from trusted sources or after having review
 Limitations
 -----------
 
-First things first, the plugin feature is brand new, so there are many rough edges and limitations.
-For the first iteration of the feature, the plugin is limited to a single read-only table. The data
-in the table is not "live" data and thus isn't refreshed when data in the document changes, so the
-tab has to be closed and reopened for the data to be refreshed.
+Plugins are still relatively new in moneyGuru's design and they don't allow a hugely broad range
+of capabilities. For now, this is the types of plugins that are supported:
+
+* Read-only tables (``ReadOnlyTablePlugin``)
+* Currency providers (``CurrencyProviderPlugin``)
+* Import Actions (``ImportActionPlugin``)
+* Import match bindings (``ImportBindPlugin``)
+
+For read-only tables, the data in the table is not "live" data and thus isn't refreshed when data
+in the document changes, so the tab has to be closed and reopened for the data to be refreshed.
 
 But despite those limitations, there's quite a lot of possibilities, especially for custom reports.
 Printing, sorting and CSV-copy-pasting (selecting rows, copying data and then pasting it in
@@ -29,18 +35,14 @@ Excel/Numbers) work with those tables.
 Creating a plugin
 -----------------
 
-Other than :mod:`a small convenience API <core.plugin>`, there's no "plugin" API, you're coding
-straight on top of moneyGuru's code. Developer documention for moneyGuru's code is unfortunately not
-very extensive, but I've created a few well commented plugin examples and I think that they're your
-best starting point.
+There's :mod:`a small convenience API <core.plugin>`, but it's a rather slim one. You're mostly
+coding straight on top of moneyGuru's code. There's a
+:doc:`developer documentation <developer/index>` telling you about moneyGuru's API as a whole.
 
-So, to create a plugin, I'd suggest that you take one of the examples (they're automatically copied
-in your plugin folder. You can also find the latest version of these examples
-`on Github <https://github.com/hsoft/moneyguru/tree/master/plugin_examples>`__), duplicate it and
-try to wade your way through with example comments. There's a
-:doc:`developer documentation <developer/index>` but it's far from complete.
-Looking at moneyGuru's `source code <https://github.com/hsoft/moneyguru>`_ is also a good way
-to learn how to work with it, but understanding it can be quite an undertaking.
+So, to create a plugin, I'd suggest that you take one of the examples (available
+`on Github <https://github.com/hsoft/moneyguru/tree/develop/core/plugin>`__), duplicate it and
+try to wade your way through with example comments. 
 
 I'm very interested in knowing about plugin development efforts so don't hesitate to
 `contact me <mailto:hsoft@hardcoded.net>`_ if you need help with the development of your plugin.
+
