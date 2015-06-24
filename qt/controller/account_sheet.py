@@ -58,7 +58,8 @@ class AccountSheetDelegate(ItemDelegate):
             result.append(deco)
         return result
 
-    def _prepare_paint_options(self, option, index):
+    def initStyleOption(self, option, index):
+        ItemDelegate.initStyleOption(self, option, index)
         node = index.internalPointer()
         ref = node.ref
         if ref.is_excluded:
