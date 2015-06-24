@@ -74,7 +74,6 @@ def package_windows(dev):
     print("Copying the rest")
     shutil.copytree('build\\help', 'dist\\help')
     shutil.copytree('build\\locale', 'dist\\locale')
-    shutil.copytree('plugin_examples', 'dist\\plugin_examples')
 
     if not dev:
         # AdvancedInstaller.com has to be in your PATH

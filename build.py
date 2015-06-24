@@ -173,7 +173,6 @@ def build_cocoa(dev):
     print("Copying resources and frameworks")
     resources = [
         'cocoa/dsa_pub.pem', 'build/mg_cocoa.py', 'build/help', 'data/example.moneyguru',
-        'plugin_examples'
     ] + glob.glob('images/*')
     app.copy_resources(*resources, use_symlinks=dev)
     app.copy_frameworks(
