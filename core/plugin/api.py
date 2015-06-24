@@ -160,9 +160,12 @@ class CurrencyProviderPlugin(Plugin):
     def __init__(self):
         Plugin.__init__(self)
         self.supported_currency_codes = set()
-        for code, name, exponent, fallback_rate in self.register_currencies():
-            Currency.register(code, name, exponent, latest_rate=fallback_rate)
-            self.supported_currency_codes.add(code)
+        try:
+            for code, name, exponent, fallback_rate in self.register_currencies():
+                self.register_currency(code, name, exponent=exponent, latest_rate=fallback_rate)
+        except TypeError: # We return None, which means we registered all currencies manually.
+            pass
+        Currency.sort_currencies()
 
     def wrapped_get_currency_rates(self, currency_code, start_date, end_date):
         """Tries to fetch exchange rates for ``currency_code``.
@@ -190,10 +193,25 @@ class CurrencyProviderPlugin(Plugin):
             except NotImplementedError:
                 raise CurrencyNotSupportedException()
 
+    def register_currency(self, code, name, **kwargs):
+        """Register a currency.
+
+        Calling this gives more options than the simple return scheme of :meth:`register_currencies`.
+
+        ``**kwargs`` is passed directly to :meth:`Currency.register`.
+
+        Returns the resulting currency instance.
+        """
+        result = Currency.register(code, name, **kwargs)
+        self.supported_currency_codes.add(code)
+        return result
+
     def register_currencies(self):
         """Override this and return a list of new currencies to support.
 
         The expected return value is a list of tuples ``(code, name, exponent, fallback_rate)``.
+
+        If you need to set more option, call :meth:`register_currency` instead.
 
         ``exponent`` is the number of decimal numbers that should be displayed when formatting
         amounts in this currency.
@@ -220,6 +238,7 @@ class CurrencyProviderPlugin(Plugin):
         This method is called asynchronously, so it won't block moneyGuru if it takes time to
         resolve.
         """
+        raise NotImplementedError()
 
     def get_currency_rates(self, currency_code, start_date, end_date):
         """Override this if your provider gives rates for past dates.

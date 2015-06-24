@@ -1,39 +1,38 @@
 # Created By: Virgil Dupras
 # Created On: 2008-05-22
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from datetime import date, timedelta
-import xmlrpc.client
 import time
 
 from pytest import raises
-from hscommon.currency import Currency, USD, CAD, RateProviderUnavailable
+from hscommon.currency import Currency, USD, CAD, RateProviderUnavailable, RatesDB
 from hscommon.testutil import jointhreads, eq_
 
 from ...model.amount import convert_amount
-from ...model.currency import RatesDB, default_currency_rate_provider
 from ...model.amount import Amount
+from ...plugin import yahoo_currency_provider, boc_currency_provider
 
 def slow_down(func):
     def wrapper(*args, **kwargs):
         time.sleep(0.05)
         return func(*args, **kwargs)
-    
+
     return wrapper
 
 def set_ratedb_for_tests(async=False, slow_down_provider=False, provider=None):
     log = []
-    
+
     # Returns a RatesDB that isn't async and that uses a fake provider
     def fake_provider(currency, start_date, end_date):
         log.append((start_date, end_date, currency))
         number_of_days = (end_date - start_date).days + 1
         return [(start_date + timedelta(i), 1.42 + (.01 * i)) for i in range(number_of_days)]
-    
+
     db = RatesDB(':memory:', async=async)
     if provider is None:
         provider = fake_provider
@@ -85,39 +84,34 @@ def test_ask_for_rates_in_the_future(monkeypatch):
     eq_(log, expected)
 
 #--- Test for the default XMLRPC provider
-class FakeServer:
-    ERROR_TO_RAISE = Exception
-    
-    def __init__(self, *args, **kwargs):
-        pass
-    
-    def get_CAD_values(self, start, end, currency):
-        raise self.ERROR_TO_RAISE()
+def exception_raiser(exception):
+    def f(*args, **kwargs):
+        raise exception
+    return f
 
 def test_no_internet(monkeypatch):
     # No crash occur if the computer don't have access to internet.
     from socket import gaierror
-    monkeypatch.setattr(xmlrpc.client, 'ServerProxy', FakeServer)
-    FakeServer.ERROR_TO_RAISE = gaierror
+    monkeypatch.setattr(boc_currency_provider, 'urlopen', exception_raiser(gaierror()))
+    monkeypatch.setattr(yahoo_currency_provider, 'urlopen', exception_raiser(gaierror()))
     with raises(RateProviderUnavailable):
-        default_currency_rate_provider('USD', date(2008, 5, 20), date(2008, 5, 20))
+        boc_currency_provider.BOCProviderPlugin().wrapped_get_currency_rates(
+            'USD', date(2008, 5, 20), date(2008, 5, 20)
+        )
+        yahoo_currency_provider.YahooProviderPlugin().wrapped_get_currency_rates(
+            'LVL', date(2008, 5, 20), date(2008, 5, 20)
+        )
 
 def test_connection_timeout(monkeypatch):
     # No crash occur the connection times out.
     from socket import error
-    def mock_get_CAD_values(self, start, end, currency):
-        raise error()
-    monkeypatch.setattr(xmlrpc.client, 'ServerProxy', FakeServer)
-    FakeServer.ERROR_TO_RAISE = error
+    monkeypatch.setattr(boc_currency_provider, 'urlopen', exception_raiser(error()))
+    monkeypatch.setattr(yahoo_currency_provider, 'urlopen', exception_raiser(error()))
     with raises(RateProviderUnavailable):
-        default_currency_rate_provider('USD', date(2008, 5, 20), date(2008, 5, 20))
-
-def test_xmlrpc_error(monkeypatch):
-    # No crash occur when there's an error on the xmlrpc level.
-    def mock_get_CAD_values(self, start, end, currency):
-        raise xmlrpc.client.Error()
-    monkeypatch.setattr(xmlrpc.client, 'ServerProxy', FakeServer)
-    FakeServer.ERROR_TO_RAISE = xmlrpc.client.Error
-    with raises(RateProviderUnavailable):
-        default_currency_rate_provider('USD', date(2008, 5, 20), date(2008, 5, 20))
+        boc_currency_provider.BOCProviderPlugin().wrapped_get_currency_rates(
+            'USD', date(2008, 5, 20), date(2008, 5, 20)
+        )
+        yahoo_currency_provider.YahooProviderPlugin().wrapped_get_currency_rates(
+            'LVL', date(2008, 5, 20), date(2008, 5, 20)
+        )
 

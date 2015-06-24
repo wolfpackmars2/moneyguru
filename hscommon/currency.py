@@ -16,6 +16,7 @@ import logging
 import sqlite3 as sqlite
 import threading
 from queue import Queue, Empty
+from operator import attrgetter
 
 from .path import Path
 from .util import iterdaterange
@@ -74,8 +75,13 @@ class Currency:
         return '<Currency %s>' % self.code
 
     @staticmethod
-    def register(code, name, exponent=2, start_date=None, start_rate=1, stop_date=None, latest_rate=1):
-        """Registers a new currency and returns it."""
+    def register(
+            code, name, exponent=2, start_date=None, start_rate=1, stop_date=None, latest_rate=1,
+            priority=100):
+        """Registers a new currency and returns it.
+
+        ``priority`` determines the order of currencies in :meth:`all`. Lower priority goes first.
+        """
         if code in Currency.by_code:
             return Currency.by_code[code]
         assert name not in Currency.by_name
@@ -87,6 +93,7 @@ class Currency:
         currency.start_rate = start_rate
         currency.stop_date = stop_date
         currency.latest_rate = latest_rate
+        currency.priority = priority
         Currency.by_code[code] = currency
         Currency.by_name[name] = currency
         Currency.all.append(currency)
@@ -106,6 +113,10 @@ class Currency:
             Currency.rates_db = RatesDB() # Make sure we always have some db to work with
         return Currency.rates_db
 
+    @staticmethod
+    def sort_currencies():
+        Currency.all = sorted(Currency.all, key=attrgetter('priority', 'code'))
+
     def rates_date_range(self):
         """Returns the range of date for which rates are available for this currency."""
         return self.get_rates_db().date_range(self.code)
@@ -124,179 +135,12 @@ class Currency:
         self.get_rates_db().set_CAD_value(date, self.code, value)
 
 
-BUILTIN_CURRENCIES = {
-# In order we want to list them
-Currency.register('USD', 'U.S. dollar',
-    start_date=date(1998, 1, 2), start_rate=1.425, latest_rate=1.0128),
-Currency.register('EUR', 'European Euro',
-    start_date=date(1999, 1, 4), start_rate=1.8123, latest_rate=1.3298),
-Currency.register('GBP', 'U.K. pound sterling',
-    start_date=date(1998, 1, 2), start_rate=2.3397, latest_rate=1.5349),
-Currency.register('CAD', 'Canadian dollar',
-    latest_rate=1),
-Currency.register('AUD', 'Australian dollar',
-    start_date=date(1998, 1, 2), start_rate=0.9267, latest_rate=0.9336),
-Currency.register('JPY', 'Japanese yen',
-    exponent=0, start_date=date(1998, 1, 2), start_rate=0.01076, latest_rate=0.01076),
-Currency.register('INR', 'Indian rupee',
-    start_date=date(1998, 1, 2), start_rate=0.03627, latest_rate=0.02273),
-Currency.register('NZD', 'New Zealand dollar',
-    start_date=date(1998, 1, 2), start_rate=0.8225, latest_rate=0.7257),
-Currency.register('CHF', 'Swiss franc',
-    start_date=date(1998, 1, 2), start_rate=0.9717, latest_rate=0.9273),
-Currency.register('ZAR', 'South African rand',
-    start_date=date(1998, 1, 2), start_rate=0.292, latest_rate=0.1353),
-# The rest, alphabetical
-Currency.register('AED', 'U.A.E. dirham',
-    start_date=date(2007, 9, 4), start_rate=0.2858, latest_rate=0.2757),
-Currency.register('ANG', 'Neth. Antilles florin',
-    start_date=date(1998, 1, 2), start_rate=0.7961, latest_rate=0.5722),
-Currency.register('ARS', 'Argentine peso',
-    start_date=date(1998, 1, 2), start_rate=1.4259, latest_rate=0.2589),
-Currency.register('ATS', 'Austrian schilling',
-    start_date=date(1998, 1, 2), start_rate=0.1123, stop_date=date(2001, 12, 31), latest_rate=0.10309), # obsolete (euro)
-Currency.register('BBD', 'Barbadian dollar',
-    start_date=date(2010, 4, 30), start_rate=0.5003, latest_rate=0.5003),
-Currency.register('BEF', 'Belgian franc',
-    start_date=date(1998, 1, 2), start_rate=0.03832, stop_date=date(2001, 12, 31), latest_rate=0.03516), # obsolete (euro)
-Currency.register('BHD', 'Bahraini dinar',
-    exponent=3, start_date=date(2008, 11, 8), start_rate=3.1518, latest_rate=2.6603),
-Currency.register('BRL', 'Brazilian real',
-    start_date=date(1998, 1, 2), start_rate=1.2707, latest_rate=0.5741),
-Currency.register('BSD', 'Bahamian dollar',
-    start_date=date(1998, 1, 2), start_rate=1.425, latest_rate=1.0128),
-Currency.register('CLP', 'Chilean peso',
-    exponent=0, start_date=date(1998, 1, 2), start_rate=0.003236, latest_rate=0.001923),
-Currency.register('CNY', 'Chinese renminbi',
-    start_date=date(1998, 1, 2), start_rate=0.1721, latest_rate=0.1484),
-Currency.register('COP', 'Colombian peso',
-    start_date=date(1998, 1, 2), start_rate=0.00109, latest_rate=0.000513),
-Currency.register('CZK', 'Czech Republic koruna',
-    start_date=date(1998, 2, 2), start_rate=0.04154, latest_rate=0.05202),
-Currency.register('DEM', 'German deutsche mark',
-    start_date=date(1998, 1, 2), start_rate=0.7904, stop_date=date(2001, 12, 31), latest_rate=0.7253), # obsolete (euro)
-Currency.register('DKK', 'Danish krone',
-    start_date=date(1998, 1, 2), start_rate=0.2075, latest_rate=0.1785),
-Currency.register('EGP', 'Egyptian Pound',
-    start_date=date(2008, 11, 27), start_rate=0.2232, latest_rate=0.1805),
-Currency.register('ESP', 'Spanish peseta',
-    exponent=0, start_date=date(1998, 1, 2), start_rate=0.009334, stop_date=date(2001, 12, 31), latest_rate=0.008526), # obsolete (euro)
-Currency.register('FIM', 'Finnish markka',
-    start_date=date(1998, 1, 2), start_rate=0.2611, stop_date=date(2001, 12, 31), latest_rate=0.2386), # obsolete (euro)
-Currency.register('FJD', 'Fiji dollar',
-    start_date=date(1998, 1, 2), start_rate=0.9198, latest_rate=0.5235),
-Currency.register('FRF', 'French franc',
-    start_date=date(1998, 1, 2), start_rate=0.2362, stop_date=date(2001, 12, 31), latest_rate=0.2163), # obsolete (euro)
-Currency.register('GHC', 'Ghanaian cedi (old)',
-    start_date=date(1998, 1, 2), start_rate=0.00063, stop_date=date(2007, 6, 29), latest_rate=0.000115), # obsolete
-Currency.register('GHS', 'Ghanaian cedi',
-    start_date=date(2007, 7, 3), start_rate=1.1397, latest_rate=0.7134),
-Currency.register('GRD', 'Greek drachma',
-    start_date=date(1998, 1, 2), start_rate=0.005, stop_date=date(2001, 12, 31), latest_rate=0.004163), # obsolete (euro)
-Currency.register('GTQ', 'Guatemalan quetzal',
-    start_date=date(2004, 12, 21), start_rate=0.15762, latest_rate=0.1264),
-Currency.register('HKD', 'Hong Kong dollar',
-    start_date=date(1998, 1, 2), start_rate=0.1838, latest_rate=0.130385),
-Currency.register('HNL', 'Honduran lempira',
-    start_date=date(1998, 1, 2), start_rate=0.108, latest_rate=0.0536),
-Currency.register('HRK', 'Croatian kuna',
-    start_date=date(2002, 3, 1), start_rate=0.1863, latest_rate=0.1837),
-Currency.register('HUF', 'Hungarian forint',
-    start_date=date(1998, 2, 2), start_rate=0.007003, latest_rate=0.00493),
-Currency.register('IDR', 'Indonesian rupiah',
-    start_date=date(1998, 2, 2), start_rate=0.000145, latest_rate=0.000112),
-Currency.register('IEP', 'Irish pound',
-    start_date=date(1998, 1, 2), start_rate=2.0235, stop_date=date(2001, 12, 31), latest_rate=1.8012), # obsolete (euro)
-Currency.register('ILS', 'Israeli new shekel',
-    start_date=date(1998, 1, 2), start_rate=0.4021, latest_rate=0.2706),
-Currency.register('ISK', 'Icelandic krona',
-    exponent=0, start_date=date(1998, 1, 2), start_rate=0.01962, latest_rate=0.00782),
-Currency.register('ITL', 'Italian lira',
-    exponent=0, start_date=date(1998, 1, 2), start_rate=0.000804, stop_date=date(2001, 12, 31), latest_rate=0.000733), # obsolete (euro)
-Currency.register('JMD', 'Jamaican dollar',
-    start_date=date(2001, 6, 25), start_rate=0.03341, latest_rate=0.01145),
-Currency.register('KRW', 'South Korean won',
-    exponent=0, start_date=date(1998, 1, 2), start_rate=0.000841, latest_rate=0.000905),
-Currency.register('LKR', 'Sri Lanka rupee',
-    start_date=date(1998, 1, 2), start_rate=0.02304, latest_rate=0.0089),
-Currency.register('LTL', 'Lithuanian litas',
-    start_date=date(2010, 4, 29), start_rate=0.384, latest_rate=0.384),
-Currency.register('LVL', 'Latvian lats',
-    start_date=date(2011, 2, 6), start_rate=1.9136, latest_rate=1.9136),
-Currency.register('MAD', 'Moroccan dirham',
-    start_date=date(1998, 1, 2), start_rate=0.1461, latest_rate=0.1195),
-Currency.register('MMK', 'Myanmar (Burma) kyat',
-    start_date=date(1998, 1, 2), start_rate=0.226, latest_rate=0.1793),
-Currency.register('MXN', 'Mexican peso',
-    start_date=date(1998, 1, 2), start_rate=0.1769, latest_rate=0.08156),
-Currency.register('MYR', 'Malaysian ringgit',
-    start_date=date(1998, 1, 2), start_rate=0.3594, latest_rate=0.3149),
-# MZN in not supported in any of my sources, so I'm just creating it with a fixed rate.
-Currency.register('MZN', 'Mozambican metical',
-    start_date=date(2011, 2, 6), start_rate=0.03, stop_date=date(2011, 2, 5), latest_rate=0.03),
-Currency.register('NIO', 'Nicaraguan córdoba',
-    start_date=date(2011, 10, 12), start_rate=0.0448, latest_rate=0.0448),
-Currency.register('NLG', 'Netherlands guilder',
-    start_date=date(1998, 1, 2), start_rate=0.7013, stop_date=date(2001, 12, 31), latest_rate=0.6437), # obsolete (euro)
-Currency.register('NOK', 'Norwegian krone',
-    start_date=date(1998, 1, 2), start_rate=0.1934, latest_rate=0.1689),
-Currency.register('PAB', 'Panamanian balboa',
-    start_date=date(1998, 1, 2), start_rate=1.425, latest_rate=1.0128),
-Currency.register('PEN', 'Peruvian new sol',
-    start_date=date(1998, 1, 2), start_rate=0.5234, latest_rate=0.3558),
-Currency.register('PHP', 'Philippine peso',
-    start_date=date(1998, 1, 2), start_rate=0.0345, latest_rate=0.02262),
-Currency.register('PKR', 'Pakistan rupee',
-    start_date=date(1998, 1, 2), start_rate=0.03238, latest_rate=0.01206),
-Currency.register('PLN', 'Polish zloty',
-    start_date=date(1998, 2, 2), start_rate=0.4108, latest_rate=0.3382),
-Currency.register('PTE', 'Portuguese escudo',
-    exponent=0, start_date=date(1998, 1, 2), start_rate=0.007726, stop_date=date(2001, 12, 31), latest_rate=0.007076), # obsolete (euro)
-Currency.register('RON', 'Romanian new leu',
-    start_date=date(2007, 9, 4), start_rate=0.4314, latest_rate=0.3215),
-Currency.register('RSD', 'Serbian dinar',
-    start_date=date(2007, 9, 4), start_rate=0.0179, latest_rate=0.01338),
-Currency.register('RUB', 'Russian rouble',
-    start_date=date(1998, 1, 2), start_rate=0.2375, latest_rate=0.03443),
-Currency.register('SAR', 'Saudi riyal',
-    start_date=date(2012, 9, 13), start_rate=0.26, latest_rate=0.26),
-Currency.register('SEK', 'Swedish krona',
-    start_date=date(1998, 1, 2), start_rate=0.1787, latest_rate=0.1378),
-Currency.register('SGD', 'Singapore dollar',
-    start_date=date(1998, 1, 2), start_rate=0.84, latest_rate=0.7358),
-Currency.register('SIT', 'Slovenian tolar',
-    start_date=date(2002, 3, 1), start_rate=0.006174, stop_date=date(2006, 12, 29), latest_rate=0.006419), # obsolete (euro)
-Currency.register('SKK', 'Slovak koruna',
-    start_date=date(2002, 3, 1), start_rate=0.03308, stop_date=date(2008, 12, 31), latest_rate=0.05661), # obsolete (euro)
-Currency.register('THB', 'Thai baht',
-    start_date=date(1998, 1, 2), start_rate=0.0296, latest_rate=0.03134),
-Currency.register('TND', 'Tunisian dinar',
-    exponent=3, start_date=date(1998, 1, 2), start_rate=1.2372, latest_rate=0.7037),
-Currency.register('TRL', 'Turkish lira',
-    exponent=0, start_date=date(1998, 1, 2), start_rate=7.0e-06, stop_date=date(2004, 12, 31), latest_rate=8.925e-07), # obsolete
-Currency.register('TWD', 'Taiwanese new dollar',
-    start_date=date(1998, 1, 2), start_rate=0.04338, latest_rate=0.03218),
-Currency.register('UAH', 'Ukrainian hryvnia',
-    start_date=date(2010, 4, 29), start_rate=0.1266, latest_rate=0.1266),
-Currency.register('VEB', 'Venezuelan bolivar',
-    exponent=0, start_date=date(1998, 1, 2), start_rate=0.002827, stop_date=date(2007, 12, 31), latest_rate=0.00046), # obsolete
-Currency.register('VEF', 'Venezuelan bolivar fuerte',
-    start_date=date(2008, 1, 2), start_rate=0.4623, latest_rate=0.2358),
-Currency.register('VND', 'Vietnamese dong',
-    start_date=date(2004, 1, 1), start_rate=8.2e-05, latest_rate=5.3e-05),
-Currency.register('XAF', 'CFA franc',
-    exponent=0, start_date=date(1998, 1, 2), start_rate=0.002362, latest_rate=0.002027),
-Currency.register('XCD', 'East Caribbean dollar',
-    start_date=date(1998, 1, 2), start_rate=0.5278, latest_rate=0.3793),
-Currency.register('XPF', 'CFP franc',
-    exponent=0, start_date=date(1998, 1, 2), start_rate=0.01299, latest_rate=0.01114),
-}
-BUILTIN_CURRENCY_CODES = {c.code for c in BUILTIN_CURRENCIES}
-
-# For legacy purpose, we need to maintain these global variables
-CAD = Currency(code='CAD')
-USD = Currency(code='USD')
-EUR = Currency(code='EUR')
+# For legacy purpose, we create USD, EUR and CAD in here, but all other currencies are app-defined.
+USD = Currency.register('USD', 'U.S. dollar',
+    start_date=date(1998, 1, 2), start_rate=1.425, latest_rate=1.0128)
+EUR = Currency.register('EUR', 'European Euro',
+    start_date=date(1999, 1, 4), start_rate=1.8123, latest_rate=1.3298)
+CAD = Currency.register('CAD', 'Canadian dollar', latest_rate=1)
 
 def date2str(date):
     return '%d%02d%02d' % (date.year, date.month, date.day)
@@ -485,7 +329,7 @@ class RatesDB:
                     except CurrencyNotSupportedException:
                         continue
                     except RateProviderUnavailable:
-                        logging.debug("Fetching failed due to temporary problems.")
+                        logging.warning("Fetching of %s failed due to temporary problems.", currency)
                         break
                     else:
                         if not values:

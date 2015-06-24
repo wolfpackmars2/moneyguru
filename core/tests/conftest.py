@@ -22,7 +22,7 @@ global_monkeypatch = None
 def pytest_configure(config):
     def fake_initialize_db(path):
         ratesdb = RatesDB(':memory:', async=False)
-        # We register no rate provider
+        ratesdb.register_rate_provider = lambda *a: None
         Currency.set_rates_db(ratesdb)
 
     global global_monkeypatch
