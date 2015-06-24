@@ -11,6 +11,7 @@ from calendar import monthrange
 from datetime import date, datetime, timedelta
 
 from hscommon.trans import tr
+from hscommon.util import iterdaterange
 
 ONE_DAY = timedelta(1)
 
@@ -76,12 +77,7 @@ class DateRange:
         return self.start <= date <= self.end
 
     def __iter__(self):
-        # XXX when we only have python 3.3 to support, we can yield from hscommon.util.iterdaterange()
-        result = self.start
-        end = self.end
-        while result <= end:
-            yield result
-            result += ONE_DAY
+        yield from iterdaterange(self.start, self.end)
 
     def __hash__(self):
         return hash((self.start, self.end))

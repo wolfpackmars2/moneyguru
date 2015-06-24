@@ -285,13 +285,16 @@ def multi_replace(s, replace_from, replace_to=''):
 
 #--- Date related
 
+# It might seem like needless namespace pollution, but the speedup gained by this constant is
+# significant, so it stays.
+ONE_DAY = timedelta(1)
 def iterdaterange(start, end):
     """Yields every day between ``start`` and ``end``.
     """
     date = start
     while date <= end:
         yield date
-        date += timedelta(1)
+        date += ONE_DAY
 
 #--- Files related
 
