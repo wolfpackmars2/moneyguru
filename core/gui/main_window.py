@@ -380,7 +380,7 @@ class MainWindow(Repeater, GUIObject):
         parsed data into model instances, ready to be shown in the Import window.
         """
         self.loader.load()
-        if self.loader.accounts and self.loader.transactions:
+        if any(a.is_balance_sheet_account() for a in self.loader.accounts) and self.loader.transactions:
             self.import_window.show()
         else:
             raise FileFormatError('This file does not contain any account to import.')

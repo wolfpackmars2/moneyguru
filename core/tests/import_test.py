@@ -18,7 +18,6 @@ from ..exception import FileFormatError
 from ..loader.csv import CsvField
 from ..model.date import MonthRange, YearRange
 
-PLN = Currency(code='PLN')
 
 def importall(app, filename):
     app.mw.parse_file_for_import(filename)
@@ -50,6 +49,15 @@ def test_import_invalid_qif(app):
     # Raise a FileFormatError if the file does not have the right format (for now, a valid
     # file is a file that starts with a '!Account' line)
     filename = testdata.filepath('qif', 'invalid.qif')
+    with raises(FileFormatError):
+        app.mw.parse_file_for_import(filename)
+
+@with_app(TestApp)
+def test_import_no_balance_account(app):
+    # When importing a moneyguru file with transactions and accounts, but no balance account, we
+    # would mistakenly go through and present an empty import dialog. We have to raise an error
+    # when that happens. ref #416.
+    filename = testdata.filepath('moneyguru', 'no_balance_account.moneyguru')
     with raises(FileFormatError):
         app.mw.parse_file_for_import(filename)
 
@@ -105,6 +113,7 @@ def test_import_updates_undo_description(app):
 #---
 def app_qif_import():
     # One account named 'Account 1' and then an parse_file_for_import() call for the 'checkbook.qif' test file.
+    PLN = Currency(code='PLN')
     app = TestApp(app=Application(ApplicationGUI(), default_currency=PLN))
     app.doc.date_range = YearRange(date(2007, 1, 1))
     app.add_account('Account 1')
@@ -130,6 +139,7 @@ def test_default_account_currency_after_qif_import(app):
     app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[2]
     app.mainwindow.edit_item()
+    PLN = Currency(code='PLN')
     eq_(app.apanel.currency, PLN)
 
 @with_app(app_qif_import)

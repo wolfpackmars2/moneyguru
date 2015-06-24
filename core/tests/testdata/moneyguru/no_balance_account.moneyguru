@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moneyguru-file document_id="6193c05076a74ba7aacbcde704852a34"><properties ahead_months="3" default_currency="CAD" first_weekday="0" year_start_month="1" /><account currency="CAD" name="foo" type="income" /><transaction date="2015-06-24" description="foo" mtime="1435159489"><split account="foo" amount="0.00" /><split account="" amount="0.00" /></transaction></moneyguru-file>
