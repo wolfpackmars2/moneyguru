@@ -411,6 +411,10 @@ def test_amounts_display(app):
     eq_(app.etable[1].decrease, 'EUR 42.00')
     eq_(app.etable[1].balance, 'EUR 0.00')
 
+@with_app(app_eur_account_with_eur_entries)
+def test_all_amount_native_with_foreign(app):
+    assert not app.etable.all_amounts_are_native
+
 #--- Two entries
 def app_two_entries():
     app = TestApp()

@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-08-22
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 import datetime
@@ -11,11 +11,11 @@ import datetime
 from hscommon.trans import trget
 from hscommon.gui.column import Column
 
-from .table import GUITable, Row, rowattr
+from .table import GUITable, Row, rowattr, TableWithAmountMixin
 
 trcol = trget('columns')
 
-class BudgetTable(GUITable):
+class BudgetTable(GUITable, TableWithAmountMixin):
     SAVENAME = 'BudgetTable'
     COLUMNS = [
         Column('start_date', display=trcol("Start Date")),
@@ -26,31 +26,34 @@ class BudgetTable(GUITable):
         Column('target', display=trcol("Target")),
         Column('amount', display=trcol("Amount")),
     ]
-    
+
     def __init__(self, budget_view):
         GUITable.__init__(self, document=budget_view.document)
         self.mainwindow = budget_view.mainwindow
-    
+
     #--- Override
     def _update_selection(self):
         self.mainwindow.selected_budgets = self.selected_budgets
-    
+
     def _fill(self):
+        self._all_amounts_are_native = True
         for budget in self.document.budgets:
+            if not self.mainwindow.document.is_amount_native(budget.amount):
+                self._all_amounts_are_native = False
             self.append(BudgetTableRow(self, budget))
-    
+
     #--- Public
     def delete(self):
         self.document.delete_budgets(self.selected_budgets)
-    
+
     def edit(self):
         self.mainwindow.edit_item()
-    
+
     #--- Properties
     @property
     def selected_budgets(self):
         return [row.budget for row in self.selected_rows]
-    
+
 
 class BudgetTableRow(Row):
     def __init__(self, table, budget):
@@ -58,7 +61,7 @@ class BudgetTableRow(Row):
         self.document = table.document
         self.budget = budget
         self.load()
-    
+
     #--- Public
     def load(self):
         budget = self.budget
@@ -72,16 +75,16 @@ class BudgetTableRow(Row):
         self._target = budget.target.name if budget.target else ''
         self._amount = budget.amount
         self._amount_fmt = self.document.format_amount(self._amount)
-    
+
     def save(self):
         pass # read-only
-    
+
     def sort_key_for_column(self, column_name):
         if column_name == 'stop_date' and self._stop_date is None:
             return datetime.date.min
         else:
             return Row.sort_key_for_column(self, column_name)
-    
+
     #--- Properties
     start_date = rowattr('_start_date_fmt')
     stop_date = rowattr('_stop_date_fmt')
@@ -90,3 +93,4 @@ class BudgetTableRow(Row):
     account = rowattr('_account')
     target = rowattr('_target')
     amount = rowattr('_amount_fmt')
+

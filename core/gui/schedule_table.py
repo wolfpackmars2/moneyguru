@@ -11,11 +11,11 @@ import datetime
 from hscommon.trans import trget, tr
 from hscommon.gui.column import Column
 from ..model.amount import convert_amount
-from .table import GUITable, Row, rowattr
+from .table import GUITable, Row, rowattr, TableWithAmountMixin
 
 trcol = trget('columns')
 
-class ScheduleTable(GUITable):
+class ScheduleTable(GUITable, TableWithAmountMixin):
     SAVENAME = 'ScheduleTable'
     COLUMNS = [
         Column('start_date', display=trcol('Start Date')),
@@ -39,8 +39,12 @@ class ScheduleTable(GUITable):
         self.mainwindow.selected_schedules = self.selected_schedules
 
     def _fill(self):
+        self._all_amounts_are_native = True
         for schedule in self.document.schedules:
-            self.append(ScheduleTableRow(self, schedule))
+            row = ScheduleTableRow(self, schedule)
+            if not row.is_amount_native:
+                self._all_amounts_are_native = False
+            self.append(row)
 
     #--- Public
     def delete(self):
@@ -90,6 +94,7 @@ class ScheduleTableRow(Row):
         except ValueError: # currency coercing problem
             currency = self.document.default_currency
             self._amount = sum(convert_amount(s.amount, currency, s.transaction.date) for s in tos)
+        self.is_amount_native = self.document.is_amount_native(self._amount)
         self._amount_fmt = self.document.format_amount(self._amount)
 
     def save(self):

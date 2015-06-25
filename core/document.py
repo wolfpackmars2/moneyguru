@@ -377,6 +377,11 @@ class BaseDocument:
             default_currency = self.default_currency
         return parse_amount(amount, default_currency, auto_decimal_place=self.app._auto_decimal_place)
 
+    def is_amount_native(self, amount):
+        if amount == 0:
+            return True
+        return amount.currency == self.default_currency
+
     #--- Properties
     @property
     def default_currency(self):

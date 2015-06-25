@@ -60,6 +60,9 @@ class EntryTable(EntryTableBase):
             return
         self.account = account
         rows = self._get_account_rows(account)
+        is_native = lambda row: self.document.is_amount_native(row._debit)\
+            and self.document.is_amount_native(row._credit)
+        self._all_amounts_are_native = all(is_native(row) for row in rows)
         if not rows:
             # We still show a total row
             rows.append(TotalRow(self, account, self.document.date_range.end, 0, 0))

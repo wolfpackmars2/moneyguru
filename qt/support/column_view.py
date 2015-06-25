@@ -87,9 +87,13 @@ class AmountPainter:
         do_paint_currency = amount.currency != ""
         # Use the currently formatted string just remove the currency information
         # for separate painting.
-        cur_width = option.fontMetrics.width(amount.currency) \
-            if do_paint_currency \
-            else option.fontMetrics.width("XXX")
+        if do_paint_currency:
+            cur_width = option.fontMetrics.width(amount.currency)
+        else:
+            if self._model.all_amounts_are_native:
+                cur_width = 0
+            else:
+                cur_width = option.fontMetrics.width("XXX")
         val_width = option.fontMetrics.width(amount.value)
 
         return cur_width, val_width

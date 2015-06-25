@@ -54,11 +54,14 @@ class TransactionTable(TransactionTableBase):
             self.document.delete_transactions(transactions)
 
     def _fill(self):
+        self._all_amounts_are_native = True
         total_amount = 0
         for transaction in self.parent_view.visible_transactions:
             self.append(TransactionTableRow(self, transaction))
             convert = lambda a: convert_amount(a, self.document.default_currency, transaction.date)
             total_amount += convert(transaction.amount)
+            if not self.document.is_amount_native(transaction.amount):
+                self._all_amounts_are_native = False
         self.footer = TotalRow(self, self.document.date_range.end, total_amount)
         self._restore_from_explicit_selection()
 

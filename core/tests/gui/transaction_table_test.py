@@ -114,6 +114,10 @@ def test_schedule_spawn_sorting(app, monkeypatch):
     app.ttable.sort_by('date', desc=False)
     eq_(app.ttable[2].description, 'schedule')
 
+@with_app(app_tview_shown)
+def test_all_amount_native_empty(app):
+    assert app.ttable.all_amounts_are_native
+
 #---
 class TestEditionMode:
     def do_setup(self):
