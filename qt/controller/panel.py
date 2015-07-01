@@ -12,6 +12,13 @@ from PyQt4.QtGui import QWidget, QDialog, QLineEdit, QSpinBox, QComboBox, QCheck
 class Panel(QDialog):
     # A list of two-sized tuples (QWidget's name, model field name).
     FIELDS = []
+    # Name to use for serialization of persistent data about this panel (geometry).
+    # XXX At the time of this writing (ticket #364), there's already a separate system in Cocoa
+    # to persist dialog frames. A "clean" implementation would do like we do with the main window
+    # and implement frame save/restore in core, but I fear that I'll needlessly complicate things
+    # doing so, so for now, I limit myself to a qt-only solution. Later, we should re-evaluate
+    # whether it could be a good idea to push this implementation to the core.
+    PERSISTENT_NAME = None
 
     def __init__(self, parent=None):
         # The flags we pass are that so we don't get the "What's this" button in the title bar

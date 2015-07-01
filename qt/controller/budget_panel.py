@@ -28,6 +28,7 @@ class BudgetPanel(Panel):
         ('amountEdit', 'amount'),
         ('notesEdit', 'notes'),
     ]
+    PERSISTENT_NAME = 'budgetPanel'
 
     def __init__(self, mainwindow):
         Panel.__init__(self, mainwindow)

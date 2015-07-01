@@ -78,6 +78,9 @@ class MoneyGuru(ApplicationBase):
     def applicationFinishedLaunching(self):
         self.prefs.restoreGeometry('mainWindowGeometry', self.mainWindow)
         self.prefs.restoreGeometry('importWindowGeometry', self.mainWindow.importWindow)
+        for panel in self.mainWindow.all_panels:
+            if panel.PERSISTENT_NAME:
+                self.prefs.restoreGeometry('%sGeometry' % panel.PERSISTENT_NAME, panel)
         self.mainWindow.show()
 
     def applicationWillTerminate(self):
@@ -85,6 +88,9 @@ class MoneyGuru(ApplicationBase):
         self.willSavePrefs.emit()
         self.prefs.saveGeometry('mainWindowGeometry', self.mainWindow)
         self.prefs.saveGeometry('importWindowGeometry', self.mainWindow.importWindow)
+        for panel in self.mainWindow.all_panels:
+            if panel.PERSISTENT_NAME:
+                self.prefs.saveGeometry('%sGeometry' % panel.PERSISTENT_NAME, panel)
         self.prefs.save()
         self.model.shutdown()
 

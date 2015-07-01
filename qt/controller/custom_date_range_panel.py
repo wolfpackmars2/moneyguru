@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-11-11
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from PyQt4 import QtGui, QtCore
@@ -22,16 +22,17 @@ class CustomDateRangePanel(Panel):
         ('slotIndexComboBox', 'slot_index'),
         ('slotNameEdit', 'slot_name'),
     ]
-    
+    PERSISTENT_NAME = 'customDateRangePanel'
+
     def __init__(self, mainwindow):
         Panel.__init__(self, mainwindow)
         self._setupUi()
         self.model = mainwindow.model.custom_daterange_panel
         self.model.view = self
-        
+
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
-    
+
     def _setupUi(self):
         self.setWindowTitle(tr("Custom Date Range"))
         self.resize(292, 86)

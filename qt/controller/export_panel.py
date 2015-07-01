@@ -26,6 +26,7 @@ class ExportType:
 
 class ExportPanel(Panel):
     FIELDS = []
+    PERSISTENT_NAME = 'exportPanel'
 
     def __init__(self, mainwindow):
         Panel.__init__(self, mainwindow)

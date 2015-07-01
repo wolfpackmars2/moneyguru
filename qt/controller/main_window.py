@@ -99,6 +99,10 @@ class MainWindow(QMainWindow):
         self.cdrpanel = CustomDateRangePanel(mainwindow=self)
         self.arpanel = AccountReassignPanel(mainwindow=self)
         self.expanel = ExportPanel(mainwindow=self)
+        self.all_panels = [
+            self.apanel, self.tpanel, self.mepanel, self.scpanel, self.bpanel, self.cdrpanel,
+            self.arpanel, self.expanel,
+        ]
         self.alookup = Lookup(self, model=self.model.account_lookup)
         self.clookup = Lookup(self, model=self.model.completion_lookup)
         self.drsel = DateRangeSelector(mainwindow=self, view=self.dateRangeSelectorView)

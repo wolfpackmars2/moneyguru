@@ -20,6 +20,8 @@ from .panel import Panel
 tr = trget('ui')
 
 class AccountReassignPanel(Panel):
+    PERSISTENT_NAME = 'accountReassignPanel'
+
     def __init__(self, mainwindow):
         Panel.__init__(self, mainwindow)
         self._setupUi()

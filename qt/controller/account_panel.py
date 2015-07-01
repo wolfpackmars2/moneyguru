@@ -25,6 +25,7 @@ class AccountPanel(Panel):
         ('accountNumberEdit', 'account_number'),
         ('notesEdit', 'notes'),
     ]
+    PERSISTENT_NAME = 'accountPanel'
 
     def __init__(self, mainwindow):
         Panel.__init__(self, mainwindow)

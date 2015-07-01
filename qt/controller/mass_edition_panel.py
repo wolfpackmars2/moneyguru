@@ -29,6 +29,7 @@ class MassEditionPanel(Panel):
         ('amountCheckBox', 'amount_enabled'),
         ('currencyCheckBox', 'currency_enabled'),
     ]
+    PERSISTENT_NAME = 'massEditionPanel'
 
     def __init__(self, mainwindow):
         Panel.__init__(self, mainwindow)

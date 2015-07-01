@@ -34,6 +34,7 @@ class SchedulePanel(Panel):
         ('checkNoEdit', 'checkno'),
         ('notesEdit', 'notes'),
     ]
+    PERSISTENT_NAME = 'schedulePanel'
 
     def __init__(self, mainwindow):
         Panel.__init__(self, mainwindow)
