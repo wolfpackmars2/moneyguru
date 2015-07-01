@@ -1,3 +1,17 @@
+=== 2.9.0 (2015-07-01)
+
+* Add "+" button in the tab bar [Linux, Windows] (#424)
+* Add API for import plugins (#420)
+* Add Russian localization (with documentation!) (Igor Fokusov)
+* Improve plugin system by introducing a "core plugins" concept (#429)
+* Improve currency rates fetching by diversifying sources (#415)
+* Improve reliability of automated tests [Windows] (#417)
+* Optimize amount column sizes in single-currency cases [Linux, Windows] (#414)
+* Remember panels position and size [Linux, Windows] (#364)
+* Make Schedule Panel's stop date field clearable (#400)
+* Fix various UI glitches [Linux, Windows] (#418, #413, #411)
+* Fix crash when importing empty files (#416)
+
 === 2.8.2 (2015-01-02)
 
 * Fix amount cell painting which didn't work properly. [Windows] (#407)
