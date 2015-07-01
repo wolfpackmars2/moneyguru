@@ -7,6 +7,7 @@ This help document is also available in these languages:
 * `German`_
 * `Italian`_
 * `Czech`_
+* `Russian`_
 
 moneyGuru is a personal finance management application. With it, you can evaluate your current
 financial situation so you can make informed (and thus better) financial decisions. Most finance
@@ -52,4 +53,5 @@ Contents:
 .. _German: http://www.hardcoded.net/moneyguru/help/de
 .. _Italian: http://www.hardcoded.net/moneyguru/help/it
 .. _Czech: http://www.hardcoded.net/moneyguru/help/cs
+.. _Russian: http://www.hardcoded.net/moneyguru/help/ru
 .. _double-entry accounting: http://en.wikipedia.org/wiki/Double-entry_bookkeeping_system
