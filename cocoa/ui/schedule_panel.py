@@ -18,6 +18,7 @@ everyField = TextField(infoTab.view, "")
 everyDescLabel = Label(infoTab.view, "")
 stopDateLabel = FieldLabel(infoTab.view, "Stop Date")
 stopDateField = TextField(infoTab.view, "")
+stopDateClearButton = Button(infoTab.view, "Clear", action=Action(owner, 'clearStopDate'))
 descriptionLabel = FieldLabel(infoTab.view, "Description")
 descriptionField = TextField(infoTab.view, "")
 payeeLabel = FieldLabel(infoTab.view, "Payee")
@@ -79,8 +80,10 @@ prevTabButton.x = nextTabButton.x = -1000
 prevTabButton.shortcut = 'cmd+alt+arrowleft'
 nextTabButton.shortcut = 'cmd+alt+arrowright'
 
-fields = [startDateField, repeatPopup, everyField, stopDateField, descriptionField, payeeField,
-    checknoField, notesField]
+fields = [
+    startDateField, repeatPopup, everyField, stopDateField, stopDateClearButton, descriptionField,
+    payeeField, checknoField, notesField
+]
 for field in fields:
     field.controlSize = ControlSize.Small
 
@@ -92,6 +95,7 @@ everyField.width = 50
 everyDescLabel.width = 100
 for field in [startDateField, stopDateField, checknoField]:
     field.width = 111
+stopDateClearButton.width = 60
 repeatPopup.width = 222
 transfersTable.height = 76
 addTransferButton.width = removeTransferButton.width = 25
@@ -112,7 +116,7 @@ infoLayout = VHLayout([
     [startDateLabel, startDateField],
     [repeatLabel, repeatPopup],
     [everyLabel, everyField, everyDescLabel],
-    [stopDateLabel, stopDateField],
+    [stopDateLabel, stopDateField, stopDateClearButton],
     [descriptionLabel, descriptionField],
     [payeeLabel, payeeField],
     [checknoLabel, checknoField],

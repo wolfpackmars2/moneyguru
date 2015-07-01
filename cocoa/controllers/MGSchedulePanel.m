@@ -119,6 +119,12 @@ http://www.gnu.org/licenses/gpl-3.0.html
     [[splitTable model] deleteSelectedRows];
 }
 
+- (void)clearStopDate
+{
+    [[self model] setStopDate:@""];
+    [stopDateField setStringValue:[[self model] stopDate]];
+}
+
 /* Python --> Cocoa */
 - (void)refreshForMultiCurrency
 {

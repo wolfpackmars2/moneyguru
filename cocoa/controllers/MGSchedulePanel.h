@@ -49,6 +49,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 /* Actions */
 - (void)addSplit;
 - (void)deleteSplit;
+- (void)clearStopDate;
 /* Python --> Cocoa */
 - (void)refreshRepeatEvery;
 @end
