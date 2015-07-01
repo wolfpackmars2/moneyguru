@@ -103,7 +103,7 @@ def package_debian(distribution):
     version = '{}~{}'.format(MoneyGuru.VERSION, distribution)
     destpath = op.join('build', 'moneyguru-{}'.format(version))
     srcpath = op.join(destpath, 'src')
-    packages = ['qt', 'hscommon', 'core', 'qtlib', 'plugin_examples', 'sgmllib']
+    packages = ['qt', 'hscommon', 'core', 'qtlib', 'sgmllib']
     copy_files_to_package(srcpath, packages, with_so=False)
     shutil.copytree('debian', op.join(destpath, 'debian'))
     move(op.join(destpath, 'debian', 'Makefile'), op.join(destpath, 'Makefile'))
@@ -124,7 +124,7 @@ def package_arch():
     # in the same folder.
     print("Packaging for Arch")
     srcpath = op.join('build', 'moneyguru-arch')
-    packages = ['qt', 'hscommon', 'core', 'qtlib', 'plugin_examples', 'sgmllib']
+    packages = ['qt', 'hscommon', 'core', 'qtlib', 'sgmllib']
     copy_files_to_package(srcpath, packages, with_so=True)
 
 def package_source_tgz():
