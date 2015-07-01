@@ -7,6 +7,20 @@ development`_. Refactoring is very frequent, but is done in small steps. The goa
 to make a major rewrite, **but**, at the same time, never be trapped by past design mistakes. We
 call that "having your cake and eating it too".
 
+Branches and tags
+=================
+
+The git repo has one main branch, ``master``. It represents the latest "stable development commit",
+that is, the latest commit that doesn't include in-progress features. This branch should always
+be buildable, ``tox`` should always run without errors on it.
+
+When a feature/bugfix has an atomicity of a single commit, it's alright to commit right into
+``master``. However, if a feature/bugfix needs more than a commit, it should live in a separate
+topic branch until it's ready.
+
+Every release is tagged with the version number. For example, there's a ``2.8.2`` tag for the
+v2.8.2 release.
+
 Tests
 =====
 
