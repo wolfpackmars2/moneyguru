@@ -79,7 +79,7 @@ class SchedulePanel(Panel):
         self.formLayout.setLayout(2, QFormLayout.FieldRole, self.horizontalLayout_2)
         self.label_9 = QLabel(tr("Stop Date:"))
         self.formLayout.setWidget(3, QFormLayout.LabelRole, self.label_9)
-        self.stopDateEdit = DateEdit(self.tab)
+        self.stopDateEdit = DateEdit(self.tab, is_clearable=True)
         self.stopDateEdit.setMaximumSize(QSize(120, 16777215))
         self.formLayout.setWidget(3, QFormLayout.FieldRole, self.stopDateEdit)
         self.label_3 = QLabel(tr("Description:"))
