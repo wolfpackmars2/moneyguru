@@ -2,29 +2,29 @@
 # Created By: Eric Mc Sween
 # Created On: 2008-02-11
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 #
 # Sections refer to the OFX 1.0.3 spec.
 
 from itertools import dropwhile
-from sgmllib import SGMLParser
 
 from ..exception import FileFormatError
+from .sgmllib import SGMLParser
 from . import base
 
 class Loader(SGMLParser, base.Loader):
     FILE_ENCODING = 'cp1252'
     NATIVE_DATE_FORMAT = '%Y%m%d'
-    
+
     def __init__(self, default_currency, default_date_format=None):
         SGMLParser.__init__(self)
         base.Loader.__init__(self, default_currency, default_date_format)
         self.data = ''
         self.data_handler = None
-    
+
     #--- Override
     def _parse(self, infile):
         # First line is OFXHEADER (section 2.2.1)
@@ -34,13 +34,13 @@ class Loader(SGMLParser, base.Loader):
         if line.strip() != 'OFXHEADER:100':
             raise FileFormatError()
         self.lines = list(infile)
-    
+
     def _load(self):
         is_header = lambda line: not line.startswith('<')
         for line in dropwhile(is_header, self.lines):
             self.feed(line)
         self.close()
-    
+
     #--- Helper methods
 
     def flush_data(self):
@@ -48,7 +48,7 @@ class Loader(SGMLParser, base.Loader):
             self.data_handler(self.data.strip())
             self.data_handler = None
         self.data = ''
-    
+
     #--- Global hooks
 
     def handle_starttag(self, tag, method, attributes):
@@ -73,20 +73,20 @@ class Loader(SGMLParser, base.Loader):
     def start_stmtrs(self, attributes):
         self.start_account()
     start_ccstmtrs = start_stmtrs
-        
+
     def end_stmtrs(self):
         a = self.account_info
         if hasattr(a, 'ofx_bank_id') and hasattr(a, 'ofx_acct_id'):
             ofx_branch_id = getattr(a, 'ofx_branch_id', '')
             a.reference = '|'.join([a.ofx_bank_id, ofx_branch_id, a.ofx_acct_id])
         self.flush_account()
-    
+
     def start_curdef(self, attributes):
         self.data_handler = self.handle_curdef
 
     def handle_curdef(self, data):
         self.account_info.currency = data
-    
+
     def start_bankid(self, attributes):
         self.data_handler = self.handle_bankid
 
@@ -105,7 +105,7 @@ class Loader(SGMLParser, base.Loader):
     def handle_acctid(self, data):
         self.account_info.ofx_acct_id = data
         self.account_info.name = data
-    
+
     def start_balamt(self, attributes):
         self.data_handler = self.handle_balamt
 
@@ -119,7 +119,7 @@ class Loader(SGMLParser, base.Loader):
 
     def end_stmttrn(self):
         self.flush_transaction()
-        
+
     def start_fitid(self, attributes):
         self.data_handler = self.handle_fitid
 
@@ -128,7 +128,7 @@ class Loader(SGMLParser, base.Loader):
 
     def start_name(self, attributes):
         self.data_handler = self.handle_name
-    
+
     def handle_name(self, data):
         self.transaction_info.description = data
 
