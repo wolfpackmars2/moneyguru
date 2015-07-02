@@ -1,14 +1,14 @@
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from hscommon.testutil import eq_
-from hscommon.currency import CAD
 
 from ..base import TestApp, with_app
 from ...model.account import AccountType
+from ...model.currency import CAD
 
 #--- Pristine
 @with_app(TestApp)
@@ -30,7 +30,7 @@ class TestTwoLiabilityTransactions:
         app.add_entry('3/1/2008', increase='120.00')
         app.add_entry('5/1/2008', decrease='40.00')
         return app
-    
+
     @with_app(do_setup)
     def test_budget(self, app, monkeypatch):
         # when we add a budget, the balance graph will show a regular progression throughout date range
@@ -40,12 +40,12 @@ class TestTwoLiabilityTransactions:
         app.show_nwview()
         app.bsheet.selected = app.bsheet.liabilities[0]
         app.show_account()
-        expected = [('04/01/2008', '120.00'), ('05/01/2008', '120.00'), ('06/01/2008', '80.00'), 
+        expected = [('04/01/2008', '120.00'), ('05/01/2008', '120.00'), ('06/01/2008', '80.00'),
             ('28/01/2008', '80.00'), ('01/02/2008', '180.00')]
         eq_(app.graph_data(), expected)
         app.drsel.select_next_date_range()
         eq_(app.graph_data()[0], ('01/02/2008', '180.00'))
-    
+
     @with_app(do_setup)
     def test_budget_on_last_day_of_the_range(self, app, monkeypatch):
         # don't raise a ZeroDivizionError
@@ -54,7 +54,7 @@ class TestTwoLiabilityTransactions:
         app.add_budget('expense', 'Visa', '100')
         app.show_nwview()
         app.drsel.select_next_date_range()
-    
+
     @with_app(do_setup)
     def test_budget_with_future_txn(self, app, monkeypatch):
         # when there's a future txn, we want the amount of that txn to be "sharply" displayed
@@ -67,17 +67,17 @@ class TestTwoLiabilityTransactions:
         app.show_account()
         # the amount at the 20th is supposed to include budgeting for the 20th, and the 21st data point
         # has to include budget for the 21st
-        expected = [('04/01/2008', '120.00'), ('05/01/2008', '120.00'), ('06/01/2008', '80.00'), 
+        expected = [('04/01/2008', '120.00'), ('05/01/2008', '120.00'), ('06/01/2008', '80.00'),
             ('16/01/2008', '80.00'), ('20/01/2008', '105.00'), ('21/01/2008', '101.25'), ('01/02/2008', '170.00')]
         eq_(app.graph_data(), expected)
-    
+
     @with_app(do_setup)
     def test_graph(self, app):
-        expected = [('04/01/2008', '120.00'), ('05/01/2008', '120.00'), 
+        expected = [('04/01/2008', '120.00'), ('05/01/2008', '120.00'),
                     ('06/01/2008', '80.00'), ('01/02/2008', '80.00')]
         eq_(app.graph_data(), expected)
         eq_(app.balgraph.title, 'Visa')
-    
+
 
 class TestForeignAccount:
     def do_setup(self):
@@ -85,11 +85,11 @@ class TestForeignAccount:
         app.add_account('Visa', currency=CAD)
         app.show_account()
         return app
-    
+
     @with_app(do_setup)
     def test_graph(self, app):
         eq_(app.balgraph.currency, CAD)
-    
+
 
 #---
 def app_budget_and_no_txn(monkeypatch):
@@ -100,7 +100,7 @@ def app_budget_and_no_txn(monkeypatch):
     app.add_account('income', account_type=AccountType.Income)
     app.add_budget('income', 'asset', '100')
     return app
-    
+
 @with_app(app_budget_and_no_txn)
 def test_future_date_range(app):
     # There was a bug where when in a future date range, and also in a range with no transaction,
@@ -129,7 +129,7 @@ class TestTwoAccountsOneTransaction:
         app.add_account('account2')
         app.add_txn('12/01/2010', to='account1', amount='42')
         return app
-    
+
     @with_app(do_setup)
     def test_show_to_account(self, app):
         # The data shown in the balgraph when showing account1 is accurate. Previously, the balgraph
@@ -139,4 +139,4 @@ class TestTwoAccountsOneTransaction:
         # No account is selected now
         eq_(app.graph_data()[0], ('13/01/2010', '42.00'))
         eq_(app.balgraph.title, 'account1')
-    
+

@@ -11,13 +11,13 @@ from datetime import date
 from io import StringIO
 
 from hscommon.testutil import eq_
-from hscommon.currency import USD
 
 from ..base import TestApp, with_app, testdata
 from ...const import PaneType
 from ...gui.transaction_table import TransactionTable
 from ...model.date import MonthRange, YearRange
 from ...model.account import AccountType
+from ...model.currency import USD
 
 #---
 def app_tview_shown():

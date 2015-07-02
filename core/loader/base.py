@@ -12,13 +12,13 @@ import re
 from itertools import groupby
 from operator import attrgetter
 
-from hscommon.currency import Currency
 from hscommon.util import nonone, flatten, stripfalse, dedupe
 
 from ..exception import FileFormatError
 from ..model.account import Account, Group, AccountList, GroupList, AccountType
 from ..model.amount import parse_amount
 from ..model.budget import Budget
+from ..model.currency import Currency
 from ..model.oven import Oven
 from ..model.recurrence import Recurrence, Spawn
 from ..model.transaction import Transaction, Split

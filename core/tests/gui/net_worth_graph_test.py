@@ -1,18 +1,18 @@
 # Created By: Virgil Dupras
 # Created On: 2008-08-03
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from datetime import date
 
-from hscommon.currency import CAD, USD
 from hscommon.testutil import eq_
 
 from ..base import TestApp, with_app, testdata
 from ...model.account import AccountType
+from ...model.currency import CAD, USD
 
 class TestAssetsAndLiabilitiesInDifferentAccounts:
     def do_setup(self):
@@ -40,7 +40,7 @@ class TestAssetsAndLiabilitiesInDifferentAccounts:
         app.show_nwview()
         app.clear_gui_calls()
         return app
-    
+
     @with_app(do_setup)
     def test_add_group(self, app):
         # There was previously a bug where adding a group would empty the graph up.
@@ -48,7 +48,7 @@ class TestAssetsAndLiabilitiesInDifferentAccounts:
         app.bsheet.selected.name = 'foo'
         app.bsheet.save_edits()
         assert app.nw_graph_data()
-    
+
     @with_app(do_setup)
     def test_budget(self, app, monkeypatch):
         # when we add a budget, the balance graph will show a regular progression throughout date range
@@ -75,7 +75,7 @@ class TestAssetsAndLiabilitiesInDifferentAccounts:
             ('01/08/2008', '287.51'),
         ]
         eq_(app.nw_graph_data(), expected)
-    
+
     @with_app(do_setup)
     def test_budget_target_excluded(self, app, monkeypatch):
         # when the budget target is excluded, don't show it's budgeted data
@@ -88,7 +88,7 @@ class TestAssetsAndLiabilitiesInDifferentAccounts:
         app.bsheet.selected = app.bsheet.assets[2] # asset3
         app.bsheet.toggle_excluded()
         eq_(app.nw_graph_data(), without_budget)
-    
+
     @with_app(do_setup)
     def test_exclude_account(self, app):
         # excluding an account removes it from the net worth graph
@@ -107,7 +107,7 @@ class TestAssetsAndLiabilitiesInDifferentAccounts:
         ]
         eq_(app.nw_graph_data(), expected)
         app.check_gui_calls(app.nwgraph_gui, ['refresh'])
-    
+
     @with_app(do_setup)
     def test_net_worth_graph(self, app):
         # One interesting thing about this graph is that on the 14th of july, the CAD value changes,
@@ -128,7 +128,7 @@ class TestAssetsAndLiabilitiesInDifferentAccounts:
         eq_(app.nw_graph_data(), expected)
         eq_(app.nwgraph.title, 'Net Worth')
         eq_(app.nwgraph.currency, USD)
-    
+
     @with_app(do_setup)
     def test_refresh_account_deleted(self, app):
         # When an account is deleted, charts are refreshed
@@ -137,7 +137,7 @@ class TestAssetsAndLiabilitiesInDifferentAccounts:
         app.arpanel.save() # continue deletion
         assert app.nw_graph_data()[0] != ('01/07/2008', '10.00')
         app.check_gui_calls(app.nwgraph_gui, ['refresh'])
-    
+
     @with_app(do_setup)
     def test_refresh_on_import(self, app):
         # When entries are imported, charts are refreshed
@@ -146,4 +146,4 @@ class TestAssetsAndLiabilitiesInDifferentAccounts:
         # For the data itself, we just have to test that it changed. the QIF has data in 02/2008
         assert app.nw_graph_data()[0] != ('01/07/2008', '10.00')
         app.check_gui_calls(app.nwgraph_gui, ['refresh'])
-    
+

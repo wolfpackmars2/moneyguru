@@ -13,7 +13,7 @@ from core.plugin import CurrencyProviderPlugin
 
 # This is the exception we have to raise when, for some reason, we temporarily can't contact the
 # rate provider.
-from hscommon.currency import RateProviderUnavailable
+from core.model.currency import RateProviderUnavailable
 
 # We use Python's built-in urlopen to hit Yahoo's server and fetch the rates
 from urllib.request import urlopen

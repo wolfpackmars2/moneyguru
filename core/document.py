@@ -14,7 +14,6 @@ import os
 import os.path as op
 from functools import wraps
 
-from hscommon.currency import Currency
 from hscommon.notify import Repeater
 from hscommon.util import nonone, allsame, dedupe, extract, first
 from hscommon.trans import tr
@@ -25,6 +24,7 @@ from .exception import FileFormatError, OperationAborted
 from .loader import native
 from .model.account import Account, Group, AccountList, GroupList, AccountType
 from .model.amount import parse_amount, format_amount
+from .model.currency import Currency
 from .model.budget import BudgetList
 from .model.date import (
     MonthRange, QuarterRange, YearRange, YearToDateRange, RunningYearRange,

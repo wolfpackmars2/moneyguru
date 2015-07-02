@@ -8,11 +8,11 @@
 
 from datetime import date
 
-from hscommon.currency import Currency
 from hscommon.util import allsame, flatten
 from hscommon.gui.text_field import TextField
 
 from ..exception import OperationAborted
+from ..model.currency import Currency
 from .base import MainWindowPanel, LinkedSelectableList
 from .completable_edit import CompletableEdit
 

@@ -9,7 +9,6 @@ import csv
 from io import StringIO
 
 from hscommon.testutil import eq_
-from hscommon.currency import Currency, USD, CAD
 
 from ..base import DocumentGUI, ApplicationGUI, TestApp, with_app, testdata
 from ...app import Application
@@ -17,6 +16,7 @@ from ...const import PaneType
 from ...document import Document
 from ...model.account import AccountType
 from ...model.date import MonthRange
+from ...model.currency import Currency, USD, CAD
 
 # IMPORTANT NOTE: Keep in mind that every node count check in these tests take the total node and the
 # blank node into account. For example, the node count of an empty ASSETS node is 2.

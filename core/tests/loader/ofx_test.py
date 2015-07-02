@@ -1,21 +1,21 @@
 # Created By: Eric Mc Sween
 # Created On: 2008-02-11
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from datetime import date
 
 from pytest import raises
-from hscommon.currency import USD, CAD, EUR
 from hscommon.testutil import eq_
 
 from ..base import testdata
 from ...exception import FileFormatError
 from ...loader import ofx
 from ...model.amount import Amount
+from ...model.currency import USD, CAD, EUR
 
 def test_dont_choke_on_empty_files():
     # The ofx loader doesn't choke on an empty file
@@ -55,7 +55,7 @@ def loader_desjardins():
 def test_accounts_desjardins():
     loader = loader_desjardins()
     accounts = [(x.name, x.currency, str(x.balance)) for x in loader.account_infos]
-    expected = [('815-30219-12345-EOP', 'CAD', '3925.84'), 
+    expected = [('815-30219-12345-EOP', 'CAD', '3925.84'),
                 ('815-30219-54321-ES1', 'CAD', '0.00'),
                 ('815-30219-11111-EOP', 'USD', '3046.90'),]
     eq_(accounts, expected)

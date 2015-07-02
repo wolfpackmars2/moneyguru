@@ -7,10 +7,10 @@
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from hscommon.testutil import eq_
-from hscommon.currency import EUR
 
 from ...const import PaneType
 from ...model.account import AccountType
+from ...model.currency import EUR
 from ..base import TestApp, with_app
 
 #--- One account

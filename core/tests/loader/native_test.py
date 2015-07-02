@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-02-15
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from io import BytesIO
@@ -11,19 +11,19 @@ from datetime import date
 
 from pytest import raises
 from hscommon.testutil import eq_
-from hscommon.currency import Currency, USD
 
 from ..base import testdata
 from ...exception import FileFormatError
 from ...loader import native
 from ...model.account import AccountType
 from ...model.amount import Amount
+from ...model.currency import Currency, USD
 
 PLN = Currency(code='PLN')
 
 def pytest_funcarg__loader(request):
     return native.Loader(USD)
-    
+
 def test_parse_non_xml(loader):
     content = b'this is not xml content'
     with raises(FileFormatError):
@@ -82,7 +82,7 @@ def test_account_and_entry_values(loader):
     split = transaction.splits[0]
     eq_(split.account.name, 'Account 2')
     eq_(split.amount, Amount(89, PLN))
-    
+
     transaction = transactions[1]
     eq_(transaction.date, date(2008, 2, 15))
     eq_(transaction.description, 'Entry 1')
@@ -94,7 +94,7 @@ def test_account_and_entry_values(loader):
     split = transaction.splits[1]
     eq_(split.account.name, 'foobar')
     eq_(split.amount, Amount(-42, USD))
-    
+
     transaction = transactions[2]
     eq_(transaction.date, date(2008, 2, 16))
     eq_(transaction.description, 'Entry 2')
@@ -106,7 +106,7 @@ def test_account_and_entry_values(loader):
     split = transaction.splits[0]
     eq_(split.account.name, 'Account 1')
     eq_(split.amount, Amount(-14, USD))
-    
+
     transaction = transactions[3]
     eq_(transaction.date, date(2008, 2, 19))
     eq_(transaction.description, 'Entry 4')

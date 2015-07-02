@@ -9,10 +9,10 @@
 from datetime import datetime
 import xml.etree.cElementTree as ET
 
-from hscommon.currency import Currency
 from hscommon.util import tryint
 
 from ..exception import FileFormatError
+from ..model.currency import Currency
 from .base import SplitInfo, TransactionInfo
 from . import base
 

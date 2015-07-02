@@ -11,7 +11,6 @@ import os
 from datetime import date
 
 from pytest import raises
-from hscommon.currency import EUR
 from hscommon.testutil import eq_
 
 from .base import ApplicationGUI, TestApp, with_app, testdata
@@ -21,6 +20,7 @@ from ..exception import FileFormatError
 from ..gui.entry_table import EntryTable
 from ..loader import base
 from ..model.account import AccountType
+from ..model.currency import EUR
 from ..model.date import MonthRange, QuarterRange, YearRange
 
 #--- No Setup

@@ -1,17 +1,17 @@
 # Created By: Virgil Dupras
 # Created On: 2008-06-15
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from hscommon.testutil import eq_
-from hscommon.currency import EUR
 
 from .base import TestApp, with_app, testdata
 from ..exception import FileFormatError
 from ..model.account import AccountType
+from ..model.currency import EUR
 
 #--- Pristine
 @with_app(TestApp)
@@ -105,7 +105,7 @@ def test_move_account(app):
     app.bsheet.move([[0, 0]], [1])
     eq_(app.account_node_subaccount_count(app.bsheet.get_node([0])), 0)
     eq_(app.account_node_subaccount_count(app.bsheet.get_node([1])), 1)
-    app.bsheet.move([[1, 0]], [0])                                
+    app.bsheet.move([[1, 0]], [0])
     eq_(app.account_node_subaccount_count(app.bsheet.get_node([0])), 1)
     eq_(app.account_node_subaccount_count(app.bsheet.get_node([1])), 0)
 
@@ -177,7 +177,7 @@ def test_delete_last_account(app):
     # current section.
     app.bsheet.selected = app.bsheet.assets[1]
     app.bsheet.delete()
-    eq_(app.account_names(), ['one', 'two']) 
+    eq_(app.account_names(), ['one', 'two'])
     eq_(app.bsheet.selected_path, [0, 1])
 
 @with_app(app_three_empty_accounts)
@@ -416,7 +416,7 @@ def app_manually_created_income():
 
 @with_app(app_manually_created_income)
 def test_auto_clean_doesnt_clean_manually_created(app):
-    # We add & remove an entry to trigger auto clean. The manually created account must not be 
+    # We add & remove an entry to trigger auto clean. The manually created account must not be
     # removed.
     app.show_account('asset')
     app.add_entry()

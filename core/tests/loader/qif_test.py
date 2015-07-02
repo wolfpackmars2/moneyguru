@@ -9,12 +9,12 @@
 from datetime import date
 
 from hscommon.testutil import eq_
-from hscommon.currency import USD
 
 from ..base import TestApp, testdata
 from ...loader.qif import Loader
 from ...model.account import AccountType
 from ...model.amount import Amount
+from ...model.currency import USD
 
 def test_checkbook_values():
     loader = Loader(USD)

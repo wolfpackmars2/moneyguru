@@ -1,16 +1,16 @@
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from datetime import date
 
-from hscommon.currency import USD, CAD
 from hscommon.testutil import eq_
 
 from ...model.account import Account, Group, AccountList, AccountType
 from ...model.amount import Amount
+from ...model.currency import USD, CAD
 from ...model.date import MonthRange
 from ...model.oven import Oven
 from ...model.transaction import Transaction
@@ -71,10 +71,10 @@ class TestOneAccount:
         ])
         oven = Oven(accounts, transactions, [], [])
         oven.cook(date.min, date.max)
-    
+
     def test_balance(self):
         eq_(self.account.entries.balance(date(2007, 12, 31)), Amount(20, USD))
-        
+
         # The balance is converted using the rate on the day the balance is
         # requested.
         eq_(self.account.entries.balance(date(2007, 12, 31), currency=CAD), Amount(20 * 1.1, CAD))

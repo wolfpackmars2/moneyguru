@@ -2,15 +2,19 @@
 # Created On: 2008-04-20
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
+
+# XXX This unit was previously "currency_test" from hscommon. During the merge into moneyguru core,
+# I had to quickly find a place for it, but we could eventually merge this unit with its
+# current currency_test neighbor.
 
 from datetime import date
 import sqlite3 as sqlite
 
-from ..testutil import eq_, assert_almost_equal
-from ..currency import Currency, RatesDB, CAD, EUR, USD
+from hscommon.testutil import eq_, assert_almost_equal
+from ...model.currency import Currency, RatesDB, CAD, EUR, USD
 
 PLN = Currency(code='PLN')
 
@@ -22,7 +26,7 @@ def setup_module(module):
 
 def teardown_module(module):
     # We must unset our test currencies or else we might mess up with other tests.
-    from .. import currency
+    from ...model import currency
     import imp
     imp.reload(currency)
 
@@ -134,7 +138,7 @@ def test_seek_rate_middle():
     eq_(USD.value_in(CAD, date(2008, 4, 24)), 1/0.996115)
 
 def test_seek_rate_after():
-    # Make sure that the *nearest* lowest rate is returned. Because the 25th have been set 
+    # Make sure that the *nearest* lowest rate is returned. Because the 25th have been set
     # before the 20th, an order by clause is required in the seek SQL to make this test pass.
     setup_two_daily_rate()
     eq_(USD.value_in(CAD, date(2008, 4, 26)), 1/0.997115)
@@ -175,7 +179,7 @@ def get_problematic_db():
                 raise sqlite.OperationalError()
             else:
                 return sqlite.Connection.execute(self, *args, **kwargs)
-    
+
     con = MockConnection(':memory:')
     db = RatesDB(con)
     con.mocking = True
@@ -208,3 +212,4 @@ def test_currency_with_start_date():
 def test_currency_with_stop_date():
     setup_db_raising_error_on_getrate()
     eq_(BAR.value_in(CAD, date(2010, 1, 13)), 2)
+

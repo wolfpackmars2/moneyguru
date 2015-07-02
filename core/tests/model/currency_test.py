@@ -10,11 +10,11 @@ from datetime import date, timedelta
 import time
 
 from pytest import raises
-from hscommon.currency import Currency, USD, CAD, RateProviderUnavailable, RatesDB
 from hscommon.testutil import jointhreads, eq_
 
 from ...model.amount import convert_amount
 from ...model.amount import Amount
+from ...model.currency import Currency, USD, CAD, RateProviderUnavailable, RatesDB
 from ...plugin import yahoo_currency_provider, boc_currency_provider
 
 def slow_down(func):
@@ -45,7 +45,7 @@ def set_ratedb_for_tests(async=False, slow_down_provider=False, provider=None):
 def test_unknown_currency():
     # Only known currencies are accepted.
     with raises(ValueError):
-        Currency('FOO')
+        Currency('NOPE')
 
 def test_async_and_repeat():
     # If you make an ensure_rates() call and then the same call right after (before the first one

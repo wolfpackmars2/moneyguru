@@ -1,16 +1,16 @@
 # Created By: Virgil Dupras
 # Created On: 2008-08-20
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from datetime import date
 
-from hscommon.currency import USD
 from hscommon.testutil import eq_
 
+from ...model.currency import USD
 from ..base import TestApp, with_app
 
 class TestPristine:
@@ -18,7 +18,7 @@ class TestPristine:
         app = TestApp()
         app.drsel.select_month_range()
         return app
-    
+
     @with_app(do_setup)
     def test_cook_bar_overflow(self, app):
         # When some data is included in a bar that overflows, we must not forget to ensure cooking
@@ -29,11 +29,11 @@ class TestPristine:
         app.drsel.select_prev_date_range() # oct 2008
         app.add_entry('31/10/2008', transfer='Income', increase='42')
         app.show_pview()
-        # now, the creation of the txn forced a recook. what we want to make sure is that both 
+        # now, the creation of the txn forced a recook. what we want to make sure is that both
         # entries will be in the bar
         eq_(app.pgraph.data[0][2], 84)
-    
-    
+
+
 class TestIncomesAndExpensesInDifferentAccounts:
     def do_setup(self):
         app = TestApp()
@@ -54,7 +54,7 @@ class TestIncomesAndExpensesInDifferentAccounts:
         app.show_pview()
         app.clear_gui_calls()
         return app
-    
+
     @with_app(do_setup)
     def test_budget(self, app, monkeypatch):
         # budgets are counted in the pgraph
@@ -69,10 +69,10 @@ class TestIncomesAndExpensesInDifferentAccounts:
         third_week_future = 27.69 # 180 / 13 * 2
         fourth_week_future = 96.92 # 180 / 13 * 7
         fifth_week_future = 55.38 + 38.71 # (180 / 13 * 4) + (400 / 31 * 3)
-        expected = [(first_week, 0), (second_week, 0), (third_week, third_week_future), 
+        expected = [(first_week, 0), (second_week, 0), (third_week, third_week_future),
             (0, fourth_week_future), (0, fifth_week_future)]
         eq_(amounts, expected)
-    
+
     @with_app(do_setup)
     def test_budget_and_exclusion(self, app, monkeypatch):
         # when an account is excluded, it's budget is not counted
@@ -84,7 +84,7 @@ class TestIncomesAndExpensesInDifferentAccounts:
         amounts = [data[2] for data in app.pgraph.data]
         expected = [32 + 22 - 7.04, -100, 54]
         eq_(amounts, expected)
-    
+
     @with_app(do_setup)
     def test_exclude_account(self, app):
         # excluding an account removes it from the net worth graph
@@ -97,7 +97,7 @@ class TestIncomesAndExpensesInDifferentAccounts:
         expected = [32 + 22 - 7.04, -100, 54]
         eq_(amounts, expected)
         app.check_gui_calls(app.pgraph.view, ['refresh'])
-    
+
     @with_app(do_setup)
     def test_profit_graph(self, app):
         # We don't want to test the padding, so we only go for the amounts here
@@ -108,4 +108,4 @@ class TestIncomesAndExpensesInDifferentAccounts:
         eq_(amounts, expected)
         eq_(app.pgraph.title, 'Profit & Loss')
         eq_(app.pgraph.currency, USD)
-    
+

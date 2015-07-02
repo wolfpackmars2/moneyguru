@@ -10,12 +10,12 @@ from datetime import date
 
 from pytest import raises
 from hscommon.testutil import eq_
-from hscommon.currency import Currency, CAD
 
 from .base import ApplicationGUI, TestApp, with_app, testdata
 from ..app import Application
 from ..exception import FileFormatError
 from ..loader.csv import CsvField
+from ..model.currency import Currency, CAD
 from ..model.date import MonthRange, YearRange
 
 

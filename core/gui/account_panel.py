@@ -6,12 +6,12 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from hscommon.currency import Currency
 from hscommon.gui.selectable_list import GUISelectableList
 from hscommon.trans import tr
 
 from ..exception import DuplicateAccountNameError
 from ..model.account import AccountType
+from ..model.currency import Currency
 from .base import MainWindowPanel, LinkedSelectableList
 
 ACCOUNT_TYPE_DESC = {

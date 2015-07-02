@@ -1,20 +1,20 @@
 # Created By: Virgil Dupras
 # Created On: 2008-09-04
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from datetime import date
 
 from hscommon.testutil import eq_
-from hscommon.currency import Currency, USD, CAD
 
 from ..base import ApplicationGUI, TestApp, with_app
 from ...app import Application
 from ...gui.pie_chart import MIN_SLICE_COUNT, MIN_VIEW_SIZE, SIZE_COST_FOR_SLICE, COLOR_COUNT
 from ...model.account import AccountType
+from ...model.currency import Currency, USD, CAD
 
 #--- Slice count
 def app_show_nwview():
@@ -75,7 +75,7 @@ def app_some_assets_and_liabilities(monkeypatch):
 class TestSomeAssetsAndLiabilities:
     def do_setup(self, monkeypatch):
         return app_some_assets_and_liabilities(monkeypatch)
-    
+
     @with_app(do_setup)
     def test_asset_pie_chart_values(self, app):
         # The asset pie chart values are sorted in reversed order of amount and have correct titles
@@ -87,7 +87,7 @@ class TestSomeAssetsAndLiabilities:
             ('a1 10.1%', 1.01, 3),
         ]
         eq_(app.nwview.pie.pie1, expected)
-    
+
     @with_app(do_setup)
     def test_budget_multiple_currency(self, app):
         # just make sure it doesn't crash
@@ -98,7 +98,7 @@ class TestSomeAssetsAndLiabilities:
         app.add_account('income', account_type=AccountType.Income)
         app.add_budget('income', None, '5')
         app.show_nwview() # don't crash
-    
+
     @with_app(do_setup)
     def test_exclude_account(self, app):
         # excluding an account removes it from the pie chart
@@ -111,7 +111,7 @@ class TestSomeAssetsAndLiabilities:
         ]
         eq_(app.nwview.pie.pie1, expected)
         app.nwview.pie.view.check_gui_calls(['refresh'])
-    
+
     @with_app(do_setup)
     def test_liabilities_pie(self, app):
         # the liability pie also works
@@ -120,7 +120,7 @@ class TestSomeAssetsAndLiabilities:
             ('l1 37.5%', 3, 1),
         ]
         eq_(app.nwview.pie.pie2, expected)
-    
+
 
 class TestSomeAssetsAndLiabilitiesWithBudget:
     def do_setup(self, monkeypatch):
@@ -130,7 +130,7 @@ class TestSomeAssetsAndLiabilitiesWithBudget:
         app.add_budget('income', 'a3', '5')
         app.show_nwview()
         return app
-    
+
     @with_app(do_setup)
     def test_future_date_range(self, app):
         # the budget amounts used for the pie chart include all previous budgets
@@ -142,7 +142,7 @@ class TestSomeAssetsAndLiabilitiesWithBudget:
             ('a1 5.0%', 1.01, 3),
         ]
         eq_(app.nwview.pie.pie1, expected)
-    
+
     @with_app(do_setup)
     def test_pie_values(self, app):
         # budgeted amounts are also reflected in the pie chart
@@ -153,7 +153,7 @@ class TestSomeAssetsAndLiabilitiesWithBudget:
             ('a1 6.7%', 1.01, 3),
         ]
         eq_(app.nwview.pie.pie1, expected)
-    
+
 #---
 def app_more_assets_than_slice_count():
     app = TestApp()
@@ -202,7 +202,7 @@ class TestSomeIncomeAndExpenses:
         app.istatement.selected = app.istatement.expenses
         app.clear_gui_calls()
         return app
-    
+
     @with_app(do_setup)
     def test_budget(self, app, monkeypatch):
         # budgeted amounts are also reflected in the pie chart
@@ -216,7 +216,7 @@ class TestSomeIncomeAndExpenses:
             ('e2 8.3%', 1, 3),
         ]
         eq_(app.pview.pie.pie2, expected)
-    
+
     @with_app(do_setup)
     def test_expenses_pie_chart_values(self, app):
         # The expenses pie chart values are sorted in reversed order of amount and have correct titles
@@ -227,7 +227,7 @@ class TestSomeIncomeAndExpenses:
             ('e2 10.0%', 1, 3),
         ]
         eq_(app.pview.pie.pie2, expected)
-    
+
     @with_app(do_setup)
     def test_exclude_account(self, app):
         # excluding an account removes it from the pie chart
@@ -240,7 +240,7 @@ class TestSomeIncomeAndExpenses:
         ]
         eq_(app.pview.pie.pie2, expected)
         app.pview.pie.view.check_gui_calls(['refresh'])
-    
+
     @with_app(do_setup)
     def test_income_pie(self, app):
         # the income pie also works
@@ -253,7 +253,7 @@ class TestSomeIncomeAndExpenses:
             ('i3 10.0%', 1, 3),
         ]
         eq_(app.pview.pie.pie1, expected)
-    
+
 
 class TestDifferentDateRanges:
     def do_setup(self):
@@ -267,7 +267,7 @@ class TestDifferentDateRanges:
         app.show_nwview()
         app.clear_gui_calls()
         return app
-    
+
     @with_app(do_setup)
     def test_balance_pie_chart(self, app):
         # the data in the balance pie chart reflects the currencly selected date range
@@ -275,7 +275,7 @@ class TestDifferentDateRanges:
         app.drsel.select_prev_date_range()
         eq_(app.nwview.pie.pie1, [('foo 100.0%', 4, 0)])
         app.nwview.pie.view.check_gui_calls(['refresh'])
-    
+
     @with_app(do_setup)
     def test_cash_flow_pie_chart(self, app):
         # the data in the cash flow pie chart reflects the currencly selected date range
@@ -286,7 +286,7 @@ class TestDifferentDateRanges:
         app.drsel.select_prev_date_range()
         eq_(app.pview.pie.pie2, [('bar 100.0%', 1, 0)])
         app.pview.pie.view.check_gui_calls(['refresh'])
-    
+
 
 class TestMultipleCurrencies:
     def do_setup(self):
@@ -302,7 +302,7 @@ class TestMultipleCurrencies:
         app.add_entry('1/1/2008', 'CAD entry', transfer='CAD income', increase='1')
         app.show_nwview()
         return app
-    
+
     @with_app(do_setup)
     def test_balance_pie_chart(self, app):
         # the amounts are converted to the default currency before being weighted
@@ -311,7 +311,7 @@ class TestMultipleCurrencies:
             ('USD asset 44.4%', 0.8, 1),
         ]
         eq_(app.nwview.pie.pie1, expected)
-    
+
     @with_app(do_setup)
     def test_cash_flow_pie_chart(self, app):
         # the amounts are converted to the default currency before being weighted
@@ -321,7 +321,7 @@ class TestMultipleCurrencies:
             ('USD income 44.4%', 0.8, 1),
         ]
         eq_(app.pview.pie.pie1, expected)
-    
+
 
 class TestNegativeAssetValue:
     def do_setup(self):
@@ -332,12 +332,12 @@ class TestNegativeAssetValue:
         app.add_entry(date='01/08/2008', transfer='foo', increase='1')
         app.show_nwview()
         return app
-    
+
     @with_app(do_setup)
     def test_balance_pie_chart(self, app):
         # negative balances are ignored
         eq_(app.nwview.pie.pie1, [('bar 100.0%', 1, 0)])
-    
+
 
 class TestAccountGroup:
     def do_setup(self):
@@ -360,7 +360,7 @@ class TestAccountGroup:
         app.show_nwview()
         app.clear_gui_calls()
         return app
-    
+
     @with_app(do_setup)
     def test_collapse_group(self, app):
         # when we collapse the group, 'foo' and 'bar' are grouped together
@@ -373,7 +373,7 @@ class TestAccountGroup:
             ('group 30.0%', 3, 1),
         ]
         eq_(app.nwview.pie.pie1, expected)
-    
+
     @with_app(do_setup)
     def test_expand_group(self, app):
         # when we expand the group again, 'foo' and 'bar' go back to separate
@@ -385,7 +385,7 @@ class TestAccountGroup:
             ('foo 10.0%', 1, 2),
         ]
         eq_(app.nwview.pie.pie1, expected)
-    
+
     @with_app(do_setup)
     def test_pie_chart_data(self, app):
         # when the group is expanded, show all accounts individually
@@ -395,4 +395,4 @@ class TestAccountGroup:
             ('foo 10.0%', 1, 2),
         ]
         eq_(app.nwview.pie.pie1, expected)
-    
+

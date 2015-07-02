@@ -16,13 +16,13 @@ from collections import namedtuple
 import re
 import importlib
 
-from hscommon.currency import Currency, USD
 from hscommon.notify import Broadcaster
 from hscommon.util import nonone
 
 from .const import DATE_FORMAT_FOR_PREFERENCES
 from .model import currency
 from .model.amount import parse_amount, format_amount
+from .model.currency import Currency, USD
 from .model.date import parse_date, format_date
 from .plugin import CurrencyProviderPlugin, get_all_core_plugin_modules, get_plugins_from_mod
 

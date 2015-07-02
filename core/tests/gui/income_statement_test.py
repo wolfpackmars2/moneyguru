@@ -7,11 +7,11 @@
 from datetime import date
 
 from hscommon.testutil import eq_
-from hscommon.currency import CAD, USD
 
 from ..base import TestApp, with_app, ApplicationGUI
 from ...app import Application
 from ...model.account import AccountType
+from ...model.currency import CAD, USD
 from ...model.date import MonthRange
 
 #---

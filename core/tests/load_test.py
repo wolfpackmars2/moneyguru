@@ -9,10 +9,10 @@
 from datetime import date
 
 from hscommon.testutil import eq_
-from hscommon.currency import Currency, CAD
 
 from ..document import ScheduleScope
 from ..model.account import AccountType
+from ..model.currency import Currency, CAD
 from ..model.date import MonthRange
 from .base import compare_apps, TestApp, with_app, testdata
 

@@ -1,19 +1,18 @@
 # Created By: Virgil Dupras
 # Created On: 2009-11-07
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 # GUI calls are often made under the same conditions for multiple guis. Duplicating that condition
 # in every test unit can get tedious, so this test unit is a "theme based" unit which tests calls
 # made to GUIs' view.
 
-from hscommon.currency import EUR
-
 from ...document import FilterType
 from ...model.account import AccountType
+from ...model.currency import EUR
 from ..base import TestApp, with_app, testdata
 
 #--- No Setup
@@ -191,9 +190,9 @@ def app_one_account():
     app.show_account()
     app.clear_gui_calls()
     return app
-    
+
 def test_add_entry():
-    # Before adding a new entry, make sure the entry table is not in edition mode. Then, start 
+    # Before adding a new entry, make sure the entry table is not in edition mode. Then, start
     # editing the new entry. Adding an entry also refreshes account totals.
     app = app_one_account()
     app.add_entry()
@@ -241,9 +240,9 @@ def test_export_panel(app):
     app.expanel.view.check_gui_calls_partial(['set_table_enabled'])
     app.expanel.export_all = False
     # We enable the table, and because there's no account selected, we disable the export button
-    app.expanel.view.check_gui_calls(['set_table_enabled', 'set_export_button_enabled'])    
+    app.expanel.view.check_gui_calls(['set_table_enabled', 'set_export_button_enabled'])
     app.expanel.account_table[0].export = True
-    app.expanel.view.check_gui_calls(['set_export_button_enabled'])    
+    app.expanel.view.check_gui_calls(['set_export_button_enabled'])
 
 #--- One transaction
 def app_one_transaction():

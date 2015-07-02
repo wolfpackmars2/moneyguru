@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-06-24
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 import copy
@@ -11,12 +11,12 @@ import time
 from datetime import date
 
 from hscommon.testutil import eq_
-from hscommon.currency import EUR
 
 from ..const import PaneType
 from ..document import ScheduleScope
 from ..model.date import MonthRange
 from ..model.account import AccountType
+from ..model.currency import EUR
 from .base import compare_apps, testdata, TestApp, with_app
 
 def copydoc(doc):
@@ -78,7 +78,7 @@ def test_add_schedule(app, checkstate):
     # schedule addition are undoable
     app.show_scview()
     app.scpanel.new()
-    app.scpanel.save()    
+    app.scpanel.save()
     checkstate()
 
 @with_app(TestApp)
@@ -115,7 +115,7 @@ def app_one_nameless_account():
     app = TestApp()
     app.add_account()
     return app
-    
+
 @with_app(app_one_nameless_account)
 def test_undo_apanel_attrs(app, checkstate):
     # Undoing a changes made from apanel work
@@ -248,7 +248,7 @@ def test_redo_delete_while_in_etable(app):
 
 @with_app(app_one_named_account)
 def test_undo_add_entry(app, checkstate):
-    # Undoing an entry addition works in one shot (not one shot to blank the fields then one 
+    # Undoing an entry addition works in one shot (not one shot to blank the fields then one
     # other shot to remove the transaction.
     app.add_entry(description='foobar')
     checkstate()
@@ -495,7 +495,7 @@ def test_undo_delete_transaction(app, checkstate):
 
 @with_app(app_two_txns_in_two_accounts)
 def test_undo_delete_account_with_txn(app, checkstate):
-    # When 'first' is deleted, one transaction is simply unbound, and the other is deleted. we 
+    # When 'first' is deleted, one transaction is simply unbound, and the other is deleted. we
     # must undo all that
     app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[0]

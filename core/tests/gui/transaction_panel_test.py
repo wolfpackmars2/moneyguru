@@ -10,9 +10,9 @@ from datetime import date
 
 from pytest import raises
 from hscommon.testutil import eq_
-from hscommon.currency import USD
 
 from ...exception import OperationAborted
+from ...model.currency import USD
 from ..base import TestApp, with_app
 
 #--- Pristine

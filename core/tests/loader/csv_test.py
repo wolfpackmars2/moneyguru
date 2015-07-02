@@ -1,20 +1,20 @@
 # Created By: Virgil Dupras
 # Created On: 2009-01-18
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from datetime import date
 
 from pytest import raises
 from hscommon.testutil import eq_
-from hscommon.currency import USD, EUR
 
 from ...exception import FileFormatError
 from ...loader.csv import Loader, CsvField
 from ...model.amount import Amount
+from ...model.currency import USD, EUR
 from ..base import testdata
 
 def test_fortis():
@@ -55,7 +55,7 @@ def test_mixed_linesep():
     # this used to mix moneyGuru up and it wouldn't have the correct field sep (it would use
     # the comma from the amounts). This is really a weird case, for which I couldn't figure
     # the exact cause (it's somewhere in the sniffer). Oh, and watch out if you edit the csv
-    # because the linesep will likely be made uniform by the editor (I used a hex editor to 
+    # because the linesep will likely be made uniform by the editor (I used a hex editor to
     # create this one).
     loader = Loader(USD)
     loader.parse(testdata.filepath('csv/mixed_linesep.csv'))

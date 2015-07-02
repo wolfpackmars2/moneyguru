@@ -20,11 +20,11 @@ the list of classes you can subclass:
 
 from datetime import date
 
-from hscommon.currency import Currency, CurrencyNotSupportedException
 
 from collections import namedtuple
 
 from hscommon.notify import Broadcaster
+from ..model.currency import Currency, CurrencyNotSupportedException
 from ..gui.base import BaseView
 from ..gui.table import GUITable, Row
 from ..const import PaneType

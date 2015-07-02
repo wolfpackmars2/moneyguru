@@ -9,7 +9,7 @@ from datetime import date, datetime
 from urllib.parse import urlencode
 from urllib.request import urlopen
 
-from hscommon.currency import RateProviderUnavailable, USD, EUR, CAD
+from core.model.currency import RateProviderUnavailable, USD, EUR, CAD
 from core.plugin import CurrencyProviderPlugin
 
 CURRENCY2BOCID = {
