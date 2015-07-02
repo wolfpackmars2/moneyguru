@@ -57,9 +57,9 @@ and follow instructions from the script. You can then ignore the rest of the bui
 
 Then, you have to make sure that your system has its "non-pip-installable" prerequisites installed:
 
-* All systems: [Python 3.3+][python]
+* All systems: [Python 3.4+][python]
 * Mac OS X: The last XCode to have the 10.7 SDK included.
-* Windows: Visual Studio 2010, [PyQt 4.7+][pyqt], [cx_Freeze][cxfreeze] and
+* Windows: Visual Studio 2010, [PyQt 4.8+][pyqt], [cx_Freeze][cxfreeze] and
   [Advanced Installer][advinst] (you only need the last two if you want to create an installer)
 
 On Ubuntu, the apt-get command to install all pre-requisites is:
@@ -73,18 +73,12 @@ On Arch, it's:
 ## Setting up the virtual environment
 
 Use Python's built-in `pyvenv` to create a virtual environment in which we're going to install our
-Python-related dependencies. `pyvenv` is built-in Python but, unlike its `virtualenv` predecessor,
-it doesn't install setuptools and pip (unless you use Python 3.4+), so it has to be installed
-manually:
+Python-related dependencies.
 
     $ pyvenv --system-site-packages env
     $ source env/bin/activate
-    $ python get-pip.py
-
-Then, you can install pip requirements in your virtualenv:
-
     $ pip install -r requirements-[osx|win].txt
-    
+
 ([osx|win] depends, of course, on your platform. On other platforms, just use requirements.txt).
 
 ## Actual building and running
@@ -125,6 +119,5 @@ and is also [available online][documentation].
 [cxfreeze]: http://cx-freeze.sourceforge.net/
 [advinst]: http://www.advancedinstaller.com
 [sphinx]: http://sphinx.pocoo.org/
-[polib]: https://bitbucket.org/izi/polib/issue/42
 [tox]: https://tox.readthedocs.org/en/latest/
 
