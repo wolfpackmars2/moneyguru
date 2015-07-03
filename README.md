@@ -59,16 +59,16 @@ Then, you have to make sure that your system has its "non-pip-installable" prere
 
 * All systems: [Python 3.4+][python]
 * Mac OS X: The last XCode to have the 10.7 SDK included.
-* Windows: Visual Studio 2010, [PyQt 4.8+][pyqt], [cx_Freeze][cxfreeze] and
+* Windows: Visual Studio 2010, [PyQt 5.4+][pyqt], [cx_Freeze][cxfreeze] and
   [Advanced Installer][advinst] (you only need the last two if you want to create an installer)
 
 On Ubuntu, the apt-get command to install all pre-requisites is:
 
-    $ apt-get install python3-dev python3-pyqt4 pyqt4-dev-tools python3-setuptools
+    $ apt-get install python3-dev python3-pyqt5 pyqt5-dev-tools
 
 On Arch, it's:
 
-    $ pacman -S python-pyqt4
+    $ pacman -S python-pyqt5
 
 ## Setting up the virtual environment
 
