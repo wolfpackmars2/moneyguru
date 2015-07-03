@@ -43,7 +43,7 @@ class EntryView(BaseView):
         self.resize(483, 423)
         self.verticalLayout = QVBoxLayout(self)
         self.verticalLayout.setSpacing(0)
-        self.verticalLayout.setMargin(0)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setSpacing(0)
         self.filterBar = RadioBox(self)
@@ -92,7 +92,7 @@ class EntryView(BaseView):
 
     def _setupColumns(self):
         h = self.tableView.horizontalHeader()
-        h.setMovable(True) # column drag & drop reorder
+        h.setSectionsMovable(True) # column drag & drop reorder
 
     #--- QWidget override
     def setFocus(self):
