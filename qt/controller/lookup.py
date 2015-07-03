@@ -45,10 +45,12 @@ class Lookup(QWidget):
         self.verticalLayout.addWidget(self.namesList)
 
         self.searchEdit.immediate = True
-        seq = QKeySequence(Qt.Key_Up)
-        self._shortcutUp = QShortcut(seq, self, None, None, Qt.WidgetShortcut)
-        seq = QKeySequence(Qt.Key_Down)
-        self._shortcutDown = QShortcut(seq, self, None, None, Qt.WidgetShortcut)
+        self._shortcutUp = QShortcut(self)
+        self._shortcutUp.setKey(QKeySequence(Qt.Key_Up))
+        self._shortcutUp.setContext(Qt.WidgetShortcut)
+        self._shortcutDown = QShortcut(self)
+        self._shortcutDown.setKey(QKeySequence(Qt.Key_Down))
+        self._shortcutDown.setContext(Qt.WidgetShortcut)
 
     def _restoreSelection(self):
         self.namesList.setCurrentRow(self.model.selected_index)

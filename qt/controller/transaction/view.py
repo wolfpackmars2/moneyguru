@@ -1,12 +1,15 @@
 # Created By: Virgil Dupras
 # Created On: 2009-10-31
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore
+from PyQt5.QtWidgets import (
+    QVBoxLayout, QSizePolicy, QAbstractItemView
+)
 
 from qtlib.radio_box import RadioBox
 
@@ -21,14 +24,14 @@ class TransactionView(BaseView):
         self.ttable = TransactionTable(self.model.ttable, view=self.tableView)
         self.tfbar = TransactionFilterBar(model=self.model.filter_bar, view=self.filterBar)
         self._setupColumns() # Can only be done after the model has been connected
-    
+
     def _setupUi(self):
         self.resize(400, 300)
-        self.verticalLayout = QtGui.QVBoxLayout(self)
+        self.verticalLayout = QVBoxLayout(self)
         self.verticalLayout.setSpacing(0)
-        self.verticalLayout.setMargin(0)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.filterBar = RadioBox(self)
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Preferred)
+        sizePolicy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Preferred)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.filterBar.sizePolicy().hasHeightForWidth())
@@ -37,10 +40,10 @@ class TransactionView(BaseView):
         self.verticalLayout.addWidget(self.filterBar)
         self.tableView = TableView(self)
         self.tableView.setAcceptDrops(True)
-        self.tableView.setEditTriggers(QtGui.QAbstractItemView.DoubleClicked|QtGui.QAbstractItemView.EditKeyPressed)
+        self.tableView.setEditTriggers(QAbstractItemView.DoubleClicked|QAbstractItemView.EditKeyPressed)
         self.tableView.setDragEnabled(True)
-        self.tableView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
-        self.tableView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.tableView.setDragDropMode(QAbstractItemView.InternalMove)
+        self.tableView.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableView.setSortingEnabled(True)
         self.tableView.setCornerButtonEnabled(False)
         self.tableView.horizontalHeader().setHighlightSections(False)
@@ -48,16 +51,16 @@ class TransactionView(BaseView):
         self.tableView.verticalHeader().setVisible(False)
         self.tableView.verticalHeader().setDefaultSectionSize(18)
         self.verticalLayout.addWidget(self.tableView)
-    
+
     def _setupColumns(self):
         h = self.tableView.horizontalHeader()
-        h.setMovable(True) # column drag & drop reorder
-    
+        h.setSectionsMovable(True) # column drag & drop reorder
+
     #--- QWidget override
     def setFocus(self):
         self.ttable.view.setFocus()
-    
+
     #--- Public
     def fitViewsForPrint(self, viewPrinter):
         viewPrinter.fitTable(self.ttable)
-    
+

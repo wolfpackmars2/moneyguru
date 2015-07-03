@@ -6,9 +6,12 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt5 import QtCore, QtGui
+from PyQt5 import QtCore
 from PyQt5.QtCore import Qt
-from PyQt5.QtWidgets import QWidget, QTabBar, QComboBox, QGroupBox, QPushButton
+from PyQt5.QtWidgets import (
+    QWidget, QTabBar, QComboBox, QGroupBox, QPushButton, QVBoxLayout, QHBoxLayout, QSpacerItem,
+    QLabel, QSizePolicy, QGridLayout, QCheckBox, QAbstractItemView
+)
 
 from hscommon.trans import trget
 from qtlib.selectable_list import ComboboxModel
@@ -39,41 +42,41 @@ class ImportWindow(QWidget):
     def _setupUi(self):
         self.setWindowTitle(tr("Import"))
         self.resize(557, 407)
-        self.verticalLayout = QtGui.QVBoxLayout(self)
+        self.verticalLayout = QVBoxLayout(self)
         self.tabView = QTabBar(self)
         self.tabView.setMinimumSize(QtCore.QSize(0, 20))
         self.verticalLayout.addWidget(self.tabView)
-        self.targetAccountLayout = QtGui.QHBoxLayout()
-        self.targetAccountLabel = QtGui.QLabel(tr("Target Account:"))
+        self.targetAccountLayout = QHBoxLayout()
+        self.targetAccountLabel = QLabel(tr("Target Account:"))
         self.targetAccountLayout.addWidget(self.targetAccountLabel)
         self.targetAccountComboBox = QComboBox(self)
         self.targetAccountComboBox.setMinimumSize(QtCore.QSize(150, 0))
         self.targetAccountLayout.addWidget(self.targetAccountComboBox)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.targetAccountLayout.addItem(spacerItem)
         self.groupBox = QGroupBox(tr("Are some fields wrong? Fix them!"))
-        self.gridLayout = QtGui.QGridLayout(self.groupBox)
+        self.gridLayout = QGridLayout(self.groupBox)
         self.swapOptionsComboBoxView = QComboBox(self.groupBox)
         self.gridLayout.addWidget(self.swapOptionsComboBoxView, 0, 0, 1, 2)
-        self.applyToAllCheckBox = QtGui.QCheckBox(tr("Apply to all accounts"))
+        self.applyToAllCheckBox = QCheckBox(tr("Apply to all accounts"))
         self.gridLayout.addWidget(self.applyToAllCheckBox, 1, 0, 1, 1)
         self.swapButton = QPushButton(tr("Fix"))
         self.gridLayout.addWidget(self.swapButton, 1, 1, 1, 1)
         self.targetAccountLayout.addWidget(self.groupBox)
         self.verticalLayout.addLayout(self.targetAccountLayout)
         self.tableView = TableView(self)
-        self.tableView.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
+        self.tableView.setEditTriggers(QAbstractItemView.NoEditTriggers)
         self.tableView.setDragEnabled(True)
-        self.tableView.setDragDropMode(QtGui.QAbstractItemView.InternalMove)
-        self.tableView.setSelectionMode(QtGui.QAbstractItemView.ExtendedSelection)
-        self.tableView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.tableView.setDragDropMode(QAbstractItemView.InternalMove)
+        self.tableView.setSelectionMode(QAbstractItemView.ExtendedSelection)
+        self.tableView.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableView.horizontalHeader().setHighlightSections(False)
         self.tableView.horizontalHeader().setMinimumSectionSize(18)
         self.tableView.verticalHeader().setVisible(False)
         self.tableView.verticalHeader().setDefaultSectionSize(18)
         self.verticalLayout.addWidget(self.tableView)
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout = QHBoxLayout()
+        spacerItem1 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem1)
         self.importButton = QPushButton(tr("Import"))
         self.horizontalLayout.addWidget(self.importButton)

@@ -83,7 +83,9 @@ class NewView(BaseView):
         self.gridLayout.addItem(verticalSpacer(), 2, 1, 1, 1)
 
         for i in range(1, 8):
-            shortcut = QShortcut(QKeySequence(str(i)), self, None, None, Qt.WidgetShortcut)
+            shortcut = QShortcut(self)
+            shortcut.setKey(QKeySequence(str(i)))
+            shortcut.setContext(Qt.WidgetShortcut)
             setattr(self, 'shortcut{0}'.format(i), shortcut)
 
     #--- Event Handlers
