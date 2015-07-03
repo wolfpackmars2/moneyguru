@@ -6,8 +6,8 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4.QtCore import Qt, QSize
-from PyQt4.QtGui import (
+from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtWidgets import (
     QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QComboBox, QPlainTextEdit,
     QDialogButtonBox, QSpinBox
 )

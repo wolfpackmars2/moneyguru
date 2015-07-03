@@ -6,10 +6,11 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4.QtCore import Qt, QSize
-from PyQt4.QtGui import (
+from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import (
     QWidget, QVBoxLayout, QHBoxLayout, QFormLayout, QTabWidget, QLabel, QLineEdit, QPlainTextEdit,
-    QAbstractItemView, QSizePolicy, QSpacerItem, QPushButton, QDialogButtonBox, QIcon, QPixmap
+    QAbstractItemView, QSizePolicy, QSpacerItem, QPushButton, QDialogButtonBox
 )
 
 from hscommon.trans import trget
@@ -82,7 +83,7 @@ class TransactionPanel(Panel):
         self.splitTableView.verticalHeader().setDefaultSectionSize(18)
         self.infoLayout.addWidget(self.splitTableView)
         self.mctButtonsLayout = QHBoxLayout()
-        self.mctButtonsLayout.setMargin(0)
+        self.mctButtonsLayout.setContentsMargins(0, 0, 0, 0)
         spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.mctButtonsLayout.addItem(spacerItem)
         self.mctButton = QPushButton(tr("&Multi-currency balance"), self.infoTab)
@@ -124,7 +125,7 @@ class TransactionPanel(Panel):
 
 if __name__ == '__main__':
     import sys
-    from PyQt4.QtGui import QApplication, QDialog
+    from PyQt5.QtWidgets import QApplication, QDialog
     app = QApplication([])
     dialog = QDialog(None)
     TransactionPanel._setupUi(dialog)

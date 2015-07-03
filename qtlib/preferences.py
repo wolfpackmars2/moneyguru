@@ -6,7 +6,7 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4.QtCore import Qt, QObject, QSettings, QRect, QPyNullVariant, pyqtSignal
+from PyQt5.QtCore import Qt, QSettings, QRect, QObject, pyqtSignal
 
 from hscommon.trans import trget
 from hscommon.util import tryint
@@ -22,9 +22,11 @@ def get_langnames():
         'cs': tr("Czech"),
         'it': tr("Italian"),
         'hy': tr("Armenian"),
+        'ko': tr("Korean"),
         'ru': tr("Russian"),
         'uk': tr("Ukrainian"),
         'nl': tr('Dutch'),
+        'pl_PL': tr("Polish"),
         'pt_BR': tr("Brazilian"),
         'es': tr("Spanish"),
         'vi': tr("Vietnamese"),
@@ -53,8 +55,6 @@ def adjust_after_deserialization(v):
             return False
         else:
             return tryint(v, v)
-    if isinstance(v, QPyNullVariant):
-        return None
     return v
 
 # About QRect conversion:

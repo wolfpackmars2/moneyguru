@@ -6,11 +6,12 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4.QtCore import Qt, QSize
-from PyQt4.QtGui import (
+from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import (
     QWidget, QHBoxLayout, QVBoxLayout, QFormLayout, QLabel, QLineEdit, QComboBox, QSizePolicy,
     QPlainTextEdit, QDialogButtonBox, QTabWidget, QSpinBox, QAbstractItemView, QSpacerItem,
-    QPushButton, QIcon, QPixmap
+    QPushButton
 )
 
 from qtlib.selectable_list import ComboboxModel
@@ -115,7 +116,7 @@ class SchedulePanel(Panel):
         sizePolicy.setHeightForWidth(self.widget.sizePolicy().hasHeightForWidth())
         self.widget.setSizePolicy(sizePolicy)
         self.horizontalLayout_6 = QHBoxLayout(self.widget)
-        self.horizontalLayout_6.setMargin(0)
+        self.horizontalLayout_6.setContentsMargins(0, 0, 0, 0)
         spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.horizontalLayout_6.addItem(spacerItem)
         self.addSplitButton = QPushButton(self.widget)

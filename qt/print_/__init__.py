@@ -6,8 +6,8 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4.QtCore import QRect
-from PyQt4.QtGui import QPainter
+from PyQt5.QtCore import QRect
+from PyQt5.QtGui import QPainter
 
 from .layout import LayoutPage, LayoutViewElement
 from .item_view import (

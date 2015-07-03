@@ -9,8 +9,9 @@
 import sys
 import os.path as op
 
-from PyQt4.QtCore import pyqtSignal, SIGNAL, QCoreApplication, QLocale, QUrl
-from PyQt4.QtGui import QDialog, QDesktopServices, QApplication, QMessageBox
+from PyQt5.QtCore import pyqtSignal, QCoreApplication, QLocale, QUrl, QStandardPaths
+from PyQt5.QtGui import QDesktopServices
+from PyQt5.QtWidgets import QDialog, QApplication, QMessageBox
 
 from qtlib.about_box import AboutBox
 from qtlib.app import Application as ApplicationBase
@@ -39,7 +40,7 @@ class MoneyGuru(ApplicationBase):
         dateFormat = self.prefs.dateFormat
         decimalSep = locale.decimalPoint()
         groupingSep = locale.groupSeparator()
-        cachePath = QDesktopServices.storageLocation(QDesktopServices.CacheLocation)
+        cachePath = QStandardPaths.standardLocations(QStandardPaths.CacheLocation)[0]
         appdata = getAppData()
         DateEdit.DATE_FORMAT = dateFormat
         self.model = MoneyGuruModel(
@@ -57,7 +58,7 @@ class MoneyGuru(ApplicationBase):
         elif self.prefs.recentDocuments:
             self.doc.open(self.prefs.recentDocuments[0])
 
-        self.connect(self, SIGNAL('applicationFinishedLaunching()'), self.applicationFinishedLaunching)
+        self.finishedLaunching.connect(self.applicationFinishedLaunching)
         QCoreApplication.instance().aboutToQuit.connect(self.applicationWillTerminate)
 
     #--- Public

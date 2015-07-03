@@ -187,7 +187,7 @@ def build_cocoa(dev):
 def build_qt(dev):
     qrc_path = op.join('qt', 'mg.qrc')
     pyrc_path = op.join('qt', 'mg_rc.py')
-    print_and_do("pyrcc4 -py3 {0} > {1}".format(qrc_path, pyrc_path))
+    print_and_do("pyrcc5 {0} > {1}".format(qrc_path, pyrc_path))
     build_help()
     print("Creating the run.py file")
     shutil.copy('run_template_qt.py', 'run.py')
@@ -236,7 +236,7 @@ def build_localizations(ui):
     shutil.copytree('locale', locale_dest, ignore=shutil.ignore_patterns('*.po', '*.pot'))
     if ui == 'qt' and not ISLINUX:
         print("Copying qt_*.qm files into the 'locale' folder")
-        from PyQt4.QtCore import QLibraryInfo
+        from PyQt5.QtCore import QLibraryInfo
         trfolder = QLibraryInfo.location(QLibraryInfo.TranslationsPath)
         for lang in loc.get_langs('locale'):
             qmname = 'qt_%s.qm' % lang

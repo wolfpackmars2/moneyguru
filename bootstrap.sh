@@ -41,7 +41,7 @@ echo "Installing pip requirements"
 if [ "$(uname)" == "Darwin" ]; then
     ./env/bin/pip install -r requirements-osx.txt
 else
-    ./env/bin/python -c "import PyQt4" >/dev/null 2>&1 || { echo >&2 "PyQt 4.8+ required. Install it and try again. Aborting"; exit 1; }
+    ./env/bin/python -c "import PyQt5" >/dev/null 2>&1 || { echo >&2 "PyQt 5.4+ required. Install it and try again. Aborting"; exit 1; }
     ./env/bin/pip install $PIPARGS -r requirements.txt
 fi
 

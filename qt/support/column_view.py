@@ -8,8 +8,9 @@
 
 from collections import namedtuple
 
-from PyQt4.QtCore import QRectF, QSize, Qt
-from PyQt4.QtGui import QStyleOptionViewItemV4, QStyle, QTextOption, QPalette
+from PyQt5.QtCore import QRectF, QSize, Qt
+from PyQt5.QtGui import QTextOption, QPalette
+from PyQt5.QtWidgets import QStyleOptionViewItem, QStyle
 
 import re
 import logging
@@ -79,7 +80,7 @@ class AmountPainter:
 
         Args:
             amount - DisplayAmount containing currency and value strings
-            option - QStyleOptionViewItemV4 normally as passed to a paint event
+            option - QStyleOptionViewItem normally as passed to a paint event
 
         Returns:
             A tuple of the currency and value widths in the amount.
@@ -104,7 +105,7 @@ class AmountPainter:
         Returns the size to draw the currency, value, and some spacing in between.
 
         Args:
-            option - QStyleOptionViewItemV4 normally as passed to a paint event
+            option - QStyleOptionViewItem normally as passed to a paint event
             index - QModelIndex in the model
 
         Returns:
@@ -113,7 +114,7 @@ class AmountPainter:
         amount = self._getDataFromIndex(index)
         if amount is None:
             return None
-        option = QStyleOptionViewItemV4(option)
+        option = QStyleOptionViewItem(option)
         cur_width, val_width = self._getAmountTextWidths(amount, option)
         # Add some extra spacing in between (15) and padding on sides (5,5)
         return QSize(5+cur_width+15+val_width+5, option.fontMetrics.height())
@@ -126,13 +127,13 @@ class AmountPainter:
 
         Args:
             painter - QPainter
-            option - QStyleOptionViewItemV4
+            option - QStyleOptionViewItem
             index - QModelIndex in the model
         """
         column_data = self._getDataFromIndex(index)
         if column_data is None:
             return
-        option = QStyleOptionViewItemV4(option)
+        option = QStyleOptionViewItem(option)
         painter.setFont(option.font)
         cur_width, val_width = self._getAmountTextWidths(column_data, option)
         font_height = option.fontMetrics.height()

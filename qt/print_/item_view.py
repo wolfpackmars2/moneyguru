@@ -8,8 +8,8 @@
 
 from collections import namedtuple
 
-from PyQt4.QtCore import Qt, QRect, QSize, QPoint, QModelIndex
-from PyQt4.QtGui import QFont, QFontMetrics
+from PyQt5.QtCore import Qt, QRect, QSize, QPoint, QModelIndex
+from PyQt5.QtGui import QFont, QFontMetrics
 
 from hscommon.util import nonone
 

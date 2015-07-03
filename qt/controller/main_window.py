@@ -8,12 +8,13 @@
 
 import os.path as op
 
-from PyQt4 import QtGui
-from PyQt4.QtCore import Qt, QProcess, QUrl, QRect, QSize
-from PyQt4.QtGui import (
-    QMainWindow, QPrintDialog, QMessageBox, QIcon, QPixmap, QDesktopServices, QTabBar, QSizePolicy,
-    QHBoxLayout, QPushButton, QMenu, QAction, QMenuBar, QShortcut, QKeySequence, QFileDialog,
-    QApplication, QToolButton
+from PyQt5.QtCore import Qt, QProcess, QUrl, QRect, QSize
+from PyQt5.QtPrintSupport import QPrintDialog
+from PyQt5.QtGui import QIcon, QPixmap, QDesktopServices, QKeySequence
+from PyQt5.QtWidgets import (
+    QMainWindow, QMessageBox, QTabBar, QSizePolicy, QHBoxLayout, QPushButton, QMenu, QAction,
+    QMenuBar, QShortcut, QFileDialog, QApplication, QToolButton, QWidget, QVBoxLayout, QSpacerItem,
+    QStackedWidget, QLabel
 )
 
 from qtlib.recent import Recent
@@ -121,19 +122,19 @@ class MainWindow(QMainWindow):
     def _setupUi(self): # has to take place *before* base elements creation
         self.setWindowTitle("moneyGuru")
         self.resize(700, 580)
-        self.centralwidget = QtGui.QWidget(self)
-        self.verticalLayout = QtGui.QVBoxLayout(self.centralwidget)
+        self.centralwidget = QWidget(self)
+        self.verticalLayout = QVBoxLayout(self.centralwidget)
         self.verticalLayout.setSpacing(0)
-        self.verticalLayout.setMargin(0)
-        self.topBar = QtGui.QWidget(self.centralwidget)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.topBar = QWidget(self.centralwidget)
         self.horizontalLayout_2 = QHBoxLayout(self.topBar)
         self.horizontalLayout_2.setContentsMargins(2, 0, 2, 0)
-        spacerItem = QtGui.QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem)
         self.dateRangeSelectorView = DateRangeSelectorView(self.topBar)
         self.dateRangeSelectorView.setMinimumSize(QSize(220, 0))
         self.horizontalLayout_2.addWidget(self.dateRangeSelectorView)
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
+        spacerItem1 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
         self.searchLineEdit = SearchEdit(self.topBar)
         self.searchLineEdit.setMaximumSize(QSize(240, 16777215))
@@ -142,14 +143,14 @@ class MainWindow(QMainWindow):
         self.tabBar = QTabBar(self.centralwidget)
         self.tabBar.setMinimumSize(QSize(0, 20))
         self.verticalLayout.addWidget(self.tabBar)
-        self.mainView = QtGui.QStackedWidget(self.centralwidget)
+        self.mainView = QStackedWidget(self.centralwidget)
         self.verticalLayout.addWidget(self.mainView)
 
         # Bottom buttons & status label
-        self.bottomBar = QtGui.QWidget(self.centralwidget)
+        self.bottomBar = QWidget(self.centralwidget)
         self.horizontalLayout = QHBoxLayout(self.bottomBar)
-        self.horizontalLayout.setMargin(2)
-        self.horizontalLayout.setMargin(0)
+        self.horizontalLayout.setContentsMargins(2, 2, 2, 2)
+        self.horizontalLayout.setContentsMargins(0, 0, 0, 0)
         self.newItemButton = QPushButton(self.bottomBar)
         buttonSizePolicy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
         buttonSizePolicy.setHorizontalStretch(0)
@@ -180,7 +181,7 @@ class MainWindow(QMainWindow):
         self.columnsVisibilityButton.setIcon(QIcon(QPixmap(':/columns_16')))
         self.horizontalLayout.addWidget(self.columnsVisibilityButton)
 
-        self.statusLabel = QtGui.QLabel(tr("Status"))
+        self.statusLabel = QLabel(tr("Status"))
         self.statusLabel.setAlignment(Qt.AlignCenter)
         self.horizontalLayout.addWidget(self.statusLabel)
         self.verticalLayout.addWidget(self.bottomBar)

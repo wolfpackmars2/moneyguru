@@ -6,8 +6,8 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4.QtCore import Qt, QSize
-from PyQt4.QtGui import (
+from PyQt5.QtCore import Qt, QSize
+from PyQt5.QtWidgets import (
     QDialog, QMessageBox, QVBoxLayout, QFormLayout, QLabel, QComboBox, QSpinBox, QCheckBox,
     QLineEdit, QDialogButtonBox
 )
@@ -117,7 +117,7 @@ class PreferencesPanel(QDialog):
 
 if __name__ == '__main__':
     import sys
-    from PyQt4.QtGui import QApplication, QDialog
+    from PyQt5.QtWidgets import QApplication, QDialog
     app = QApplication([])
     dialog = QDialog(None)
     PreferencesPanel._setupUi(dialog)

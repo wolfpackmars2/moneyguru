@@ -12,8 +12,9 @@ import gc
 import logging
 import os.path as op
 
-from PyQt4.QtCore import QFile, QTextStream, QSettings
-from PyQt4.QtGui import QApplication, QIcon, QPixmap
+from PyQt5.QtCore import QFile, QTextStream, QSettings
+from PyQt5.QtGui import QIcon, QPixmap
+from PyQt5.QtWidgets import QApplication
 
 import hscommon.trans
 from hscommon.plat import ISLINUX

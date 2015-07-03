@@ -1,13 +1,13 @@
 # Created By: Virgil Dupras
 # Created On: 2010-09-12
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QFont, QBrush, QColor
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QFont, QBrush, QColor
 
 from qtlib.column import Column
 from ...const import EXTRA_ROLE, EXTRA_SPAN_ALL_COLUMNS
@@ -27,11 +27,11 @@ class GeneralLedgerTable(TableWithTransactions):
         Column('credit', 95, alignment=Qt.AlignRight, cantTruncate=True),
         Column('balance', 110, alignment=Qt.AlignRight, cantTruncate=True),
     ]
-    
+
     def __init__(self, model, view):
         TableWithTransactions.__init__(self, model, view)
         self.view.deletePressed.connect(self.model.delete)
-    
+
     #--- Override
     def _getData(self, row, column, role):
         is_account_row = self.model.is_account_row(row)
@@ -56,11 +56,11 @@ class GeneralLedgerTable(TableWithTransactions):
             return font
         else:
             return TableWithTransactions._getData(self, row, column, role)
-    
+
     def reset(self):
         TableWithTransactions.reset(self)
         self.view.clearSpans()
         for index, row in enumerate(self.model):
             if self.model.is_account_row(row):
                 self.view.setSpan(index, 0, 1, len(self.COLUMNS))
-    
+

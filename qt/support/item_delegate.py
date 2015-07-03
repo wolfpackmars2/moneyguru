@@ -9,8 +9,8 @@
 
 from collections import namedtuple
 
-from PyQt4.QtCore import QRect, QSize
-from PyQt4.QtGui import QStyledItemDelegate, QStyleOptionViewItemV4, QStyle
+from PyQt5.QtCore import QRect, QSize
+from PyQt5.QtWidgets import QStyledItemDelegate, QStyleOptionViewItem, QStyle
 
 # onClickCallable has the signature f(clicked_row_index: int).
 ItemDecoration = namedtuple('ItemDecoration', 'pixmap onClickCallable')
@@ -73,7 +73,7 @@ class ItemDelegate(QStyledItemDelegate):
         by the custom value_painter if it exists.
 
         Args:
-            option - QStyleOptionViewItemV4
+            option - QStyleOptionViewItem
             index - QModelIndex
 
         Returns:
@@ -106,11 +106,11 @@ class ItemDelegate(QStyledItemDelegate):
         QStyledItemDelegate.initStyleOption(self, option, index)
         decorations = self._get_decorations(index, bool(option.state & QStyle.State_Selected))
         if decorations:
-            option.decorationPosition = QStyleOptionViewItemV4.Right
+            option.decorationPosition = QStyleOptionViewItem.Right
             decorationWidth = sum(dec.pixmap.width() for dec in decorations)
             decorationHeight = max(dec.pixmap.height() for dec in decorations)
             option.decorationSize = QSize(decorationWidth, decorationHeight)
-            option.features |= QStyleOptionViewItemV4.HasDecoration
+            option.features |= QStyleOptionViewItem.HasDecoration
 
     def paint(self, painter, option, index):
         """Performs custom painting of value of data in the model and decorations.
@@ -120,7 +120,7 @@ class ItemDelegate(QStyledItemDelegate):
 
          Args:
             painter - QPainter
-            option - QStyleOptionViewItemV4
+            option - QStyleOptionViewItem
             index - QModelIndex
         """
         xOffset = 0
@@ -130,7 +130,7 @@ class ItemDelegate(QStyledItemDelegate):
         self._display_text = value_painter is None
         QStyledItemDelegate.paint(self, painter, option, index)
         if value_painter is not None:
-            value_option = QStyleOptionViewItemV4(option)
+            value_option = QStyleOptionViewItem(option)
             rect = value_option.rect
             rect = QRect(rect.left(), rect.top(), rect.width() - xOffset, rect.height())
             value_option.rect = rect

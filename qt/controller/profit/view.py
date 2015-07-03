@@ -6,8 +6,8 @@
 # which should be included with this package. The terms are also available at 
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QFrame, QAbstractItemView, QSplitter
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QFrame, QAbstractItemView, QSplitter
 
 from ...support.item_view import TreeView
 from ...support.pie_chart_view import PieChartView

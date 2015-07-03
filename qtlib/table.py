@@ -6,24 +6,21 @@
 # which should be included with this package. The terms are also available at 
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4.QtCore import Qt, QAbstractTableModel, QModelIndex
-from PyQt4.QtGui import QItemSelectionModel, QItemSelection
+from PyQt5.QtCore import Qt, QAbstractTableModel, QModelIndex, QItemSelectionModel, QItemSelection
 
 from .column import Columns
-
 
 class Table(QAbstractTableModel):
     # Flags you want when index.isValid() is False. In those cases, _getFlags() is never called.
     INVALID_INDEX_FLAGS = Qt.ItemIsEnabled
     COLUMNS = []
     
-    def __init__(self, model, view):
-        QAbstractTableModel.__init__(self)
+    def __init__(self, model, view, **kwargs):
+        super().__init__(**kwargs)
         self.model = model
         self.view = view
         self.view.setModel(self)
         self.model.view = self
-
         if hasattr(self.model, 'columns'):
             self.columns = Columns(self.model.columns, self.COLUMNS, view.horizontalHeader())
         
@@ -53,7 +50,6 @@ class Table(QAbstractTableModel):
     #--- Data Model methods
     # Virtual
     def _getData(self, row, column, role):
-
         if role in (Qt.DisplayRole, Qt.EditRole):
             attrname = column.name
             return row.get_cell_value(attrname)
@@ -138,7 +134,8 @@ class Table(QAbstractTableModel):
     
     #--- model --> view
     def refresh(self):
-        self.reset()
+        self.beginResetModel()
+        self.endResetModel()
         self._updateViewSelection()
     
     def show_selected_row(self):

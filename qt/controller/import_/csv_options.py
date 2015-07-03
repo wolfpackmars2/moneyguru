@@ -6,9 +6,10 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import Qt, QAbstractTableModel
-from PyQt4.QtGui import QWidget, QMenu, QCursor, QPixmap, QInputDialog, QMessageBox
+from PyQt5 import QtGui, QtCore
+from PyQt5.QtCore import Qt, QAbstractTableModel
+from PyQt5.QtGui import QPixmap, QCursor
+from PyQt5.QtWidgets import QWidget, QMenu, QInputDialog, QMessageBox
 
 from hscommon.trans import trget
 from core.gui.csv_options import FIELD_NAMES, FIELD_ORDER, SUPPORTED_ENCODINGS
