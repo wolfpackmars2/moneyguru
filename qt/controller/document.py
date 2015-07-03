@@ -77,7 +77,7 @@ class Document(QObject):
     def openDocument(self):
         title = tr("Select a document to load")
         filters = tr("moneyGuru Documents (*.moneyguru)")
-        docpath = str(QFileDialog.getOpenFileName(self.app.mainWindow, title, '', filters))
+        docpath, filetype = QFileDialog.getOpenFileName(self.app.mainWindow, title, '', filters)
         if docpath:
             self.open(docpath)
 
