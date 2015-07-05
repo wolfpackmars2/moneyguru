@@ -74,11 +74,13 @@ class AccountPane:
 
         def check_better(key, weight):
             conflict = self._match_entries.get(key, None)
-            if conflict and conflict.probability < weight:
+            if conflict and conflict.weight < weight:
                 self._remove_match(conflict)
 
         # Take existing entry that is recommended to be mapped to an import entry
         for existing_entry, imported_entry, will_import, weight in matches:
+            if existing_entry is None or imported_entry is None:
+                continue
             # If there is a better mapping for existing entries, use it.
             check_better(existing_entry, weight)
             # if there is a better mapping for imported entries, use it.

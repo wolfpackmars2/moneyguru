@@ -80,9 +80,12 @@ class MainWindowGUI(CallLogger):
 
 class DictLoader(base.Loader):
     """Used for fake_import"""
-    def __init__(self, default_currency, account_name, transactions, default_date_format='%d/%m/%Y'):
+    def __init__(
+            self, default_currency, account_name, transactions, default_date_format='%d/%m/%Y',
+            account_reference=None):
         base.Loader.__init__(self, default_currency, default_date_format)
         self.account_name = account_name
+        self.account_reference = account_reference
         self.transaction_dicts = transactions
         str_dates = [txn['date'] for txn in transactions]
         self.parsing_date_format = self.guess_date_format(str_dates)
@@ -92,6 +95,7 @@ class DictLoader(base.Loader):
 
     def _load(self):
         self.account_info.name = self.account_name
+        self.account_info.reference = self.account_reference
         for txn in self.transaction_dicts:
             self.start_transaction()
             for attr, value in txn.items():
@@ -410,13 +414,15 @@ class TestApp(TestAppBase):
         # add one to the expected count, we use this method that subtract 1 to the len of etable.
         return len(self.etable) - 1
 
-    def fake_import(self, account_name, transactions):
+    def fake_import(self, account_name, transactions, account_reference=None):
         # When you want to test the post-parsing import process, rather than going through the hoops,
         # use this methods. 'transactions' is a list of dicts, the dicts being attribute values.
         # dates are strings in the app's default date format.
         default_date_format = DateFormat(self.app.date_format).sys_format
-        self.mw.loader = DictLoader(self.doc.default_currency, account_name, transactions,
-            default_date_format=default_date_format)
+        self.mw.loader = DictLoader(
+            self.doc.default_currency, account_name, transactions,
+            default_date_format=default_date_format, account_reference=account_reference
+        )
         self.mw.loader.load()
         self.iwin.show()
 
