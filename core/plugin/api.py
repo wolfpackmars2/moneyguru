@@ -290,7 +290,7 @@ class ImportActionPlugin(Plugin, Broadcaster):
         pass
 
 
-EntryMatch = namedtuple('EntryProbability', 'existing imported will_import weight')
+EntryMatch = namedtuple('EntryMatch', 'existing imported will_import weight')
 
 
 class ImportBindPlugin(Plugin):

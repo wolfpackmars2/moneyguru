@@ -32,13 +32,14 @@ class LineEditButton(QToolButton):
 class ClearableEdit(QLineEdit):
     def __init__(self, parent=None, is_clearable=True):
         QLineEdit.__init__(self, parent)
-        self._is_clearable = is_clearable
+        self._is_clearable = False
         if is_clearable:
             self._clearButton = LineEditButton(self)
             frameWidth = self.style().pixelMetric(QStyle.PM_DefaultFrameWidth)
             paddingRight = self._clearButton.sizeHint().width() + frameWidth + 1
             stylesheet = "QLineEdit {{ padding-right:{0}px; }}".format(paddingRight)
             self.setStyleSheet(stylesheet)
+            self._is_clearable = True
             self._updateClearButton()
 
             self._clearButton.clicked.connect(self._clearSearch)
@@ -63,6 +64,11 @@ class ClearableEdit(QLineEdit):
             rightX = rect.right() - frameWidth - rightHint.width()
             rightY = (rect.bottom() - rightHint.height()) // 2
             self._clearButton.move(rightX, rightY)
+
+    def setText(self, value):
+        QLineEdit.setText(self, value)
+        if self._is_clearable:
+            self._updateClearButton()
 
     #--- Event Handlers
     def _textChanged(self, text):

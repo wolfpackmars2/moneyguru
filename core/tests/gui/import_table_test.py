@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-08-08
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from datetime import date
@@ -42,7 +42,7 @@ def test_is_two_sided_without_target_account(app):
 
 @with_app(app_import_checkbook_qif)
 def test_rows_after_checkbook_import(app):
-    # The shown rows are the imported txns from the first account. The target account is a new 
+    # The shown rows are the imported txns from the first account. The target account is a new
     # file, so we don't have any 'left side' entries.
     eq_(len(app.itable), 5)
     eq_(app.itable[0].date, '')
@@ -101,7 +101,7 @@ def test_will_import_value_is_kept(app):
 
 #---
 def app_import_checkbook_qif_with_existing_txns():
-    # The end result of this setup is that only the 2nd existing entry end up in the table 
+    # The end result of this setup is that only the 2nd existing entry end up in the table
     # (the first is reconciled)
     app = TestApp()
     app.add_account('foo')
@@ -140,7 +140,7 @@ def test_can_bind(app):
 
 @with_app(app_import_checkbook_qif_with_existing_txns)
 def test_is_two_sided_with_target_account(app):
-    # We have a target account, and some transactions can be bound in it. The table is 
+    # We have a target account, and some transactions can be bound in it. The table is
     # two-sided.
     assert app.itable.is_two_sided
 
@@ -253,3 +253,46 @@ def test_unbind_unbound(app):
     eq_(len(app.itable), 3)
     app.itable.unbind(2)
     eq_(len(app.itable), 3)
+
+#---
+def app_load_then_import_with_many_matching_and_unmatching():
+    # We ended up at some point with some regressions that were caused by more than one references
+    # matching, along with some references not matching. A case which wasn't covered by
+    # app_load_then_import_with_references(). This why this setup exists.
+    app = TestApp()
+    app.TXNS = [
+        {'date': '20/07/2009', 'amount': '1', 'reference': 'txn1'},
+        {'date': '21/07/2009', 'amount': '1', 'reference': 'txn2'},
+        {'date': '22/07/2009', 'amount': '1'},
+        {'date': '23/07/2009', 'amount': '1'},
+    ]
+    app.fake_import('foo', app.TXNS, account_reference='foo')
+    app.iwin.import_selected_pane()
+    app.doc.select_all_transactions_range()
+    aview = app.show_account('foo')
+    aview.toggle_reconciliation_mode()
+    aview.etable.select([0])
+    aview.etable.toggle_reconciled()
+    aview.toggle_reconciliation_mode()
+    app.fake_import('foo', app.TXNS, account_reference='foo')
+    return app
+
+@with_app(app_load_then_import_with_many_matching_and_unmatching)
+def test_will_import_is_set_properly_with_reconciled_followed_by_unreconciled(app):
+    # Reference matching system works properly when mixed with unmatched entries. Fixes regression
+    # from #432.
+    # The 2 references txns, matched, followed 4 unmatched entries (2 existing, 2 imported)
+    EXPECTED = [
+        (False, '20/07/2009', '20/07/2009'),
+        (True, '21/07/2009', '21/07/2009'),
+        (False, '22/07/2009', ''),
+        (True, '', '22/07/2009'),
+        (False, '23/07/2009', ''),
+        (True, '', '23/07/2009'),
+    ]
+    eq_(len(app.itable), len(EXPECTED))
+    for row, (will_import, date_, date_import) in zip(app.itable, EXPECTED):
+        eq_(row.will_import, will_import)
+        eq_(row.date, date_)
+        eq_(row.date_import, date_import)
+

@@ -7,6 +7,7 @@
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from datetime import date
+from collections import defaultdict
 
 from hscommon.testutil import eq_
 
@@ -17,7 +18,7 @@ from ...gui.import_window import ActionSelectionOptions
 from core.model.transaction import Split
 from core.model.account import AccountType
 from core.model.amount import Amount
-from core.plugin import ImportActionPlugin
+from core.plugin import ImportActionPlugin, ImportBindPlugin, EntryMatch
 
 # Legacy structure
 # This used to list the possible swap operations. Since the introduction of import plugins, this
@@ -31,6 +32,88 @@ class SwapType:
     InvertAmount = 4
 
 
+#--- Support test plugin
+
+class ChangeStructure(ImportActionPlugin):
+    NAME = "Structure Change Import Plugin"
+    ACTION_NAME = "Structure change import"
+
+    def perform_action(self, import_document, transactions, panes, selected_rows=None):
+
+        imbalance_account = import_document.accounts.find('imbalance account', AccountType.Expense)
+
+        for transaction in transactions:
+            if len(transaction.splits) == 2:
+                # Wow, this was actually something pretty hard to do...
+                txn_copy = transaction.replicate()
+                if txn_copy.splits[0].amount == 0:  # If an amount is zero, it's an int...
+                    amount_value = 0
+                    amount_currency = import_document.default_currency
+                else:
+                    amount_value = txn_copy.splits[0].amount.value
+                    amount_currency = txn_copy.splits[0].amount.currency
+                first_split_new_amount = Amount(amount_value+1, amount_currency)
+                new_split_amount = Amount(-1.0, amount_currency)
+                txn_copy.splits[0].amount = first_split_new_amount
+                txn_copy.splits.append(Split(txn_copy, imbalance_account, new_split_amount))
+                import_document.change_transaction(transaction, txn_copy)
+
+class ChangeTransfer(ImportActionPlugin):
+    """
+    The point of this plugin is to change any transfer with the
+    phrase 'automatic' to a checking account.
+    """
+
+    def always_perform_action(self):
+        return True
+
+    def perform_action(self, import_document, transactions, panes):
+        auto_pays = []
+
+        # We go through all of our transactions searching for the keyword
+        # automatic.
+        for txn in transactions:
+            for split in txn.splits:
+                if 'automatic' in split.account_name.lower():
+                    # We collect up the actual account names marked for transfer
+                    auto_pays.append(split.account_name)
+
+        if not auto_pays:
+            return
+
+        checking = import_document.accounts.find('checking', AccountType.Asset)
+
+        # Reassign our transfers to checking
+        auto_pay_accounts = [import_document.accounts.find(ap) for ap in auto_pays]
+        for account in auto_pay_accounts:
+            import_document.transactions.reassign_account(account, checking)
+
+class ValueImportBind(ImportBindPlugin):
+    """A simple import binder that checks date + description + payee
+
+    Match score increases with the number of fields that are the same
+    """
+    NAME = "Value Import Bind"
+
+    def match_entries(self, target_account, document, import_document, existing_entries, imported_entries):
+        matches = []
+        import_date2entry = defaultdict(set)
+        for e in imported_entries:
+            import_date2entry[e.date].add(e)
+        for existing_entry in existing_entries:
+            if existing_entry.date not in import_date2entry:
+                continue
+            matching = import_date2entry[existing_entry.date]
+            for import_entry in matching:
+                score = 0.3
+                if import_entry.description == existing_entry.description:
+                    score += 0.3
+                if import_entry.payee == existing_entry.payee:
+                    score += 0.3
+                matches.append(EntryMatch(existing_entry, import_entry, True, score))
+
+        return matches
+
 #--- No setup
 
 @with_app(TestApp)
@@ -42,6 +125,36 @@ def test_MMM_date_formats_are_supported(app):
     app.iwin.import_selected_pane()
     eq_(app.itable[0].date_import, '16/09/2012')
     eq_(app.iwin.swap_type_list[0], "dd MMM yyyy --> MMM dd yyyy")
+
+@with_app(TestApp)
+def test_fuzzy_matching_plugin(app):
+    # Verify that fuzzily matching entries on import can actually ever work (core plugins don't do
+    # that (yet) so that's why we can only verify this with a dummy plugin).
+    # Here, our higest score (date+desc+payee are matched, the last entry) is bound to our existing
+    # entry. The rest is unbound.
+    app.set_plugins([ValueImportBind])
+    TXNS = [
+        {'date': '22/06/2015', 'description': 'foo', 'payee': 'foo', 'amount': '1'},
+    ]
+    app.fake_import('foo', TXNS, account_reference='foo')
+    app.iwin.import_selected_pane()
+    TXNS = [
+        {'date': '22/06/2015', 'description': 'bar', 'payee': 'bar', 'amount': '2'}, # date matching
+        {'date': '22/06/2015', 'description': 'foo', 'payee': 'bar', 'amount': '3'}, # date+desc matching
+        {'date': '22/06/2015', 'description': 'foo', 'payee': 'foo', 'amount': '4'}, # date+desc+payee matching
+    ]
+    app.fake_import('foo', TXNS, account_reference='foo')
+    EXPECTED = [
+        ('1.00', '4.00'),
+        ('', '2.00'),
+        ('', '3.00'),
+
+    ]
+    eq_(len(app.itable), len(EXPECTED))
+    for row, (amount, amount_import) in zip(app.itable, EXPECTED):
+        eq_(row.amount, amount)
+        eq_(row.amount_import, amount_import)
+
 
 #---
 def app_import_checkbook_qif():
@@ -533,61 +646,6 @@ def test_switch_description_payee_with_common_txn(app):
     eq_(app.itable[0].description_import, 'bar')
     eq_(app.itable[0].payee_import, 'foo')
 
-
-#---
-class ChangeStructure(ImportActionPlugin):
-    NAME = "Structure Change Import Plugin"
-    ACTION_NAME = "Structure change import"
-
-    def perform_action(self, import_document, transactions, panes, selected_rows=None):
-
-        imbalance_account = import_document.accounts.find('imbalance account', AccountType.Expense)
-
-        for transaction in transactions:
-            if len(transaction.splits) == 2:
-                # Wow, this was actually something pretty hard to do...
-                txn_copy = transaction.replicate()
-                if txn_copy.splits[0].amount == 0:  # If an amount is zero, it's an int...
-                    amount_value = 0
-                    amount_currency = import_document.default_currency
-                else:
-                    amount_value = txn_copy.splits[0].amount.value
-                    amount_currency = txn_copy.splits[0].amount.currency
-                first_split_new_amount = Amount(amount_value+1, amount_currency)
-                new_split_amount = Amount(-1.0, amount_currency)
-                txn_copy.splits[0].amount = first_split_new_amount
-                txn_copy.splits.append(Split(txn_copy, imbalance_account, new_split_amount))
-                import_document.change_transaction(transaction, txn_copy)
-
-class ChangeTransfer(ImportActionPlugin):
-    """
-    The point of this plugin is to change any transfer with the
-    phrase 'automatic' to a checking account.
-    """
-
-    def always_perform_action(self):
-        return True
-
-    def perform_action(self, import_document, transactions, panes):
-        auto_pays = []
-
-        # We go through all of our transactions searching for the keyword
-        # automatic.
-        for txn in transactions:
-            for split in txn.splits:
-                if 'automatic' in split.account_name.lower():
-                    # We collect up the actual account names marked for transfer
-                    auto_pays.append(split.account_name)
-
-        if not auto_pays:
-            return
-
-        checking = import_document.accounts.find('checking', AccountType.Asset)
-
-        # Reassign our transfers to checking
-        auto_pay_accounts = [import_document.accounts.find(ap) for ap in auto_pays]
-        for account in auto_pay_accounts:
-            import_document.transactions.reassign_account(account, checking)
 
 #---
 def app_with_structure_change_import_plugin():

@@ -1,3 +1,9 @@
+=== 2.9.1 (2015-07-06)
+
+* Fix import regression introduced in v2.9.0 (#432)
+* Fix visual glitch in schedule panel [Linux, Windows] (#430)
+* Fix keyboard bindings  in all panels [Linux, Windows] (#433)
+
 === 2.9.0 (2015-07-01)
 
 * Add "+" button in the tab bar [Linux, Windows] (#424)
