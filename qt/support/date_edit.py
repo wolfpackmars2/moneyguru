@@ -67,6 +67,10 @@ class DateEdit(ClearableEdit):
         self.prepareDataForCommit()
         ClearableEdit.focusOutEvent(self, event)
 
+    def setText(self, value):
+        self.widget.text = value
+        super().setText(value)
+
     #--- Public
     def prepareDataForCommit(self):
         self.widget.exit()
