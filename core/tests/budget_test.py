@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-06-02
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from hscommon.testutil import eq_
@@ -53,9 +53,9 @@ def test_set_budget_again(app):
     # in the case of an income-based budget.
     app.show_bview()
     app.btable.select([0])
-    app.mw.edit_item()
-    app.bpanel.amount = '200'
-    app.bpanel.save()
+    bpanel = app.mw.edit_item()
+    bpanel.amount = '200'
+    bpanel.save()
     app.show_tview()
     eq_(app.ttable[0].from_, 'Some Income')
 
@@ -97,7 +97,7 @@ def test_busted_budget_spaws_dont_show_up(app):
     app.ttable.save_edits()
     eq_(app.ttable.row_count, 12)
     eq_(app.ttable[1].date, '29/02/2008')
-    
+
 
 #--- Expense with budget and target
 def app_expense_with_budget_and_target(monkeypatch):

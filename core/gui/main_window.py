@@ -28,7 +28,6 @@ from .completion_lookup import CompletionLookup
 from .account_panel import AccountPanel
 from .transaction_panel import TransactionPanel
 from .mass_edition_panel import MassEditionPanel
-from .budget_panel import BudgetPanel
 from .schedule_panel import SchedulePanel
 from .custom_date_range_panel import CustomDateRangePanel
 from .account_reassign_panel import AccountReassignPanel
@@ -112,7 +111,6 @@ class MainWindow(Repeater, GUIObject):
         self.account_panel = AccountPanel(self)
         self.transaction_panel = TransactionPanel(self)
         self.mass_edit_panel = MassEditionPanel(self)
-        self.budget_panel = BudgetPanel(self)
         self.schedule_panel = SchedulePanel(self)
         self.custom_daterange_panel = CustomDateRangePanel(self)
         self.account_reassign_panel = AccountReassignPanel(self)
@@ -197,7 +195,7 @@ class MainWindow(Repeater, GUIObject):
     def _perform_if_possible(self, action_name):
         current_view = self._current_pane.view
         if current_view.can_perform(action_name):
-            getattr(current_view, action_name)()
+            return getattr(current_view, action_name)()
 
     def _restore_default_panes(self):
         pane_types = [
@@ -348,14 +346,14 @@ class MainWindow(Repeater, GUIObject):
             self.view.change_current_pane()
 
     def delete_item(self):
-        self._perform_if_possible('delete_item')
+        return self._perform_if_possible('delete_item')
 
     def duplicate_item(self):
-        self._perform_if_possible('duplicate_item')
+        return self._perform_if_possible('duplicate_item')
 
     def edit_item(self):
         try:
-            self._perform_if_possible('edit_item')
+            return self._perform_if_possible('edit_item')
         except OperationAborted:
             pass
 
@@ -418,7 +416,7 @@ class MainWindow(Repeater, GUIObject):
 
     def new_item(self):
         try:
-            self._perform_if_possible('new_item')
+            return self._perform_if_possible('new_item')
         except OperationAborted as e:
             if e.message:
                 self.view.show_message(e.message)

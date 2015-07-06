@@ -60,6 +60,17 @@ class DocumentGUI(CallLogger):
         return self.query_for_schedule_scope_result
 
 
+class ViewGUI(CallLogger):
+    @log
+    def get_panel_view(self, model):
+        for elem in vars(model).values():
+            if elem is model:
+                continue
+            if isinstance(elem, GUIObject) and elem.view is None:
+                elem.view = CallLogger()
+        self.panel_view = CallLogger() # We have to hold onto this instance for a while
+        return self.panel_view
+
 class MainWindowGUI(CallLogger):
     def __init__(self, testapp):
         CallLogger.__init__(self)
@@ -75,8 +86,7 @@ class MainWindowGUI(CallLogger):
     def refresh_panes(self):
         app = self.testapp
         for i in range(app.mw.pane_count):
-            app.link_gui(app.mw.pane_view(i))
-
+            app.link_gui(app.mw.pane_view(i), logger_class=ViewGUI)
 
 class DictLoader(base.Loader):
     """Used for fake_import"""
@@ -134,7 +144,6 @@ class TestApp(TestAppBase):
         self.tpanel = link_gui(self.mw.transaction_panel)
         self.stable = link_gui(self.tpanel.split_table)
         self.mepanel = link_gui(self.mw.mass_edit_panel)
-        self.bpanel = link_gui(self.mw.budget_panel)
         self.cdrpanel = link_gui(self.mw.custom_daterange_panel)
         self.arpanel = link_gui(self.mw.account_reassign_panel)
         self.expanel = link_gui(self.mw.export_panel)
@@ -154,9 +163,9 @@ class TestApp(TestAppBase):
         self.mainwindow_gui = self.mw.view
         self.mw.connect()
 
-    def link_gui(self, gui):
+    def link_gui(self, gui, logger_class=CallLogger):
         if gui.view is None:
-            gui.view = self.make_logger()
+            gui.view = self.make_logger(class_=logger_class)
         # link sub GUIs too
         for elem in vars(gui).values():
             if elem is gui or elem is self.mw:
@@ -235,20 +244,20 @@ class TestApp(TestAppBase):
             repeat_every=1, stop_date=None):
         # if no target, set target_name to None
         self.show_bview()
-        self.mainwindow.new_item()
+        bpanel = self.mainwindow.new_item()
         if start_date is None:
             start_date = self.app.format_date(date(date.today().year, date.today().month, 1))
-        self.bpanel.start_date = start_date
-        self.bpanel.repeat_type_list.select(repeat_type_index)
-        self.bpanel.repeat_every = repeat_every
+        bpanel.start_date = start_date
+        bpanel.repeat_type_list.select(repeat_type_index)
+        bpanel.repeat_every = repeat_every
         if stop_date is not None:
-            self.bpanel.stop_date = stop_date
-        account_index = self.bpanel.account_list.index(account_name)
-        self.bpanel.account_list.select(account_index)
-        target_index = self.bpanel.target_list.index(target_name) if target_name else 0
-        self.bpanel.target_list.select(target_index)
-        self.bpanel.amount = str_amount
-        self.bpanel.save()
+            bpanel.stop_date = stop_date
+        account_index = bpanel.account_list.index(account_name)
+        bpanel.account_list.select(account_index)
+        target_index = bpanel.target_list.index(target_name) if target_name else 0
+        bpanel.target_list.select(target_index)
+        bpanel.amount = str_amount
+        bpanel.save()
 
     def add_entry(self, date=None, description=None, payee=None, transfer=None, increase=None,
             decrease=None, checkno=None, reconciliation_date=None):
@@ -580,7 +589,7 @@ class TestApp(TestAppBase):
     def show_bview(self):
         self.mw.select_pane_of_type(PaneType.Budget)
         if not hasattr(self, 'bview'):
-            self.bview = self.link_gui(self.current_view())
+            self.bview = self.current_view()
             self.btable = self.link_gui(self.bview.table)
         return self.current_view()
 

@@ -44,7 +44,6 @@ from .account_reassign_panel import AccountReassignPanel
 from .transaction_panel import TransactionPanel
 from .mass_edition_panel import MassEditionPanel
 from .schedule_panel import SchedulePanel
-from .budget_panel import BudgetPanel
 from .export_panel import ExportPanel
 from .custom_date_range_panel import CustomDateRangePanel
 from .search_field import SearchField
@@ -96,12 +95,11 @@ class MainWindow(QMainWindow):
         self.tpanel = TransactionPanel(mainwindow=self)
         self.mepanel = MassEditionPanel(mainwindow=self)
         self.scpanel = SchedulePanel(mainwindow=self)
-        self.bpanel = BudgetPanel(mainwindow=self)
         self.cdrpanel = CustomDateRangePanel(mainwindow=self)
         self.arpanel = AccountReassignPanel(mainwindow=self)
         self.expanel = ExportPanel(mainwindow=self)
         self.all_panels = [
-            self.apanel, self.tpanel, self.mepanel, self.scpanel, self.bpanel, self.cdrpanel,
+            self.apanel, self.tpanel, self.mepanel, self.scpanel, self.cdrpanel,
             self.arpanel, self.expanel,
         ]
         self.alookup = Lookup(self, model=self.model.account_lookup)
@@ -436,7 +434,7 @@ class MainWindow(QMainWindow):
         if pane_view in self.model2view:
             view = self.model2view[pane_view]
         else:
-            view = PANETYPE2VIEWCLASS[pane_type](model=pane_view)
+            view = PANETYPE2VIEWCLASS[pane_type](model=pane_view, mainwindow=self)
             self.model2view[pane_view] = view
             self.mainView.addWidget(view)
             view.restoreSubviewsSize()

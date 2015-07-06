@@ -754,9 +754,10 @@ def app_with_budget(monkeypatch):
 
 @with_app(app_with_budget)
 def test_change_budget(app, checkstate):
-    app.bpanel.load()
-    app.bpanel.repeat_every = 12
-    app.bpanel.save()
+    bpanel = app.mw.edit_item()
+    bpanel.load()
+    bpanel.repeat_every = 12
+    bpanel.save()
     checkstate()
 
 @with_app(app_with_budget)

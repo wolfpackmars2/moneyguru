@@ -272,9 +272,9 @@ def app_account_with_budget():
     app.add_account('asset')
     app.add_account('income', account_type=AccountType.Income)
     app.add_budget('income', 'asset', '400')
-    app.mainwindow.edit_item()
-    app.bpanel.notes = 'foobar'
-    app.bpanel.save()
+    bpanel = app.mainwindow.edit_item()
+    bpanel.notes = 'foobar'
+    bpanel.save()
     return app
 
 def app_transaction_with_payee_and_checkno():

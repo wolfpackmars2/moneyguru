@@ -30,11 +30,11 @@ class BudgetPanel(Panel):
     ]
     PERSISTENT_NAME = 'budgetPanel'
 
-    def __init__(self, mainwindow):
+    def __init__(self, model, mainwindow):
         Panel.__init__(self, mainwindow)
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self._setupUi()
-        self.model = mainwindow.model.budget_panel
-        self.model.view = self
+        self.model = model
         self.repeatTypeComboBox = ComboboxModel(model=self.model.repeat_type_list, view=self.repeatTypeComboBoxView)
         self.accountComboBox = ComboboxModel(model=self.model.account_list, view=self.accountComboBoxView)
         self.targetComboBox = ComboboxModel(model=self.model.target_list, view=self.targetComboBoxView)
