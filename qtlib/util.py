@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2011-02-01
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 import sys
@@ -14,8 +14,9 @@ import logging
 
 from hscommon.util import first
 
-from PyQt4.QtGui import (QDesktopWidget, QSpacerItem, QSizePolicy, QPixmap, QIcon, QAction,
-    QHBoxLayout, QDesktopServices)
+from PyQt5.QtCore import QStandardPaths
+from PyQt5.QtGui import QPixmap, QIcon
+from PyQt5.QtWidgets import QDesktopWidget, QSpacerItem, QSizePolicy, QAction, QHBoxLayout
 
 def moveToScreenCenter(widget):
     frame = widget.frameGeometry()
@@ -36,7 +37,7 @@ def horizontalSpacer(size=None):
 
 def horizontalWrap(widgets):
     """Wrap all widgets in `widgets` in a horizontal layout.
-    
+
     If, instead of placing a widget in your list, you place an int or None, an horizontal spacer
     with the width corresponding to the int will be placed (0 or None means an expanding spacer).
     """
@@ -75,7 +76,7 @@ def setAccelKeys(menu):
         action.setText(newtext)
 
 def getAppData():
-    return str(QDesktopServices.storageLocation(QDesktopServices.DataLocation))
+    return QStandardPaths.standardLocations(QStandardPaths.DataLocation)[0]
 
 class SysWrapper(io.IOBase):
     def write(self, s):

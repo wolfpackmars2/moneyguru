@@ -1,16 +1,16 @@
 # Created By: Virgil Dupras
 # Created On: 2009-10-31
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 import os.path as op
 import tempfile
 
-from PyQt4.QtCore import pyqtSignal, Qt, QObject, QFile
-from PyQt4.QtGui import QFileDialog, QMessageBox, QApplication
+from PyQt5.QtCore import pyqtSignal, Qt, QObject, QFile
+from PyQt5.QtWidgets import QFileDialog, QMessageBox, QApplication
 
 from hscommon.trans import trget
 from core.exception import FileFormatError
@@ -27,12 +27,12 @@ class Document(QObject):
         self.documentPath = None
         self.model = DocumentModel(app=app.model)
         self.model.view = self
-    
+
     #--- Public
     def close(self):
         if self.documentPath:
             self.model.close()
-    
+
     def confirmDestructiveAction(self):
         # Asks whether the user wants to continue before continuing with an action that will replace
         # the current document. Will save the document as needed. Returns True if the action can
@@ -53,7 +53,7 @@ class Document(QObject):
             return False
         elif result == QMessageBox.Discard:
             return True
-    
+
     def new(self):
         if not self.confirmDestructiveAction():
             return
@@ -61,7 +61,7 @@ class Document(QObject):
         self.documentPath = None
         self.model.clear()
         self.documentPathChanged.emit()
-    
+
     def open(self, docpath):
         if not self.confirmDestructiveAction():
             return
@@ -73,14 +73,14 @@ class Document(QObject):
             QMessageBox.warning(self.app.mainWindow, tr("Cannot load file"), str(e))
         self.documentPathChanged.emit()
         self.documentOpened.emit(docpath)
-    
+
     def openDocument(self):
         title = tr("Select a document to load")
         filters = tr("moneyGuru Documents (*.moneyguru)")
-        docpath = str(QFileDialog.getOpenFileName(self.app.mainWindow, title, '', filters))
+        docpath, filetype = QFileDialog.getOpenFileName(self.app.mainWindow, title, '', filters)
         if docpath:
             self.open(docpath)
-    
+
     def openExampleDocument(self):
         if not self.confirmDestructiveAction():
             return
@@ -92,13 +92,13 @@ class Document(QObject):
         self.model.adjust_example_file()
         self.documentPath = None # As if it was a new doc. Save As is required.
         self.documentPathChanged.emit()
-    
+
     def save(self):
         if self.documentPath is not None:
             self.model.save_to_xml(self.documentPath)
         else:
             self.saveAs()
-    
+
     def saveAs(self):
         title = tr("Save As")
         filters = tr("moneyGuru Documents (*.moneyguru)")
@@ -110,7 +110,7 @@ class Document(QObject):
             self.documentPath = docpath
             self.documentPathChanged.emit()
             self.documentSavedAs.emit(docpath)
-    
+
     # model --> view
     def query_for_schedule_scope(self):
         if QApplication.keyboardModifiers() & Qt.ShiftModifier:
@@ -119,7 +119,7 @@ class Document(QObject):
             return ScheduleScope.Local
         dialog = ScheduleScopeDialog(self.app.mainWindow)
         return dialog.queryForScope()
-    
+
     #--- Signals
     documentOpened = pyqtSignal(str)
     documentSavedAs = pyqtSignal(str)

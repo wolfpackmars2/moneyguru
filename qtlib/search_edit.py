@@ -6,9 +6,9 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4.QtCore import pyqtSignal, Qt
-from PyQt4.QtGui import (QToolButton, QLineEdit, QIcon, QPixmap, QStyle, QStyleOptionFrameV2,
-    QPainter, QPalette)
+from PyQt5.QtCore import pyqtSignal, Qt
+from PyQt5.QtGui import QIcon, QPixmap, QPainter, QPalette
+from PyQt5.QtWidgets import QToolButton, QLineEdit, QStyle, QStyleOptionFrame
 
 from hscommon.trans import trget
 
@@ -18,8 +18,8 @@ tr = trget('qtlib')
 # "images" folder in your resources.
 
 class LineEditButton(QToolButton):
-    def __init__(self, parent):
-        QToolButton.__init__(self, parent)
+    def __init__(self, parent, **kwargs):
+        super().__init__(parent, **kwargs)
         pixmap = QPixmap(':/search_clear_13')
         self.setIcon(QIcon(pixmap))
         self.setIconSize(pixmap.size())
@@ -30,8 +30,8 @@ class LineEditButton(QToolButton):
 
 
 class ClearableEdit(QLineEdit):
-    def __init__(self, parent=None, is_clearable=True):
-        QLineEdit.__init__(self, parent)
+    def __init__(self, parent=None, is_clearable=True, **kwargs):
+        super().__init__(parent, **kwargs)
         self._is_clearable = False
         if is_clearable:
             self._clearButton = LineEditButton(self)
@@ -105,7 +105,7 @@ class SearchEdit(ClearableEdit):
     def paintEvent(self, event):
         ClearableEdit.paintEvent(self, event)
         if not bool(self.text()) and self.inactiveText and not self.hasFocus():
-            panel = QStyleOptionFrameV2()
+            panel = QStyleOptionFrame()
             self.initStyleOption(panel)
             textRect = self.style().subElementRect(QStyle.SE_LineEditContents, panel, self)
             leftMargin = 2

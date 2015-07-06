@@ -6,8 +6,8 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import (
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QSizePolicy, QPushButton, QAbstractItemView, QStackedWidget,
     QSplitter
 )
@@ -43,7 +43,7 @@ class EntryView(BaseView):
         self.resize(483, 423)
         self.verticalLayout = QVBoxLayout(self)
         self.verticalLayout.setSpacing(0)
-        self.verticalLayout.setMargin(0)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.horizontalLayout = QHBoxLayout()
         self.horizontalLayout.setSpacing(0)
         self.filterBar = RadioBox(self)
@@ -92,7 +92,7 @@ class EntryView(BaseView):
 
     def _setupColumns(self):
         h = self.tableView.horizontalHeader()
-        h.setMovable(True) # column drag & drop reorder
+        h.setSectionsMovable(True) # column drag & drop reorder
 
     #--- QWidget override
     def setFocus(self):

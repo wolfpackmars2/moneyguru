@@ -6,8 +6,8 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QPen
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QPen
 
 from core.gui.balance_graph import PenID, BrushID
 from .graph_view import GraphView
@@ -22,10 +22,10 @@ class LineGraphView(GraphView):
             return pen
         else:
             return GraphView.penForID(self, penId)
-    
+
     def brushForID(self, brushId):
         if brushId == BrushID.GraphNormal:
             return self.graphBrush
         elif brushId == BrushID.GraphFuture:
             return self.graphFutureBrush
-    
+

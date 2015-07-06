@@ -6,7 +6,7 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4 import QtGui
+from PyQt5.QtWidgets import QVBoxLayout, QAbstractItemView
 
 from ...support.item_view import TableView
 from ..base_view import BaseView
@@ -20,11 +20,11 @@ class BudgetView(BaseView):
 
     def _setupUi(self):
         self.resize(400, 300)
-        self.verticalLayout = QtGui.QVBoxLayout(self)
-        self.verticalLayout.setMargin(0)
+        self.verticalLayout = QVBoxLayout(self)
+        self.verticalLayout.setContentsMargins(0, 0, 0, 0)
         self.tableView = TableView(self)
-        self.tableView.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
-        self.tableView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.tableView.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tableView.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableView.setSortingEnabled(True)
         self.tableView.horizontalHeader().setHighlightSections(False)
         self.tableView.horizontalHeader().setMinimumSectionSize(18)
@@ -34,7 +34,7 @@ class BudgetView(BaseView):
 
     def _setupColumns(self):
         h = self.tableView.horizontalHeader()
-        h.setMovable(True) # column drag & drop reorder
+        h.setSectionsMovable(True) # column drag & drop reorder
 
     #--- QWidget override
     def setFocus(self):

@@ -6,9 +6,13 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4 import QtGui, QtCore
-from PyQt4.QtCore import Qt, QAbstractTableModel
-from PyQt4.QtGui import QWidget, QMenu, QCursor, QPixmap, QInputDialog, QMessageBox
+from PyQt5 import QtCore
+from PyQt5.QtCore import Qt, QAbstractTableModel
+from PyQt5.QtGui import QPixmap, QCursor
+from PyQt5.QtWidgets import (
+    QWidget, QMenu, QInputDialog, QMessageBox, QVBoxLayout, QLabel, QGridLayout, QComboBox,
+    QLineEdit, QSpacerItem, QSizePolicy, QHBoxLayout, QPushButton, QTableView, QAbstractItemView
+)
 
 from hscommon.trans import trget
 from core.gui.csv_options import FIELD_NAMES, FIELD_ORDER, SUPPORTED_ENCODINGS
@@ -38,64 +42,64 @@ class CSVOptionsWindow(QWidget):
     def _setupUi(self):
         self.setWindowTitle(tr("CSV Options"))
         self.resize(526, 369)
-        self.verticalLayout = QtGui.QVBoxLayout(self)
+        self.verticalLayout = QVBoxLayout(self)
         msg = tr(
             "Specify which CSV columns correspond to which transaction fields. You must also "
             "uncheck the \"Import\" column for lines that don\'t represent a transaction "
             "(header, footer, comments)."
         )
-        self.label = QtGui.QLabel(msg)
+        self.label = QLabel(msg)
         self.label.setWordWrap(True)
         self.verticalLayout.addWidget(self.label)
-        self.gridLayout = QtGui.QGridLayout()
-        self.label_2 = QtGui.QLabel(tr("Layout:"))
+        self.gridLayout = QGridLayout()
+        self.label_2 = QLabel(tr("Layout:"))
         self.gridLayout.addWidget(self.label_2, 0, 0, 1, 1)
-        self.layoutComboBox = QtGui.QComboBox(self)
+        self.layoutComboBox = QComboBox(self)
         self.layoutComboBox.setMinimumSize(QtCore.QSize(160, 0))
         self.gridLayout.addWidget(self.layoutComboBox, 0, 1, 1, 1)
-        self.label_4 = QtGui.QLabel(tr("Delimiter:"))
+        self.label_4 = QLabel(tr("Delimiter:"))
         self.gridLayout.addWidget(self.label_4, 0, 3, 1, 1)
-        self.fieldSeparatorEdit = QtGui.QLineEdit(self)
+        self.fieldSeparatorEdit = QLineEdit(self)
         self.fieldSeparatorEdit.setMaximumSize(QtCore.QSize(30, 16777215))
         self.gridLayout.addWidget(self.fieldSeparatorEdit, 0, 4, 1, 1)
-        self.targetComboBox = QtGui.QComboBox(self)
+        self.targetComboBox = QComboBox(self)
         self.gridLayout.addWidget(self.targetComboBox, 1, 1, 1, 1)
-        self.label_3 = QtGui.QLabel(tr("Target:"))
+        self.label_3 = QLabel(tr("Target:"))
         self.gridLayout.addWidget(self.label_3, 1, 0, 1, 1)
-        self.encodingComboBox = QtGui.QComboBox(self)
+        self.encodingComboBox = QComboBox(self)
         self.gridLayout.addWidget(self.encodingComboBox, 1, 4, 1, 1)
-        spacerItem = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.gridLayout.addItem(spacerItem, 2, 2, 1, 1)
-        self.horizontalLayout_2 = QtGui.QHBoxLayout()
+        self.horizontalLayout_2 = QHBoxLayout()
         self.horizontalLayout_2.setSpacing(0)
-        spacerItem1 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        spacerItem1 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.horizontalLayout_2.addItem(spacerItem1)
-        self.rescanButton = QtGui.QPushButton(tr("Rescan"))
-        sizePolicy = QtGui.QSizePolicy(QtGui.QSizePolicy.Maximum, QtGui.QSizePolicy.Fixed)
+        self.rescanButton = QPushButton(tr("Rescan"))
+        sizePolicy = QSizePolicy(QSizePolicy.Maximum, QSizePolicy.Fixed)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
         sizePolicy.setHeightForWidth(self.rescanButton.sizePolicy().hasHeightForWidth())
         self.rescanButton.setSizePolicy(sizePolicy)
         self.horizontalLayout_2.addWidget(self.rescanButton)
         self.gridLayout.addLayout(self.horizontalLayout_2, 2, 3, 1, 2)
-        self.label_5 = QtGui.QLabel(tr("Encoding:"))
+        self.label_5 = QLabel(tr("Encoding:"))
         self.gridLayout.addWidget(self.label_5, 1, 3, 1, 1)
         self.verticalLayout.addLayout(self.gridLayout)
-        self.tableView = QtGui.QTableView(self)
-        self.tableView.setEditTriggers(QtGui.QAbstractItemView.NoEditTriggers)
-        self.tableView.setSelectionBehavior(QtGui.QAbstractItemView.SelectRows)
+        self.tableView = QTableView(self)
+        self.tableView.setEditTriggers(QAbstractItemView.NoEditTriggers)
+        self.tableView.setSelectionBehavior(QAbstractItemView.SelectRows)
         self.tableView.setShowGrid(False)
         self.tableView.horizontalHeader().setHighlightSections(False)
         self.tableView.verticalHeader().setVisible(False)
         self.tableView.verticalHeader().setDefaultSectionSize(18)
         self.verticalLayout.addWidget(self.tableView)
-        self.horizontalLayout = QtGui.QHBoxLayout()
-        spacerItem2 = QtGui.QSpacerItem(40, 20, QtGui.QSizePolicy.Expanding, QtGui.QSizePolicy.Minimum)
+        self.horizontalLayout = QHBoxLayout()
+        spacerItem2 = QSpacerItem(40, 20, QSizePolicy.Expanding, QSizePolicy.Minimum)
         self.horizontalLayout.addItem(spacerItem2)
-        self.cancelButton = QtGui.QPushButton(tr("Cancel"))
+        self.cancelButton = QPushButton(tr("Cancel"))
         self.cancelButton.setShortcut("Esc")
         self.horizontalLayout.addWidget(self.cancelButton)
-        self.continueButton = QtGui.QPushButton(tr("Continue Import"))
+        self.continueButton = QPushButton(tr("Continue Import"))
         self.continueButton.setDefault(True)
         self.horizontalLayout.addWidget(self.continueButton)
         self.verticalLayout.addLayout(self.horizontalLayout)

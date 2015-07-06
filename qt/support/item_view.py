@@ -6,9 +6,9 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4.QtCore import Qt, pyqtSignal, QPoint, QRect
-from PyQt4.QtGui import (
-    QAbstractItemView, QTableView, QTreeView, QAbstractItemDelegate, QItemSelectionModel
+from PyQt5.QtCore import Qt, pyqtSignal, QPoint, QRect, QItemSelectionModel
+from PyQt5.QtWidgets import (
+    QAbstractItemView, QTableView, QTreeView, QAbstractItemDelegate
 )
 
 from hscommon.util import first

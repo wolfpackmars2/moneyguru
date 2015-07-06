@@ -8,8 +8,8 @@
 
 import os.path as op
 
-from PyQt4.QtCore import QLocale
-from PyQt4.QtGui import QApplication
+from PyQt5.QtCore import QLocale
+from PyQt5.QtWidgets import QApplication
 
 from core.model.date import clean_format
 from qtlib.preferences import Preferences as PreferencesBase

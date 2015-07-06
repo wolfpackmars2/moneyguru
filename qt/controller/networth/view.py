@@ -1,13 +1,13 @@
 # Created By: Virgil Dupras
 # Created On: 2009-11-01
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import QVBoxLayout, QFrame, QAbstractItemView, QSplitter
+from PyQt5.QtCore import Qt
+from PyQt5.QtWidgets import QVBoxLayout, QFrame, QAbstractItemView, QSplitter
 
 from ...support.item_view import TreeView
 from ...support.pie_chart_view import PieChartView
@@ -22,12 +22,12 @@ class NetWorthView(AccountSheetView):
         self.sheet = self.nwsheet = NetWorthSheet(self.model.bsheet, view=self.treeView)
         self.graph = self.nwgraph = Chart(self.model.nwgraph, view=self.graphView)
         self.piechart = Chart(self.model.pie, view=self.pieChart)
-    
+
     def _setupUi(self):
         self.resize(558, 447)
         self.mainLayout = QVBoxLayout(self)
         self.mainLayout.setSpacing(0)
-        self.mainLayout.setMargin(0)
+        self.mainLayout.setContentsMargins(0, 0, 0, 0)
         self.splitterView = QSplitter()
         self.splitterView.setChildrenCollapsible(False)
         self.splitterView.setOrientation(Qt.Vertical)
@@ -57,4 +57,4 @@ class NetWorthView(AccountSheetView):
         self.subSplitterView.setStretchFactor(0, 1)
         self.subSplitterView.setStretchFactor(1, 0)
         self.mainLayout.addWidget(self.splitterView)
-    
+

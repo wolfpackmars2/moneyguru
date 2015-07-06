@@ -8,8 +8,9 @@
 
 from itertools import combinations
 
-from PyQt4.QtCore import Qt, QRect, QSize, QPoint
-from PyQt4.QtGui import QPixmap, QPainter, QApplication, QFont, QFontMetrics
+from PyQt5.QtCore import Qt, QRect, QSize, QPoint
+from PyQt5.QtGui import QPixmap, QPainter, QFont, QFontMetrics
+from PyQt5.QtWidgets import QApplication
 
 from hscommon.util import first
 

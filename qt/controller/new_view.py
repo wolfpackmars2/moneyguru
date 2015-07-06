@@ -6,9 +6,10 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt4.QtCore import Qt
-from PyQt4.QtGui import (
-    QShortcut, QKeySequence, QGridLayout, QIcon, QPixmap, QPushButton, QLabel, QVBoxLayout,
+from PyQt5.QtCore import Qt
+from PyQt5.QtGui import QKeySequence, QIcon, QPixmap
+from PyQt5.QtWidgets import (
+    QShortcut, QGridLayout, QPushButton, QLabel, QVBoxLayout,
     QListView, QAbstractItemView
 )
 
@@ -82,7 +83,9 @@ class NewView(BaseView):
         self.gridLayout.addItem(verticalSpacer(), 2, 1, 1, 1)
 
         for i in range(1, 8):
-            shortcut = QShortcut(QKeySequence(str(i)), self, None, None, Qt.WidgetShortcut)
+            shortcut = QShortcut(self)
+            shortcut.setKey(QKeySequence(str(i)))
+            shortcut.setContext(Qt.WidgetShortcut)
             setattr(self, 'shortcut{0}'.format(i), shortcut)
 
     #--- Event Handlers
