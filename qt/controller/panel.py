@@ -7,7 +7,7 @@
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from PyQt4.QtCore import Qt, QSignalMapper
-from PyQt4.QtGui import QWidget, QDialog, QLineEdit, QSpinBox, QComboBox, QCheckBox, QPlainTextEdit
+from PyQt4.QtGui import QWidget, QDialog, QLineEdit, QSpinBox, QComboBox, QCheckBox, QPlainTextEdit, QDialogButtonBox
 
 class Panel(QDialog):
     # A list of two-sized tuples (QWidget's name, model field name).
@@ -81,6 +81,16 @@ class Panel(QDialog):
         self.setFocus()
         self.model.save()
         QDialog.accept(self)
+
+    def reject(self):
+        # XXX temporary work around to avoid ending up with the "Cancel" button focused and thus
+        # have Return bound to Cancel. Will soon be replaced by something cleaner. See #433
+        super().reject()
+        buttonBox = getattr(self, 'buttonBox', None)
+        if buttonBox is not None:
+            saveButton = buttonBox.button(QDialogButtonBox.Save)
+            if saveButton is not None:
+                saveButton.setFocus()
 
     #--- Event Handlers
     def widgetChanged(self, sender):
