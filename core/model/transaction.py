@@ -378,10 +378,10 @@ class Transaction:
         """Sets :attr:`splits` to copies of splits in ``splits``.
 
         :param bool preserve_instances: Try to "recycle" split instances as much as possible. This
-        is because in certain places, notable in the import window, there's an entry binding
-        mechanism and entry identity is based on split instances, so it breaks if we don't keep
-        instances there. However, we don't want to preserve instances in all cases. For example,
-        when spawning transactions from recurrences, we want fresh instances.
+            is because in certain places, notable in the import window, there's an entry binding
+            mechanism and entry identity is based on split instances, so it breaks if we don't keep
+            instances there. However, we don't want to preserve instances in all cases. For example,
+            when spawning transactions from recurrences, we want fresh instances.
         """
         if preserve_instances:
             if len(splits) < len(self.splits):

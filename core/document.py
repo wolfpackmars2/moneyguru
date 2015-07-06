@@ -1536,8 +1536,10 @@ class Document(BaseDocument, Repeater, GUIObject):
 
 class ImportDocument(BaseDocument):
     """A document used to as a segregation area to operate on core model data before importing.
-     Inherits all capabilities of the ``BaseDocument`` superclass with some small modifications
-     pertinent to the importing of data.
+
+    Inherits all capabilities of the ``BaseDocument`` superclass with some small modifications
+    pertinent to the importing of data.
+
     Subclasses :class:`core.document.BaseDocument`.
     """
 

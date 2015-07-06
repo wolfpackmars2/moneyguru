@@ -5,7 +5,6 @@ hscommon
     :maxdepth: 2
     
     build
-    currency
     desktop
     notify
     path
