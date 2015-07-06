@@ -1,0 +1,5 @@
+--recurse=yes
+--exclude=.tox/*
+--exclude=env/*
+--extra=+f
+--python-kinds=-iv
