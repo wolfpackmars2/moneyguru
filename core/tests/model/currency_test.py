@@ -83,6 +83,16 @@ def test_ask_for_rates_in_the_future(monkeypatch):
     expected = [(date(2008, 5, 21), date(2008, 5, 29), 'USD')]
     eq_(log, expected)
 
+def test_dont_crash_on_None_rates():
+    # Don't crash when a currency provider returns None rates. Just ignore it.
+
+    def provider(currency, start_date, end_date):
+        return [(start_date, None)]
+
+    db, log = set_ratedb_for_tests(provider=provider)
+    db.ensure_rates(date(2008, 5, 20), ['USD']) # no crash
+    db.get_rate(date(2008, 5, 20), 'USD', 'CAD') # no crash
+
 #--- Test for the default XMLRPC provider
 def exception_raiser(exception):
     def f(*args, **kwargs):

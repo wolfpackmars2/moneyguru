@@ -186,12 +186,11 @@ class RatesDB:
                 create_tables()
         except sqlite.DatabaseError: # corrupt db
             logging.warning("Corrupt currency database at {0}. Starting over.".format(repr(self.db_or_path)))
-            if isinstance(self.db_or_path, str):
+            if isinstance(self.db_or_path, str) and self.db_or_path != ':memory:':
                 self.con.close()
                 os.remove(str(self.db_or_path))
                 self.con = sqlite.connect(str(self.db_or_path))
             else:
-                logging.warning("Can't re-use the file, using a memory table")
                 self.con = sqlite.connect(':memory:')
             create_tables()
         return self.con.execute(*args, **kwargs) # try again
@@ -234,6 +233,9 @@ class RatesDB:
                 rates, currency, fetch_start, fetch_end = self._fetched_values.get_nowait()
                 logging.debug("Saving %d rates for the currency %s", len(rates), currency)
                 for rate_date, rate in rates:
+                    if not rate:
+                        logging.debug("Empty rate for %s. Skipping", rate_date)
+                        continue
                     logging.debug("Saving rate %2.2f for %s", rate, rate_date)
                     self.set_CAD_value(rate_date, currency, rate)
                 self._ensure_filled(fetch_start, fetch_end, currency)
