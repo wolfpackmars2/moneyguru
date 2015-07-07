@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-08-12
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from hscommon.testutil import eq_
@@ -16,13 +16,13 @@ def app_schedule():
     app = TestApp()
     app.doc.date_range = MonthRange(app.app.parse_date('13/09/2008'))
     app.show_scview()
-    app.scpanel.new()
-    app.scpanel.start_date = '13/09/2008'
-    app.scpanel.description = 'foobar'
-    app.scpanel.repeat_type_list.select(4)
-    app.scpanel.repeat_every = 3
-    app.scpanel.stop_date = '13/12/2008'
-    app.scpanel.save()
+    scpanel = app.mw.new_item()
+    scpanel.start_date = '13/09/2008'
+    scpanel.description = 'foobar'
+    scpanel.repeat_type_list.select(4)
+    scpanel.repeat_every = 3
+    scpanel.stop_date = '13/12/2008'
+    scpanel.save()
     app.show_scview()
     return app
 
@@ -52,8 +52,8 @@ def test_edit_selected():
     # This caused item edition not to work until the user manually selected a schedule.
     app = app_schedule()
     app.clear_gui_calls()
-    app.mainwindow.edit_item()
-    app.scpanel.view.check_gui_calls_partial(['post_load'])
+    scpanel = app.mainwindow.edit_item()
+    scpanel.view.check_gui_calls_partial(['post_load'])
 
 def test_edition_must_stop():
     # When the edition_must_stop event is broadcasted, btable must ignore it because the objc
@@ -62,3 +62,4 @@ def test_edition_must_stop():
     app.clear_gui_calls()
     app.doc.stop_edition()
     app.sctable.view.check_gui_calls_partial(not_expected=['stop_editing'])
+

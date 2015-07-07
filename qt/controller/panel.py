@@ -22,10 +22,11 @@ class Panel(QDialog):
     # whether it could be a good idea to push this implementation to the core.
     PERSISTENT_NAME = None
 
-    def __init__(self, parent=None):
+    def __init__(self, mainwindow):
         # The flags we pass are that so we don't get the "What's this" button in the title bar
-        QDialog.__init__(self, parent, Qt.WindowTitleHint | Qt.WindowSystemMenuHint)
+        QDialog.__init__(self, mainwindow, Qt.WindowTitleHint | Qt.WindowSystemMenuHint)
         self._widget2ModelAttr = {}
+        self.mainwindow = mainwindow
 
     def _changeComboBoxItems(self, comboBox, newItems):
         # When a combo box's items are changed, its currentIndex changed with a currentIndexChanged
@@ -76,15 +77,25 @@ class Panel(QDialog):
     def _saveFields(self):
         pass
 
+    def _loadGeometry(self):
+        if self.PERSISTENT_NAME:
+            self.mainwindow.app.prefs.restoreGeometry('%sGeometry' % self.PERSISTENT_NAME, self)
+
+    def _saveGeometry(self):
+        if self.PERSISTENT_NAME:
+            self.mainwindow.app.prefs.saveGeometry('%sGeometry' % self.PERSISTENT_NAME, self)
+
     def accept(self):
         # The setFocus() call is to force the last edited field to "commit". When the save button
         # is clicked, accept() is called before the last field to have focus has a chance to emit
         # its edition signal.
         self.setFocus()
         self.model.save()
+        self._saveGeometry()
         QDialog.accept(self)
 
     def reject(self):
+        self._saveGeometry()
         # XXX temporary work around to avoid ending up with the "Cancel" button focused and thus
         # have Return bound to Cancel. Will soon be replaced by something cleaner. See #433
         super().reject()
@@ -111,7 +122,7 @@ class Panel(QDialog):
 
     #--- model --> view
     def pre_load(self):
-        pass
+        self._loadGeometry()
 
     def pre_save(self):
         self._saveFields()

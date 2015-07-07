@@ -43,7 +43,6 @@ from .account_panel import AccountPanel
 from .account_reassign_panel import AccountReassignPanel
 from .transaction_panel import TransactionPanel
 from .mass_edition_panel import MassEditionPanel
-from .schedule_panel import SchedulePanel
 from .export_panel import ExportPanel
 from .custom_date_range_panel import CustomDateRangePanel
 from .search_field import SearchField
@@ -94,14 +93,9 @@ class MainWindow(QMainWindow):
         self.apanel = AccountPanel(mainwindow=self)
         self.tpanel = TransactionPanel(mainwindow=self)
         self.mepanel = MassEditionPanel(mainwindow=self)
-        self.scpanel = SchedulePanel(mainwindow=self)
         self.cdrpanel = CustomDateRangePanel(mainwindow=self)
         self.arpanel = AccountReassignPanel(mainwindow=self)
         self.expanel = ExportPanel(mainwindow=self)
-        self.all_panels = [
-            self.apanel, self.tpanel, self.mepanel, self.scpanel, self.cdrpanel,
-            self.arpanel, self.expanel,
-        ]
         self.alookup = Lookup(self, model=self.model.account_lookup)
         self.clookup = Lookup(self, model=self.model.completion_lookup)
         self.drsel = DateRangeSelector(mainwindow=self, view=self.dateRangeSelectorView)

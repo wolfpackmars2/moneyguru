@@ -6,6 +6,7 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
+import weakref
 from datetime import date
 
 from hscommon.util import first
@@ -26,7 +27,7 @@ class PanelWithTransaction(MainWindowPanel):
         # completable_edit has to be set before split_table is created because split table fetches
         # our completable edit on __init__ (for Qt).
         self.completable_edit = CompletableEdit(mainwindow)
-        self.split_table = SplitTable(self)
+        self.split_table = SplitTable(weakref.proxy(self))
 
     def change_split(self, split, account_name, amount, memo):
         if account_name:

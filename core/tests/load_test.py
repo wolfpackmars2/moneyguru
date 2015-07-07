@@ -401,8 +401,8 @@ def app_schedule_with_local_deletion(monkeypatch):
 def app_schedule_made_from_txn():
     app = TestApp()
     app.add_txn('11/07/2008', 'description', 'payee', from_='first', to='second', amount='42')
-    app.mw.make_schedule_from_selected()
-    app.scpanel.save()
+    scpanel = app.mw.make_schedule_from_selected()
+    scpanel.save()
     return app
 
 def app_account_and_group():

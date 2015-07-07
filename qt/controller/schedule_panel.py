@@ -37,12 +37,11 @@ class SchedulePanel(Panel):
     ]
     PERSISTENT_NAME = 'schedulePanel'
 
-    def __init__(self, mainwindow):
+    def __init__(self, model, mainwindow):
         Panel.__init__(self, mainwindow)
-        self.mainwindow = mainwindow
-        self.model = mainwindow.model.schedule_panel
+        self.setAttribute(Qt.WA_DeleteOnClose)
+        self.model = model
         self._setupUi()
-        self.model.view = self
         self.splitTable = SplitTable(model=self.model.split_table, view=self.splitTableView)
         self.repeatTypeComboBox = ComboboxModel(model=self.model.repeat_type_list, view=self.repeatTypeComboBoxView)
 

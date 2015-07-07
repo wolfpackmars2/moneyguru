@@ -139,8 +139,6 @@ class TestApp(TestAppBase):
         self.mw = self.mainwindow # shortcut. This one is often typed
         self.default_parent = self.mw
         self.apanel = link_gui(self.mw.account_panel)
-        self.scpanel = link_gui(self.mw.schedule_panel)
-        self.scsplittable = link_gui(self.scpanel.split_table)
         self.tpanel = link_gui(self.mw.transaction_panel)
         self.stable = link_gui(self.tpanel.split_table)
         self.mepanel = link_gui(self.mw.mass_edit_panel)
@@ -292,23 +290,23 @@ class TestApp(TestAppBase):
             repeat_type_index=0, repeat_every=1, stop_date=None):
         if start_date is None:
             start_date = self.app.format_date(date(date.today().year, date.today().month, 1))
-        self.show_scview()
-        self.scpanel.new()
-        self.scpanel.start_date = start_date
-        self.scpanel.description = description
-        self.scpanel.repeat_type_list.select(repeat_type_index)
-        self.scpanel.repeat_every = repeat_every
+        scview = self.show_scview()
+        scpanel = scview.new_item()
+        scpanel.start_date = start_date
+        scpanel.description = description
+        scpanel.repeat_type_list.select(repeat_type_index)
+        scpanel.repeat_every = repeat_every
         if stop_date is not None:
-            self.scpanel.stop_date = stop_date
+            scpanel.stop_date = stop_date
         if account:
-            self.scsplittable.add()
-            self.scsplittable.edited.account = account
+            scpanel.split_table.add()
+            scpanel.split_table.edited.account = account
             if self.doc.parse_amount(amount) >= 0:
-                self.scsplittable.edited.debit = amount
+                scpanel.split_table.edited.debit = amount
             else:
-                self.scsplittable.edited.credit = amount
-            self.scsplittable.save_edits()
-        self.scpanel.save()
+                scpanel.split_table.edited.credit = amount
+            scpanel.split_table.save_edits()
+        scpanel.save()
 
     def add_txn(self, date=None, description=None, payee=None, from_=None, to=None, amount=None,
             checkno=None):

@@ -28,7 +28,6 @@ from .completion_lookup import CompletionLookup
 from .account_panel import AccountPanel
 from .transaction_panel import TransactionPanel
 from .mass_edition_panel import MassEditionPanel
-from .schedule_panel import SchedulePanel
 from .custom_date_range_panel import CustomDateRangePanel
 from .account_reassign_panel import AccountReassignPanel
 from .export_panel import ExportPanel
@@ -111,7 +110,6 @@ class MainWindow(Repeater, GUIObject):
         self.account_panel = AccountPanel(self)
         self.transaction_panel = TransactionPanel(self)
         self.mass_edit_panel = MassEditionPanel(self)
-        self.schedule_panel = SchedulePanel(self)
         self.custom_daterange_panel = CustomDateRangePanel(self)
         self.account_reassign_panel = AccountReassignPanel(self)
         self.export_panel = ExportPanel(self)
@@ -396,7 +394,7 @@ class MainWindow(Repeater, GUIObject):
             ref.date = inc_month(ref.date, 1)
             schedule = Recurrence(ref, RepeatType.Monthly, 1)
             self.selected_schedules = [schedule]
-            self.edit_item()
+            return self.edit_item()
 
     def move_down(self):
         self._perform_if_possible('move_down')

@@ -101,8 +101,8 @@ def test_new_schedule():
     # Repeat options and mct notices must be updated upon panel load
     app = app_cleared_gui_calls()
     app.show_scview()
-    app.mw.new_item()
-    app.scpanel.repeat_type_list.view.check_gui_calls_partial(['refresh'])
+    scpanel = app.mw.new_item()
+    scpanel.repeat_type_list.view.check_gui_calls_partial(['refresh'])
 
 @with_app(app_cleared_gui_calls)
 def test_select_mainwindow_next_previous_view(app):

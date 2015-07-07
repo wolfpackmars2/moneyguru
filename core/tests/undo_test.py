@@ -77,8 +77,8 @@ def test_undo_add_group(app, checkstate):
 def test_add_schedule(app, checkstate):
     # schedule addition are undoable
     app.show_scview()
-    app.scpanel.new()
-    app.scpanel.save()
+    scpanel = app.mw.new_item()
+    scpanel.save()
     checkstate()
 
 @with_app(TestApp)
@@ -680,10 +680,10 @@ def app_scheduled_txn():
 
 @with_app(app_scheduled_txn)
 def test_change_schedule(app, checkstate):
-    app.scpanel.load()
-    app.scpanel.description = 'changed'
-    app.scpanel.repeat_every = 12
-    app.scpanel.save()
+    scpanel = app.mw.edit_item()
+    scpanel.description = 'changed'
+    scpanel.repeat_every = 12
+    scpanel.save()
     checkstate()
 
 @with_app(app_scheduled_txn)
