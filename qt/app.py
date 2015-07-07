@@ -6,7 +6,6 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-import sys
 import os.path as op
 
 from PyQt5.QtCore import pyqtSignal, QCoreApplication, QLocale, QUrl, QStandardPaths
@@ -30,7 +29,7 @@ class MoneyGuru(ApplicationBase):
     VERSION = MoneyGuruModel.VERSION
     LOGO_NAME = 'logo'
 
-    def __init__(self):
+    def __init__(self, filepath=None):
         ApplicationBase.__init__(self)
         self.prefs = Preferences()
         self.prefs.load()
@@ -53,8 +52,8 @@ class MoneyGuru(ApplicationBase):
         self.mainWindow = MainWindow(doc=self.doc)
         self.preferencesPanel = PreferencesPanel(self.mainWindow, app=self)
         self.aboutBox = AboutBox(self.mainWindow, self)
-        if sys.argv[1:] and op.exists(sys.argv[1]):
-            self.doc.open(sys.argv[1])
+        if filepath and op.exists(filepath):
+            self.doc.open(filepath)
         elif self.prefs.recentDocuments:
             self.doc.open(self.prefs.recentDocuments[0])
 

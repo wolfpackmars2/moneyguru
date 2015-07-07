@@ -23,19 +23,25 @@ from qtlib.util import setupQtLogging
 from qtlib.preferences import adjust_after_deserialization
 import qt.mg_rc # noqa
 from qt.plat import BASE_PATH
+from qt.args import get_parser
 
 # We import this module below to force cx_freeze to include it because the currency plugins
 # need it.
 import urllib.request # noqa
 
-def main(argv):
-    app = QApplication(sys.argv)
+def main():
+    parser = get_parser()
+    args = parser.parse_args()
+    app = QApplication([])
     app.setWindowIcon(QIcon(QPixmap(":/logo_small")))
     app.setOrganizationName('Hardcoded Software')
     app.setApplicationName('moneyGuru')
     settings = QSettings()
-    LOGGING_LEVEL = logging.DEBUG if adjust_after_deserialization(settings.value('DebugMode')) else logging.WARNING
-    setupQtLogging(level=LOGGING_LEVEL)
+    if args.debug:
+        LOGGING_LEVEL = logging.DEBUG
+    else:
+        LOGGING_LEVEL = logging.DEBUG if adjust_after_deserialization(settings.value('DebugMode')) else logging.WARNING
+    setupQtLogging(level=LOGGING_LEVEL, log_to_stdout=args.log_to_stdout)
     logging.debug('started in debug mode')
     if ISLINUX:
         stylesheetFile = QFile(':/stylesheet_lnx')
@@ -53,7 +59,7 @@ def main(argv):
     # has been installed
     from qt.app import MoneyGuru
     app.setApplicationVersion(MoneyGuru.VERSION)
-    mgapp = MoneyGuru()
+    mgapp = MoneyGuru(filepath=args.filepath)
     install_excepthook('https://github.com/hsoft/moneyguru/issues')
     exec_result = app.exec_()
     del mgapp
@@ -65,4 +71,4 @@ def main(argv):
     return exec_result
 
 if __name__ == "__main__":
-    sys.exit(main(sys.argv))
+    sys.exit(main())
