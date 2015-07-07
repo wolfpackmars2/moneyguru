@@ -11,7 +11,6 @@ from objp.util import pyref, dontwrap, nsrect, nssize, nspoint
 from cocoa import install_exception_hook, proxy, install_cocoa_logger
 from cocoa.inter import (PyGUIObject, GUIObjectView, PyTextField, PyTable, PyColumns, PyOutline,
     OutlineView, PySelectableList, PyBaseApp)
-from hscommon.currency import Currency, USD
 from hscommon.util import nonone
 
 # Set translation func. This has to be set before core modules are initialized
@@ -28,6 +27,7 @@ from core.gui.import_window import ActionSelectionOptions
 from core.gui.main_window import MainWindow
 from core.gui.print_view import PrintView
 from core.gui.transaction_print import TransactionPrint, EntryPrint
+from core.model.currency import Currency, USD
 from core.model.date import clean_format
 
 # Force to collect modules normally missing by the dependencies collector.
