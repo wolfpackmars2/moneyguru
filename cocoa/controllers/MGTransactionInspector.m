@@ -28,7 +28,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 - (id)initWithParent:(MGMainWindowController *)aParent
 {
     PyTransactionPanel *m = [[PyTransactionPanel alloc] initWithModel:[[aParent model] transactionPanel]];
-    self = [super initWithModel:m parent:aParent];
+    self = [super initWithModel:m parentWindow:[aParent window]];
     [m bindCallback:createCallback(@"PanelWithTransactionView", self)];
     [m release];
     [self setWindow:createMGTransactionInspector_UI(self)];

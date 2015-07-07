@@ -28,7 +28,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 - (id)initWithParent:(MGMainWindowController *)aParent
 {
     PySchedulePanel *m = [[PySchedulePanel alloc] initWithModel:[[aParent model] schedulePanel]];
-    self = [super initWithModel:m parent:aParent];
+    self = [super initWithModel:m parentWindow:[aParent window]];
     [m bindCallback:createCallback(@"SchedulePanelView", self)];
     [m release];
     [self setWindow:createMGSchedulePanel_UI(self)];

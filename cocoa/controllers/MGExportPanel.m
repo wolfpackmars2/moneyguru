@@ -26,7 +26,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 - (id)initWithParent:(MGMainWindowController *)aParent
 {
     PyExportPanel *m = [[PyExportPanel alloc] initWithModel:[[aParent model] exportPanel]];
-    self = [super initWithModel:m parent:aParent];
+    self = [super initWithModel:m parentWindow:[aParent window]];
     [m bindCallback:createCallback(@"ExportPanelView", self)];
     [m release];
     [self setWindow:createMGExportPanel_UI(self)];

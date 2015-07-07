@@ -8,7 +8,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
 
 #import "MGBudgetPanel.h"
 #import "MGBudgetPanel_UI.h"
-#import "MGMainWindowController.h"
 #import "HSPyUtil.h"
 
 @implementation MGBudgetPanel
@@ -23,11 +22,11 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @synthesize amountField;
 @synthesize notesField;
 
-- (id)initWithParent:(MGMainWindowController *)aParent
+- (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow
 {
-    PyBudgetPanel *m = [[PyBudgetPanel alloc] initWithModel:[[aParent model] budgetPanel]];
-    self = [super initWithModel:m parent:aParent];
-    [m bindCallback:createCallback(@"BudgetPanelView", self)];
+    PyBudgetPanel *m = [[PyBudgetPanel alloc] initWithModel:aPyRef];
+    self = [super initWithModel:m parentWindow:aParentWindow];
+    [m bindCallbackWithoutView:createCallback(@"BudgetPanelView", self)];
     [m release];
     [self setWindow:createMGBudgetPanel_UI(self)];
     repeatTypePopUp = [[HSPopUpList alloc] initWithPyRef:[[self model] repeatTypeList] popupView:repeatTypePopUpView];
@@ -39,6 +38,8 @@ http://www.gnu.org/licenses/gpl-3.0.html
 - (void)dealloc
 {
     [repeatTypePopUp release];
+    [accountPopUp release];
+    [targetPopUp release];
     [super dealloc];
 }
 

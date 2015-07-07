@@ -23,7 +23,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 - (id)initWithParent:(MGMainWindowController *)aParent
 {
     PyAccountPanel *m = [[PyAccountPanel alloc] initWithModel:[[aParent model] accountPanel]];
-    self = [super initWithModel:m parent:aParent];
+    self = [super initWithModel:m parentWindow:[aParent window]];
     [m bindCallback:createCallback(@"PanelView", self)];
     [m release];
     [self setWindow:createMGAccountProperties_UI(self)];

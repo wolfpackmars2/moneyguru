@@ -11,7 +11,6 @@ from objp.util import pyref, dontwrap, nsrect, nssize, nspoint
 from cocoa import install_exception_hook, proxy, install_cocoa_logger
 from cocoa.inter import (PyGUIObject, GUIObjectView, PyTextField, PyTable, PyColumns, PyOutline,
     OutlineView, PySelectableList, PyBaseApp)
-from hscommon.currency import Currency, USD
 from hscommon.util import nonone
 
 # Set translation func. This has to be set before core modules are initialized
@@ -29,6 +28,7 @@ from core.gui.main_window import MainWindow
 from core.gui.print_view import PrintView
 from core.gui.transaction_print import TransactionPrint, EntryPrint
 from core.model.date import clean_format
+from core.model.currency import Currency, USD
 
 # Force to collect modules normally missing by the dependencies collector.
 import xml.etree.ElementTree
@@ -830,6 +830,7 @@ class PyLookup(PyGUIObject):
 #--- Views
 class BaseViewView:
     def updateVisibility(self): pass
+    def createPanelWithModelRef_(self, pyref: pyref) -> pyref: pass
 
 class PyBaseView(PyGUIObject):
     def mainwindow(self) -> pyref:
@@ -839,6 +840,10 @@ class PyBaseView(PyGUIObject):
         return list(self.model.mainwindow.hidden_areas)
 
     #--- Python --> Cocoa
+    @dontwrap
+    def get_panel_view(self, model):
+        return self.callback.createPanelWithModelRef_(model)
+
     @dontwrap
     def restore_subviews_size(self):
         # Under Cocoa, we don't use this because all views are created after the document opening.
@@ -1004,9 +1009,6 @@ class PyMainWindow(PyGUIObject):
 
     def massEditPanel(self) -> pyref:
         return self.model.mass_edit_panel
-
-    def budgetPanel(self) -> pyref:
-        return self.model.budget_panel
 
     def schedulePanel(self) -> pyref:
         return self.model.schedule_panel

@@ -21,7 +21,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 - (id)initWithParent:(MGMainWindowController *)aParent
 {
     PyCustomDateRangePanel *m = [[PyCustomDateRangePanel alloc] initWithModel:[[aParent model] customDateRangePanel]];
-    self = [super initWithModel:m parent:aParent];
+    self = [super initWithModel:m parentWindow:[aParent window]];
     [m bindCallback:createCallback(@"PanelView", self)];
     [m release];
     [self setWindow:createMGCustomDateRangePanel_UI(self)];

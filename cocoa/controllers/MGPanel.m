@@ -9,24 +9,17 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #import "MGPanel.h"
 
 @implementation MGPanel
-- (id)initWithNibName:(NSString *)aNibName model:(PyPanel *)aModel parent:(NSWindowController *)aParent
-{
-    self = [super initWithWindowNibName:aNibName];
-    [self window]; // Initialize elements from the NIB.
-    model = [aModel retain];
-    parentWindow = [aParent window];
-    customFieldEditor = nil; // instantiated by subclasses
-    customDateFieldEditor = [[MGDateFieldEditor alloc] init];
-    return self;
-}
 
-- (id)initWithModel:(PyPanel *)aModel parent:(NSWindowController *)aParent
+@synthesize releaseOnEndSheet;
+
+- (id)initWithModel:(PyPanel *)aModel parentWindow:(NSWindow *)aParentWindow
 {
     self = [super initWithWindow:nil];
     model = [aModel retain];
-    parentWindow = [aParent window];
+    parentWindow = aParentWindow;
     customFieldEditor = nil; // instantiated by subclasses
     customDateFieldEditor = [[MGDateFieldEditor alloc] init];
+    releaseOnEndSheet = NO;
     return self;
 }
 
@@ -106,6 +99,9 @@ http://www.gnu.org/licenses/gpl-3.0.html
 - (void)didEndSheet:(NSWindow *)sheet returnCode:(int)returnCode contextInfo:(void *)contextInfo
 {
     [sheet orderOut:nil];
+    if (releaseOnEndSheet) {
+        [self release];
+    }
 }
 
 /* Python --> Cocoa */
