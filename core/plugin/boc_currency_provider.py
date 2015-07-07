@@ -265,9 +265,18 @@ class BOCProviderPlugin(CurrencyProviderPlugin):
             csv_contents = csv_file.read().decode('ascii')
             _, rates_contents = csv_contents.split('\nDate,%s\n' % currency_code)
             lines = rates_contents.splitlines()
-            convert = lambda s: datetime.strptime(s, '%Y-%m-%d').date()
+
+            def convert(s):
+                sdate, svalue = s.split(',')
+                date = datetime.strptime(sdate, '%Y-%m-%d').date()
+                try:
+                    value = float(svalue)
+                except ValueError:
+                    # We sometimes have the value "Bank Holiday"
+                    value = None
+                return (date, value)
             try:
-                return [(convert(l.split(',')[0]), float(l.split(',')[1])) for l in lines]
+                return [convert(l) for l in lines]
             except Exception:
                 raise RateProviderUnavailable()
 

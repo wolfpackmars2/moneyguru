@@ -229,6 +229,9 @@ class RatesDB:
                 rates, currency, fetch_start, fetch_end = self._fetched_values.get_nowait()
                 logging.debug("Saving %d rates for the currency %s", len(rates), currency)
                 for rate_date, rate in rates:
+                    if not rate:
+                        logging.debug("Empty rate for %s. Skipping", rate_date)
+                        continue
                     logging.debug("Saving rate %2.2f for %s", rate, rate_date)
                     self.set_CAD_value(rate_date, currency, rate)
                 self._ensure_filled(fetch_start, fetch_end, currency)
