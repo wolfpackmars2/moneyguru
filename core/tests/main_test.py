@@ -610,9 +610,9 @@ class TestOneEntryInPreviousRange:
         # If we make the account an income account, the previous balance entry disappears
         app.show_nwview()
         app.bsheet.selected = app.bsheet.assets[0]
-        app.mainwindow.edit_item()
-        app.apanel.type_list.select(2) # income
-        app.apanel.save()
+        apanel = app.mainwindow.edit_item()
+        apanel.type_list.select(2) # income
+        apanel.save()
         app.show_pview()
         app.istatement.selected = app.istatement.income[0]
         app.show_account()

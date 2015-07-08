@@ -138,9 +138,9 @@ def test_default_account_currency_after_qif_import(app):
     # This QIF has no currency. Therefore, the default currency should be used for accounts
     app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[2]
-    app.mainwindow.edit_item()
+    apanel = app.mainwindow.edit_item()
     PLN = Currency(code='PLN')
-    eq_(app.apanel.currency, PLN)
+    eq_(apanel.currency, PLN)
 
 @with_app(app_qif_import)
 def test_default_entry_currency_after_qif_import(app):
@@ -148,9 +148,9 @@ def test_default_entry_currency_after_qif_import(app):
     # after the import should cause the entries to be cooked as amount with currency
     app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[2]
-    app.mainwindow.edit_item()
-    app.apanel.currency = CAD
-    app.apanel.save()
+    apanel = app.mainwindow.edit_item()
+    apanel.currency = CAD
+    apanel.save()
     app.show_account()
     eq_(app.etable[0].increase, '42.32')
 

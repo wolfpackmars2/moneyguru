@@ -119,11 +119,11 @@ def app_one_nameless_account():
 @with_app(app_one_nameless_account)
 def test_undo_apanel_attrs(app, checkstate):
     # Undoing a changes made from apanel work
-    app.mw.edit_item()
-    app.apanel.currency = EUR
-    app.apanel.account_number = '1234'
-    app.apanel.notes = 'some notes'
-    app.apanel.save()
+    apanel = app.mw.edit_item()
+    apanel.currency = EUR
+    apanel.account_number = '1234'
+    apanel.notes = 'some notes'
+    apanel.save()
     checkstate()
 
 #---

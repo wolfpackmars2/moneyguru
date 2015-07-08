@@ -1,13 +1,14 @@
 # Created On: 2012-09-24
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from core.const import PaneArea
 
 from .base_view import BaseView
+from .account_panel import AccountPanel
 
 class AccountSheetView(BaseView):
     # In sublasses' _setup(), set self.sheet, self.graph, self.piechart, self.splitterView and
@@ -15,7 +16,7 @@ class AccountSheetView(BaseView):
     #--- QWidget override
     def setFocus(self):
         self.sheet.view.setFocus()
-    
+
     #--- Public
     def fitViewsForPrint(self, viewPrinter):
         hidden = self.model.mainwindow.hidden_areas
@@ -24,7 +25,7 @@ class AccountSheetView(BaseView):
             viewPrinter.fit(self.piechart.view, 150, 300, expandH=True)
         if PaneArea.BottomGraph not in hidden:
             viewPrinter.fit(self.graph.view, 300, 150, expandH=True, expandV=True)
-    
+
     def restoreSubviewsSize(self):
         graphHeight = self.model.graph_height_to_restore
         if graphHeight:
@@ -36,10 +37,13 @@ class AccountSheetView(BaseView):
             splitterWidth = self.subSplitterView.width()
             sizes = [splitterWidth-pieWidth, pieWidth]
             self.subSplitterView.setSizes(sizes)
-    
+
     #--- model --> view
+    def get_panel_view(self, model):
+        return AccountPanel(model, self.mainwindow)
+
     def update_visibility(self):
         hidden = self.model.mainwindow.hidden_areas
         self.graph.view.setHidden(PaneArea.BottomGraph in hidden)
         self.piechart.view.setHidden(PaneArea.RightChart in hidden)
-    
+

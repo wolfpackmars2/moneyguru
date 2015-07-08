@@ -138,7 +138,6 @@ class TestApp(TestAppBase):
         # reference.
         self.mw = self.mainwindow # shortcut. This one is often typed
         self.default_parent = self.mw
-        self.apanel = link_gui(self.mw.account_panel)
         self.tpanel = link_gui(self.mw.transaction_panel)
         self.stable = link_gui(self.tpanel.split_table)
         self.mepanel = link_gui(self.mw.mass_edit_panel)
@@ -221,14 +220,14 @@ class TestApp(TestAppBase):
                 sheet.selected = group_node
         self.mw.new_item()
         if currency or account_number:
-            self.mw.edit_item()
+            apanel = self.mw.edit_item()
             if name:
-                self.apanel.name = name
+                apanel.name = name
             if currency:
-                self.apanel.currency = currency
+                apanel.currency = currency
             if account_number:
-                self.apanel.account_number = account_number
-            self.apanel.save()
+                apanel.account_number = account_number
+            apanel.save()
         elif name is not None:
             sheet.selected.name = name
             sheet.save_edits()

@@ -62,9 +62,9 @@ class TestLoadFile:
         # Changing an account currency sets the modified flag.
         PLN = Currency(code='PLN')
         app.show_nwview()
-        app.mainwindow.edit_item()
-        app.apanel.currency = PLN
-        app.apanel.save()
+        apanel = app.mainwindow.edit_item()
+        apanel.currency = PLN
+        apanel.save()
         assert app.doc.is_dirty()
 
     @with_app(do_setup)
@@ -361,10 +361,10 @@ def app_budget_with_all_fields_set():
 def app_account_with_apanel_attrs():
     app = TestApp()
     app.add_account()
-    app.mw.edit_item()
-    app.apanel.account_number = '1234'
-    app.apanel.notes = 'some\nnotes'
-    app.apanel.save()
+    apanel = app.mw.edit_item()
+    apanel.account_number = '1234'
+    apanel.notes = 'some\nnotes'
+    apanel.save()
     return app
 
 def app_one_schedule_and_one_normal_txn():

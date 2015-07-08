@@ -530,9 +530,9 @@ def test_budget_multiple_currencies(app, monkeypatch):
     USD.set_CAD_value(0.8, date(2008, 1, 1))
     app.show_pview()
     app.istatement.selected = app.istatement.income[0]
-    app.mw.edit_item()
-    app.apanel.currency_list.select(Currency.all.index(CAD))
-    app.apanel.save()
+    apanel = app.mw.edit_item()
+    apanel.currency_list.select(Currency.all.index(CAD))
+    apanel.save()
     app.add_budget('income', 'Account 1', '400 cad')
     app.show_nwview()
     eq_(app.bsheet.assets[0].end, '250.00')

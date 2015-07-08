@@ -83,10 +83,10 @@ def test_detect_duplicate_account_names_with_whitespaces(app):
 @with_app(app_one_empty_account)
 def test_get_account_attribute_value(app):
     # get_account_*() returns the correct values.
-    app.mw.edit_item()
-    eq_(app.apanel.name, 'Checking')
-    eq_(app.apanel.currency, EUR)
-    eq_(app.apanel.type, AccountType.Asset)
+    apanel = app.mw.edit_item()
+    eq_(apanel.name, 'Checking')
+    eq_(apanel.currency, EUR)
+    eq_(apanel.type, AccountType.Asset)
 
 @with_app(app_one_empty_account)
 def test_keep_old_accounts_on_load_failure(app):
@@ -272,9 +272,9 @@ def test_change_account_type(app):
     # When changing the account type through apanel, an account under a group wouldn't want to
     # leave its group, thus refusing to go to its real type's base node.
     app.bsheet.selected = app.bsheet.assets[0][0]
-    app.mw.edit_item()
-    app.apanel.type_list.select(1) # liability
-    app.apanel.save()
+    apanel = app.mw.edit_item()
+    apanel.type_list.select(1) # liability
+    apanel.save()
     eq_(app.account_node_subaccount_count(app.bsheet.assets[0]), 0) # group is empty
     eq_(app.account_node_subaccount_count(app.bsheet.liabilities), 1) # the account is in liabilities
 

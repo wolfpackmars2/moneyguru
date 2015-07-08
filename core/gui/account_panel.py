@@ -6,6 +6,8 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
+import weakref
+
 from hscommon.gui.selectable_list import GUISelectableList
 from hscommon.trans import tr
 
@@ -50,12 +52,13 @@ class AccountPanel(MainWindowPanel):
     def __init__(self, mainwindow):
         MainWindowPanel.__init__(self, mainwindow)
         self._init_fields()
-        self.type_list = AccountTypeList(self)
+        self_proxy = weakref.proxy(self)
+        self.type_list = AccountTypeList(self_proxy)
         currencies_display = ['%s - %s' % (currency.code, currency.name) for currency in Currency.all]
 
         def setfunc(index):
             try:
-                self.currency = Currency.all[index]
+                self_proxy.currency = Currency.all[index]
             except IndexError:
                 pass
         self.currency_list = LinkedSelectableList(items=currencies_display, setfunc=setfunc)

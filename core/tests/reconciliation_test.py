@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-05-28
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from hscommon.testutil import eq_
@@ -92,7 +92,7 @@ def test_toggle_entries_reconciled(app):
 
 #--- One entry in reconciliation mode
 def app_one_entry_reconciliation_mode():
-    app = TestApp()    
+    app = TestApp()
     app.add_account()
     app.show_account()
     app.add_entry('11/07/2008', decrease='42')
@@ -129,7 +129,7 @@ def test_reconciling_sets_dirty_flag(app):
 
 @with_app(app_one_entry_reconciliation_mode)
 def test_reconciliation_balance(app):
-    # Unreconcilied entries return a None balance, and reconciled entries return a 
+    # Unreconcilied entries return a None balance, and reconciled entries return a
     # reconciliation balance
     eq_(app.etable[0].balance, '')
     row = app.etable.selected_row
@@ -338,17 +338,17 @@ def test_cant_change_account_currency(app):
     # We cannot change an account currency if this account has reconciled entries.
     app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[0]
-    app.mw.edit_item()
-    assert not app.apanel.can_change_currency
+    apanel = app.mw.edit_item()
+    assert not apanel.can_change_currency
 
 @with_app(app_three_entries_one_reconciled)
 def test_can_change_other_account_attributes(app):
     # There was a bug causing any attribute change through apanel to throw an assertion error.
     app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[0]
-    app.mw.edit_item()
-    app.apanel.notes = 'foo'
-    app.apanel.save() # no crash
+    apanel = app.mw.edit_item()
+    apanel.notes = 'foo'
+    apanel.save() # no crash
 
 #--- Three entries all reconciled
 def app_three_entries_all_reconciled():
