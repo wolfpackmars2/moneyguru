@@ -46,7 +46,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
     accountProperties = [[MGAccountProperties alloc] initWithParent:self];
     transactionPanel = [[MGTransactionInspector alloc] initWithParent:self];
     massEditionPanel = [[MGMassEditionPanel alloc] initWithParent:self];
-    schedulePanel = [[MGSchedulePanel alloc] initWithParent:self];
     exportPanel = [[MGExportPanel alloc] initWithParent:self];
     searchField = [[MGSearchField alloc] initWithPyRef:[[self model] searchField]];
     importWindow = [[MGImportWindow alloc] initWithPyRef:[[self model] importWindow]];
@@ -86,7 +85,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
     [[self window] setDelegate:nil];
     [transactionPanel release];
     [massEditionPanel release];
-    [schedulePanel release];
     [accountProperties release];
     [exportPanel release];
     [searchField release];

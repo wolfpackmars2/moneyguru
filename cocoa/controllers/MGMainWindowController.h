@@ -12,7 +12,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #import "MGAccountProperties.h"
 #import "MGTransactionInspector.h"
 #import "MGMassEditionPanel.h"
-#import "MGSchedulePanel.h"
 #import "MGExportPanel.h"
 #import "MGSearchField.h"
 #import "MGImportWindow.h"
@@ -38,7 +37,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
     MGAccountProperties *accountProperties;
     MGTransactionInspector *transactionPanel;
     MGMassEditionPanel *massEditionPanel;
-    MGSchedulePanel *schedulePanel;
     MGExportPanel *exportPanel;
     MGSearchField *searchField;
     MGImportWindow *importWindow;

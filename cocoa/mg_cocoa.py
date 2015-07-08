@@ -1010,9 +1010,6 @@ class PyMainWindow(PyGUIObject):
     def massEditPanel(self) -> pyref:
         return self.model.mass_edit_panel
 
-    def schedulePanel(self) -> pyref:
-        return self.model.schedule_panel
-
     def customDateRangePanel(self) -> pyref:
         return self.model.custom_daterange_panel
 
