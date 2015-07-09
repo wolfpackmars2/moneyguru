@@ -137,7 +137,7 @@ class Application(Broadcaster):
     APP_NAME = "moneyGuru"
     PROMPT_NAME = APP_NAME
     NAME = APP_NAME
-    VERSION = '2.9.1'
+    VERSION = '2.9.2'
 
     def __init__(
             self, view, date_format='dd/MM/yyyy', decimal_sep='.', grouping_sep='',
