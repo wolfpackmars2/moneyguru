@@ -10,7 +10,6 @@ import sys
 import os
 import os.path as op
 import shutil
-import json
 import glob
 import compileall
 from argparse import ArgumentParser
@@ -30,6 +29,14 @@ from hscommon.util import ensure_folder, modified_after, delete_files_with_patte
 
 def parse_args():
     parser = ArgumentParser()
+    parser.add_argument(
+        '--ui',
+        help="Type of UI to build. 'qt' or 'cocoa'. Default is determined by your system."
+    )
+    parser.add_argument(
+        '--dev', action='store_true', default=False,
+        help="If this flag is set, will configure for dev builds."
+    )
     parser.add_argument(
         '--clean', action='store_true', dest='clean',
         help="Clean build folder before building"
@@ -391,11 +398,11 @@ def build_normal(ui, dev, do_build_ext=True):
 
 def main():
     args = parse_args()
-    conf = json.load(open('conf.json'))
-    ui = conf['ui']
-    dev = conf['dev']
+    ui = args.ui
+    if ui not in ('cocoa', 'qt'):
+        ui = 'cocoa' if ISOSX else 'qt'
     print("Building moneyGuru with UI {}".format(ui))
-    if dev:
+    if args.dev:
         print("Building in Dev mode")
     if args.clean:
         clean()
@@ -423,7 +430,8 @@ def main():
         build_cocoalib_xibless()
         build_xibless()
     else:
-        build_normal(ui, dev, not args.no_ext)
+        build_normal(ui, args.dev, not args.no_ext)
 
 if __name__ == '__main__':
     main()
+

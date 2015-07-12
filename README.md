@@ -85,7 +85,6 @@ Python-related dependencies.
 
 With your virtualenv activated, you can build and run moneyGuru with these commands:
 
-    $ python configure.py
     $ python build.py
     $ python run.py
 
