@@ -19,7 +19,7 @@ from ...plugin import yahoo_currency_provider, boc_currency_provider
 
 def slow_down(func):
     def wrapper(*args, **kwargs):
-        time.sleep(0.05)
+        time.sleep(0.1)
         return func(*args, **kwargs)
 
     return wrapper
