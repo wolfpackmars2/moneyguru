@@ -156,7 +156,10 @@ def main():
         if ISWINDOWS:
             package_windows(dev)
         elif ISLINUX:
-            distname, _, _ = platform.dist()
+            if not args.arch_pkg:
+                distname, _, _ = platform.dist()
+            else:
+                distname = 'arch'
             if distname == 'arch':
                 package_arch()
             else:
