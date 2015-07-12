@@ -47,3 +47,8 @@ def test_ignore_duplicate_plugin_names(app):
     emptyview = app.new_tab()
     eq_(len(emptyview.plugin_list), 1) # Only one plugin was loaded
 
+def test_dont_crash_on_missing_appdata_path(tmpdir):
+    # When the "appdata" path doesn't exist, don't crash on startup. ref #437
+    appdata = str(tmpdir.join('appdata'))
+    TestApp(appargs={'appdata_path': appdata}) # no crash
+

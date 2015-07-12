@@ -154,6 +154,8 @@ class Application(Broadcaster):
         else:
             db_path = ':memory:'
         self.appdata_path = appdata_path
+        if appdata_path and not op.exists(appdata_path):
+            os.makedirs(appdata_path)
         currency.initialize_db(db_path)
         self.is_first_run = not self.get_default(PreferenceNames.HadFirstLaunch, False)
         if self.is_first_run:
