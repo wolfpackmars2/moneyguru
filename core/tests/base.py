@@ -104,12 +104,14 @@ class DictLoader(base.Loader):
                 setattr(self.transaction_info, attr, value)
 
 class TestApp(TestAppBase):
-    def __init__(self, app=None, doc=None, tmppath=None):
+    def __init__(self, app=None, doc=None, tmppath=None, appargs=None):
         TestAppBase.__init__(self)
         link_gui = self.link_gui
         self._tmppath = tmppath
         if app is None:
-            app = Application(self.make_logger(ApplicationGUI))
+            if not appargs:
+                appargs = {}
+            app = Application(self.make_logger(ApplicationGUI), **appargs)
         self.app = app
         self.app_gui = app.view
         if doc is None:
