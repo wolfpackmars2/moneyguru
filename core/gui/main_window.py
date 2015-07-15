@@ -28,7 +28,6 @@ from .completion_lookup import CompletionLookup
 from .transaction_panel import TransactionPanel
 from .mass_edition_panel import MassEditionPanel
 from .custom_date_range_panel import CustomDateRangePanel
-from .account_reassign_panel import AccountReassignPanel
 from .export_panel import ExportPanel
 from .import_window import ImportWindow
 from .csv_options import CSVOptions
@@ -109,7 +108,6 @@ class MainWindow(Repeater, GUIObject):
         self.transaction_panel = TransactionPanel(self)
         self.mass_edit_panel = MassEditionPanel(self)
         self.custom_daterange_panel = CustomDateRangePanel(self)
-        self.account_reassign_panel = AccountReassignPanel(self)
         self.export_panel = ExportPanel(self)
 
         self.csv_options = CSVOptions(self)

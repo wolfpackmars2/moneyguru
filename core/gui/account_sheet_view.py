@@ -10,6 +10,7 @@ import weakref
 
 from .base import BaseView
 from .account_panel import AccountPanel
+from .account_reassign_panel import AccountReassignPanel
 
 class AccountSheetView(BaseView):
     INVALIDATING_MESSAGES = BaseView.INVALIDATING_MESSAGES | {'area_visibility_changed'}
@@ -65,6 +66,11 @@ class AccountSheetView(BaseView):
     def expand_group(self, group):
         group.expanded = True
         self.notify('group_expanded_state_changed')
+
+    def get_account_reassign_panel(self):
+        panel = AccountReassignPanel(self.mainwindow)
+        panel.view = weakref.proxy(self.view.get_panel_view(panel))
+        return panel
 
     def new_item(self):
         self.sheet.add_account()

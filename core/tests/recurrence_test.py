@@ -212,10 +212,11 @@ def test_change_spawn_with_global_scope_twice(app):
 @with_app(app_daily_schedule)
 def test_delete_account(app):
     # Deleting an account affecting a schedule properly update that schedule
-    app.show_nwview()
+    nwview = app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[0]
     app.bsheet.delete()
-    app.arpanel.save()
+    arpanel = nwview.view.panel
+    arpanel.save()
     app.show_scview()
     eq_(app.sctable[0].to, '')
 
@@ -405,10 +406,11 @@ def test_schedule_exceptions_are_correctly_reassigned(app):
     app.ttable[3].from_ = 'account'
     app.ttable.save_edits()
     eq_(app.ttable[3].to, 'account2')
-    app.show_nwview()
+    nwview = app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[1]
     app.bsheet.delete()
-    app.arpanel.save() # reassign to None
+    arpanel = nwview.view.panel
+    arpanel.save() # reassign to None
     app.show_tview()
     eq_(app.ttable[3].to, '')
 
@@ -499,7 +501,8 @@ def test_delete_account_with_schedule_containing_deletions(app):
     # affected_accounts() crash.
     app.select_account('account')
     app.mw.delete_item()
-    app.arpanel.save() # no crash
+    arpanel = app.current_view().view.panel
+    arpanel.save() # no crash
 
 #--- Schedule with stop date
 def app_schedule_with_stop_date():

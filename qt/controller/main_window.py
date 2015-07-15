@@ -39,7 +39,6 @@ from .docprops_view import DocPropsView
 from .new_view import NewView
 from .readonly_table_plugin_view import ReadOnlyTablePluginView
 from .lookup import Lookup
-from .account_reassign_panel import AccountReassignPanel
 from .transaction_panel import TransactionPanel
 from .mass_edition_panel import MassEditionPanel
 from .export_panel import ExportPanel
@@ -92,7 +91,6 @@ class MainWindow(QMainWindow):
         self.tpanel = TransactionPanel(mainwindow=self)
         self.mepanel = MassEditionPanel(mainwindow=self)
         self.cdrpanel = CustomDateRangePanel(mainwindow=self)
-        self.arpanel = AccountReassignPanel(mainwindow=self)
         self.expanel = ExportPanel(mainwindow=self)
         self.alookup = Lookup(self, model=self.model.account_lookup)
         self.clookup = Lookup(self, model=self.model.completion_lookup)

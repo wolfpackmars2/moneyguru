@@ -68,6 +68,7 @@ class ViewGUI(CallLogger):
                 continue
             if isinstance(elem, GUIObject) and elem.view is None:
                 elem.view = CallLogger()
+        self.panel = model # So we can get a hold of this reference somewhere
         self.panel_view = CallLogger() # We have to hold onto this instance for a while
         return self.panel_view
 
@@ -142,7 +143,6 @@ class TestApp(TestAppBase):
         self.stable = link_gui(self.tpanel.split_table)
         self.mepanel = link_gui(self.mw.mass_edit_panel)
         self.cdrpanel = link_gui(self.mw.custom_daterange_panel)
-        self.arpanel = link_gui(self.mw.account_reassign_panel)
         self.expanel = link_gui(self.mw.export_panel)
         self.sfield = link_gui(self.mw.search_field)
         self.drsel = link_gui(self.mw.daterange_selector)

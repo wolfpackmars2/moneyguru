@@ -175,7 +175,8 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
         if anodes:
             accounts = [n.account for n in anodes]
             if any(a.entries for a in accounts):
-                self.mainwindow.account_reassign_panel.load(accounts)
+                panel = self.parent_view.get_account_reassign_panel()
+                panel.load(accounts)
             else:
                 self.document.delete_accounts(accounts)
 

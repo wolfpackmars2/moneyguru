@@ -401,7 +401,9 @@ def test_delete_account_unbinds_transactions(app):
     # Deleting an account unbinds every entries in it, but does *not* delete the bound txns.
     app.bsheet.selected = app.bsheet.assets[1] # second
     app.bsheet.delete()
-    app.arpanel.save()
+    nwview = app.current_view()
+    arpanel = nwview.view.panel
+    arpanel.save()
     app.show_tview()
     eq_(app.ttable.row_count, 1)
     eq_(app.ttable[0].from_, 'first')

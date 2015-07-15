@@ -126,10 +126,11 @@ def test_budget_is_counted_in_etable_balance(app):
 @with_app(app_expense_with_budget_and_target)
 def test_delete_account(app):
     # When deleting an income or expense account, delete all budgets associated with it as well.
-    app.show_pview()
+    pview = app.show_pview()
     app.istatement.selected = app.istatement.expenses[0]
     app.istatement.delete()
-    app.arpanel.save() # don't reassign
+    arpanel = pview.view.panel
+    arpanel.save() # don't reassign
     app.show_bview()
     eq_(len(app.btable), 0) # the budget has been removed
 
@@ -139,8 +140,10 @@ def test_delete_account_and_reassign(app):
     app.add_account('other expense', account_type=AccountType.Expense)
     app.istatement.selected = app.istatement.expenses[1] # Some Expense
     app.istatement.delete()
-    app.arpanel.account_list.select(2) # other expense
-    app.arpanel.save()
+    pview = app.current_view()
+    arpanel = pview.view.panel
+    arpanel.account_list.select(2) # other expense
+    arpanel.save()
     app.show_bview()
     eq_(app.btable[0].account, 'other expense')
 
@@ -148,10 +151,11 @@ def test_delete_account_and_reassign(app):
 def test_delete_target(app):
     # When deleting the target account, budgets having this account as their target have it
     # changed to None
-    app.show_nwview()
+    nwview = app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[0]
     app.bsheet.delete()
-    app.arpanel.save()
+    arpanel = nwview.view.panel
+    arpanel.save()
     app.show_bview()
     eq_(app.btable[0].target, '') # been changed to None
 
@@ -161,8 +165,10 @@ def test_delete_target_and_reassign(app):
     app.add_account('other asset')
     app.bsheet.selected = app.bsheet.assets[1] # some asset
     app.bsheet.delete()
-    app.arpanel.account_list.select(1) # other asset
-    app.arpanel.save()
+    nwview = app.current_view()
+    arpanel = nwview.view.panel
+    arpanel.account_list.select(1) # other asset
+    arpanel.save()
     app.show_bview()
     eq_(app.btable[0].target, 'other asset')
 

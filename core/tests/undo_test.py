@@ -497,10 +497,11 @@ def test_undo_delete_transaction(app, checkstate):
 def test_undo_delete_account_with_txn(app, checkstate):
     # When 'first' is deleted, one transaction is simply unbound, and the other is deleted. we
     # must undo all that
-    app.show_nwview()
+    nwview = app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[0]
     app.bsheet.delete()
-    app.arpanel.save() # continue deletion
+    arpanel = nwview.view.panel
+    arpanel.save() # continue deletion
     checkstate()
 
 @with_app(app_two_txns_in_two_accounts)
@@ -700,10 +701,11 @@ def test_change_spawn_globally(app):
 
 @with_app(app_scheduled_txn)
 def test_delete_account(app, checkstate):
-    app.show_nwview()
+    nwview = app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[0]
     app.bsheet.delete()
-    app.arpanel.save()
+    arpanel = nwview.view.panel
+    arpanel.save()
     checkstate()
 
 @with_app(app_scheduled_txn)
@@ -762,10 +764,11 @@ def test_change_budget(app, checkstate):
 
 @with_app(app_with_budget)
 def test_delete_account_with_budget(app, checkstate):
-    app.show_pview()
+    pview = app.show_pview()
     app.istatement.selected = app.istatement.expenses[0]
     app.istatement.delete()
-    app.arpanel.save()
+    arpanel = pview.view.panel
+    arpanel.save()
     checkstate()
 
 @with_app(app_with_budget)

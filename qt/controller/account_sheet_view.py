@@ -6,9 +6,11 @@
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from core.const import PaneArea
+from core.gui.account_reassign_panel import AccountReassignPanel as AccountReassignPanelModel
 
 from .base_view import BaseView
 from .account_panel import AccountPanel
+from .account_reassign_panel import AccountReassignPanel
 
 class AccountSheetView(BaseView):
     # In sublasses' _setup(), set self.sheet, self.graph, self.piechart, self.splitterView and
@@ -40,7 +42,10 @@ class AccountSheetView(BaseView):
 
     #--- model --> view
     def get_panel_view(self, model):
-        return AccountPanel(model, self.mainwindow)
+        if isinstance(model, AccountReassignPanelModel):
+            return AccountReassignPanel(model, self.mainwindow)
+        else:
+            return AccountPanel(model, self.mainwindow)
 
     def update_visibility(self):
         hidden = self.model.mainwindow.hidden_areas

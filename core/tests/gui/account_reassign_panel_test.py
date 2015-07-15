@@ -25,8 +25,9 @@ def app_deleting_second_account():
 @with_app(app_deleting_second_account)
 def test_available_accounts(app):
     # the available accounts in arpanel are No Account, one and three
+    arpanel = app.current_view().view.panel
     expected = ['No Account', 'one', 'three']
-    eq_(app.arpanel.account_list[:], expected)
+    eq_(arpanel.account_list[:], expected)
 
 @with_app(app_deleting_second_account)
 def test_no_delete_took_place(app):
@@ -36,8 +37,9 @@ def test_no_delete_took_place(app):
 @with_app(app_deleting_second_account)
 def test_reassign_to_one(app):
     # choosing 'one' and continuing reassigns two's entry to one.
-    app.arpanel.account_list.select(1) # one
-    app.arpanel.save()
+    arpanel = app.current_view().view.panel
+    arpanel.account_list.select(1) # one
+    arpanel.save()
     eq_(len(app.bsheet.assets), 3) # now, it's deleted
     app.bsheet.selected = app.bsheet.assets[0]
     app.show_account()
@@ -69,8 +71,9 @@ def app_different_currencies_reconciled_entries():
 def test_reassign_to_account_with_different_currency(app):
     # When re-assigning transactions to a different account, de-reconcile them if the account is
     # of a different currency or else we get a crash when we compute the balance.
-    app.arpanel.account_list.select(1) # one
-    app.arpanel.save() # no crash
+    arpanel = app.current_view().view.panel
+    arpanel.account_list.select(1) # one
+    arpanel.save() # no crash
     app.show_account('one')
     eq_(app.etable_count(), 2)
 
@@ -89,4 +92,5 @@ def test_delete_two_accounts_at_once_and_reassign(app):
     app.bsheet.selected_nodes = app.bsheet.assets[:2]
     app.bsheet.delete() # arpanel popping up.
     expected = ['No Account', 'acc3']
-    eq_(app.arpanel.account_list[:], expected)
+    arpanel = app.current_view().view.panel
+    eq_(arpanel.account_list[:], expected)
