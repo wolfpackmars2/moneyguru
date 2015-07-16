@@ -95,8 +95,9 @@ class TestLoadFile:
     def test_change_split(self, app):
         # Changing a split in the tpanel doesn't make the app dirty unless it's saved.
         app.etable.select([1])
-        app.tpanel.load()
-        app.stable.delete()
+        tpanel = app.mw.edit_item()
+        stable = tpanel.split_table
+        stable.delete()
         assert not app.doc.is_dirty()
 
     @with_app(do_setup)
@@ -166,13 +167,14 @@ class TestLoadMultiCurrency:
     def test_amounts(self, app):
         # The amounts are correctly loaded and the logical imbalance has been dealt with.
         eq_(app.etable[0].increase, '200.00')
-        app.tpanel.load()
-        eq_(len(app.stable), 4)
-        eq_(app.stable[0].debit, '200.00')
-        eq_(app.stable[1].debit, 'PLN 123.45')
+        tpanel = app.mw.edit_item()
+        stable = tpanel.split_table
+        eq_(len(stable), 4)
+        eq_(stable[0].debit, '200.00')
+        eq_(stable[1].debit, 'PLN 123.45')
         expected = set(['200.00', 'PLN 123.45'])
-        assert app.stable[2].credit in expected
-        assert app.stable[3].credit in expected
+        assert stable[2].credit in expected
+        assert stable[3].credit in expected
 
 
 class TestLoadPayeeDescription:
@@ -283,9 +285,9 @@ def app_transaction_with_payee_and_checkno():
     app.add_account('Checking')
     app.add_txn('10/10/2007', 'Deposit', payee='Payee', from_='Salary', to='Checking',
         amount='42.00', checkno='42')
-    app.mainwindow.edit_item()
-    app.tpanel.notes = 'foobar\nfoobaz'
-    app.tpanel.save()
+    tpanel = app.mainwindow.edit_item()
+    tpanel.notes = 'foobar\nfoobaz'
+    tpanel.save()
     return app
 
 def app_entry_with_blank_description():
@@ -308,16 +310,17 @@ def app_transaction_with_memos():
     app.add_account('second')
     app.show_tview()
     app.ttable.add()
-    app.tpanel.load()
-    app.stable[0].account = 'first'
-    app.stable[0].memo = 'memo1'
-    app.stable[0].credit = '42'
-    app.stable.save_edits()
-    app.stable.select([1])
-    app.stable[1].account = 'second'
-    app.stable[1].memo = 'memo2'
-    app.stable.save_edits()
-    app.tpanel.save()
+    tpanel = app.mw.edit_item()
+    stable = tpanel.split_table
+    stable[0].account = 'first'
+    stable[0].memo = 'memo1'
+    stable[0].credit = '42'
+    stable.save_edits()
+    stable.select([1])
+    stable[1].account = 'second'
+    stable[1].memo = 'memo2'
+    stable.save_edits()
+    tpanel.save()
     return app
 
 def app_entry_in_liability():
@@ -332,12 +335,13 @@ def app_split_with_null_amount():
     app.add_account('foo')
     app.show_account()
     app.add_entry(date='2/1/2007', description='Split', transfer='bar')
-    app.tpanel.load()
-    app.stable.add()
-    row = app.stable.selected_row
+    tpanel = app.mw.edit_item()
+    stable = tpanel.split_table
+    stable.add()
+    row = stable.selected_row
     row.account = 'baz'
-    app.stable.save_edits()
-    app.tpanel.save()
+    stable.save_edits()
+    tpanel.save()
     return app
 
 def app_one_account_and_one_group():

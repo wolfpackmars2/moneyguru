@@ -28,13 +28,13 @@ def pytest_funcarg__fake_server(request):
 def test_cache_path_is_auto_created(fake_server, tmpdir):
     # the cache_path directory is automatically created.
     cache_path = str(tmpdir.join('foo/bar'))
-    app = Application(ApplicationGUI(), cache_path=cache_path)
+    Application(ApplicationGUI(), cache_path=cache_path)
     assert op.exists(cache_path)
 
 def test_cache_path_is_none(fake_server, monkeypatch):
     # currency.initialize_db() is called with :memory: when cache_path is None.
     monkeypatch.setattr(currency, 'initialize_db', log_calls(currency.initialize_db))
-    app = Application(ApplicationGUI()) # default cache_path is None
+    Application(ApplicationGUI()) # default cache_path is None
     expected = [
         {'path': ':memory:'}
     ]
@@ -44,7 +44,7 @@ def test_cache_path_is_not_none(fake_server, monkeypatch, tmpdir):
     # currency.initialize_db() is called with cache_path/currency.db when cache_path is not None.
     cache_path = str(tmpdir)
     monkeypatch.setattr(currency, 'initialize_db', log_calls(currency.initialize_db))
-    app = Application(ApplicationGUI(), cache_path=cache_path)
+    Application(ApplicationGUI(), cache_path=cache_path)
     expected = [
         {'path': op.join(cache_path, 'currency.db')}
     ]
@@ -353,13 +353,14 @@ def test_add_imbalancing_split():
     # Adding a split making one of the two currencies balance, while leaving the rest all on
     # the same side makes moneyGuru rebalance this.
     app = app_multi_currency_transaction()
-    app.tpanel.load()
-    app.stable.add()
-    row = app.stable.selected_row
+    tpanel = app.mw.edit_item()
+    stable = tpanel.split_table
+    stable.add()
+    row = stable.selected_row
     row.credit = '42 usd'
-    app.stable.save_edits() # Now we have CAD standing all alone
-    eq_(len(app.stable), 4)
-    eq_(app.stable[3].debit, 'CAD 40.00')
+    stable.save_edits() # Now we have CAD standing all alone
+    eq_(len(stable), 4)
+    eq_(stable[3].debit, 'CAD 40.00')
 
 def test_set_entry_increase():
     # If we set up the CAD side to be an increase, the USD side must switch to decrease
@@ -377,16 +378,17 @@ def test_set_split_to_logical_imbalance():
     # The first split is the USD entry (a debit). If we set it to be a credit instead, we end
     # up with both splits on the same side. We must create balancing splits.
     app = app_multi_currency_transaction()
-    app.tpanel.load()
-    app.stable.add()
-    app.stable[2].credit = '1 usd'
-    app.stable.save_edits()
-    app.stable[0].credit = '12 usd'
-    app.stable.save_edits()
-    eq_(len(app.stable), 4)
+    tpanel = app.mw.edit_item()
+    stable = tpanel.split_table
+    stable.add()
+    stable[2].credit = '1 usd'
+    stable.save_edits()
+    stable[0].credit = '12 usd'
+    stable.save_edits()
+    eq_(len(stable), 4)
     expected = set(['12.00', 'CAD 40.00'])
-    assert app.stable[2].debit in expected
-    assert app.stable[3].debit in expected
+    assert stable[2].debit in expected
+    assert stable[3].debit in expected
 
 class TestCaseEntryWithXPFAmount:
     def setup_method(self, method):

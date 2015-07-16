@@ -23,6 +23,7 @@ from ...support.line_graph_view import LineGraphView
 from ...support.bar_graph_view import BarGraphView
 from ..base_view import BaseView
 from ..chart import Chart
+from ..transaction_panel import TransactionPanel
 from .filter_bar import EntryFilterBar
 from .table import EntryTable
 
@@ -113,6 +114,9 @@ class EntryView(BaseView):
             self.splitterView.setSizes(sizes)
 
     #--- model --> view
+    def get_panel_view(self, model):
+        return TransactionPanel(model, self.mainwindow)
+
     def refresh_reconciliation_button(self):
         if self.model.can_toggle_reconciliation_mode:
             self.reconciliationButton.setEnabled(True)

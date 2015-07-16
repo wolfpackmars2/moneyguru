@@ -11,7 +11,6 @@ from datetime import date
 
 from hscommon.util import first
 
-from ..exception import OperationAborted
 from ..model.account import Account, AccountType
 from ..model.transaction import Split, Transaction
 from .base import MainWindowPanel
@@ -96,13 +95,10 @@ class PanelWithTransaction(MainWindowPanel):
 
 class TransactionPanel(PanelWithTransaction):
     #--- Override
-    def _load(self):
-        if not self.mainwindow.selected_transactions:
-            raise OperationAborted()
-        original = self.mainwindow.selected_transactions[0]
+    def _load(self, transaction):
         self.document.stop_edition()
-        self.transaction = original.replicate()
-        self.original = original
+        self.transaction = transaction.replicate()
+        self.original = transaction
         self.view.refresh_for_multi_currency()
         self.split_table.refresh_initial()
 

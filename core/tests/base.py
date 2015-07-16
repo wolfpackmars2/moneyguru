@@ -139,8 +139,6 @@ class TestApp(TestAppBase):
         # reference.
         self.mw = self.mainwindow # shortcut. This one is often typed
         self.default_parent = self.mw
-        self.tpanel = link_gui(self.mw.transaction_panel)
-        self.stable = link_gui(self.tpanel.split_table)
         self.mepanel = link_gui(self.mw.mass_edit_panel)
         self.cdrpanel = link_gui(self.mw.custom_daterange_panel)
         self.expanel = link_gui(self.mw.export_panel)
@@ -333,17 +331,18 @@ class TestApp(TestAppBase):
         # splits argument is [(account_name, memo, debit, credit)]. Don't forget that if they don't
         # balance, you end up with an imbalance split.
         self.add_txn(date=date, description=description, payee=payee, checkno=checkno)
-        self.mw.edit_item()
+        tpanel = self.mw.edit_item()
+        stable = tpanel.split_table
         for index, (account, memo, debit, credit) in enumerate(splits):
-            if index >= len(self.stable):
-                self.stable.add()
-            row = self.stable[index]
+            if index >= len(stable):
+                stable.add()
+            row = stable[index]
             row.account = account
             row.memo = memo
             row.debit = debit
             row.credit = credit
-            self.stable.save_edits()
-        self.tpanel.save()
+            stable.save_edits()
+        tpanel.save()
 
     def account_names(self):
         account_sort = {
@@ -431,6 +430,12 @@ class TestApp(TestAppBase):
         )
         self.mw.loader.load()
         self.iwin.show()
+
+    def get_current_panel(self):
+        """Returns the instance of the last invoked panel.
+        """
+        assert hasattr(self.current_view().view, 'panel')
+        return self.current_view().view.panel
 
     def graph_data(self):
         xoffset = self.balgraph._xoffset

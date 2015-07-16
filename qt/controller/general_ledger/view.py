@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QAbstractItemView
 
 from ...support.item_view import TableView
 from ..base_view import BaseView
+from ..transaction_panel import TransactionPanel
 from .table import GeneralLedgerTable
 
 class GeneralLedgerView(BaseView):
@@ -43,4 +44,8 @@ class GeneralLedgerView(BaseView):
     #--- Public
     def fitViewsForPrint(self, viewPrinter):
         viewPrinter.fitTable(self.gltable)
+
+    #--- model --> view
+    def get_panel_view(self, model):
+        return TransactionPanel(model, self.mainwindow)
 

@@ -156,9 +156,9 @@ def test_change_spawn_through_tpanel(app):
     # Previously, each edition of a spawn through tpanel would result in a new schedule being
     # added even if the recurrence itself didn't change
     app.ttable.select([1])
-    app.tpanel.load()
-    app.tpanel.description = 'changed'
-    app.tpanel.save()
+    tpanel = app.mw.edit_item()
+    tpanel.description = 'changed'
+    tpanel.save()
     eq_(app.ttable[1].description, 'changed')
     eq_(app.ttable[2].description, 'foobar')
     eq_(app.ttable[3].description, 'foobar')

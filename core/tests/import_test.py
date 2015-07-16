@@ -317,11 +317,12 @@ def app_double_ofx_import_with_split_in_the_middle():
     row = app.etable.selected_row
     row.transfer = 'account1'
     app.etable.save_edits()
-    app.tpanel.load()
-    app.stable.add()
-    app.stable[2].credit = '1'
-    app.stable.save_edits()
-    app.tpanel.save()
+    tpanel = app.mw.edit_item()
+    stable = tpanel.split_table
+    stable.add()
+    stable[2].credit = '1'
+    stable.save_edits()
+    tpanel.save()
     importall(app, testdata.filepath('ofx', 'desjardins.ofx'))
     return app
 
@@ -329,8 +330,10 @@ def test_split_wasnt_touched():
     # When matching transaction and encountering a case where the old transaction was changed
     # into a split, bail out and don't touch the amounts.
     app = app_double_ofx_import_with_split_in_the_middle()
-    eq_(len(app.stable), 4)
-    eq_(app.stable[2].credit, '1.00')
+    tpanel = app.get_current_panel()
+    stable = tpanel.split_table
+    eq_(len(stable), 4)
+    eq_(stable[2].credit, '1.00')
 
 class TestImportAccountInGroup:
     def do_setup(self):

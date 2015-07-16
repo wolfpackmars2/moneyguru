@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2010-09-09
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from hscommon.testutil import eq_
@@ -90,8 +90,8 @@ def app_txns_in_different_date_ranges():
 def test_edit_item(app):
     # the table correctly updates txn selection so that when edit item is called, the right txn
     # shown up in the panel.
-    app.mw.edit_item()
-    eq_(app.tpanel.description, 'first')
+    tpanel = app.mw.edit_item()
+    eq_(tpanel.description, 'first')
 
 @with_app(app_txns_in_different_date_ranges)
 def test_only_show_rows_in_date_range(app):

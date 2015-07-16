@@ -321,15 +321,17 @@ def test_etable_show_asset_account(app):
 def app_transaction_with_panel_loaded():
     app = TestApp()
     app.add_txn('20/02/2010', from_='foo', to='bar', amount='42')
-    app.tpanel.load()
+    app.mw.edit_item()
     app.clear_gui_calls()
     return app
 
 def test_move_split():
     # The split table is refreshed after a move
     app = app_transaction_with_panel_loaded()
-    app.stable.move_split(0, 1)
-    app.stable.view.check_gui_calls_partial(['refresh'])
+    tpanel = app.get_current_panel()
+    stable = tpanel.split_table
+    stable.move_split(0, 1)
+    stable.view.check_gui_calls_partial(['refresh'])
 
 #--- Completable edit
 def app_completable_edit():

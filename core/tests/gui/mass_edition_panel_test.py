@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-07-25
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from pytest import raises
@@ -283,17 +283,17 @@ def app_two_transactions_one_split():
     app.show_account()
     app.add_entry(date='06/07/2008', description='description', payee='payee', checkno='42', transfer='account2', increase='42')
     app.add_entry(date='06/07/2008', description='description', payee='payee', checkno='42', transfer='account2', increase='42')
-    app.tpanel.load()
-    app.stable.add()
-    row = app.stable.selected_row
+    tpanel = app.mw.edit_item()
+    tpanel.split_table.add()
+    row = tpanel.split_table.selected_row
     row.account = 'account3'
     row.debit = '24'
-    app.stable.save_edits()
-    app.tpanel.save()
+    tpanel.split_table.save_edits()
+    tpanel.save()
     app.etable.select([0, 1])
     app.mepanel.load()
     return app
-    
+
 def test_cant_change_accounts():
     app = app_two_transactions_one_split()
     assert not app.mepanel.can_change_accounts
@@ -334,13 +334,14 @@ def test_change_currency():
 def app_two_transactions_with_a_multi_currency_one():
     app = TestApp()
     app.add_txn('20/02/2010')
-    app.tpanel.load()
-    app.stable[0].credit = '44 usd'
-    app.stable.save_edits()
-    app.stable.select([1])
-    app.stable[1].debit = '42 cad'
-    app.stable.save_edits()
-    app.tpanel.save()
+    tpanel = app.mw.edit_item()
+    stable = tpanel.split_table
+    stable[0].credit = '44 usd'
+    stable.save_edits()
+    stable.select([1])
+    stable[1].debit = '42 cad'
+    stable.save_edits()
+    tpanel.save()
     app.add_txn('20/02/2010')
     app.ttable.select([0, 1])
     app.mepanel.load()
@@ -386,11 +387,11 @@ def test_set_currency_to_native_one_when_we_cant_choose_one_from_selection(app):
 def test_can_change_amount():
     def check(app, expected):
         eq_(app.mepanel.can_change_amount, expected)
-    
+
     # Splits prevent the Amount field from being enabled
     app = app_two_transactions_one_split()
     yield check, app, False
-    
+
     # If a MCT is selected, amount is not editable
     app = app_two_transactions_with_a_multi_currency_one()
     yield check, app, False

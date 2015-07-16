@@ -15,6 +15,7 @@ from qtlib.radio_box import RadioBox
 
 from ...support.item_view import TableView
 from ..base_view import BaseView
+from ..transaction_panel import TransactionPanel
 from .filter_bar import TransactionFilterBar
 from .table import TransactionTable
 
@@ -63,4 +64,8 @@ class TransactionView(BaseView):
     #--- Public
     def fitViewsForPrint(self, viewPrinter):
         viewPrinter.fitTable(self.ttable)
+
+    #--- model --> view
+    def get_panel_view(self, model):
+        return TransactionPanel(model, self.mainwindow)
 

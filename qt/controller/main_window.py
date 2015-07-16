@@ -39,7 +39,6 @@ from .docprops_view import DocPropsView
 from .new_view import NewView
 from .readonly_table_plugin_view import ReadOnlyTablePluginView
 from .lookup import Lookup
-from .transaction_panel import TransactionPanel
 from .mass_edition_panel import MassEditionPanel
 from .export_panel import ExportPanel
 from .custom_date_range_panel import CustomDateRangePanel
@@ -88,7 +87,6 @@ class MainWindow(QMainWindow):
         # Create base elements
         self.model = MainWindowModel(document=doc.model)
         self.model2view = {}
-        self.tpanel = TransactionPanel(mainwindow=self)
         self.mepanel = MassEditionPanel(mainwindow=self)
         self.cdrpanel = CustomDateRangePanel(mainwindow=self)
         self.expanel = ExportPanel(mainwindow=self)

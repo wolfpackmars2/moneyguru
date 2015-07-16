@@ -523,18 +523,18 @@ def test_undo_mass_edition(app, checkstate):
 
 @with_app(app_two_txns_in_two_accounts)
 def test_undo_schedule(app, checkstate):
-    app.tpanel.load()
-    app.tpanel.repeat_index = 1 # daily
-    app.tpanel.save()
+    tpanel = app.mw.edit_item()
+    tpanel.repeat_index = 1 # daily
+    tpanel.save()
     checkstate()
 
 @with_app(app_two_txns_in_two_accounts)
 def test_undo_schedule_entry_transfer(app):
     # After undoing a scheduling, the entry has the wrong transfer
     app.etable.select([0])
-    app.tpanel.load()
-    app.tpanel.repeat_index = 1 # daily
-    app.tpanel.save()
+    tpanel = app.mw.edit_item()
+    tpanel.repeat_index = 1 # daily
+    tpanel.save()
     app.doc.undo()
     eq_(app.etable[0].transfer, 'second')
 

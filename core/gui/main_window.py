@@ -16,7 +16,6 @@ from hscommon.gui.base import GUIObject
 from ..const import PaneType
 from ..document import FilterType
 from ..exception import OperationAborted, FileFormatError
-from ..model.budget import BudgetSpawn
 from ..model.date import inc_month, DateFormat
 from ..model.recurrence import Recurrence, RepeatType
 from ..loader import csv, qif, ofx, native
@@ -25,7 +24,6 @@ from .search_field import SearchField
 from .date_range_selector import DateRangeSelector
 from .account_lookup import AccountLookup
 from .completion_lookup import CompletionLookup
-from .transaction_panel import TransactionPanel
 from .mass_edition_panel import MassEditionPanel
 from .custom_date_range_panel import CustomDateRangePanel
 from .export_panel import ExportPanel
@@ -105,7 +103,6 @@ class MainWindow(Repeater, GUIObject):
         self.account_lookup = AccountLookup(self)
         self.completion_lookup = CompletionLookup(self)
 
-        self.transaction_panel = TransactionPanel(self)
         self.mass_edit_panel = MassEditionPanel(self)
         self.custom_daterange_panel = CustomDateRangePanel(self)
         self.export_panel = ExportPanel(self)
@@ -350,13 +347,6 @@ class MainWindow(Repeater, GUIObject):
             return self._perform_if_possible('edit_item')
         except OperationAborted:
             pass
-
-    def edit_selected_transactions(self):
-        editable_txns = [txn for txn in self.selected_transactions if not isinstance(txn, BudgetSpawn)]
-        if len(editable_txns) > 1:
-            self.mass_edit_panel.load()
-        elif len(editable_txns) == 1:
-            self.transaction_panel.load()
 
     def export(self):
         self.export_panel.load()
