@@ -14,12 +14,11 @@ from PyQt5.QtWidgets import (
 from qtlib.radio_box import RadioBox
 
 from ...support.item_view import TableView
-from ..base_view import BaseView
-from ..transaction_panel import TransactionPanel
+from ..base_transaction_view import BaseTransactionView
 from .filter_bar import TransactionFilterBar
 from .table import TransactionTable
 
-class TransactionView(BaseView):
+class TransactionView(BaseTransactionView):
     def _setup(self):
         self._setupUi()
         self.ttable = TransactionTable(self.model.ttable, view=self.tableView)
@@ -64,8 +63,4 @@ class TransactionView(BaseView):
     #--- Public
     def fitViewsForPrint(self, viewPrinter):
         viewPrinter.fitTable(self.ttable)
-
-    #--- model --> view
-    def get_panel_view(self, model):
-        return TransactionPanel(model, self.mainwindow)
 

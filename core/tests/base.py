@@ -139,7 +139,6 @@ class TestApp(TestAppBase):
         # reference.
         self.mw = self.mainwindow # shortcut. This one is often typed
         self.default_parent = self.mw
-        self.mepanel = link_gui(self.mw.mass_edit_panel)
         self.cdrpanel = link_gui(self.mw.custom_daterange_panel)
         self.expanel = link_gui(self.mw.export_panel)
         self.sfield = link_gui(self.mw.search_field)

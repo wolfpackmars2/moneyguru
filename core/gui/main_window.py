@@ -24,7 +24,6 @@ from .search_field import SearchField
 from .date_range_selector import DateRangeSelector
 from .account_lookup import AccountLookup
 from .completion_lookup import CompletionLookup
-from .mass_edition_panel import MassEditionPanel
 from .custom_date_range_panel import CustomDateRangePanel
 from .export_panel import ExportPanel
 from .import_window import ImportWindow
@@ -103,7 +102,6 @@ class MainWindow(Repeater, GUIObject):
         self.account_lookup = AccountLookup(self)
         self.completion_lookup = CompletionLookup(self)
 
-        self.mass_edit_panel = MassEditionPanel(self)
         self.custom_daterange_panel = CustomDateRangePanel(self)
         self.export_panel = ExportPanel(self)
 

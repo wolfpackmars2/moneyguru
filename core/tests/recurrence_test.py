@@ -279,9 +279,9 @@ def test_mass_edition(app):
     # When a mass edition has a spawn in it, don't ask for scope, just perform the change in the
     # local scope
     app.ttable.select([1, 2])
-    app.mepanel.load()
-    app.mepanel.description = 'changed'
-    app.mepanel.save()
+    mepanel = app.mw.edit_item()
+    mepanel.description = 'changed'
+    mepanel.save()
     eq_(app.ttable[3].description, 'foobar')
     app.check_gui_calls_partial(app.doc_gui, not_expected=['query_for_schedule_scope'])
 

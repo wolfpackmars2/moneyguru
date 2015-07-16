@@ -16,6 +16,7 @@ from ..model.amount import convert_amount
 from ..model.budget import BudgetSpawn
 from .base import BaseView, MESSAGES_DOCUMENT_CHANGED
 from .filter_bar import FilterBar
+from .mass_edition_panel import MassEditionPanel
 from .transaction_table import TransactionTable
 from .transaction_print import TransactionPrint
 from .transaction_panel import TransactionPanel
@@ -25,7 +26,10 @@ class ViewWithTransactionsMixin:
     def edit_selected_transactions(self):
         editable_txns = [txn for txn in self.mainwindow.selected_transactions if not isinstance(txn, BudgetSpawn)]
         if len(editable_txns) > 1:
-            self.mainwindow.mass_edit_panel.load()
+            panel = MassEditionPanel(self.mainwindow)
+            panel.view = weakref.proxy(self.view.get_panel_view(panel))
+            panel.load(editable_txns)
+            return panel
         elif len(editable_txns) == 1:
             panel = TransactionPanel(self.mainwindow)
             panel.view = weakref.proxy(self.view.get_panel_view(panel))

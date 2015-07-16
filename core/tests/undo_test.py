@@ -515,10 +515,10 @@ def test_undo_duplicate_transaction(app, checkstate):
 def test_undo_mass_edition(app, checkstate):
     # Mass edition can be undone.
     app.etable.select([0, 1])
-    app.mepanel.load()
-    app.mepanel.description_enabled = True
-    app.mepanel.description = 'foobar'
-    app.mepanel.save()
+    mepanel = app.mw.edit_item()
+    mepanel.description_enabled = True
+    mepanel.description = 'foobar'
+    mepanel.save()
     checkstate()
 
 @with_app(app_two_txns_in_two_accounts)
