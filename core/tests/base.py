@@ -28,6 +28,28 @@ from ..model.date import DateFormat
 
 testdata = TestData(op.join(op.dirname(__file__), 'testdata'))
 
+class PanelViewProvider:
+    """Provide dummy views for panels during tests.
+
+    Also, keep track of the last panel invoked. This is pretty much the only way to manage
+    to reach those panels because their instance are not referenced anywhere in the app
+    (they are shown and then discarded right away).
+    """
+    def __init__(self):
+        self.current_panel = None
+
+    def get_panel_view(self, model):
+        for elem in vars(model).values():
+            if elem is model:
+                continue
+            if isinstance(elem, GUIObject) and elem.view is None:
+                elem.view = CallLogger()
+        self.current_panel = model
+        # We have to hold onto this instance for a while
+        self.current_panel_view = CallLogger()
+        return self.current_panel_view
+
+
 def log(method):
     def wrapper(self, *args, **kw):
         result = method(self, *args, **kw)
@@ -61,16 +83,13 @@ class DocumentGUI(CallLogger):
 
 
 class ViewGUI(CallLogger):
+    def __init__(self, panel_view_provider):
+        CallLogger.__init__(self)
+        self.panel_view_provider = panel_view_provider
+
     @log
     def get_panel_view(self, model):
-        for elem in vars(model).values():
-            if elem is model:
-                continue
-            if isinstance(elem, GUIObject) and elem.view is None:
-                elem.view = CallLogger()
-        self.panel = model # So we can get a hold of this reference somewhere
-        self.panel_view = CallLogger() # We have to hold onto this instance for a while
-        return self.panel_view
+        return self.panel_view_provider.get_panel_view(model)
 
 class MainWindowGUI(CallLogger):
     def __init__(self, testapp):
@@ -87,7 +106,10 @@ class MainWindowGUI(CallLogger):
     def refresh_panes(self):
         app = self.testapp
         for i in range(app.mw.pane_count):
-            app.link_gui(app.mw.pane_view(i), logger_class=ViewGUI)
+            app.link_gui(
+                app.mw.pane_view(i),
+                ViewGUI(self.testapp.panel_view_provider)
+            )
 
 class DictLoader(base.Loader):
     """Used for fake_import"""
@@ -117,15 +139,16 @@ class DictLoader(base.Loader):
 class TestApp(TestAppBase):
     def __init__(self, app=None, doc=None, tmppath=None):
         TestAppBase.__init__(self)
+        self.panel_view_provider = PanelViewProvider()
         link_gui = self.link_gui
         self._tmppath = tmppath
         if app is None:
-            app = Application(self.make_logger(ApplicationGUI))
+            app = Application(self.make_logger(ApplicationGUI()))
         self.app = app
         self.app_gui = app.view
         if doc is None:
             doc = Document(self.app)
-            doc.view = self.make_logger(DocumentGUI)
+            doc.view = self.make_logger(DocumentGUI())
         self.doc = doc
         self.doc_gui = doc.view
         self.mainwindow = MainWindow(self.doc)
@@ -153,13 +176,13 @@ class TestApp(TestAppBase):
         self.alookup = link_gui(self.mw.account_lookup)
         self.clookup = link_gui(self.mw.completion_lookup)
         self.doc.connect()
-        self.mw.view = self.make_logger(MainWindowGUI, self)
+        self.mw.view = self.make_logger(MainWindowGUI(self))
         self.mainwindow_gui = self.mw.view
         self.mw.connect()
 
-    def link_gui(self, gui, logger_class=CallLogger):
+    def link_gui(self, gui, logger=None):
         if gui.view is None:
-            gui.view = self.make_logger(class_=logger_class)
+            gui.view = self.make_logger(logger=logger)
         # link sub GUIs too
         for elem in vars(gui).values():
             if elem is gui or elem is self.mw:
@@ -433,8 +456,7 @@ class TestApp(TestAppBase):
     def get_current_panel(self):
         """Returns the instance of the last invoked panel.
         """
-        assert hasattr(self.current_view().view, 'panel')
-        return self.current_view().view.panel
+        return self.panel_view_provider.current_panel
 
     def graph_data(self):
         xoffset = self.balgraph._xoffset

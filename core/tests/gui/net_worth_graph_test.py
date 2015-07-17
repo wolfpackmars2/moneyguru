@@ -134,7 +134,7 @@ class TestAssetsAndLiabilitiesInDifferentAccounts:
         # When an account is deleted, charts are refreshed
         app.bsheet.selected = app.bsheet.assets[0]
         app.bsheet.delete()
-        arpanel = app.current_view().view.panel
+        arpanel = app.get_current_panel()
         arpanel.save() # continue deletion
         assert app.nw_graph_data()[0] != ('01/07/2008', '10.00')
         app.check_gui_calls(app.nwgraph_gui, ['refresh'])

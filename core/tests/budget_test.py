@@ -126,10 +126,10 @@ def test_budget_is_counted_in_etable_balance(app):
 @with_app(app_expense_with_budget_and_target)
 def test_delete_account(app):
     # When deleting an income or expense account, delete all budgets associated with it as well.
-    pview = app.show_pview()
+    app.show_pview()
     app.istatement.selected = app.istatement.expenses[0]
     app.istatement.delete()
-    arpanel = pview.view.panel
+    arpanel = app.get_current_panel()
     arpanel.save() # don't reassign
     app.show_bview()
     eq_(len(app.btable), 0) # the budget has been removed
@@ -140,8 +140,7 @@ def test_delete_account_and_reassign(app):
     app.add_account('other expense', account_type=AccountType.Expense)
     app.istatement.selected = app.istatement.expenses[1] # Some Expense
     app.istatement.delete()
-    pview = app.current_view()
-    arpanel = pview.view.panel
+    arpanel = app.get_current_panel()
     arpanel.account_list.select(2) # other expense
     arpanel.save()
     app.show_bview()
@@ -151,10 +150,10 @@ def test_delete_account_and_reassign(app):
 def test_delete_target(app):
     # When deleting the target account, budgets having this account as their target have it
     # changed to None
-    nwview = app.show_nwview()
+    app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[0]
     app.bsheet.delete()
-    arpanel = nwview.view.panel
+    arpanel = app.get_current_panel()
     arpanel.save()
     app.show_bview()
     eq_(app.btable[0].target, '') # been changed to None
@@ -165,8 +164,7 @@ def test_delete_target_and_reassign(app):
     app.add_account('other asset')
     app.bsheet.selected = app.bsheet.assets[1] # some asset
     app.bsheet.delete()
-    nwview = app.current_view()
-    arpanel = nwview.view.panel
+    arpanel = app.get_current_panel()
     arpanel.account_list.select(1) # other asset
     arpanel.save()
     app.show_bview()

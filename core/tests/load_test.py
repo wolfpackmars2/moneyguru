@@ -70,10 +70,10 @@ class TestLoadFile:
     @with_app(do_setup)
     def test_delete_account(self, app):
         # Removing an account sets the modified flag.
-        nwview = app.show_nwview()
+        app.show_nwview()
         app.bsheet.selected = app.bsheet.assets[0]
         app.bsheet.delete()
-        arpanel = nwview.view.panel
+        arpanel = app.get_current_panel()
         arpanel.save() # continue deletion
         assert app.doc.is_dirty()
 

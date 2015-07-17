@@ -269,11 +269,11 @@ def test_close_pane_of_autocleaned_accounts(app):
 @with_app(app_asset_and_income_accounts_with_txn)
 def test_delete_account(app):
     # deleting a non-empty account shows the account reassign panel
-    nwview = app.show_nwview()
+    app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[0]
     app.clear_gui_calls()
     app.bsheet.delete()
-    arpanel = nwview.view.panel
+    arpanel = app.get_current_panel()
     arpanel.view.check_gui_calls(['pre_load', 'post_load'])
 
 @with_app(app_asset_and_income_accounts_with_txn)
