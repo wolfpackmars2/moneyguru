@@ -96,14 +96,7 @@ class Panel(QDialog):
 
     def reject(self):
         self._saveGeometry()
-        # XXX temporary work around to avoid ending up with the "Cancel" button focused and thus
-        # have Return bound to Cancel. Will soon be replaced by something cleaner. See #433
         super().reject()
-        buttonBox = getattr(self, 'buttonBox', None)
-        if buttonBox is not None:
-            saveButton = buttonBox.button(QDialogButtonBox.Save)
-            if saveButton is not None:
-                saveButton.setFocus()
 
     #--- Event Handlers
     def widgetChanged(self, sender):
