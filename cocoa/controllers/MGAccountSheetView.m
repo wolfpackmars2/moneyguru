@@ -8,6 +8,8 @@ http://www.gnu.org/licenses/gpl-3.0.html
 
 #import "MGAccountSheetView.h"
 #import "MGConst.h"
+#import "MGAccountProperties.h"
+#import "MGAccountReassignPanel.h"
 #import "HSPyUtil.h"
 #import "Utils.h"
 
@@ -82,6 +84,19 @@ http://www.gnu.org/licenses/gpl-3.0.html
 }
 
 /* model --> view */
+- (PyObject *)createPanelWithModelRef:(PyObject *)aPyRef name:(NSString *)name
+{
+    MGPanel *panel;
+    if ([name isEqual:@"AccountReassignPanel"]) {
+        panel = [[MGAccountReassignPanel alloc] initWithPyRef:aPyRef parentWindow:[[self view] window]];
+    }
+    else {
+        panel = [[MGAccountProperties alloc] initWithPyRef:aPyRef parentWindow:[[self view] window]];
+    }
+    panel.releaseOnEndSheet = YES;
+    return [[panel model] pyRef];
+}
+
 - (void)updateVisibility
 {
     NSIndexSet *hiddenAreas = [Utils array2IndexSet:[[self model] hiddenAreas]];

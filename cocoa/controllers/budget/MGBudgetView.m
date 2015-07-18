@@ -49,10 +49,10 @@ http://www.gnu.org/licenses/gpl-3.0.html
     return @"budget_16";
 }
 
-- (PyObject *)createPanelWithModelRef:(PyObject *)aPyRef
+- (PyObject *)createPanelWithModelRef:(PyObject *)aPyRef name:(NSString *)name
 {
-     MGBudgetPanel *panel = [[MGBudgetPanel alloc] initWithPyRef:aPyRef parentWindow:[[self view] window]];
-     panel.releaseOnEndSheet = YES;
-     return [[panel model] pyRef];
+    MGBudgetPanel *panel = [[MGBudgetPanel alloc] initWithPyRef:aPyRef parentWindow:[[self view] window]];
+    panel.releaseOnEndSheet = YES;
+    return [[panel model] pyRef];
 }
 @end

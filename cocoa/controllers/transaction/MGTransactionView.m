@@ -9,6 +9,9 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #import "MGTransactionView.h"
 #import "MGTransactionView_UI.h"
 #import "MGTransactionPrint.h"
+#import "MGTransactionInspector.h"
+#import "MGMassEditionPanel.h"
+#import "HSPyUtil.h"
 #import "Utils.h"
 
 @implementation MGTransactionView
@@ -20,6 +23,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 {
     PyTransactionView *m = [[PyTransactionView alloc] initWithModel:aPyRef];
     self = [super initWithModel:m];
+    [m bindCallback:createCallback(@"BaseViewView", self)];
     [m release];
     self.view = createMGTransactionView_UI(self);
     transactionTable = [[MGTransactionTable alloc] initWithPyRef:[[self model] table] tableView:tableView];
@@ -53,5 +57,18 @@ http://www.gnu.org/licenses/gpl-3.0.html
 - (id)fieldEditorForObject:(id)asker
 {
     return [transactionTable fieldEditorForObject:asker];
+}
+
+- (PyObject *)createPanelWithModelRef:(PyObject *)aPyRef name:(NSString *)name
+{
+    MGPanel *panel;
+    if ([name isEqual:@"MassEditionPanel"]) {
+        panel = [[MGMassEditionPanel alloc] initWithPyRef:aPyRef parentWindow:[[self view] window]];
+    }
+    else {
+        panel = [[MGTransactionInspector alloc] initWithPyRef:aPyRef parentWindow:[[self view] window]];
+    }
+    panel.releaseOnEndSheet = YES;
+    return [[panel model] pyRef];
 }
 @end

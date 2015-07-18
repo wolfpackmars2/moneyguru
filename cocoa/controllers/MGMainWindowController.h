@@ -9,15 +9,9 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #import <Cocoa/Cocoa.h>
 #import <PSMTabBarControl/PSMTabBarControl.h>
 #import "MGConst.h"
-#import "MGAccountProperties.h"
-#import "MGTransactionInspector.h"
-#import "MGMassEditionPanel.h"
-#import "MGExportPanel.h"
 #import "MGSearchField.h"
 #import "MGImportWindow.h"
 #import "MGCSVImportOptions.h"
-#import "MGCustomDateRangePanel.h"
-#import "MGAccountReassignPanel.h"
 #import "MGAccountLookup.h"
 #import "MGCompletionLookup.h"
 #import "MGDateRangeSelector.h"
@@ -25,6 +19,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #import "MGPrintView.h"
 #import "MGMainWindow.h"
 #import "PyMainWindow.h"
+#import "PyDocument.h"
 
 @interface MGMainWindowController : NSWindowController <NSToolbarDelegate, NSWindowDelegate>
 {
@@ -34,15 +29,9 @@ http://www.gnu.org/licenses/gpl-3.0.html
     NSSegmentedControl *visibilitySegments;
     
     PyMainWindow *model;
-    MGAccountProperties *accountProperties;
-    MGTransactionInspector *transactionPanel;
-    MGMassEditionPanel *massEditionPanel;
-    MGExportPanel *exportPanel;
     MGSearchField *searchField;
     MGImportWindow *importWindow;
     MGCSVImportOptions *csvOptionsWindow;
-    MGCustomDateRangePanel *customDateRangePanel;
-    MGAccountReassignPanel *accountReassignPanel;
     MGAccountLookup *accountLookup;
     MGCompletionLookup *completionLookup;
     MGDateRangeSelector *dateRangeSelector;

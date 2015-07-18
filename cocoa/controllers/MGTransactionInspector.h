@@ -12,8 +12,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #import "MGSplitTable.h"
 #import "PyTransactionPanel.h"
 
-@class MGMainWindowController;
-
 @interface MGTransactionInspector : MGPanel {
     NSTabView *tabView;
     NSTextField *dateField;
@@ -36,7 +34,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @property (readwrite, retain) MGTableView *splitTableView;
 @property (readwrite, retain) NSButton *mctBalanceButton;
 
-- (id)initWithParent:(MGMainWindowController *)aParent;
+- (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow;
 - (PyTransactionPanel *)model;
 /* Actions */
 - (void)addSplit;

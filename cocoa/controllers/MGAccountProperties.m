@@ -20,11 +20,11 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @synthesize accountNumberTextField;
 @synthesize notesTextField;
 
-- (id)initWithParent:(MGMainWindowController *)aParent
+- (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow
 {
-    PyAccountPanel *m = [[PyAccountPanel alloc] initWithModel:[[aParent model] accountPanel]];
-    self = [super initWithModel:m parentWindow:[aParent window]];
-    [m bindCallback:createCallback(@"PanelView", self)];
+    PyAccountPanel *m = [[PyAccountPanel alloc] initWithModel:aPyRef];
+    self = [super initWithModel:m parentWindow:aParentWindow];
+    [m bindCallbackWithoutView:createCallback(@"PanelView", self)];
     [m release];
     [self setWindow:createMGAccountProperties_UI(self)];
     typePopUp = [[HSPopUpList alloc] initWithPyRef:[[self model] typeList] popupView:typeSelector];

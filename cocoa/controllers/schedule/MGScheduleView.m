@@ -50,10 +50,10 @@ http://www.gnu.org/licenses/gpl-3.0.html
     return @"schedules_16";
 }
 
-- (PyObject *)createPanelWithModelRef:(PyObject *)aPyRef
+- (PyObject *)createPanelWithModelRef:(PyObject *)aPyRef name:(NSString *)name
 {
-     MGSchedulePanel *panel = [[MGSchedulePanel alloc] initWithPyRef:aPyRef parentWindow:[[self view] window]];
-     panel.releaseOnEndSheet = YES;
-     return [[panel model] pyRef];
+    MGSchedulePanel *panel = [[MGSchedulePanel alloc] initWithPyRef:aPyRef parentWindow:[[self view] window]];
+    panel.releaseOnEndSheet = YES;
+    return [[panel model] pyRef];
 }
 @end

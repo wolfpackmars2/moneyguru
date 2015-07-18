@@ -8,6 +8,9 @@ http://www.gnu.org/licenses/gpl-3.0.html
 
 #import "MGGeneralLedgerView.h"
 #import "MGGeneralLedgerPrint.h"
+#import "MGTransactionInspector.h"
+#import "MGMassEditionPanel.h"
+#import "HSPyUtil.h"
 #import "Utils.h"
 
 @implementation MGGeneralLedgerView
@@ -15,6 +18,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 {
     PyGeneralLedgerView *m = [[PyGeneralLedgerView alloc] initWithModel:aPyRef];
     self = [super initWithModel:m];
+    [m bindCallback:createCallback(@"BaseViewView", self)];
     [m release];
     tableView = [[MGGeneralLedgerTableView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     [self setupTableView:tableView];
@@ -49,5 +53,18 @@ http://www.gnu.org/licenses/gpl-3.0.html
 - (id)fieldEditorForObject:(id)asker
 {
     return [ledgerTable fieldEditorForObject:asker];
+}
+
+- (PyObject *)createPanelWithModelRef:(PyObject *)aPyRef name:(NSString *)name
+{
+    MGPanel *panel;
+    if ([name isEqual:@"MassEditionPanel"]) {
+        panel = [[MGMassEditionPanel alloc] initWithPyRef:aPyRef parentWindow:[[self view] window]];
+    }
+    else {
+        panel = [[MGTransactionInspector alloc] initWithPyRef:aPyRef parentWindow:[[self view] window]];
+    }
+    panel.releaseOnEndSheet = YES;
+    return [[panel model] pyRef];
 }
 @end
