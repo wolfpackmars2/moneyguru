@@ -98,6 +98,10 @@ class MainWindowGUI(CallLogger):
         self.testapp = testapp
 
     @log
+    def get_panel_view(self, model):
+        return self.testapp.panel_view_provider.get_panel_view(model)
+
+    @log
     def show_message(self, message):
         self.messages.append(message)
 
@@ -163,7 +167,6 @@ class TestApp(TestAppBase):
         self.mw = self.mainwindow # shortcut. This one is often typed
         self.default_parent = self.mw
         self.cdrpanel = link_gui(self.mw.custom_daterange_panel)
-        self.expanel = link_gui(self.mw.export_panel)
         self.sfield = link_gui(self.mw.search_field)
         self.drsel = link_gui(self.mw.daterange_selector)
         self.csvopt = link_gui(self.mw.csv_options)
@@ -420,8 +423,9 @@ class TestApp(TestAppBase):
     def do_test_qif_export_import(self):
         filepath = str(self.tmppath() + 'foo.qif')
         self.mainwindow.export()
-        self.expanel.export_path = filepath
-        self.expanel.save()
+        expanel = self.get_current_panel()
+        expanel.export_path = filepath
+        expanel.save()
         newapp = Application(ApplicationGUI(), default_currency=self.doc.default_currency)
         app = TestApp(app=newapp)
         try:
@@ -701,17 +705,17 @@ def compare_apps(first, second, qif_mode=False):
         compare_txns(rec1.ref, rec2.ref)
         eq_(rec1.stop_date, rec2.stop_date)
         eq_(len(rec1.date2exception), len(rec2.date2exception))
-        for date in rec1.date2exception:
-            exc1 = rec1.date2exception[date]
-            exc2 = rec2.date2exception[date]
+        for date_ in rec1.date2exception:
+            exc1 = rec1.date2exception[date_]
+            exc2 = rec2.date2exception[date_]
             if exc1 is None:
                 assert exc2 is None
             else:
                 compare_txns(exc1, exc2)
         eq_(len(rec1.date2globalchange), len(rec2.date2globalchange))
-        for date in rec1.date2globalchange:
-            txn1 = rec1.date2globalchange[date]
-            txn2 = rec2.date2globalchange[date]
+        for date_ in rec1.date2globalchange:
+            txn1 = rec1.date2globalchange[date_]
+            txn2 = rec2.date2globalchange[date_]
             compare_txns(txn1, txn2)
     for budget1, budget2 in zip(first.budgets, second.budgets):
         eq_(budget1.account.name, budget2.account.name)

@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2010-10-24
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 import csv
@@ -22,7 +22,8 @@ def test_account_table_order(app):
     app.add_account('b', account_type=AccountType.Income) # not shown
     app.add_account('a', account_type=AccountType.Expense) # not shown
     app.mw.export()
-    t = app.expanel.account_table
+    expanel = app.get_current_panel()
+    t = expanel.account_table
     eq_(len(t), 2)
     eq_(t[0].name, 'd')
     eq_(t[1].name, 'c')
@@ -31,19 +32,21 @@ def test_account_table_order(app):
 def test_default_values(app):
     app.add_account('foo')
     app.mw.export()
-    assert app.expanel.export_all
-    assert not app.expanel.account_table[0].export
-    assert app.expanel.export_path is None
+    expanel = app.get_current_panel()
+    assert expanel.export_all
+    assert not expanel.account_table[0].export
+    assert expanel.export_path is None
 
 @with_app(TestApp)
 def test_export_only_one_account(app):
     app.add_accounts('foobar', 'foobaz')
     app.mw.export()
-    app.expanel.export_all = False
-    app.expanel.account_table[0].export = True
+    expanel = app.get_current_panel()
+    expanel.export_all = False
+    expanel.account_table[0].export = True
     expath = str(app.tmppath() + 'foo.qif')
-    app.expanel.export_path = expath
-    app.expanel.save()
+    expanel.export_path = expath
+    expanel.save()
     contents = open(expath, 'rt', encoding='utf-8').read()
     assert 'foobaz' not in contents
 
@@ -52,10 +55,11 @@ def test_export_as_csv(app):
     app.add_account('foo')
     app.add_txn(to='foo', amount='42')
     app.mw.export()
-    app.expanel.export_format = ExportFormat.CSV
+    expanel = app.get_current_panel()
+    expanel.export_format = ExportFormat.CSV
     expath = str(app.tmppath() + 'foo.csv')
-    app.expanel.export_path = expath
-    app.expanel.save()
+    expanel.export_path = expath
+    expanel.save()
     # We just check that the resulting file is a CSV. whether it's a correct CSV file is tested
     # elsewhere.
     contents = open(expath, 'rt').read()

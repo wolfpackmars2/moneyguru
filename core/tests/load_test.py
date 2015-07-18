@@ -487,8 +487,9 @@ def test_save_load_qif(tmpdir):
     def check(app):
         filepath = str(tmpdir.join('foo.qif'))
         app.mw.export()
-        app.expanel.export_path = filepath
-        app.expanel.save()
+        expanel = app.get_current_panel()
+        expanel.export_path = filepath
+        expanel.save()
         app.doc.close()
         newapp = TestApp()
         newapp.mw.parse_file_for_import(filepath)

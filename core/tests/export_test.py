@@ -18,12 +18,13 @@ from .base import TestApp, with_app
 def perform_export(app, options=None):
     filepath = str(app.tmppath() + 'foo.csv')
     app.mw.export()
-    app.expanel.export_format = ExportFormat.CSV
-    app.expanel.export_path = filepath
+    expanel = app.get_current_panel()
+    expanel.export_format = ExportFormat.CSV
+    expanel.export_path = filepath
     if options is not None:
         for key, value in options.items():
-            setattr(app.expanel, key, value)
-    app.expanel.save()
+            setattr(expanel, key, value)
+    expanel.save()
     return filepath
 
 #---

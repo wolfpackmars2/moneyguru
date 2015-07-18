@@ -237,12 +237,13 @@ def test_jump_to_account():
 @with_app(app_one_account)
 def test_export_panel(app):
     app.mw.export()
-    app.expanel.view.check_gui_calls_partial(['set_table_enabled'])
-    app.expanel.export_all = False
+    expanel = app.get_current_panel()
+    expanel.view.check_gui_calls_partial(['set_table_enabled'])
+    expanel.export_all = False
     # We enable the table, and because there's no account selected, we disable the export button
-    app.expanel.view.check_gui_calls(['set_table_enabled', 'set_export_button_enabled'])
-    app.expanel.account_table[0].export = True
-    app.expanel.view.check_gui_calls(['set_export_button_enabled'])
+    expanel.view.check_gui_calls(['set_table_enabled', 'set_export_button_enabled'])
+    expanel.account_table[0].export = True
+    expanel.view.check_gui_calls(['set_export_button_enabled'])
 
 #--- One transaction
 def app_one_transaction():

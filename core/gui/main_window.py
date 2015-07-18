@@ -7,6 +7,7 @@
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 import logging
+import weakref
 
 from hscommon.notify import Repeater
 from hscommon.util import first, minmax
@@ -74,6 +75,7 @@ class ViewPane:
 class MainWindow(Repeater, GUIObject):
     #--- model -> view calls:
     # change_current_pane()
+    # get_panel_view(model)
     # refresh_panes()
     # refresh_status_line()
     # refresh_undo_actions()
@@ -103,7 +105,6 @@ class MainWindow(Repeater, GUIObject):
         self.completion_lookup = CompletionLookup(self)
 
         self.custom_daterange_panel = CustomDateRangePanel(self)
-        self.export_panel = ExportPanel(self)
 
         self.csv_options = CSVOptions(self)
         self.import_window = ImportWindow(self)
@@ -347,7 +348,10 @@ class MainWindow(Repeater, GUIObject):
             pass
 
     def export(self):
-        self.export_panel.load()
+        accounts = [a for a in self.document.accounts if a.is_balance_sheet_account()]
+        panel = ExportPanel(self.document)
+        panel.view = weakref.proxy(self.view.get_panel_view(panel))
+        panel.load(accounts)
 
     def jump_to_account(self):
         self.account_lookup.show()

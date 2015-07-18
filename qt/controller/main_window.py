@@ -87,7 +87,6 @@ class MainWindow(QMainWindow):
         self.model = MainWindowModel(document=doc.model)
         self.model2view = {}
         self.cdrpanel = CustomDateRangePanel(mainwindow=self)
-        self.expanel = ExportPanel(mainwindow=self)
         self.alookup = Lookup(self, model=self.model.account_lookup)
         self.clookup = Lookup(self, model=self.model.completion_lookup)
         self.drsel = DateRangeSelector(mainwindow=self, view=self.dateRangeSelectorView)
@@ -635,6 +634,9 @@ class MainWindow(QMainWindow):
     #--- model --> view
     def change_current_pane(self):
         self._setTabIndex(self.model.current_pane_index)
+
+    def get_panel_view(self, model):
+        return ExportPanel(model, self)
 
     def refresh_panes(self):
         # Always remove the "new tab" tab
