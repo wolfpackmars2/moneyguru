@@ -6,7 +6,7 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt5 import QtCore
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QLabel, QComboBox, QSizePolicy, QSpacerItem, QLineEdit,
     QDialogButtonBox
@@ -28,11 +28,11 @@ class CustomDateRangePanel(Panel):
     ]
     PERSISTENT_NAME = 'customDateRangePanel'
 
-    def __init__(self, mainwindow):
+    def __init__(self, model, mainwindow):
         Panel.__init__(self, mainwindow)
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self._setupUi()
-        self.model = mainwindow.model.custom_daterange_panel
-        self.model.view = self
+        self.model = model
 
         self.buttonBox.accepted.connect(self.accept)
         self.buttonBox.rejected.connect(self.reject)
@@ -81,6 +81,7 @@ class CustomDateRangePanel(Panel):
         self.horizontalLayout_3.addWidget(self.slotNameEdit)
         self.verticalLayout.addLayout(self.horizontalLayout_3)
         self.buttonBox = QDialogButtonBox(self)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setOrientation(Qt.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Ok)
         self.verticalLayout.addWidget(self.buttonBox)
+

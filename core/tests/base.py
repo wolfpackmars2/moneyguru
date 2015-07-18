@@ -166,7 +166,6 @@ class TestApp(TestAppBase):
         # reference.
         self.mw = self.mainwindow # shortcut. This one is often typed
         self.default_parent = self.mw
-        self.cdrpanel = link_gui(self.mw.custom_daterange_panel)
         self.sfield = link_gui(self.mw.search_field)
         self.drsel = link_gui(self.mw.daterange_selector)
         self.csvopt = link_gui(self.mw.csv_options)

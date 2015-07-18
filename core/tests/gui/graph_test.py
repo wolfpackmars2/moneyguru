@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-04-21
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from hscommon.testutil import eq_
@@ -14,9 +14,10 @@ from ..base import TestApp, with_app
 def test_monthly_xtickmark_dont_start_at_zero(app):
     # same as yearly, but with a month based date range
     app.drsel.select_custom_date_range()
-    app.cdrpanel.start_date = '09/11/2007' # 22 days before the end of the month
-    app.cdrpanel.end_date = '18/02/2008'
-    app.cdrpanel.save() # changes the date range
+    cdrpanel = app.get_current_panel()
+    cdrpanel.start_date = '09/11/2007' # 22 days before the end of the month
+    cdrpanel.end_date = '18/02/2008'
+    cdrpanel.save() # changes the date range
     app.show_nwview()
     first_mark = app.nwgraph.xtickmarks[1] # 0 is xmin
     eq_(first_mark - app.nwgraph.xmin, 22)
@@ -28,9 +29,10 @@ def test_yearly_xtickmark_dont_start_at_zero(app):
     # of the year, the first xtickmark would still be 365 days on the X line, making the data
     # and the marks not fitting together.
     app.drsel.select_custom_date_range()
-    app.cdrpanel.start_date = '09/12/2007' # 23 days before the end of the year
-    app.cdrpanel.end_date = '18/02/2009'
-    app.cdrpanel.save() # changes the date range
+    cdrpanel = app.get_current_panel()
+    cdrpanel.start_date = '09/12/2007' # 23 days before the end of the year
+    cdrpanel.end_date = '18/02/2009'
+    cdrpanel.save() # changes the date range
     app.show_nwview()
     first_mark = app.nwgraph.xtickmarks[1] # 0 is xmin
     eq_(first_mark - app.nwgraph.xmin, 23)
@@ -46,7 +48,7 @@ def app_one_account():
 
 @with_app(app_one_account)
 def test_balance_for_datapoints_are_computed_daily(app):
-    # The balance went at 10000 with the first entry, but it went back to 1000 it with the second. 
+    # The balance went at 10000 with the first entry, but it went back to 1000 it with the second.
     # The yaxis should only take the final 1000 into account
     app.add_entry(increase='10000')
     app.add_entry(decrease='9000') # same day
@@ -79,3 +81,4 @@ def test_ymin_is_a_little_lower_than_lowest_datapoint(app):
     app.add_entry(increase='1000') # exactly on the yfactor
     eq_(app.balgraph.ymin, 900) # one step lower
     eq_(app.balgraph.ymax, 1100) # one step higher
+

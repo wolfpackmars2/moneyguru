@@ -104,8 +104,6 @@ class MainWindow(Repeater, GUIObject):
         self.account_lookup = AccountLookup(self)
         self.completion_lookup = CompletionLookup(self)
 
-        self.custom_daterange_panel = CustomDateRangePanel(self)
-
         self.csv_options = CSVOptions(self)
         self.import_window = ImportWindow(self)
 
@@ -608,7 +606,9 @@ class MainWindow(Repeater, GUIObject):
     budget_deleted = _undo_stack_changed
 
     def custom_date_range_selected(self):
-        self.custom_daterange_panel.load()
+        panel = CustomDateRangePanel(self.document)
+        panel.view = weakref.proxy(self.view.get_panel_view(panel))
+        panel.load()
 
     def date_range_will_change(self):
         self.daterange_selector.remember_current_range()

@@ -24,6 +24,7 @@ from hscommon.trans import trget
 from hscommon.plat import ISLINUX
 from core.const import PaneType, PaneArea
 from core.gui.main_window import MainWindow as MainWindowModel
+from core.gui.custom_date_range_panel import CustomDateRangePanel as CustomDateRangePanelModel
 from core.exception import FileFormatError
 
 from ..support.date_range_selector_view import DateRangeSelectorView
@@ -86,7 +87,6 @@ class MainWindow(QMainWindow):
         # Create base elements
         self.model = MainWindowModel(document=doc.model)
         self.model2view = {}
-        self.cdrpanel = CustomDateRangePanel(mainwindow=self)
         self.alookup = Lookup(self, model=self.model.account_lookup)
         self.clookup = Lookup(self, model=self.model.completion_lookup)
         self.drsel = DateRangeSelector(mainwindow=self, view=self.dateRangeSelectorView)
@@ -636,7 +636,10 @@ class MainWindow(QMainWindow):
         self._setTabIndex(self.model.current_pane_index)
 
     def get_panel_view(self, model):
-        return ExportPanel(model, self)
+        if isinstance(model, CustomDateRangePanelModel):
+            return CustomDateRangePanel(model, self)
+        else:
+            return ExportPanel(model, self)
 
     def refresh_panes(self):
         # Always remove the "new tab" tab

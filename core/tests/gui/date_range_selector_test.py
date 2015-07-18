@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2010-03-16
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from hscommon.testutil import eq_
@@ -22,11 +22,12 @@ def test_can_navigate():
 def app_saved_custom_range():
     app = TestApp()
     app.drsel.select_custom_date_range()
-    app.cdrpanel.start_date = '27/02/2010'
-    app.cdrpanel.end_date = '17/03/2010'
-    app.cdrpanel.slot_index = 2
-    app.cdrpanel.slot_name = 'foo'
-    app.cdrpanel.save()
+    cdrpanel = app.get_current_panel()
+    cdrpanel.start_date = '27/02/2010'
+    cdrpanel.end_date = '17/03/2010'
+    cdrpanel.slot_index = 2
+    cdrpanel.slot_name = 'foo'
+    cdrpanel.save()
     # Select another range
     app.drsel.select_month_range()
     return app

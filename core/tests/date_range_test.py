@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2010-01-03
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from datetime import date
@@ -79,9 +79,10 @@ def test_quarter_range(app):
 @with_app(app_range_on_actober_2007)
 def test_select_custom_date_range(app):
     app.drsel.select_custom_date_range()
-    app.cdrpanel.start_date = '09/12/2008'
-    app.cdrpanel.end_date = '18/02/2009'
-    app.cdrpanel.save() # changes the date range
+    cdrpanel = app.get_current_panel()
+    cdrpanel.start_date = '09/12/2008'
+    cdrpanel.end_date = '18/02/2009'
+    cdrpanel.save() # changes the date range
     eq_(app.doc.date_range.start, date(2008, 12, 9))
     eq_(app.doc.date_range.end, date(2009, 2, 18))
     eq_(app.doc.date_range.display, '09/12/2008 - 18/02/2009')
@@ -92,7 +93,8 @@ def test_select_custom_date_range_without_changing_the_dates(app):
     # When selecting a custom date range that has the same start/end as the previous one, it
     # still causes the change notification (so the DR display changes.
     app.drsel.select_custom_date_range()
-    app.cdrpanel.save()
+    cdrpanel = app.get_current_panel()
+    cdrpanel.save()
     eq_(app.doc.date_range.display, '01/10/2007 - 31/10/2007')
 
 @with_app(app_range_on_actober_2007)
@@ -255,7 +257,7 @@ def test_add_entry_doesnt_crash_on_date_adjust(app):
 
 @with_app(app_range_on_running_year)
 def test_running_year_date_range_bounds(app):
-    # Running year (with the default 3 ahead months) starts 10 months in the past and ends 2 
+    # Running year (with the default 3 ahead months) starts 10 months in the past and ends 2
     # months in the future, rounding the months. (default ahead_months is 2)
     eq_(app.doc.date_range.start, date(2008, 4, 1))
     eq_(app.doc.date_range.end, date(2009, 3, 31))
@@ -286,9 +288,10 @@ def test_running_year_range_with_ahead_months_bounds(app):
 def app_custom_date_range():
     app = TestApp()
     app.drsel.select_custom_date_range()
-    app.cdrpanel.start_date = '09/12/2008'
-    app.cdrpanel.end_date = '18/02/2009'
-    app.cdrpanel.save() # changes the date range
+    cdrpanel = app.get_current_panel()
+    cdrpanel.start_date = '09/12/2008'
+    cdrpanel.end_date = '18/02/2009'
+    cdrpanel.save() # changes the date range
     return app
 
 @with_app(app_custom_date_range)
@@ -308,14 +311,14 @@ def app_one_entry_year_range_2007():
 
 @with_app(app_one_entry_year_range_2007)
 def test_select_month_range(app):
-    # Make sure that the month range selection will be the first valid (contains at least one 
+    # Make sure that the month range selection will be the first valid (contains at least one
     # entry) range.
     app.drsel.select_month_range()
     eq_(app.doc.date_range, MonthRange(date(2007, 10, 1)))
 
 @with_app(app_one_entry_year_range_2007)
 def test_select_quarter_range(app):
-    # Make sure that the quarter range selection will be the first valid (contains at least one 
+    # Make sure that the quarter range selection will be the first valid (contains at least one
     # entry) range.
     app.drsel.select_quarter_range()
     eq_(app.doc.date_range, QuarterRange(date(2007, 10, 1)))
@@ -341,7 +344,7 @@ def test_set_date_out_of_range(app):
     app.drsel.view.check_gui_calls(expected)
 
 #---
-# One account, two entries, one in January 2007, one in April 2007. The latest entry is 
+# One account, two entries, one in January 2007, one in April 2007. The latest entry is
 # selected. The range is Yearly, on 2007.
 def app_two_entries_in_different_quarters_with_year_range():
     app = TestApp()
