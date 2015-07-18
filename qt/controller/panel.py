@@ -8,7 +8,7 @@
 
 from PyQt5.QtCore import Qt, QSignalMapper
 from PyQt5.QtWidgets import (
-    QWidget, QDialog, QLineEdit, QSpinBox, QComboBox, QCheckBox, QPlainTextEdit, QDialogButtonBox
+    QWidget, QDialog, QLineEdit, QSpinBox, QComboBox, QCheckBox, QPlainTextEdit
 )
 
 class Panel(QDialog):
