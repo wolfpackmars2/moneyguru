@@ -27,11 +27,11 @@ class AccountPanel(Panel):
     ]
     PERSISTENT_NAME = 'accountPanel'
 
-    def __init__(self, mainwindow):
+    def __init__(self, model, mainwindow):
         Panel.__init__(self, mainwindow)
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self._setupUi()
-        self.model = mainwindow.model.account_panel
-        self.model.view = self
+        self.model = model
         self.typeComboBox = ComboboxModel(model=self.model.type_list, view=self.typeComboBoxView)
         self.currencyComboBox = ComboboxModel(model=self.model.currency_list, view=self.currencyComboBoxView)
 

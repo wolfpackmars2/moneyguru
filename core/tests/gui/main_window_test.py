@@ -1,9 +1,9 @@
 # Created By: Eric Mc Sween
 # Created On: 2008-07-12
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from datetime import date
@@ -273,7 +273,8 @@ def test_delete_account(app):
     app.bsheet.selected = app.bsheet.assets[0]
     app.clear_gui_calls()
     app.bsheet.delete()
-    app.arpanel.view.check_gui_calls(['pre_load', 'post_load'])
+    arpanel = app.get_current_panel()
+    arpanel.view.check_gui_calls(['pre_load', 'post_load'])
 
 @with_app(app_asset_and_income_accounts_with_txn)
 def test_navigate_back(app):

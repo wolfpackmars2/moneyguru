@@ -12,8 +12,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #import "HSTextField.h"
 #import "HSComboBox.h"
 
-@class MGMainWindowController;
-
 @interface MGMassEditionPanel : MGPanel {
     NSTextField *dateFieldView;
     NSTextField *descriptionFieldView;
@@ -59,6 +57,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @property (readwrite, retain) NSButton *amountCheckBox;
 @property (readwrite, retain) NSButton *currencyCheckBox;
 
-- (id)initWithParent:(MGMainWindowController *)aParent;
+- (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow;
 - (PyMassEditionPanel *)model;
 @end

@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-08-16
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from hscommon.testutil import eq_
@@ -14,9 +14,9 @@ from ..base import TestApp, with_app
 @with_app(TestApp)
 def test_add_schedule(app):
     app.show_scview()
-    app.scpanel.new()
-    app.scpanel.description = 'foobar'
-    app.scpanel.save()
+    scpanel = app.mw.new_item()
+    scpanel.description = 'foobar'
+    scpanel.save()
     eq_(len(app.sctable), 1)
     eq_(app.sctable[0].description, 'foobar')
 
@@ -31,14 +31,13 @@ def app_daily_scheduled_txn():
     app = TestApp()
     app.add_schedule(start_date='13/09/2008', repeat_every=3)
     app.sctable.select([0])
-    app.clear_gui_calls()
+    app.scpanel = app.mw.edit_item()
     return app
 
 @with_app(app_daily_scheduled_txn)
 def test_calls_refresh_repeat_every_on_load(app):
     # When the panel loads, make the panel call its refresh_repeat_every() view method so that
     # the correct time unit escription shows up
-    app.scpanel.load()
     app.scpanel.view.check_gui_calls_partial(['refresh_repeat_every'])
 
 @with_app(app_daily_scheduled_txn)
@@ -50,6 +49,7 @@ def test_repeat_every(app):
 @with_app(app_daily_scheduled_txn)
 def test_repeat_type_index(app):
     # changing the repeat_type_index changes the repeat_every_desc attribute
+    app.scpanel.view.clear_calls()
     eq_(app.scpanel.repeat_every_desc, 'days')
     app.scpanel.repeat_every = 1
     eq_(app.scpanel.repeat_every_desc, 'day')
@@ -74,6 +74,7 @@ def test_repeat_options(app):
 @with_app(app_daily_scheduled_txn)
 def test_repeat_options_on_last_week(app):
     # When the txn's date is on the last week of the month, there's an extra 'last' option
+    app.scpanel.repeat_type_list.view.clear_calls()
     app.scpanel.start_date = '29/07/2008'
     expected = ['Daily', 'Weekly', 'Monthly', 'Yearly', 'Every fifth Tuesday of the month',
                 'Every last Tuesday of the month']
@@ -85,18 +86,19 @@ def app_daily_schedule_loaded():
     app = TestApp()
     app.doc.date_range = MonthRange(app.app.parse_date('13/09/2008'))
     app.show_scview()
-    app.scpanel.new()
-    app.scpanel.start_date = '13/09/2008'
-    app.scpanel.description = 'foobar'
-    app.scpanel.repeat_type_list.select(0)
-    app.scpanel.repeat_every = 3
-    app.scpanel.notes = 'some notes'
-    app.scpanel.save()
+    scpanel = app.mw.new_item()
+    scpanel.new()
+    scpanel.start_date = '13/09/2008'
+    scpanel.description = 'foobar'
+    scpanel.repeat_type_list.select(0)
+    scpanel.repeat_every = 3
+    scpanel.notes = 'some notes'
+    scpanel.save()
     app.show_scview()
     app.sctable.select([0])
-    app.scpanel.load()
+    app.scpanel = app.mw.edit_item()
     return app
-    
+
 def test_attrs():
     # The attributes of the panel are correctly set
     app = app_daily_schedule_loaded()
@@ -124,3 +126,4 @@ def test_edit_then_save():
     # To see if the save_edits() worked, we look if the spawns are correct in the ttable
     app.show_tview()
     eq_(app.ttable.row_count, 3) #stops 2 days after it starts
+

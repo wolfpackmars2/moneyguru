@@ -13,8 +13,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #import "HSPopUpList.h"
 #import "PySchedulePanel.h"
 
-@class MGMainWindowController;
-
 @interface MGSchedulePanel : MGPanel <NSTextFieldDelegate> {
     NSTabView *tabView;
     NSTextField *startDateField;
@@ -44,7 +42,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @property (readwrite, retain) NSTextField *notesField;
 @property (readwrite, retain) MGTableView *splitTableView;
 
-- (id)initWithParent:(MGMainWindowController *)aParent;
+- (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow;
 - (PySchedulePanel *)model;
 /* Actions */
 - (void)addSplit;

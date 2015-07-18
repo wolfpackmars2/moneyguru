@@ -610,9 +610,9 @@ class TestOneEntryInPreviousRange:
         # If we make the account an income account, the previous balance entry disappears
         app.show_nwview()
         app.bsheet.selected = app.bsheet.assets[0]
-        app.mainwindow.edit_item()
-        app.apanel.type_list.select(2) # income
-        app.apanel.save()
+        apanel = app.mainwindow.edit_item()
+        apanel.type_list.select(2) # income
+        apanel.save()
         app.show_pview()
         app.istatement.selected = app.istatement.income[0]
         app.show_account()
@@ -1399,11 +1399,11 @@ class TestExampleDocumentLoadTest:
         app.add_entry('15/04/2009')
         app.add_entry('28/04/2009') # will be deleted because in the future
         app.show_scview()
-        app.mainwindow.new_item()
-        app.scpanel.start_date = '03/03/2009'
-        app.scpanel.stop_date = '04/05/2009'
-        app.scpanel.repeat_type_index = 2 # monthly
-        app.scpanel.save()
+        scpanel = app.mainwindow.new_item()
+        scpanel.start_date = '03/03/2009'
+        scpanel.stop_date = '04/05/2009'
+        scpanel.repeat_type_index = 2 # monthly
+        scpanel.save()
         return app
 
     @with_app(do_setup)

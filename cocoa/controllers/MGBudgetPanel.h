@@ -11,8 +11,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #import "HSPopUpList.h"
 #import "PyBudgetPanel.h"
 
-@class MGMainWindowController;
-
 @interface MGBudgetPanel : MGPanel <NSTextFieldDelegate> {
     NSTextField *startDateField;
     NSTextField *repeatEveryField;
@@ -39,7 +37,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @property (readwrite, retain) NSTextField *amountField;
 @property (readwrite, retain) NSTextField *notesField;
 
-- (id)initWithParent:(MGMainWindowController *)aParent;
+- (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow;
 - (PyBudgetPanel *)model;
 /* Python --> Cocoa */
 - (void)refreshRepeatEvery;

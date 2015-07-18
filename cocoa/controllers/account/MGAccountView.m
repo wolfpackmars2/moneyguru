@@ -10,6 +10,8 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #import "MGAccountView_UI.h"
 #import "MGConst.h"
 #import "MGEntryPrint.h"
+#import "MGTransactionInspector.h"
+#import "MGMassEditionPanel.h"
 #import "HSPyUtil.h"
 #import "Utils.h"
 #import "PyMainWindow.h"
@@ -174,5 +176,18 @@ http://www.gnu.org/licenses/gpl-3.0.html
 - (void)showBarGraph
 {
     [self showGraph:barGraph];
+}
+
+- (PyObject *)createPanelWithModelRef:(PyObject *)aPyRef name:(NSString *)name
+{
+    MGPanel *panel;
+    if ([name isEqualTo:@"MassEditionPanel"]) {
+        panel = [[MGMassEditionPanel alloc] initWithPyRef:aPyRef parentWindow:[[self view] window]];
+    }
+    else {
+        panel = [[MGTransactionInspector alloc] initWithPyRef:aPyRef parentWindow:[[self view] window]];
+    }
+    panel.releaseOnEndSheet = YES;
+    return [[panel model] pyRef];
 }
 @end

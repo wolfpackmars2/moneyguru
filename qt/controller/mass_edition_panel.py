@@ -6,7 +6,7 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
-from PyQt5 import QtCore
+from PyQt5.QtCore import Qt
 from PyQt5.QtWidgets import (
     QVBoxLayout, QHBoxLayout, QFormLayout, QLabel, QCheckBox, QLineEdit, QComboBox,
     QDialogButtonBox
@@ -35,12 +35,12 @@ class MassEditionPanel(Panel):
     ]
     PERSISTENT_NAME = 'massEditionPanel'
 
-    def __init__(self, mainwindow):
+    def __init__(self, model, mainwindow):
         Panel.__init__(self, mainwindow)
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self.mainwindow = mainwindow
-        self.model = mainwindow.model.mass_edit_panel
+        self.model = model
         self._setupUi()
-        self.model.view = self
         self.dateEdit = TextField(model=self.model.date_field, view=self.dateEditView)
         self.descriptionEdit = TextField(model=self.model.description_field, view=self.descriptionEditView)
         self.payeeEdit = TextField(model=self.model.payee_field, view=self.payeeEditView)
@@ -126,7 +126,7 @@ class MassEditionPanel(Panel):
         self.formLayout.setLayout(7, QFormLayout.FieldRole, self.horizontalLayout_8)
         self.verticalLayout.addLayout(self.formLayout)
         self.buttonBox = QDialogButtonBox(self)
-        self.buttonBox.setOrientation(QtCore.Qt.Horizontal)
+        self.buttonBox.setOrientation(Qt.Horizontal)
         self.buttonBox.setStandardButtons(QDialogButtonBox.Cancel|QDialogButtonBox.Save)
         self.verticalLayout.addWidget(self.buttonBox)
         self.label.setBuddy(self.dateEditView)

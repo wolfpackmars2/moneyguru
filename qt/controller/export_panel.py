@@ -28,12 +28,12 @@ class ExportPanel(Panel):
     FIELDS = []
     PERSISTENT_NAME = 'exportPanel'
 
-    def __init__(self, mainwindow):
+    def __init__(self, model, mainwindow):
         Panel.__init__(self, mainwindow)
+        self.setAttribute(Qt.WA_DeleteOnClose)
         self.mainwindow = mainwindow
         self._setupUi()
-        self.model = mainwindow.model.export_panel
-        self.model.view = self
+        self.model = model
         self.accountTable = ExportAccountTable(model=self.model.account_table, view=self.tableView)
 
         self.exportTypeButtons.buttonClicked[int].connect(self.exportTypeSelected)

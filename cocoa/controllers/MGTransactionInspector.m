@@ -25,11 +25,11 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @synthesize splitTableView;
 @synthesize mctBalanceButton;
 
-- (id)initWithParent:(MGMainWindowController *)aParent
+- (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow
 {
-    PyTransactionPanel *m = [[PyTransactionPanel alloc] initWithModel:[[aParent model] transactionPanel]];
-    self = [super initWithModel:m parent:aParent];
-    [m bindCallback:createCallback(@"PanelWithTransactionView", self)];
+    PyTransactionPanel *m = [[PyTransactionPanel alloc] initWithModel:aPyRef];
+    self = [super initWithModel:m parentWindow:aParentWindow];
+    [m bindCallbackWithoutView:createCallback(@"PanelWithTransactionView", self)];
     [m release];
     [self setWindow:createMGTransactionInspector_UI(self)];
     splitTable = [[MGSplitTable alloc] initWithPyRef:[[self model] splitTable] tableView:splitTableView];

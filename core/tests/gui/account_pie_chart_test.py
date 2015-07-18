@@ -92,9 +92,9 @@ class TestSomeAssetsAndLiabilities:
     def test_budget_multiple_currency(self, app):
         # just make sure it doesn't crash
         app.bsheet.selected = app.bsheet.assets[0]
-        app.mw.edit_item()
-        app.apanel.currency_list.select(Currency.all.index(CAD))
-        app.apanel.save()
+        apanel = app.mw.edit_item()
+        apanel.currency_list.select(Currency.all.index(CAD))
+        apanel.save()
         app.add_account('income', account_type=AccountType.Income)
         app.add_budget('income', None, '5')
         app.show_nwview() # don't crash

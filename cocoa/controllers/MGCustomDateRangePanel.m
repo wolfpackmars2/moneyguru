@@ -18,11 +18,11 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @synthesize slotIndexSelector;
 @synthesize slotNameField;
 
-- (id)initWithParent:(MGMainWindowController *)aParent
+- (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow
 {
-    PyCustomDateRangePanel *m = [[PyCustomDateRangePanel alloc] initWithModel:[[aParent model] customDateRangePanel]];
-    self = [super initWithModel:m parent:aParent];
-    [m bindCallback:createCallback(@"PanelView", self)];
+    PyCustomDateRangePanel *m = [[PyCustomDateRangePanel alloc] initWithModel:aPyRef];
+    self = [super initWithModel:m parentWindow:aParentWindow];
+    [m bindCallbackWithoutView:createCallback(@"PanelView", self)];
     [m release];
     [self setWindow:createMGCustomDateRangePanel_UI(self)];
     return self;

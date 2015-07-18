@@ -16,9 +16,16 @@ http://www.gnu.org/licenses/gpl-3.0.html
     NSWindow *parentWindow;
     MGFieldEditor *customFieldEditor;
     MGDateFieldEditor *customDateFieldEditor;
+    BOOL releaseOnEndSheet;
 }
-- (id)initWithNibName:(NSString *)aNibName model:(PyPanel *)aModel parent:(NSWindowController *)aParent;
-- (id)initWithModel:(PyPanel *)aModel parent:(NSWindowController *)aParent;
+
+/* The releaseOnEndSheet property makes the MGPanel release *itself* after a the sheet is done
+   showing itself. It's a bit hackish, but the best way I found to properly release a panel
+   in situations where its reference is not held anywhere in the UI layer.
+ */
+@property (readwrite) BOOL releaseOnEndSheet;
+
+- (id)initWithModel:(PyPanel *)aModel parentWindow:(NSWindow *)aParentWindow;
 - (PyPanel *)model;
 /* Virtual */
 - (NSString *)completionAttrForField:(id)aField;

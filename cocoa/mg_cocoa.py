@@ -830,6 +830,7 @@ class PyLookup(PyGUIObject):
 #--- Views
 class BaseViewView:
     def updateVisibility(self): pass
+    def createPanelWithModelRef_name_(self, pyref: pyref, name: str) -> pyref: pass
 
 class PyBaseView(PyGUIObject):
     def mainwindow(self) -> pyref:
@@ -839,6 +840,11 @@ class PyBaseView(PyGUIObject):
         return list(self.model.mainwindow.hidden_areas)
 
     #--- Python --> Cocoa
+    @dontwrap
+    def get_panel_view(self, model):
+        name = model.__class__.__name__
+        return self.callback.createPanelWithModelRef_name_(model, name)
+
     @dontwrap
     def restore_subviews_size(self):
         # Under Cocoa, we don't use this because all views are created after the document opening.
@@ -965,6 +971,7 @@ class PyReadOnlyPluginView(PyBaseView):
 
 class MainWindowView(GUIObjectView):
     def changeSelectedPane(self): pass
+    def createPanelWithModelRef_name_(self, pyref: pyref, name: str) -> pyref: pass
     def refreshPanes(self): pass
     def refreshStatusLine(self): pass
     def refreshUndoActions(self): pass
@@ -995,30 +1002,6 @@ class PyMainWindow(PyGUIObject):
 
     def completionLookup(self) -> pyref:
         return self.model.completion_lookup
-
-    def accountPanel(self) -> pyref:
-        return self.model.account_panel
-
-    def transactionPanel(self) -> pyref:
-        return self.model.transaction_panel
-
-    def massEditPanel(self) -> pyref:
-        return self.model.mass_edit_panel
-
-    def budgetPanel(self) -> pyref:
-        return self.model.budget_panel
-
-    def schedulePanel(self) -> pyref:
-        return self.model.schedule_panel
-
-    def customDateRangePanel(self) -> pyref:
-        return self.model.custom_daterange_panel
-
-    def accountReassignPanel(self) -> pyref:
-        return self.model.account_reassign_panel
-
-    def exportPanel(self) -> pyref:
-        return self.model.export_panel
 
     def importWindow(self) -> pyref:
         return self.model.import_window
@@ -1126,6 +1109,11 @@ class PyMainWindow(PyGUIObject):
     @dontwrap
     def change_current_pane(self):
         self.callback.changeSelectedPane()
+
+    @dontwrap
+    def get_panel_view(self, model):
+        name = model.__class__.__name__
+        return self.callback.createPanelWithModelRef_name_(model, name)
 
     @dontwrap
     def refresh_panes(self):

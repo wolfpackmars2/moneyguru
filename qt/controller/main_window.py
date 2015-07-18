@@ -24,6 +24,7 @@ from hscommon.trans import trget
 from hscommon.plat import ISLINUX
 from core.const import PaneType, PaneArea
 from core.gui.main_window import MainWindow as MainWindowModel
+from core.gui.custom_date_range_panel import CustomDateRangePanel as CustomDateRangePanelModel
 from core.exception import FileFormatError
 
 from ..support.date_range_selector_view import DateRangeSelectorView
@@ -39,12 +40,6 @@ from .docprops_view import DocPropsView
 from .new_view import NewView
 from .readonly_table_plugin_view import ReadOnlyTablePluginView
 from .lookup import Lookup
-from .account_panel import AccountPanel
-from .account_reassign_panel import AccountReassignPanel
-from .transaction_panel import TransactionPanel
-from .mass_edition_panel import MassEditionPanel
-from .schedule_panel import SchedulePanel
-from .budget_panel import BudgetPanel
 from .export_panel import ExportPanel
 from .custom_date_range_panel import CustomDateRangePanel
 from .search_field import SearchField
@@ -92,18 +87,6 @@ class MainWindow(QMainWindow):
         # Create base elements
         self.model = MainWindowModel(document=doc.model)
         self.model2view = {}
-        self.apanel = AccountPanel(mainwindow=self)
-        self.tpanel = TransactionPanel(mainwindow=self)
-        self.mepanel = MassEditionPanel(mainwindow=self)
-        self.scpanel = SchedulePanel(mainwindow=self)
-        self.bpanel = BudgetPanel(mainwindow=self)
-        self.cdrpanel = CustomDateRangePanel(mainwindow=self)
-        self.arpanel = AccountReassignPanel(mainwindow=self)
-        self.expanel = ExportPanel(mainwindow=self)
-        self.all_panels = [
-            self.apanel, self.tpanel, self.mepanel, self.scpanel, self.bpanel, self.cdrpanel,
-            self.arpanel, self.expanel,
-        ]
         self.alookup = Lookup(self, model=self.model.account_lookup)
         self.clookup = Lookup(self, model=self.model.completion_lookup)
         self.drsel = DateRangeSelector(mainwindow=self, view=self.dateRangeSelectorView)
@@ -436,7 +419,7 @@ class MainWindow(QMainWindow):
         if pane_view in self.model2view:
             view = self.model2view[pane_view]
         else:
-            view = PANETYPE2VIEWCLASS[pane_type](model=pane_view)
+            view = PANETYPE2VIEWCLASS[pane_type](model=pane_view, mainwindow=self)
             self.model2view[pane_view] = view
             self.mainView.addWidget(view)
             view.restoreSubviewsSize()
@@ -651,6 +634,12 @@ class MainWindow(QMainWindow):
     #--- model --> view
     def change_current_pane(self):
         self._setTabIndex(self.model.current_pane_index)
+
+    def get_panel_view(self, model):
+        if isinstance(model, CustomDateRangePanelModel):
+            return CustomDateRangePanel(model, self)
+        else:
+            return ExportPanel(model, self)
 
     def refresh_panes(self):
         # Always remove the "new tab" tab

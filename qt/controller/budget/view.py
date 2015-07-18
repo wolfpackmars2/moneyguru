@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QAbstractItemView
 
 from ...support.item_view import TableView
 from ..base_view import BaseView
+from ..budget_panel import BudgetPanel
 from .table import BudgetTable
 
 class BudgetView(BaseView):
@@ -43,4 +44,8 @@ class BudgetView(BaseView):
     #--- Public
     def fitViewsForPrint(self, viewPrinter):
         viewPrinter.fitTable(self.btable)
+
+    #--- model --> view
+    def get_panel_view(self, model):
+        return BudgetPanel(model, self.mainwindow)
 

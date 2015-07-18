@@ -12,8 +12,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #import "PyExportPanel.h"
 #import "MGExportAccountTable.h"
 
-@class MGMainWindowController;
-
 @interface MGExportPanel : MGPanel {
     NSMatrix *exportAllButtons;
     NSButton *exportButton;
@@ -30,7 +28,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @property (readwrite, retain) NSMatrix *exportFormatButtons;
 @property (readwrite, retain) NSButton *currentDateRangeOnlyButton;
 
-- (id)initWithParent:(MGMainWindowController *)aParent;
+- (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow;
 - (PyExportPanel *)model;
 /* Actions */
 - (void)exportAllToggled;

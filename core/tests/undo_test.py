@@ -77,8 +77,8 @@ def test_undo_add_group(app, checkstate):
 def test_add_schedule(app, checkstate):
     # schedule addition are undoable
     app.show_scview()
-    app.scpanel.new()
-    app.scpanel.save()
+    scpanel = app.mw.new_item()
+    scpanel.save()
     checkstate()
 
 @with_app(TestApp)
@@ -119,11 +119,11 @@ def app_one_nameless_account():
 @with_app(app_one_nameless_account)
 def test_undo_apanel_attrs(app, checkstate):
     # Undoing a changes made from apanel work
-    app.mw.edit_item()
-    app.apanel.currency = EUR
-    app.apanel.account_number = '1234'
-    app.apanel.notes = 'some notes'
-    app.apanel.save()
+    apanel = app.mw.edit_item()
+    apanel.currency = EUR
+    apanel.account_number = '1234'
+    apanel.notes = 'some notes'
+    apanel.save()
     checkstate()
 
 #---
@@ -500,7 +500,8 @@ def test_undo_delete_account_with_txn(app, checkstate):
     app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[0]
     app.bsheet.delete()
-    app.arpanel.save() # continue deletion
+    arpanel = app.get_current_panel()
+    arpanel.save() # continue deletion
     checkstate()
 
 @with_app(app_two_txns_in_two_accounts)
@@ -514,26 +515,26 @@ def test_undo_duplicate_transaction(app, checkstate):
 def test_undo_mass_edition(app, checkstate):
     # Mass edition can be undone.
     app.etable.select([0, 1])
-    app.mepanel.load()
-    app.mepanel.description_enabled = True
-    app.mepanel.description = 'foobar'
-    app.mepanel.save()
+    mepanel = app.mw.edit_item()
+    mepanel.description_enabled = True
+    mepanel.description = 'foobar'
+    mepanel.save()
     checkstate()
 
 @with_app(app_two_txns_in_two_accounts)
 def test_undo_schedule(app, checkstate):
-    app.tpanel.load()
-    app.tpanel.repeat_index = 1 # daily
-    app.tpanel.save()
+    tpanel = app.mw.edit_item()
+    tpanel.repeat_index = 1 # daily
+    tpanel.save()
     checkstate()
 
 @with_app(app_two_txns_in_two_accounts)
 def test_undo_schedule_entry_transfer(app):
     # After undoing a scheduling, the entry has the wrong transfer
     app.etable.select([0])
-    app.tpanel.load()
-    app.tpanel.repeat_index = 1 # daily
-    app.tpanel.save()
+    tpanel = app.mw.edit_item()
+    tpanel.repeat_index = 1 # daily
+    tpanel.save()
     app.doc.undo()
     eq_(app.etable[0].transfer, 'second')
 
@@ -680,10 +681,10 @@ def app_scheduled_txn():
 
 @with_app(app_scheduled_txn)
 def test_change_schedule(app, checkstate):
-    app.scpanel.load()
-    app.scpanel.description = 'changed'
-    app.scpanel.repeat_every = 12
-    app.scpanel.save()
+    scpanel = app.mw.edit_item()
+    scpanel.description = 'changed'
+    scpanel.repeat_every = 12
+    scpanel.save()
     checkstate()
 
 @with_app(app_scheduled_txn)
@@ -703,7 +704,8 @@ def test_delete_account(app, checkstate):
     app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[0]
     app.bsheet.delete()
-    app.arpanel.save()
+    arpanel = app.get_current_panel()
+    arpanel.save()
     checkstate()
 
 @with_app(app_scheduled_txn)
@@ -754,9 +756,10 @@ def app_with_budget(monkeypatch):
 
 @with_app(app_with_budget)
 def test_change_budget(app, checkstate):
-    app.bpanel.load()
-    app.bpanel.repeat_every = 12
-    app.bpanel.save()
+    bpanel = app.mw.edit_item()
+    bpanel.load()
+    bpanel.repeat_every = 12
+    bpanel.save()
     checkstate()
 
 @with_app(app_with_budget)
@@ -764,7 +767,8 @@ def test_delete_account_with_budget(app, checkstate):
     app.show_pview()
     app.istatement.selected = app.istatement.expenses[0]
     app.istatement.delete()
-    app.arpanel.save()
+    arpanel = app.get_current_panel()
+    arpanel.save()
     checkstate()
 
 @with_app(app_with_budget)

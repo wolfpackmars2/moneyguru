@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-09-12
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from hscommon.testutil import eq_
@@ -37,17 +37,17 @@ def app_one_transaction():
 def test_make_schedule_from_selected(app):
     # make_schedule_from_selected takes the selected transaction, create a monthly schedule out
     # of it, selects the schedule table, and pops the edition panel for it.
-    app.mw.make_schedule_from_selected()
+    scpanel = app.mw.make_schedule_from_selected()
     app.check_current_pane(PaneType.Schedule)
     scview = app.current_view()
     sctable = scview.table
-    app.scpanel.view.check_gui_calls_partial(['pre_load', 'post_load'])
+    scpanel.view.check_gui_calls_partial(['pre_load', 'post_load'])
     eq_(len(sctable), 0) # It's a *new* schedule, only added if we press save
-    eq_(app.scpanel.start_date, '11/08/2008')
-    eq_(app.scpanel.description, 'description')
-    eq_(app.scpanel.repeat_type_list.selected_index, 2) # monthly
-    eq_(app.scpanel.repeat_every, 1)
-    app.scpanel.save()
+    eq_(scpanel.start_date, '11/08/2008')
+    eq_(scpanel.description, 'description')
+    eq_(scpanel.repeat_type_list.selected_index, 2) # monthly
+    eq_(scpanel.repeat_every, 1)
+    scpanel.save()
     eq_(len(sctable), 1) # now we have it
     # When creating the schedule, we must delete the first occurrence because it overlapse with
     # the base transaction
@@ -58,10 +58,10 @@ def test_make_schedule_from_selected(app):
 def test_make_schedule_from_selected_weekly(app):
     # Previously, making a non-monthly schedule from a transaction would result in a duplicate
     # of the model txn.
-    app.mw.make_schedule_from_selected()
-    app.scpanel.repeat_type_list.select(1) # weekly
-    app.scpanel.start_date = '18/07/2008'
-    app.scpanel.save()
+    scpanel = app.mw.make_schedule_from_selected()
+    scpanel.repeat_type_list.select(1) # weekly
+    scpanel.start_date = '18/07/2008'
+    scpanel.save()
     app.show_tview()
     eq_(app.ttable[1].date, '18/07/2008')
 
@@ -83,9 +83,10 @@ def test_change_schedule_transaction(app):
     # is reflected among all spawns (in other words, reset spawn cache).
     app.show_scview()
     app.sctable.select([0])
-    app.scpanel.load()
-    app.scpanel.description = 'foobaz'
-    app.scpanel.save()
+    scpanel = app.mw.edit_item()
+    scpanel.load()
+    scpanel.description = 'foobaz'
+    scpanel.save()
     app.show_tview()
     eq_(app.ttable[1].description, 'foobaz')
 
@@ -155,9 +156,9 @@ def test_change_spawn_through_tpanel(app):
     # Previously, each edition of a spawn through tpanel would result in a new schedule being
     # added even if the recurrence itself didn't change
     app.ttable.select([1])
-    app.tpanel.load()
-    app.tpanel.description = 'changed'
-    app.tpanel.save()
+    tpanel = app.mw.edit_item()
+    tpanel.description = 'changed'
+    tpanel.save()
     eq_(app.ttable[1].description, 'changed')
     eq_(app.ttable[2].description, 'foobar')
     eq_(app.ttable[3].description, 'foobar')
@@ -214,7 +215,8 @@ def test_delete_account(app):
     app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[0]
     app.bsheet.delete()
-    app.arpanel.save()
+    arpanel = app.get_current_panel()
+    arpanel.save()
     app.show_scview()
     eq_(app.sctable[0].to, '')
 
@@ -236,7 +238,7 @@ def test_delete_spawn_cancel(app):
 
 @with_app(app_daily_schedule)
 def test_delete_spawn_with_global_scope(app):
-    # when deleting a spawn and query_for_global_scope returns True, we stop the recurrence 
+    # when deleting a spawn and query_for_global_scope returns True, we stop the recurrence
     # right there
     app.ttable.select([2])
     app.doc_gui.query_for_schedule_scope_result = ScheduleScope.Global
@@ -277,9 +279,9 @@ def test_mass_edition(app):
     # When a mass edition has a spawn in it, don't ask for scope, just perform the change in the
     # local scope
     app.ttable.select([1, 2])
-    app.mepanel.load()
-    app.mepanel.description = 'changed'
-    app.mepanel.save()
+    mepanel = app.mw.edit_item()
+    mepanel.description = 'changed'
+    mepanel.save()
     eq_(app.ttable[3].description, 'foobar')
     app.check_gui_calls_partial(app.doc_gui, not_expected=['query_for_schedule_scope'])
 
@@ -356,9 +358,9 @@ def test_delete_spawns_until_global_change(app):
     eq_(app.ttable[0].description, 'changed')
     scview = app.show_scview()
     eq_(scview.table[0].description, 'changed')
-    app.mw.edit_item()
-    app.scpanel.description = 'changed again'
-    app.scpanel.save()
+    scpanel = app.mw.edit_item()
+    scpanel.description = 'changed again'
+    scpanel.save()
     tview = app.show_tview()
     eq_(tview.ttable[0].description, 'changed again')
 
@@ -407,7 +409,8 @@ def test_schedule_exceptions_are_correctly_reassigned(app):
     app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[1]
     app.bsheet.delete()
-    app.arpanel.save() # reassign to None
+    arpanel = app.get_current_panel()
+    arpanel.save() # reassign to None
     app.show_tview()
     eq_(app.ttable[3].to, '')
 
@@ -498,7 +501,8 @@ def test_delete_account_with_schedule_containing_deletions(app):
     # affected_accounts() crash.
     app.select_account('account')
     app.mw.delete_item()
-    app.arpanel.save() # no crash
+    arpanel = app.get_current_panel()
+    arpanel.save() # no crash
 
 #--- Schedule with stop date
 def app_schedule_with_stop_date():
@@ -678,7 +682,7 @@ def app_daily_schedule_one_spawn_reconciled():
     app.etable.select([1]) # This one is the spawn on 16/09/2008
     app.aview.toggle_reconciliation_mode()
     app.etable.selected_row.toggle_reconciled()
-    app.aview.toggle_reconciliation_mode()    
+    app.aview.toggle_reconciliation_mode()
     return app
 
 @with_app(app_daily_schedule_one_spawn_reconciled)
@@ -689,9 +693,9 @@ def test_dont_spawn_before_last_materialization_on_change(app):
     # repeat_every is changed, its exceptions are simply reset.
     app.show_scview()
     app.sctable.select([0])
-    app.scpanel.load()
-    app.scpanel.repeat_every = 1
-    app.scpanel.save()
+    scpanel = app.mw.edit_item()
+    scpanel.repeat_every = 1
+    scpanel.save()
     app.show_tview()
     # spawns start from the 13th, *not* the 13th, which means 18 spawn. If we add the reconciled
     # spawn which have been materialized, we have 19

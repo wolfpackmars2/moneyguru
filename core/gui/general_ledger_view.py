@@ -11,8 +11,9 @@ from ..const import PaneType
 from .base import BaseView, MESSAGES_DOCUMENT_CHANGED
 from .general_ledger_table import GeneralLedgerTable
 from .transaction_print import EntryPrint
+from .transaction_view import ViewWithTransactionsMixin
 
-class GeneralLedgerView(BaseView):
+class GeneralLedgerView(BaseView, ViewWithTransactionsMixin):
     VIEW_TYPE = PaneType.GeneralLedger
     PRINT_TITLE_FORMAT = tr('General Ledger from {start_date} to {end_date}')
     PRINT_VIEW_CLASS = EntryPrint
@@ -41,7 +42,7 @@ class GeneralLedgerView(BaseView):
         self.gltable.delete()
 
     def edit_item(self):
-        self.mainwindow.edit_selected_transactions()
+        return self.edit_selected_transactions()
 
     def new_item(self):
         self.gltable.add()

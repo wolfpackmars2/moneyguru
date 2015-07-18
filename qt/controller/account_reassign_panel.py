@@ -22,11 +22,10 @@ tr = trget('ui')
 class AccountReassignPanel(Panel):
     PERSISTENT_NAME = 'accountReassignPanel'
 
-    def __init__(self, mainwindow):
+    def __init__(self, model, mainwindow):
         Panel.__init__(self, mainwindow)
         self._setupUi()
-        self.model = mainwindow.model.account_reassign_panel
-        self.model.view = self
+        self.model = model
         self.accountComboBox = ComboboxModel(model=self.model.account_list, view=self.accountComboBoxView)
 
         self.continueButton.clicked.connect(self.accept)

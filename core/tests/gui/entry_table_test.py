@@ -429,15 +429,16 @@ def app_two_entries():
 def test_remove_entry_through_tpanel(app):
     # Removing an entry through tpanel (by unassigning the split from the shown account) correctly
     # updates selection at the document level
-    app.mw.edit_item()
+    tpanel = app.mw.edit_item()
+    stable = tpanel.split_table
     # We're not too sure which split is assigned to the account, so we unassign both
-    app.stable[0].account = ''
-    app.stable.save_edits()
-    app.stable[1].account = ''
-    app.stable.save_edits()
-    app.tpanel.save()
-    app.mw.edit_item() # Because doc selection has been updated, the first entry is shown in tpanel.
-    eq_(app.tpanel.description, 'first')
+    stable[0].account = ''
+    stable.save_edits()
+    stable[1].account = ''
+    stable.save_edits()
+    tpanel.save()
+    tpanel = app.mw.edit_item() # Because doc selection has been updated, the first entry is shown in tpanel.
+    eq_(tpanel.description, 'first')
 
 @with_app(app_two_entries)
 def test_search(app):
@@ -504,8 +505,8 @@ def test_selection_after_date_range_change(app):
     # The selection in the document is correctly updated when the date range changes.
     # The tpanel loads the document selection, so this is why we test through it.
     app.drsel.select_prev_date_range()
-    app.tpanel.load()
-    eq_(app.tpanel.description, 'first')
+    tpanel = app.mw.edit_item()
+    eq_(tpanel.description, 'first')
 
 #--- Two entries in two accounts
 def app_two_entries_in_two_accounts():
@@ -527,8 +528,8 @@ def test_selection_after_connect(app):
     app.show_nwview()
     app.bsheet.selected = app.bsheet.assets[1]
     app.show_account()
-    app.tpanel.load()
-    eq_(app.tpanel.description, 'second')
+    tpanel = app.mw.edit_item()
+    eq_(tpanel.description, 'second')
 
 #--- Two entries with one reconciled
 def app_two_entries_with_one_reconciled():
@@ -619,12 +620,13 @@ def app_split_transaction():
     app.add_account('first')
     app.show_account()
     app.add_entry('08/11/2008', description='foobar', transfer='second', increase='42')
-    app.tpanel.load()
-    app.stable.add()
-    app.stable.selected_row.account = 'third'
-    app.stable.selected_row.debit = '20'
-    app.stable.save_edits()
-    app.tpanel.save()
+    tpanel = app.mw.edit_item()
+    stable = tpanel.split_table
+    stable.add()
+    stable.selected_row.account = 'third'
+    stable.selected_row.debit = '20'
+    stable.save_edits()
+    tpanel.save()
     return app
 
 def test_autofill():
@@ -658,11 +660,12 @@ def test_show_transfer_account():
 def test_show_transfer_account_with_unassigned_split():
     # If there's an unassigned split among the splits, just skip over it
     app = app_split_transaction()
-    app.mainwindow.edit_item()
-    app.stable.select([1]) # second
-    app.stable.selected_row.account = ''
-    app.stable.save_edits()
-    app.tpanel.save()
+    tpanel = app.mainwindow.edit_item()
+    stable = tpanel.split_table
+    stable.select([1]) # second
+    stable.selected_row.account = ''
+    stable.save_edits()
+    tpanel.save()
     app.etable.show_transfer_account() # skip unassigned, and to to third
     app.check_current_pane(PaneType.Account, account_name='third')
 
@@ -672,14 +675,15 @@ def app_two_splits_same_account():
     app.add_account('first')
     app.show_account()
     app.add_entry('08/11/2008', description='foobar', transfer='second', increase='42')
-    app.tpanel.load()
-    app.stable.select([0])
-    app.stable.selected_row.debit = '20'
-    app.stable.save_edits()
-    app.stable.select([2])
-    app.stable.selected_row.account = 'first'
-    app.stable.save_edits()
-    app.tpanel.save()
+    tpanel = app.mw.edit_item()
+    stable = tpanel.split_table
+    stable.select([0])
+    stable.selected_row.debit = '20'
+    stable.save_edits()
+    stable.select([2])
+    stable.selected_row.account = 'first'
+    stable.save_edits()
+    tpanel.save()
     return app
 
 @with_app(app_two_splits_same_account)

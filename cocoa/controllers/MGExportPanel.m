@@ -23,11 +23,11 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @synthesize exportFormatButtons;
 @synthesize currentDateRangeOnlyButton;
 
-- (id)initWithParent:(MGMainWindowController *)aParent
+- (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow
 {
-    PyExportPanel *m = [[PyExportPanel alloc] initWithModel:[[aParent model] exportPanel]];
-    self = [super initWithModel:m parent:aParent];
-    [m bindCallback:createCallback(@"ExportPanelView", self)];
+    PyExportPanel *m = [[PyExportPanel alloc] initWithModel:aPyRef];
+    self = [super initWithModel:m parentWindow:aParentWindow];
+    [m bindCallbackWithoutView:createCallback(@"ExportPanelView", self)];
     [m release];
     [self setWindow:createMGExportPanel_UI(self)];
     accountTable = [[MGExportAccountTable alloc] initWithPyRef:[[self model] accountTable] tableView:accountTableView];

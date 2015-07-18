@@ -513,17 +513,18 @@ def app_three_way_multi_currency_transaction():
     app.add_account('first')
     app.show_account()
     app.add_entry('11/07/2008', transfer='second', decrease='42')
-    app.tpanel.load()
-    app.stable.select([1])
-    row = app.stable.selected_row
+    tpanel = app.mw.edit_item()
+    stable = tpanel.split_table
+    stable.select([1])
+    row = stable.selected_row
     row.debit = '20 cad'
-    app.stable.save_edits()
-    app.stable.add()
-    row = app.stable.selected_row
+    stable.save_edits()
+    stable.add()
+    row = stable.selected_row
     row.account = 'third'
     row.debit = '22 usd'
-    app.stable.save_edits()
-    app.tpanel.save()
+    stable.save_edits()
+    tpanel.save()
     app.show_tview()
     return app
 
@@ -664,8 +665,8 @@ class TestTwoTransactionsOneOutOfRange:
         # The selection in the document is correctly updated when the date range changes
         # The tpanel loads the document selection, so this is why we test through it.
         app.drsel.select_prev_date_range()
-        app.tpanel.load()
-        eq_(app.tpanel.description, 'first')
+        tpanel = app.mw.edit_item()
+        eq_(tpanel.description, 'first')
 
 
 #--- Three transactions
@@ -762,8 +763,8 @@ def test_selection_changed_when_filtering_out(app):
     app.ttable.select([0]) # first
     app.sfield.text = 'second'
     eq_(app.ttable.selected_row.description, 'second')
-    app.mw.edit_item()
-    eq_(app.tpanel.description, 'second')
+    tpanel = app.mw.edit_item()
+    eq_(tpanel.description, 'second')
 
 @with_app(app_three_transactions)
 def test_total_row(app):
@@ -1224,8 +1225,7 @@ class TestWithBudget:
         eq_(app.ttable[11].date, '31/12/2008')
         # Budget spawns can't be edited
         assert not app.ttable.can_edit_cell('date', 0)
-        app.mw.edit_item() # budget spawns can't be edited
-        app.tpanel.view.check_gui_calls_partial(not_expected=['post_load'])
+        assert app.mw.edit_item() is None # budget spawns can't be edited
 
 
 #--- Generators

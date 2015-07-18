@@ -21,14 +21,14 @@ from qtlib.util import horizontalSpacer
 from ...support.item_view import TableView
 from ...support.line_graph_view import LineGraphView
 from ...support.bar_graph_view import BarGraphView
-from ..base_view import BaseView
+from ..base_transaction_view import BaseTransactionView
 from ..chart import Chart
 from .filter_bar import EntryFilterBar
 from .table import EntryTable
 
 tr = trget('ui')
 
-class EntryView(BaseView):
+class EntryView(BaseTransactionView):
     def _setup(self):
         self._setupUi()
         self.etable = EntryTable(self.model.etable, view=self.tableView)

@@ -94,15 +94,15 @@ def test_new_budget():
     app = app_cleared_gui_calls()
     app.add_account('income', account_type=AccountType.Income) # we need an account for the panel to load
     app.show_bview()
-    app.mw.new_item()
-    app.bpanel.repeat_type_list.view.check_gui_calls_partial(['refresh'])
+    bpanel = app.mw.new_item()
+    bpanel.repeat_type_list.view.check_gui_calls_partial(['refresh'])
 
 def test_new_schedule():
     # Repeat options and mct notices must be updated upon panel load
     app = app_cleared_gui_calls()
     app.show_scview()
-    app.mw.new_item()
-    app.scpanel.repeat_type_list.view.check_gui_calls_partial(['refresh'])
+    scpanel = app.mw.new_item()
+    scpanel.repeat_type_list.view.check_gui_calls_partial(['refresh'])
 
 @with_app(app_cleared_gui_calls)
 def test_select_mainwindow_next_previous_view(app):
@@ -143,9 +143,10 @@ def test_ttable_add_and_cancel():
 def test_save_custom_range(app):
     # Saving a custom range causes the date range selector's view to refresh them.
     app.drsel.select_custom_date_range()
-    app.cdrpanel.slot_index = 1
-    app.cdrpanel.slot_name = 'foo'
-    app.cdrpanel.save()
+    cdrpanel = app.get_current_panel()
+    cdrpanel.slot_index = 1
+    cdrpanel.slot_name = 'foo'
+    cdrpanel.save()
     app.drsel.view.check_gui_calls(['refresh_custom_ranges', 'refresh'])
 
 def test_show_account():
@@ -221,9 +222,9 @@ def test_delete_entry():
 @with_app(app_one_account)
 def test_edit_account(app):
     app.show_nwview()
-    app.mw.edit_item() # apanel popping up
+    apanel = app.mw.edit_item() # apanel popping up
     # Popping the panel refreshes the type list selection
-    app.apanel.type_list.view.check_gui_calls(['update_selection'])
+    apanel.type_list.view.check_gui_calls_partial(['update_selection'])
 
 def test_jump_to_account():
     app = app_one_account()
@@ -237,12 +238,13 @@ def test_jump_to_account():
 @with_app(app_one_account)
 def test_export_panel(app):
     app.mw.export()
-    app.expanel.view.check_gui_calls_partial(['set_table_enabled'])
-    app.expanel.export_all = False
+    expanel = app.get_current_panel()
+    expanel.view.check_gui_calls_partial(['set_table_enabled'])
+    expanel.export_all = False
     # We enable the table, and because there's no account selected, we disable the export button
-    app.expanel.view.check_gui_calls(['set_table_enabled', 'set_export_button_enabled'])
-    app.expanel.account_table[0].export = True
-    app.expanel.view.check_gui_calls(['set_export_button_enabled'])
+    expanel.view.check_gui_calls(['set_table_enabled', 'set_export_button_enabled'])
+    expanel.account_table[0].export = True
+    expanel.view.check_gui_calls(['set_export_button_enabled'])
 
 #--- One transaction
 def app_one_transaction():
@@ -321,15 +323,17 @@ def test_etable_show_asset_account(app):
 def app_transaction_with_panel_loaded():
     app = TestApp()
     app.add_txn('20/02/2010', from_='foo', to='bar', amount='42')
-    app.tpanel.load()
+    app.mw.edit_item()
     app.clear_gui_calls()
     return app
 
 def test_move_split():
     # The split table is refreshed after a move
     app = app_transaction_with_panel_loaded()
-    app.stable.move_split(0, 1)
-    app.stable.view.check_gui_calls_partial(['refresh'])
+    tpanel = app.get_current_panel()
+    stable = tpanel.split_table
+    stable.move_split(0, 1)
+    stable.view.check_gui_calls_partial(['refresh'])
 
 #--- Completable edit
 def app_completable_edit():

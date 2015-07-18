@@ -337,8 +337,9 @@ def test_export_to_qif(tmpdir):
     app.add_entry(date='03/01/2009', description='transfer', transfer='first', increase='42')
     export_filename = str(tmpdir.join('export.qif'))
     app.mw.export()
-    app.expanel.export_path = export_filename
-    app.expanel.save()
+    expanel = app.get_current_panel()
+    expanel.export_path = export_filename
+    expanel.save()
     exported = open(export_filename).read()
     reference = open(testdata.filepath('qif', 'export_ref_transfer.qif')).read()
     eq_(exported, reference)

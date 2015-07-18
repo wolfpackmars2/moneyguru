@@ -12,8 +12,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #import "HSPopUpList.h"
 #import "PyAccountReassignPanel.h"
 
-@class MGMainWindowController;
-
 @interface MGAccountReassignPanel : MGPanel {
     NSPopUpButton *accountSelector;
     
@@ -22,6 +20,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
 
 @property (readwrite, retain) NSPopUpButton *accountSelector;
 
-- (id)initWithParent:(MGMainWindowController *)aParent;
+- (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow;
 - (PyAccountReassignPanel *)model;
 @end

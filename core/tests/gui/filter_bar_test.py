@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2008-08-02
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from hscommon.testutil import eq_
@@ -21,7 +21,7 @@ class TestPristine:
         app.add_account('foo')
         app.show_account('foo')
         assert app.efbar.filter_type is None
-    
+
 
 class TestTransactionsOfEachType:
     def do_setup(self):
@@ -35,7 +35,7 @@ class TestTransactionsOfEachType:
         app.add_entry(description='fourth', transfer='asset 1', decrease='4')
         app.clear_gui_calls()
         return app
-    
+
     @with_app(do_setup)
     def test_efbar_filter_expenses(self, app):
         #The etable's expense filter makes it only show entries with a decrease
@@ -50,7 +50,7 @@ class TestTransactionsOfEachType:
         assert app.tfbar.filter_type is FilterType.Expense
         eq_(app.ttable.row_count, 1)
         eq_(app.ttable[0].description, 'third')
-    
+
     @with_app(do_setup)
     def test_efbar_filter_income(self, app):
         #The etable's income filter makes it only show entries with an increase.
@@ -65,7 +65,7 @@ class TestTransactionsOfEachType:
         assert app.tfbar.filter_type is FilterType.Income
         eq_(app.ttable.row_count, 1)
         eq_(app.ttable[0].description, 'first')
-    
+
     @with_app(do_setup)
     def test_efbar_filter_transfer(self, app):
         #The etable's transfer filter makes it only show entries with a transfer to an asset/liability.
@@ -78,7 +78,7 @@ class TestTransactionsOfEachType:
         assert app.tfbar.filter_type is FilterType.Transfer
         eq_(app.ttable.row_count, 1)
         eq_(app.ttable[0].description, 'fourth')
-    
+
     @with_app(do_setup)
     def test_efbar_filter_unassigned(self, app):
         # The etable's unassigned filter makes it only show unassigned entries. going to ttable keeps
@@ -91,7 +91,7 @@ class TestTransactionsOfEachType:
         app.tfbar.view.check_gui_calls(['refresh']) # refreshes on connect()
         assert app.tfbar.filter_type is FilterType.Unassigned
         eq_(app.ttable.row_count, 1)
-    
+
     @with_app(do_setup)
     def test_enable_disable_buttons(self, app):
         # The enable disable mechanism of the income, expense and transfer buttons work as expected
@@ -108,7 +108,7 @@ class TestTransactionsOfEachType:
         app.bsheet.selected = app.bsheet.assets[0]
         app.show_account()
         app.efbar.view.check_gui_calls(['refresh', 'enable_transfers'])
-    
+
     @with_app(do_setup)
     def test_enable_disable_buttons_through_etable_cycling(self, app):
         # filter bar's enable/disable actions are correctly triggered when cycling through transfer
@@ -121,7 +121,7 @@ class TestTransactionsOfEachType:
         app.link_aview()
         # We only enable/disable transfers on creation, not on every refresh
         app.efbar.view.check_gui_calls(['refresh'])
-    
+
     @with_app(do_setup)
     def test_multiple_filters_at_the_same_time(self, app):
         # Having an unassigned filter at the same time as a search filter works as expected.
@@ -129,7 +129,7 @@ class TestTransactionsOfEachType:
         app.tfbar.filter_type = FilterType.Unassigned
         app.sfield.text = 'first'
         eq_(app.ttable.row_count, 0)
-    
+
     @with_app(do_setup)
     def test_allow_change_in_fbar_when_in_income_account(self, app):
         # There was a bug (#297) where the fbar, when in an income/expense account, would always
@@ -137,7 +137,7 @@ class TestTransactionsOfEachType:
         app.show_account('Income')
         app.efbar.filter_type = FilterType.Income
         eq_(app.efbar.filter_type, FilterType.Income)
-    
+
 
 class TestThreeEntriesOneReconciled:
     def do_setup(self):
@@ -153,7 +153,7 @@ class TestThreeEntriesOneReconciled:
         row.toggle_reconciled()
         app.aview.toggle_reconciliation_mode() # commit reonciliation
         return app
-    
+
     @with_app(do_setup)
     def test_efbar_not_reconciled(self, app):
         app.efbar.filter_type = FilterType.NotReconciled
@@ -162,7 +162,7 @@ class TestThreeEntriesOneReconciled:
         app.show_tview()
         eq_(app.ttable.row_count, 2)
         eq_(app.ttable[1].description, 'three')
-    
+
     @with_app(do_setup)
     def test_efbar_reconciled(self, app):
         app.efbar.filter_type = FilterType.Reconciled
@@ -171,7 +171,7 @@ class TestThreeEntriesOneReconciled:
         app.show_tview()
         eq_(app.ttable.row_count, 1)
         eq_(app.ttable[0].description, 'two')
-    
+
 
 #--- Expense split between asset and liability
 # A transaction going to an expense, half coming from an asset, the other half coming from a
@@ -182,16 +182,17 @@ def app_expense_split_between_asset_and_liability():
     app.add_account('asset')
     app.show_account()
     app.add_entry(transfer='expense', decrease='100')
-    app.tpanel.load()
-    app.stable.add()
-    app.stable[2].account = 'liability'
-    app.stable[2].credit = '50'
-    app.stable.save_edits()
-    app.tpanel.save()
+    tpanel = app.mw.edit_item()
+    stable = tpanel.split_table
+    stable.add()
+    stable[2].account = 'liability'
+    stable[2].credit = '50'
+    stable.save_edits()
+    tpanel.save()
     app.clear_gui_calls()
     # we're now on etable, looking at 'asset'
     return app
-    
+
 def test_efbar_increase_decrease():
     app = app_expense_split_between_asset_and_liability()
     app.efbar.filter_type = FilterType.Income # increase

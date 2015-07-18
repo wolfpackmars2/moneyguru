@@ -18,6 +18,8 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #import "MGDocPropsView.h"
 #import "MGEmptyView.h"
 #import "MGReadOnlyPluginView.h"
+#import "MGCustomDateRangePanel.h"
+#import "MGExportPanel.h"
 #import "HSPyUtil.h"
 #import "Utils.h"
 #import "Dialogs.h"
@@ -43,17 +45,9 @@ http://www.gnu.org/licenses/gpl-3.0.html
     [[self window] retain];
     /* Put a cute iTunes-like bottom bar */
     [[self window] setContentBorderThickness:28 forEdge:NSMinYEdge];
-    accountProperties = [[MGAccountProperties alloc] initWithParent:self];
-    transactionPanel = [[MGTransactionInspector alloc] initWithParent:self];
-    massEditionPanel = [[MGMassEditionPanel alloc] initWithParent:self];
-    schedulePanel = [[MGSchedulePanel alloc] initWithParent:self];
-    budgetPanel = [[MGBudgetPanel alloc] initWithParent:self];
-    exportPanel = [[MGExportPanel alloc] initWithParent:self];
     searchField = [[MGSearchField alloc] initWithPyRef:[[self model] searchField]];
     importWindow = [[MGImportWindow alloc] initWithPyRef:[[self model] importWindow]];
     csvOptionsWindow = [[MGCSVImportOptions alloc] initWithPyRef:[[self model] csvOptions]];
-    customDateRangePanel = [[MGCustomDateRangePanel alloc] initWithParent:self];
-    accountReassignPanel = [[MGAccountReassignPanel alloc] initWithParent:self];
     accountLookup = [[MGAccountLookup alloc] initWithPyRef:[[self model] accountLookup]];
     completionLookup = [[MGCompletionLookup alloc] initWithPyRef:[[self model] completionLookup]];
     dateRangeSelector = [[MGDateRangeSelector alloc] initWithPyRef:[[self model] daterangeSelector]];
@@ -85,17 +79,9 @@ http://www.gnu.org/licenses/gpl-3.0.html
 - (void)dealloc
 {
     [[self window] setDelegate:nil];
-    [transactionPanel release];
-    [massEditionPanel release];
-    [schedulePanel release];
-    [accountProperties release];
-    [budgetPanel release];
-    [exportPanel release];
     [searchField release];
     [importWindow release];
     [csvOptionsWindow release];
-    [customDateRangePanel release];
-    [accountReassignPanel release];
     [accountLookup release];
     [completionLookup release];
     [dateRangeSelector release];
@@ -589,6 +575,19 @@ http://www.gnu.org/licenses/gpl-3.0.html
     [tabView selectTabViewItemAtIndex:index];
     top = [subviews objectAtIndex:index];
     [[self window] makeFirstResponder:[top mainResponder]];
+}
+
+- (PyObject *)createPanelWithModelRef:(PyObject *)aPyRef name:(NSString *)name
+{
+    MGPanel *panel;
+    if ([name isEqual:@"CustomDateRangePanel"]) {
+        panel = [[MGCustomDateRangePanel alloc] initWithPyRef:aPyRef parentWindow:[self window]];
+    }
+    else {
+        panel = [[MGExportPanel alloc] initWithPyRef:aPyRef parentWindow:[self window]];
+    }
+    panel.releaseOnEndSheet = YES;
+    return [[panel model] pyRef];
 }
 
 - (void)refreshPanes

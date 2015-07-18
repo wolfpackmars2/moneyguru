@@ -7,6 +7,7 @@
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 import logging
+import weakref
 
 from hscommon.notify import Repeater
 from hscommon.util import first, minmax
@@ -16,7 +17,6 @@ from hscommon.gui.base import GUIObject
 from ..const import PaneType
 from ..document import FilterType
 from ..exception import OperationAborted, FileFormatError
-from ..model.budget import BudgetSpawn
 from ..model.date import inc_month, DateFormat
 from ..model.recurrence import Recurrence, RepeatType
 from ..loader import csv, qif, ofx, native
@@ -25,13 +25,7 @@ from .search_field import SearchField
 from .date_range_selector import DateRangeSelector
 from .account_lookup import AccountLookup
 from .completion_lookup import CompletionLookup
-from .account_panel import AccountPanel
-from .transaction_panel import TransactionPanel
-from .mass_edition_panel import MassEditionPanel
-from .budget_panel import BudgetPanel
-from .schedule_panel import SchedulePanel
 from .custom_date_range_panel import CustomDateRangePanel
-from .account_reassign_panel import AccountReassignPanel
 from .export_panel import ExportPanel
 from .import_window import ImportWindow
 from .csv_options import CSVOptions
@@ -81,6 +75,7 @@ class ViewPane:
 class MainWindow(Repeater, GUIObject):
     #--- model -> view calls:
     # change_current_pane()
+    # get_panel_view(model)
     # refresh_panes()
     # refresh_status_line()
     # refresh_undo_actions()
@@ -108,15 +103,6 @@ class MainWindow(Repeater, GUIObject):
         self.daterange_selector = DateRangeSelector(self)
         self.account_lookup = AccountLookup(self)
         self.completion_lookup = CompletionLookup(self)
-
-        self.account_panel = AccountPanel(self)
-        self.transaction_panel = TransactionPanel(self)
-        self.mass_edit_panel = MassEditionPanel(self)
-        self.budget_panel = BudgetPanel(self)
-        self.schedule_panel = SchedulePanel(self)
-        self.custom_daterange_panel = CustomDateRangePanel(self)
-        self.account_reassign_panel = AccountReassignPanel(self)
-        self.export_panel = ExportPanel(self)
 
         self.csv_options = CSVOptions(self)
         self.import_window = ImportWindow(self)
@@ -197,7 +183,7 @@ class MainWindow(Repeater, GUIObject):
     def _perform_if_possible(self, action_name):
         current_view = self._current_pane.view
         if current_view.can_perform(action_name):
-            getattr(current_view, action_name)()
+            return getattr(current_view, action_name)()
 
     def _restore_default_panes(self):
         pane_types = [
@@ -348,26 +334,22 @@ class MainWindow(Repeater, GUIObject):
             self.view.change_current_pane()
 
     def delete_item(self):
-        self._perform_if_possible('delete_item')
+        return self._perform_if_possible('delete_item')
 
     def duplicate_item(self):
-        self._perform_if_possible('duplicate_item')
+        return self._perform_if_possible('duplicate_item')
 
     def edit_item(self):
         try:
-            self._perform_if_possible('edit_item')
+            return self._perform_if_possible('edit_item')
         except OperationAborted:
             pass
 
-    def edit_selected_transactions(self):
-        editable_txns = [txn for txn in self.selected_transactions if not isinstance(txn, BudgetSpawn)]
-        if len(editable_txns) > 1:
-            self.mass_edit_panel.load()
-        elif len(editable_txns) == 1:
-            self.transaction_panel.load()
-
     def export(self):
-        self.export_panel.load()
+        accounts = [a for a in self.document.accounts if a.is_balance_sheet_account()]
+        panel = ExportPanel(self.document)
+        panel.view = weakref.proxy(self.view.get_panel_view(panel))
+        panel.load(accounts)
 
     def jump_to_account(self):
         self.account_lookup.show()
@@ -398,7 +380,7 @@ class MainWindow(Repeater, GUIObject):
             ref.date = inc_month(ref.date, 1)
             schedule = Recurrence(ref, RepeatType.Monthly, 1)
             self.selected_schedules = [schedule]
-            self.edit_item()
+            return self.edit_item()
 
     def move_down(self):
         self._perform_if_possible('move_down')
@@ -418,7 +400,7 @@ class MainWindow(Repeater, GUIObject):
 
     def new_item(self):
         try:
-            self._perform_if_possible('new_item')
+            return self._perform_if_possible('new_item')
         except OperationAborted as e:
             if e.message:
                 self.view.show_message(e.message)
@@ -624,7 +606,9 @@ class MainWindow(Repeater, GUIObject):
     budget_deleted = _undo_stack_changed
 
     def custom_date_range_selected(self):
-        self.custom_daterange_panel.load()
+        panel = CustomDateRangePanel(self.document)
+        panel.view = weakref.proxy(self.view.get_panel_view(panel))
+        panel.load()
 
     def date_range_will_change(self):
         self.daterange_selector.remember_current_range()

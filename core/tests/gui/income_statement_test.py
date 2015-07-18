@@ -128,9 +128,10 @@ def test_income_statement_with_accounts_and_entries(app):
 def test_set_custom_date_range(app):
     # same problem as test_year_to_date_last_cash_flow
     app.drsel.select_custom_date_range()
-    app.cdrpanel.start_date = '01/01/2008'
-    app.cdrpanel.start_date = '12/12/2008'
-    app.cdrpanel.save()
+    cdrpanel = app.get_current_panel()
+    cdrpanel.start_date = '01/01/2008'
+    cdrpanel.start_date = '12/12/2008'
+    cdrpanel.save()
     eq_(app.istatement.income[0].last_cash_flow, '0.00')
 
 @with_app(app_accounts_and_entries)

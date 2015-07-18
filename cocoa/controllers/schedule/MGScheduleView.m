@@ -8,6 +8,8 @@ http://www.gnu.org/licenses/gpl-3.0.html
 
 #import "MGScheduleView.h"
 #import "MGSchedulePrint.h"
+#import "MGSchedulePanel.h"
+#import "HSPyUtil.h"
 #import "Utils.h"
 
 @implementation MGScheduleView
@@ -15,6 +17,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 {
     PyScheduleView *m = [[PyScheduleView alloc] initWithModel:aPyRef];
     self = [super initWithModel:m];
+    [m bindCallback:createCallback(@"BaseViewView", self)];
     [m release];
     tableView = [[MGTableView alloc] initWithFrame:NSMakeRect(0, 0, 100, 100)];
     [self setupTableView:tableView];
@@ -45,5 +48,12 @@ http://www.gnu.org/licenses/gpl-3.0.html
 - (NSString *)tabIconName
 {
     return @"schedules_16";
+}
+
+- (PyObject *)createPanelWithModelRef:(PyObject *)aPyRef name:(NSString *)name
+{
+    MGSchedulePanel *panel = [[MGSchedulePanel alloc] initWithPyRef:aPyRef parentWindow:[[self view] window]];
+    panel.releaseOnEndSheet = YES;
+    return [[panel model] pyRef];
 }
 @end

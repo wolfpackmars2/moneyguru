@@ -15,11 +15,11 @@ http://www.gnu.org/licenses/gpl-3.0.html
 
 @synthesize accountSelector;
 
-- (id)initWithParent:(MGMainWindowController *)aParent
+- (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow
 {
-    PyAccountReassignPanel *m = [[PyAccountReassignPanel alloc] initWithModel:[[aParent model] accountReassignPanel]];
-    self = [super initWithModel:m parent:aParent];
-    [m bindCallback:createCallback(@"PanelView", self)];
+    PyAccountReassignPanel *m = [[PyAccountReassignPanel alloc] initWithModel:aPyRef];
+    self = [super initWithModel:m parentWindow:aParentWindow];
+    [m bindCallbackWithoutView:createCallback(@"PanelView", self)];
     [m release];
     [self setWindow:createMGAccountReassignPanel_UI(self)];
     accountPopUp = [[HSPopUpList alloc] initWithPyRef:[[self model] accountList] popupView:accountSelector];

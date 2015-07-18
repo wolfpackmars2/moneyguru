@@ -11,8 +11,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #import "MGPanel.h"
 #import "PyCustomDateRangePanel.h"
 
-@class MGMainWindowController;
-
 @interface MGCustomDateRangePanel : MGPanel <NSTextFieldDelegate> {
     NSTextField *startDateField;
     NSTextField *endDateField;
@@ -25,6 +23,6 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @property (readwrite, retain) NSPopUpButton *slotIndexSelector;
 @property (readwrite, retain) NSTextField *slotNameField;
 
-- (id)initWithParent:(MGMainWindowController *)aParent;
+- (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow;
 - (PyCustomDateRangePanel *)model;
 @end

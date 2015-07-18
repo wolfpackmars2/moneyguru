@@ -25,11 +25,11 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @synthesize notesField;
 @synthesize splitTableView;
 
-- (id)initWithParent:(MGMainWindowController *)aParent
+- (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow
 {
-    PySchedulePanel *m = [[PySchedulePanel alloc] initWithModel:[[aParent model] schedulePanel]];
-    self = [super initWithModel:m parent:aParent];
-    [m bindCallback:createCallback(@"SchedulePanelView", self)];
+    PySchedulePanel *m = [[PySchedulePanel alloc] initWithModel:aPyRef];
+    self = [super initWithModel:m parentWindow:aParentWindow];
+    [m bindCallbackWithoutView:createCallback(@"SchedulePanelView", self)];
     [m release];
     [self setWindow:createMGSchedulePanel_UI(self)];
     splitTable = [[MGSplitTable alloc] initWithPyRef:[[self model] splitTable] tableView:splitTableView];

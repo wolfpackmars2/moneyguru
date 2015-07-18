@@ -7,6 +7,7 @@
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from datetime import date
+import weakref
 
 from hscommon.util import first
 from hscommon.gui.selectable_list import GUISelectableList
@@ -111,7 +112,7 @@ class PanelWithScheduleMixIn:
         self.view.refresh_repeat_every()
 
     def create_repeat_type_list(self):
-        self.repeat_type_list = RepeatTypeList(self)
+        self.repeat_type_list = RepeatTypeList(weakref.proxy(self))
 
 class SchedulePanel(PanelWithTransaction, PanelWithScheduleMixIn):
     def __init__(self, mainwindow):

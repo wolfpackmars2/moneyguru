@@ -10,6 +10,7 @@ from PyQt5.QtWidgets import QVBoxLayout, QAbstractItemView
 
 from ...support.item_view import TableView
 from ..base_view import BaseView
+from ..schedule_panel import SchedulePanel
 from .table import ScheduleTable
 
 class ScheduleView(BaseView):
@@ -43,4 +44,8 @@ class ScheduleView(BaseView):
     #--- Public
     def fitViewsForPrint(self, viewPrinter):
         viewPrinter.fitTable(self.sctable)
+
+    #--- model --> view
+    def get_panel_view(self, model):
+        return SchedulePanel(model, self.mainwindow)
 

@@ -30,11 +30,11 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @synthesize amountCheckBox;
 @synthesize currencyCheckBox;
 
-- (id)initWithParent:(MGMainWindowController *)aParent
+- (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow
 {
-    PyMassEditionPanel *m = [[PyMassEditionPanel alloc] initWithModel:[[aParent model] massEditPanel]];
-    self = [super initWithModel:m parent:aParent];
-    [m bindCallback:createCallback(@"PanelView", self)];
+    PyMassEditionPanel *m = [[PyMassEditionPanel alloc] initWithModel:aPyRef];
+    self = [super initWithModel:m parentWindow:aParentWindow];
+    [m bindCallbackWithoutView:createCallback(@"PanelView", self)];
     [m release];
     [self setWindow:createMGMassEditionPanel_UI(self)];
     dateField = [[HSTextField alloc] initWithPyRef:[[self model] dateField] view:dateFieldView];

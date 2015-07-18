@@ -14,8 +14,9 @@ from .entry_table import EntryTable
 from .account_balance_graph import AccountBalanceGraph
 from .account_flow_graph import AccountFlowGraph
 from .transaction_print import EntryPrint
+from .transaction_view import ViewWithTransactionsMixin
 
-class AccountView(BaseView):
+class AccountView(BaseView, ViewWithTransactionsMixin):
     VIEW_TYPE = PaneType.Account
     PRINT_TITLE_FORMAT = tr('{account_name}\nEntries from {start_date} to {end_date}')
     PRINT_VIEW_CLASS = EntryPrint
@@ -104,7 +105,7 @@ class AccountView(BaseView):
         self.etable.duplicate_selected()
 
     def edit_item(self):
-        self.mainwindow.edit_selected_transactions()
+        return self.edit_selected_transactions()
 
     def navigate_back(self):
         """When the entry table is shown, go back to the appropriate report."""

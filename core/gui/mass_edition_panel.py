@@ -6,12 +6,12 @@
 # which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
+import weakref
 from datetime import date
 
 from hscommon.util import allsame, flatten
 from hscommon.gui.text_field import TextField
 
-from ..exception import OperationAborted
 from ..model.currency import Currency
 from .base import MainWindowPanel, LinkedSelectableList
 from .completable_edit import CompletableEdit
@@ -48,13 +48,14 @@ class MassEditAmountField(MassEditTextField):
 class MassEditionPanel(MainWindowPanel):
     def __init__(self, mainwindow):
         MainWindowPanel.__init__(self, mainwindow)
-        self.date_field = MassEditDateField(self, 'date')
-        self.description_field = MassEditTextField(self, 'description')
-        self.payee_field = MassEditTextField(self, 'payee')
-        self.checkno_field = MassEditTextField(self, 'checkno')
-        self.from_field = MassEditTextField(self, 'from')
-        self.to_field = MassEditTextField(self, 'to')
-        self.amount_field = MassEditAmountField(self, 'amount')
+        self_proxy = weakref.proxy(self)
+        self.date_field = MassEditDateField(self_proxy, 'date')
+        self.description_field = MassEditTextField(self_proxy, 'description')
+        self.payee_field = MassEditTextField(self_proxy, 'payee')
+        self.checkno_field = MassEditTextField(self_proxy, 'checkno')
+        self.from_field = MassEditTextField(self_proxy, 'from')
+        self.to_field = MassEditTextField(self_proxy, 'to')
+        self.amount_field = MassEditAmountField(self_proxy, 'amount')
         self.completable_edit = CompletableEdit(mainwindow)
         currencies_display = ['%s - %s' % (currency.code, currency.name) for currency in Currency.all]
 
@@ -63,10 +64,10 @@ class MassEditionPanel(MainWindowPanel):
                 currency = Currency.all[index]
             else:
                 currency = None
-            if currency != self.currency:
-                self.currency = currency
-                self.currency_enabled = currency is not None
-                self.view.refresh()
+            if currency != self_proxy.currency:
+                self_proxy.currency = currency
+                self_proxy.currency_enabled = currency is not None
+                self_proxy.view.refresh()
         self.currency = None
         self.currency_list = LinkedSelectableList(items=currencies_display, setfunc=setfunc)
         self._init_checkboxes()
@@ -83,10 +84,8 @@ class MassEditionPanel(MainWindowPanel):
         self.currency_enabled = False
 
     #--- Override
-    def _load(self):
-        transactions = self.mainwindow.selected_transactions
-        if len(transactions) < 2:
-            raise OperationAborted()
+    def _load(self, transactions):
+        assert len(transactions) >= 2
         self.can_change_accounts = all(len(t.splits) == 2 for t in transactions)
         self.can_change_amount = all(t.can_set_amount for t in transactions)
         self.date_field.value = date.today()

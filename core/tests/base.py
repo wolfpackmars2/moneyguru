@@ -28,6 +28,28 @@ from ..model.date import DateFormat
 
 testdata = TestData(op.join(op.dirname(__file__), 'testdata'))
 
+class PanelViewProvider:
+    """Provide dummy views for panels during tests.
+
+    Also, keep track of the last panel invoked. This is pretty much the only way to manage
+    to reach those panels because their instance are not referenced anywhere in the app
+    (they are shown and then discarded right away).
+    """
+    def __init__(self):
+        self.current_panel = None
+
+    def get_panel_view(self, model):
+        for elem in vars(model).values():
+            if elem is model:
+                continue
+            if isinstance(elem, GUIObject) and elem.view is None:
+                elem.view = CallLogger()
+        self.current_panel = model
+        # We have to hold onto this instance for a while
+        self.current_panel_view = CallLogger()
+        return self.current_panel_view
+
+
 def log(method):
     def wrapper(self, *args, **kw):
         result = method(self, *args, **kw)
@@ -60,11 +82,24 @@ class DocumentGUI(CallLogger):
         return self.query_for_schedule_scope_result
 
 
+class ViewGUI(CallLogger):
+    def __init__(self, panel_view_provider):
+        CallLogger.__init__(self)
+        self.panel_view_provider = panel_view_provider
+
+    @log
+    def get_panel_view(self, model):
+        return self.panel_view_provider.get_panel_view(model)
+
 class MainWindowGUI(CallLogger):
     def __init__(self, testapp):
         CallLogger.__init__(self)
         self.messages = []
         self.testapp = testapp
+
+    @log
+    def get_panel_view(self, model):
+        return self.testapp.panel_view_provider.get_panel_view(model)
 
     @log
     def show_message(self, message):
@@ -75,8 +110,10 @@ class MainWindowGUI(CallLogger):
     def refresh_panes(self):
         app = self.testapp
         for i in range(app.mw.pane_count):
-            app.link_gui(app.mw.pane_view(i))
-
+            app.link_gui(
+                app.mw.pane_view(i),
+                ViewGUI(self.testapp.panel_view_provider)
+            )
 
 class DictLoader(base.Loader):
     """Used for fake_import"""
@@ -106,17 +143,18 @@ class DictLoader(base.Loader):
 class TestApp(TestAppBase):
     def __init__(self, app=None, doc=None, tmppath=None, appargs=None):
         TestAppBase.__init__(self)
+        self.panel_view_provider = PanelViewProvider()
         link_gui = self.link_gui
         self._tmppath = tmppath
         if app is None:
             if not appargs:
                 appargs = {}
-            app = Application(self.make_logger(ApplicationGUI), **appargs)
+            app = Application(self.make_logger(ApplicationGUI()), **appargs)
         self.app = app
         self.app_gui = app.view
         if doc is None:
             doc = Document(self.app)
-            doc.view = self.make_logger(DocumentGUI)
+            doc.view = self.make_logger(DocumentGUI())
         self.doc = doc
         self.doc_gui = doc.view
         self.mainwindow = MainWindow(self.doc)
@@ -130,16 +168,6 @@ class TestApp(TestAppBase):
         # reference.
         self.mw = self.mainwindow # shortcut. This one is often typed
         self.default_parent = self.mw
-        self.apanel = link_gui(self.mw.account_panel)
-        self.scpanel = link_gui(self.mw.schedule_panel)
-        self.scsplittable = link_gui(self.scpanel.split_table)
-        self.tpanel = link_gui(self.mw.transaction_panel)
-        self.stable = link_gui(self.tpanel.split_table)
-        self.mepanel = link_gui(self.mw.mass_edit_panel)
-        self.bpanel = link_gui(self.mw.budget_panel)
-        self.cdrpanel = link_gui(self.mw.custom_daterange_panel)
-        self.arpanel = link_gui(self.mw.account_reassign_panel)
-        self.expanel = link_gui(self.mw.export_panel)
         self.sfield = link_gui(self.mw.search_field)
         self.drsel = link_gui(self.mw.daterange_selector)
         self.csvopt = link_gui(self.mw.csv_options)
@@ -152,13 +180,13 @@ class TestApp(TestAppBase):
         self.alookup = link_gui(self.mw.account_lookup)
         self.clookup = link_gui(self.mw.completion_lookup)
         self.doc.connect()
-        self.mw.view = self.make_logger(MainWindowGUI, self)
+        self.mw.view = self.make_logger(MainWindowGUI(self))
         self.mainwindow_gui = self.mw.view
         self.mw.connect()
 
-    def link_gui(self, gui):
+    def link_gui(self, gui, logger=None):
         if gui.view is None:
-            gui.view = self.make_logger()
+            gui.view = self.make_logger(logger=logger)
         # link sub GUIs too
         for elem in vars(gui).values():
             if elem is gui or elem is self.mw:
@@ -216,14 +244,14 @@ class TestApp(TestAppBase):
                 sheet.selected = group_node
         self.mw.new_item()
         if currency or account_number:
-            self.mw.edit_item()
+            apanel = self.mw.edit_item()
             if name:
-                self.apanel.name = name
+                apanel.name = name
             if currency:
-                self.apanel.currency = currency
+                apanel.currency = currency
             if account_number:
-                self.apanel.account_number = account_number
-            self.apanel.save()
+                apanel.account_number = account_number
+            apanel.save()
         elif name is not None:
             sheet.selected.name = name
             sheet.save_edits()
@@ -237,20 +265,20 @@ class TestApp(TestAppBase):
             repeat_every=1, stop_date=None):
         # if no target, set target_name to None
         self.show_bview()
-        self.mainwindow.new_item()
+        bpanel = self.mainwindow.new_item()
         if start_date is None:
             start_date = self.app.format_date(date(date.today().year, date.today().month, 1))
-        self.bpanel.start_date = start_date
-        self.bpanel.repeat_type_list.select(repeat_type_index)
-        self.bpanel.repeat_every = repeat_every
+        bpanel.start_date = start_date
+        bpanel.repeat_type_list.select(repeat_type_index)
+        bpanel.repeat_every = repeat_every
         if stop_date is not None:
-            self.bpanel.stop_date = stop_date
-        account_index = self.bpanel.account_list.index(account_name)
-        self.bpanel.account_list.select(account_index)
-        target_index = self.bpanel.target_list.index(target_name) if target_name else 0
-        self.bpanel.target_list.select(target_index)
-        self.bpanel.amount = str_amount
-        self.bpanel.save()
+            bpanel.stop_date = stop_date
+        account_index = bpanel.account_list.index(account_name)
+        bpanel.account_list.select(account_index)
+        target_index = bpanel.target_list.index(target_name) if target_name else 0
+        bpanel.target_list.select(target_index)
+        bpanel.amount = str_amount
+        bpanel.save()
 
     def add_entry(self, date=None, description=None, payee=None, transfer=None, increase=None,
             decrease=None, checkno=None, reconciliation_date=None):
@@ -285,23 +313,23 @@ class TestApp(TestAppBase):
             repeat_type_index=0, repeat_every=1, stop_date=None):
         if start_date is None:
             start_date = self.app.format_date(date(date.today().year, date.today().month, 1))
-        self.show_scview()
-        self.scpanel.new()
-        self.scpanel.start_date = start_date
-        self.scpanel.description = description
-        self.scpanel.repeat_type_list.select(repeat_type_index)
-        self.scpanel.repeat_every = repeat_every
+        scview = self.show_scview()
+        scpanel = scview.new_item()
+        scpanel.start_date = start_date
+        scpanel.description = description
+        scpanel.repeat_type_list.select(repeat_type_index)
+        scpanel.repeat_every = repeat_every
         if stop_date is not None:
-            self.scpanel.stop_date = stop_date
+            scpanel.stop_date = stop_date
         if account:
-            self.scsplittable.add()
-            self.scsplittable.edited.account = account
+            scpanel.split_table.add()
+            scpanel.split_table.edited.account = account
             if self.doc.parse_amount(amount) >= 0:
-                self.scsplittable.edited.debit = amount
+                scpanel.split_table.edited.debit = amount
             else:
-                self.scsplittable.edited.credit = amount
-            self.scsplittable.save_edits()
-        self.scpanel.save()
+                scpanel.split_table.edited.credit = amount
+            scpanel.split_table.save_edits()
+        scpanel.save()
 
     def add_txn(self, date=None, description=None, payee=None, from_=None, to=None, amount=None,
             checkno=None):
@@ -329,17 +357,18 @@ class TestApp(TestAppBase):
         # splits argument is [(account_name, memo, debit, credit)]. Don't forget that if they don't
         # balance, you end up with an imbalance split.
         self.add_txn(date=date, description=description, payee=payee, checkno=checkno)
-        self.mw.edit_item()
+        tpanel = self.mw.edit_item()
+        stable = tpanel.split_table
         for index, (account, memo, debit, credit) in enumerate(splits):
-            if index >= len(self.stable):
-                self.stable.add()
-            row = self.stable[index]
+            if index >= len(stable):
+                stable.add()
+            row = stable[index]
             row.account = account
             row.memo = memo
             row.debit = debit
             row.credit = credit
-            self.stable.save_edits()
-        self.tpanel.save()
+            stable.save_edits()
+        tpanel.save()
 
     def account_names(self):
         account_sort = {
@@ -395,8 +424,9 @@ class TestApp(TestAppBase):
     def do_test_qif_export_import(self):
         filepath = str(self.tmppath() + 'foo.qif')
         self.mainwindow.export()
-        self.expanel.export_path = filepath
-        self.expanel.save()
+        expanel = self.get_current_panel()
+        expanel.export_path = filepath
+        expanel.save()
         newapp = Application(ApplicationGUI(), default_currency=self.doc.default_currency)
         app = TestApp(app=newapp)
         try:
@@ -427,6 +457,11 @@ class TestApp(TestAppBase):
         )
         self.mw.loader.load()
         self.iwin.show()
+
+    def get_current_panel(self):
+        """Returns the instance of the last invoked panel.
+        """
+        return self.panel_view_provider.current_panel
 
     def graph_data(self):
         xoffset = self.balgraph._xoffset
@@ -582,7 +617,7 @@ class TestApp(TestAppBase):
     def show_bview(self):
         self.mw.select_pane_of_type(PaneType.Budget)
         if not hasattr(self, 'bview'):
-            self.bview = self.link_gui(self.current_view())
+            self.bview = self.current_view()
             self.btable = self.link_gui(self.bview.table)
         return self.current_view()
 
@@ -671,17 +706,17 @@ def compare_apps(first, second, qif_mode=False):
         compare_txns(rec1.ref, rec2.ref)
         eq_(rec1.stop_date, rec2.stop_date)
         eq_(len(rec1.date2exception), len(rec2.date2exception))
-        for date in rec1.date2exception:
-            exc1 = rec1.date2exception[date]
-            exc2 = rec2.date2exception[date]
+        for date_ in rec1.date2exception:
+            exc1 = rec1.date2exception[date_]
+            exc2 = rec2.date2exception[date_]
             if exc1 is None:
                 assert exc2 is None
             else:
                 compare_txns(exc1, exc2)
         eq_(len(rec1.date2globalchange), len(rec2.date2globalchange))
-        for date in rec1.date2globalchange:
-            txn1 = rec1.date2globalchange[date]
-            txn2 = rec2.date2globalchange[date]
+        for date_ in rec1.date2globalchange:
+            txn1 = rec1.date2globalchange[date_]
+            txn2 = rec2.date2globalchange[date_]
             compare_txns(txn1, txn2)
     for budget1, budget2 in zip(first.budgets, second.budgets):
         eq_(budget1.account.name, budget2.account.name)

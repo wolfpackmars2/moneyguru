@@ -9,6 +9,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 #import "MGMainWindow.h"
 #import "MGConst.h"
 #import "NSEventAdditions.h"
+#import "MGMainWindowController.h"
 
 @implementation MGMainWindow
 - (MGMainWindowController *)delegate

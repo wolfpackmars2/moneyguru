@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2009-08-23
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from hscommon.testutil import eq_
@@ -41,7 +41,7 @@ def app_one_expense_with_budget(monkeypatch):
     app.add_account('Some Income', account_type=AccountType.Income)
     app.show_bview()
     app.btable.select([0])
-    app.mainwindow.edit_item()
+    app.bpanel = app.mainwindow.edit_item()
     return app
 
 @with_app(app_one_expense_with_budget)
@@ -68,7 +68,7 @@ def test_edit_then_save(app):
     app.bpanel.amount = '43'
     app.bpanel.notes = 'foobaz'
     # Reload the panel and check the values
-    app.mainwindow.edit_item()
+    app.bpanel = app.mainwindow.edit_item()
     eq_(app.bpanel.amount, '42.00')
     eq_(app.bpanel.notes, 'foobar')
     # Check that the correct info is in the btable.
@@ -91,7 +91,7 @@ def test_edit_without_selection(app):
 
 @with_app(app_one_expense_with_budget)
 def test_new_budget(app):
-    app.mainwindow.new_item()
+    app.bpanel = app.mainwindow.new_item()
     eq_(app.bpanel.start_date, '27/01/2008') # mocked date
     eq_(app.bpanel.repeat_type_list.selected_index, 2) # monthly
     eq_(app.bpanel.account_list.selected_index, 0)
