@@ -12,7 +12,7 @@ from hscommon.trans import tr
 from hscommon.gui.column import Columns
 
 from ..exception import DuplicateAccountNameError
-from .base import RestorableChild, SheetViewNotificationsMixin, MESSAGES_DOCUMENT_CHANGED
+from .base import ViewChild, SheetViewNotificationsMixin, MESSAGES_DOCUMENT_CHANGED
 
 # used in both bsheet and istatement
 def get_delta_perc(delta_amount, start_amount):
@@ -21,14 +21,15 @@ def get_delta_perc(delta_amount, start_amount):
     else:
         return '---'
 
-class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
+class Report(ViewChild, tree.Tree, SheetViewNotificationsMixin):
     SAVENAME = ''
     COLUMNS = []
     INVALIDATING_MESSAGES = MESSAGES_DOCUMENT_CHANGED | {'accounts_excluded', 'date_range_changed'}
 
     def __init__(self, parent_view):
-        RestorableChild.__init__(self, parent_view)
+        ViewChild.__init__(self, parent_view)
         tree.Tree.__init__(self)
+        self._was_restored = False
         self.columns = Columns(self, prefaccess=parent_view.document, savename=self.SAVENAME)
         self.edited = None
         self._expanded_paths = {(0, ), (1, )}
@@ -260,6 +261,11 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
         if refresh_view:
             self.view.refresh()
 
+    def restore_view(self):
+        if not self._was_restored:
+            if self._do_restore_view():
+                self._was_restored = True
+
     def save_edits(self):
         node = self.edited
         if node is None:
@@ -344,7 +350,7 @@ class Report(RestorableChild, tree.Tree, SheetViewNotificationsMixin):
     def date_range_changed(self):
         self.refresh()
 
-    document_restoring_preferences = RestorableChild.restore_view
+    document_restoring_preferences = restore_view
 
     def edition_must_stop(self):
         self.view.stop_editing()
