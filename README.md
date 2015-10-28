@@ -58,7 +58,7 @@ and follow instructions from the script. You can then ignore the rest of the bui
 Then, you have to make sure that your system has its "non-pip-installable" prerequisites installed:
 
 * All systems: [Python 3.3+][python]
-* Mac OS X: The last XCode to have the 10.7 SDK included.
+* Mac OS X: 10.7+ with XCode command line tools. *doesn't work with Python 3.5+*
 * Windows: Visual Studio 2010, [PyQt 4.7+][pyqt], [cx_Freeze][cxfreeze] and
   [Advanced Installer][advinst] (you only need the last two if you want to create an installer)
 
