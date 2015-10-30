@@ -507,3 +507,21 @@ def test_save_load_qif(tmpdir):
     # Splits with null amount are saved/loaded
     app = app_split_with_null_amount()
     check(app)
+
+class TestLoadOffCurrencyReconciliations:
+    def do_setup(self, monkeypatch):
+        monkeypatch.patch_today(2015, 10, 26) # so that the entries are shown
+        app = TestApp()
+        app.doc.load_from_xml(testdata.filepath('moneyguru', 'off_currency_reconciliations.moneyguru'))
+        app.show_nwview()
+        app.bsheet.selected = app.bsheet.assets[0]
+        app.show_account()
+        return app
+
+    @with_app(do_setup)
+    def test_attributes(self, app):
+        # off-currency reconciled splits are un-reconciled at load
+        eq_(app.etable[1].description, 'Money going out')
+        eq_(app.etable[1].reconciliation_date, '')
+        eq_(app.etable[3].description, 'Money going nowhere')
+        eq_(app.etable[3].reconciliation_date, '26/10/2015')
