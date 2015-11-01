@@ -520,7 +520,7 @@ class TestLoadOffCurrencyReconciliations:
 
     @with_app(do_setup)
     def test_attributes(self, app):
-        # off-currency reconciled splits are un-reconciled at load
+        # issue #442 off-currency reconciled splits should be un-reconciled at load
         eq_(app.etable[1].description, 'Money going out')
         eq_(app.etable[1].reconciliation_date, '')
         eq_(app.etable[3].description, 'Money going nowhere')
