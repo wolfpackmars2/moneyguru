@@ -17,7 +17,7 @@ from hscommon.util import nonone, flatten, stripfalse, dedupe
 
 from ..exception import FileFormatError
 from ..model.account import Account, Group, AccountList, GroupList, AccountType
-from ..model.amount import parse_amount
+from ..model.amount import parse_amount, of_currency
 from ..model.budget import Budget
 from ..model.oven import Oven
 from ..model.recurrence import Recurrence, Spawn
@@ -247,7 +247,10 @@ class Loader:
                 memo = nonone(split_info.memo, '')
                 split = Split(transaction, account, amount)
                 split.memo = memo
-                if split_info.reconciliation_date is not None:
+                if account is None or not of_currency(amount, account.currency):
+                    # fix #442: off-currency transactions shouldn't be reconciled
+                    split.reconciliation_date = None
+                elif split_info.reconciliation_date is not None:
                     split.reconciliation_date = split_info.reconciliation_date
                 elif split_info.reconciled: # legacy
                     split.reconciliation_date = transaction.date

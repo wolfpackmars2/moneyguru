@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<moneyguru-file document_id="88bd54affa52423881525e8168b6ce1a">
+    <properties ahead_months="3" default_currency="USD" first_weekday="0" year_start_month="1" />
+    <account currency="USD" name="Account1" type="asset" />
+    <account currency="USD" name="Line1" type="expense" />
+    <transaction date="2015-10-26" description="Other money going out" mtime="1445929805">
+	<split account="Account1" amount="USD -15.00" />
+	<split account="Line1" amount="USD 15.00" />
+    </transaction>
+    <transaction date="2015-10-26" description="Money going out" mtime="1445929859">
+	<split account="Account1" amount="EUR -10.00" reconciliation_date="2015-10-26" />
+	<split account="Line1" amount="EUR 10.00" />
+    </transaction>
+    <transaction date="2015-10-26" description="Money coming in" mtime="1445922340">
+	<split account="Account1" amount="USD 10.00" />
+	<split account="Line1" amount="USD -10.00" />
+    </transaction>
+    <transaction date="2015-10-26" description="Money going nowhere" mtime="1446167581">
+	<split account="Account1" amount="EUR 0.00" reconciliation_date="2015-10-26" />
+	<split account="Line1" amount="EUR 0.00" />
+    </transaction>
+</moneyguru-file>
