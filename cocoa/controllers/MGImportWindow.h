@@ -7,7 +7,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 */
 
 #import <Cocoa/Cocoa.h>
-#import <PSMTabBarControl/PSMTabBarControl.h>
+#import "PSMTabBarControl.h"
 #import "MGTableView.h"
 #import "MGImportTable.h"
 #import "HSPopUpList.h"

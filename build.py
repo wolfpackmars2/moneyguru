@@ -92,7 +92,7 @@ def clean():
                 pass
 
 def cocoa_compile_command():
-    return '{0} waf configure && {0} waf'.format(sys.executable)
+    return 'python2.7 waf configure && python2.7 waf'
 
 def cocoa_app():
     return OSXAppStructure('build/moneyGuru.app')
@@ -167,10 +167,6 @@ def build_cocoa(dev):
         compileall.compile_dir(pydep_folder, force=True, legacy=True)
         delete_files_with_pattern(pydep_folder, '*.py')
         delete_files_with_pattern(pydep_folder, '__pycache__')
-    print("Compiling PSMTabBarControl framework")
-    os.chdir('psmtabbarcontrol')
-    print_and_do('{0} waf configure && {0} waf && {0} waf build_framework'.format(sys.executable))
-    os.chdir('..')
     print("Compiling with WAF")
     os.chdir('cocoa')
     print_and_do(cocoa_compile_command())
@@ -184,7 +180,6 @@ def build_cocoa(dev):
     app.copy_resources(*resources, use_symlinks=dev)
     app.copy_frameworks(
         'build/Python', 'cocoalib/Sparkle.framework',
-        'psmtabbarcontrol/PSMTabBarControl.framework'
     )
     print("Creating the run.py file")
     tmpl = open('run_template_cocoa.py', 'rt').read()
