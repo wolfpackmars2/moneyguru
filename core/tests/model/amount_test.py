@@ -324,6 +324,18 @@ def test_parse_divide_rounding():
     # wouldn't want a specific python implementation to come and create a false failure.
     assert parse_amount('12.37/2', USD).value in {6.18, 6.19}
 
+def test_parse_negative_amount():
+    # Test that a negative amount is correctly parsed
+    eq_(parse_amount('-12.34', USD), Amount(-12.34, USD))
+    eq_(parse_amount('-12.34', USD, with_expression=False), Amount(-12.34, USD))
+
+def test_parse_negative_amount_parenthesis():
+    # Test that a negative amount denoted with parenthesis
+    # is parsed correctly
+    eq_(parse_amount('(12.34)', USD, with_expression=False), Amount(-12.34, USD))
+    eq_(parse_amount('$(12.34)', USD, with_expression=False), Amount(-12.34, USD))
+    eq_(parse_amount('-(12.34)', USD, with_expression=False), Amount(-12.34, USD))
+
 def test_parse_dot_ambiguity():
     # See #379
     eq_(parse_amount('USD 1000*1.055'), Amount(1055, USD))

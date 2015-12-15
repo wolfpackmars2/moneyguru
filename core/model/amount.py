@@ -115,7 +115,7 @@ def parse_amount_expression(string, exponent):
         else:
             repl_exponent = exponent
             hadfirstmatch = True
-        parsed = parse_amount_single(s, repl_exponent, auto_decimal_place=False)
+        parsed = parse_amount_single(s, repl_exponent, auto_decimal_place=False, parens_for_negatives=False)
         fmt = '{{:1.{}f}}'.format(repl_exponent)
         return fmt.format(parsed)
 
@@ -123,7 +123,7 @@ def parse_amount_expression(string, exponent):
     result = re_not_arithmetic_operators.sub(repl, string)
     return result
 
-def parse_amount_single(string, exponent, auto_decimal_place):
+def parse_amount_single(string, exponent, auto_decimal_place, parens_for_negatives=True):
     # Parse a string which contains a single amount (not an expression) and return a float
     # Now, we have a string that might have thousand separators and might or might not have
     # a decimal separator, which might be either "," or ".". We'll first find our decimal sep
@@ -148,7 +148,11 @@ def parse_amount_single(string, exponent, auto_decimal_place):
         if m is None:
             raise ValueError("'{}' is not an amount".format(string))
         value = float(string[m.start():m.end()])
-        if '-' in string[:m.start()]:
+        # Handle negative amounts either starting with a minus sign or surrounded
+        # by parenthasis, which is used frequently to denote a negative in finance.
+        # e.g. -12.30 == (12.30), if we're allowing parens to be used for negative
+        # values.
+        if '-' in string[:m.start()] or (parens_for_negatives and '(' in string[:m.start()] and ')' in string[m.end():]):
             value = -value
     return value
 
