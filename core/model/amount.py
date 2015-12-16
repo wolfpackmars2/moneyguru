@@ -152,7 +152,10 @@ def parse_amount_single(string, exponent, auto_decimal_place, parens_for_negativ
         # by parenthasis, which is used frequently to denote a negative in finance.
         # e.g. -12.30 == (12.30), if we're allowing parens to be used for negative
         # values.
-        if '-' in string[:m.start()] or (parens_for_negatives and '(' in string[:m.start()] and ')' in string[m.end():]):
+        is_negative = '-' in string[:m.start()]
+        if not is_negative and parens_for_negatives:
+            is_negative = '(' in string[:m.start()] and ')' in string[m.end():]
+        if is_negative:
             value = -value
     return value
 
