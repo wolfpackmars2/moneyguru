@@ -1,21 +1,22 @@
 # Created By: Virgil Dupras
 # Created On: 2010-01-11
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 import sys
+import os.path as op
 import xml.etree.cElementTree as ET
 
 from ..model.amount import format_amount
-from hscommon.util import remove_invalid_xml
+from hscommon.util import remove_invalid_xml, ensure_folder
 
 def save(filename, document_id, properties, accounts, groups, transactions, schedules, budgets):
     def date2str(date):
         return date.strftime('%Y-%m-%d')
-    
+
     def handle_newlines(s):
         # etree doesn't correctly save newlines. In fields that allow it, we have to escape them so
         # that we can restore them during load.
@@ -24,11 +25,11 @@ def save(filename, document_id, properties, accounts, groups, transactions, sche
         if not s:
             return s
         return s.replace('\n', '\\n')
-    
+
     def setattrib(attribs, attribname, value):
         if value:
             attribs[attribname] = value
-    
+
     def write_transaction_element(parent_element, transaction):
         transaction_element = ET.SubElement(parent_element, 'transaction')
         attrib = transaction_element.attrib
@@ -47,7 +48,7 @@ def save(filename, document_id, properties, accounts, groups, transactions, sche
             setattrib(attrib, 'reference', split.reference)
             if split.reconciliation_date is not None:
                 attrib['reconciliation_date'] = date2str(split.reconciliation_date)
-    
+
     root = ET.Element('moneyguru-file')
     root.attrib['document_id'] = document_id
     props_element = ET.SubElement(root, 'properties')
@@ -116,6 +117,7 @@ def save(filename, document_id, properties, accounts, groups, transactions, sche
         for key, value in attrib.items():
             attrib[key] = remove_invalid_xml(value)
     tree = ET.ElementTree(root)
+    ensure_folder(op.dirname(filename))
     fp = open(filename, 'wt', encoding='utf-8')
     fp.write('<?xml version="1.0" encoding="utf-8"?>\n')
     # This 'unicode' encoding thing is only available (and necessary) from Python 3.2
