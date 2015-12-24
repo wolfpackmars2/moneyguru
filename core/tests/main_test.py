@@ -163,57 +163,65 @@ class TestRangeOnYearToDate:
         eq_([d['text'] for d in app.nwgraph.xlabels], expected)
 
 
-class TestOneEmptyAccountRangeOnOctober2007:
+#---
+def app_one_empty_account_range_on_october_2007(monkeypatch):
     # One empty account, range on October 2007
-    def do_setup(self):
-        app = TestApp()
-        app.add_account('Checking', EUR)
-        app.show_account()
-        app.doc.date_range = MonthRange(date(2007, 10, 1))
-        app.clear_gui_calls()
-        return app
+    app = TestApp()
+    app.add_account('Checking', EUR)
+    app.show_account()
+    app.doc.date_range = MonthRange(date(2007, 10, 1))
+    app.clear_gui_calls()
+    return app
 
-    @with_app(do_setup)
-    def test_autosave(self, app, tmpdir):
-        # Testing the interval between autosaves would require some complicated mocking. We're just
-        # going to cheat here and call 'must_autosave' directly.
-        cache_path = str(tmpdir)
-        app.app.cache_path = cache_path
+@with_app(app_one_empty_account_range_on_october_2007)
+def test_autosave(app, tmpdir):
+    # Testing the interval between autosaves would require some complicated mocking. We're just
+    # going to cheat here and call 'must_autosave' directly.
+    cache_path = str(tmpdir)
+    app.app.cache_path = cache_path
+    app.doc.must_autosave()
+    eq_(len(os.listdir(cache_path)), 1)
+    app.check_gui_calls_partial(app.etable_gui, not_expected=['stop_edition'])
+    assert app.doc.is_dirty
+    # test that the autosave file rotation works
+    for i in range(AUTOSAVE_BUFFER_COUNT):
         app.doc.must_autosave()
-        eq_(len(os.listdir(cache_path)), 1)
-        app.check_gui_calls_partial(app.etable_gui, not_expected=['stop_edition'])
-        assert app.doc.is_dirty
-        # test that the autosave file rotation works
-        for i in range(AUTOSAVE_BUFFER_COUNT):
-            app.doc.must_autosave()
-        # The extra autosave file has been deleted
-        eq_(len(os.listdir(cache_path)), AUTOSAVE_BUFFER_COUNT)
+    # The extra autosave file has been deleted
+    eq_(len(os.listdir(cache_path)), AUTOSAVE_BUFFER_COUNT)
 
-    @with_app(do_setup)
-    def test_balance_recursion_limit(self, app):
-        # Balance calculation don't cause recursion errors when there's a lot of them.
-        sys.setrecursionlimit(200)
-        for i in range(200):
-            app.add_entry('1/10/2007')
-        try:
-            app.etable[-1].balance
-        except RuntimeError:
-            raise AssertionError()
-        finally:
-            sys.setrecursionlimit(1000)
+@with_app(app_one_empty_account_range_on_october_2007)
+def test_balance_recursion_limit(app):
+    # Balance calculation don't cause recursion errors when there's a lot of them.
+    sys.setrecursionlimit(200)
+    for i in range(200):
+        app.add_entry('1/10/2007')
+    try:
+        app.etable[-1].balance
+    except RuntimeError:
+        raise AssertionError()
+    finally:
+        sys.setrecursionlimit(1000)
 
-    @with_app(do_setup)
-    def test_modified_flag(self, app):
-        # Adding an account is a modification.
-        assert app.doc.is_dirty()
+@with_app(app_one_empty_account_range_on_october_2007)
+def test_modified_flag_with_account_added(app):
+    # Adding an account is a modification.
+    assert app.doc.is_dirty()
 
-    @with_app(do_setup)
-    def test_save(self, app, tmpdir):
-        # Saving puts the modified flag back to false.
-        app.doc.save_to_xml(str(tmpdir.join('foo.xml')))
-        assert not app.doc.is_dirty()
+@with_app(app_one_empty_account_range_on_october_2007)
+def test_save(app, tmpdir):
+    # Saving puts the modified flag back to false.
+    app.doc.save_to_xml(str(tmpdir.join('foo.xml')))
+    assert not app.doc.is_dirty()
 
+@with_app(app_one_empty_account_range_on_october_2007)
+def test_save_dest_folder_doesnt_exist(app, tmpdir):
+    # When saving to a dest folder that doesn't exist, create it and save. ref #445
+    dest = tmpdir.join('doesnotexist', 'foo.xml')
+    assert not dest.exists()
+    app.doc.save_to_xml(str(dest))
+    assert dest.exists()
 
+#---
 class TestThreeAccountsAndOneEntry:
     def do_setup(self):
         app = TestApp()
