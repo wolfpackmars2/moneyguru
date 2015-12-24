@@ -1,3 +1,9 @@
+=== 2.9.4 (2015-12-24)
+
+* Fix crash on loading files with inconsistent currencies. (#442)
+* Fix Account Lookup up/down keys. [Linux, Windows] (#444)
+* Fix crash on saving file to non-existing folder. (#445)
+
 === 2.9.3 (2015-07-14)
 
 * Fix crash on startup. [Mac] (#437)
