@@ -92,7 +92,7 @@ def clean():
                 pass
 
 def cocoa_compile_command():
-    return 'python2.7 waf configure && python2.7 waf'
+    return '{0} waf configure && {0} waf'.format(sys.executable)
 
 def cocoa_app():
     return OSXAppStructure('build/moneyGuru.app')
