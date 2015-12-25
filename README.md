@@ -19,6 +19,20 @@ Whatever your skills, if you are remotely interestested in being a contributor, 
 mentoring you. If that's the case, please refer to [the open ticket on the subject][contrib-issue]
 and let's get started.
 
+## Windows maintainer wanted
+
+As [described on my website][nowindows], v2.9.x serie of moneyGuru is the last one to support
+Windows unless someone steps up to maintain it. If you're a Windows developer and are interested
+in taking this task, [don't hesitate to let me know][contrib-issue].
+
+## OS X maintainer wanted
+
+My Mac Mini is already a couple of years old and is likely to be my last Apple purchase. When it
+dies, I will be unable maintain the OS X version of moneyGuru. I've already stopped paying for the
+Mac Developer membership so I can't sign the apps anymore (in the "official way" I mean. The
+download is still PGP signed) If you're a Mac developer and are interested in taking this task,
+[don't hesitate to let me know][contrib-issue].
+
 # Contents of this folder
 
 This package contains the source for moneyGuru. Its documentation is
@@ -112,6 +126,7 @@ and is also [available online][documentation].
 
 [moneyguru]: http://www.hardcoded.net/moneyguru/
 [contrib-issue]: https://github.com/hsoft/moneyguru/issues/425
+[nowindows]: https://www.hardcoded.net/archive2015#2015-11-01
 [documentation]: http://www.hardcoded.net/moneyguru/help/en/
 [python]: http://www.python.org/
 [pyqt]: http://www.riverbankcomputing.com
