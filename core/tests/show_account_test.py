@@ -19,27 +19,18 @@ from ..model.account import AccountType
 from .base import TestApp, with_app
 
 #---
-def app_one_account():
+def test_show_transfer_account_on_empty_row_does_nothing():
+    # show_transfer_account() when the table is empty doesn't do anything
     app = TestApp()
     app.add_account()
     app.show_account()
-    return app
-
-def test_show_transfer_account_on_empty_row_does_nothing():
-    # show_transfer_account() when the table is empty doesn't do anything
-    app = app_one_account()
     app.etable.show_transfer_account() # no crash
 
-#---
-def app_three_accounts():
+def test_selection_is_kept_on_show_account():
+    # Performing a show_account() keeps the txn selection in the newly shown account.
     app = TestApp()
     app.add_accounts('one', 'two', 'three') # three is the selected account (in second position)
     app.show_account()
-    return app
-
-@with_app(app_three_accounts)
-def test_selection_is_kept_on_show_account(app):
-    # Performing a show_account() keeps the txn selection in the newly shown account.
     app.add_entry(description='foo', transfer='one')
     app.add_entry(description='bar', transfer='one')
     # first, let's open the accounts to make sure that selection restoration is not based on
@@ -53,6 +44,45 @@ def test_selection_is_kept_on_show_account(app):
     assert app.current_view() is aview_one
     eq_(aview_one.etable.selected_indexes, [0])
     aview_one.etable.view.check_gui_calls_partial(['update_selection'])
+
+def test_show_transfer_account_when_entry_has_no_transfer():
+    # show_transfer_account() does nothing when an entry has no transfer
+    app = TestApp()
+    app.add_account('account')
+    app.show_account()
+    app.add_entry(description='foobar', decrease='130')
+    app.etable.show_transfer_account() # no crash
+    app.check_current_pane(PaneType.Account, account_name='account')
+
+def test_show_from_account_when_theres_none_does_nothing():
+    # show_from_account() when the selected txn has no assigned account does nothing
+    app = TestApp()
+    app.show_tview()
+    app.clear_gui_calls()
+    app.ttable.show_from_account() # no crash
+    app.check_gui_calls_partial(app.mainwindow_gui, not_expected=['show_entry_table'])
+
+def test_show_from_account():
+    # show_from_account() takes the first account in the From column and shows it in etable.
+    app = TestApp()
+    app.drsel.select_month_range()
+    app.add_account('first')
+    app.add_txn(
+        '11/07/2008', 'description', 'payee', from_='first', to='second', amount='42', checkno='24'
+    )
+    app.clear_gui_calls()
+    app.ttable.show_from_account()
+    app.check_current_pane(PaneType.Account, account_name='first')
+
+def test_show_from_account_unassigned_txn():
+    # show_from_account() when the selected txn has no assigned account does nothing
+    app = TestApp()
+    app.show_tview()
+    app.ttable.add()
+    app.ttable[0].amount = '42'
+    app.ttable.save_edits()
+    app.ttable.show_from_account() # no crash
+    app.check_gui_calls_partial(app.mainwindow_gui, not_expected=['show_entry_table'])
 
 #---
 def app_one_entry():
@@ -90,20 +120,6 @@ def test_show_transfer_account_twice(app):
     app.link_aview()
     app.etable.show_transfer_account()
     app.check_current_pane(PaneType.Account, account_name='first')
-
-#---
-def app_entry_without_transfer():
-    app = TestApp()
-    app.add_account('account')
-    app.show_account()
-    app.add_entry(description='foobar', decrease='130')
-    return app
-
-@with_app(app_entry_without_transfer)
-def test_show_transfer_account_when_entry_has_no_transfer(app):
-    # show_transfer_account() does nothing when an entry has no transfer
-    app.etable.show_transfer_account() # no crash
-    app.check_current_pane(PaneType.Account, account_name='account')
 
 #---
 def app_two_entries():
@@ -168,50 +184,6 @@ def test_show_transfer_account_with_unassigned_split():
     tpanel.save()
     app.etable.show_transfer_account() # skip unassigned, and to to third
     app.check_current_pane(PaneType.Account, account_name='third')
-
-#---
-def app_tview_shown():
-    app = TestApp()
-    app.show_tview()
-    return app
-
-@with_app(app_tview_shown)
-def test_show_from_account_when_theres_none_does_nothing(app):
-    # show_from_account() when the selected txn has no assigned account does nothing
-    app.clear_gui_calls()
-    app.ttable.show_from_account() # no crash
-    app.check_gui_calls_partial(app.mainwindow_gui, not_expected=['show_entry_table'])
-
-#---
-def app_unassigned_transaction_with_amount():
-    app = TestApp()
-    app.show_tview()
-    app.ttable.add()
-    app.ttable[0].amount = '42'
-    app.ttable.save_edits()
-    return app
-
-@with_app(app_unassigned_transaction_with_amount)
-def test_show_from_account_unassigned_txn(app):
-    # show_from_account() when the selected txn has no assigned account does nothing
-    app.ttable.show_from_account() # no crash
-    app.check_gui_calls_partial(app.mainwindow_gui, not_expected=['show_entry_table'])
-
-#---
-def app_one_transaction():
-    app = TestApp()
-    app.drsel.select_month_range()
-    app.add_account('first')
-    app.add_txn('11/07/2008', 'description', 'payee', from_='first', to='second', amount='42',
-        checkno='24')
-    app.clear_gui_calls()
-    return app
-
-@with_app(app_one_transaction)
-def test_show_from_account(app):
-    # show_from_account() takes the first account in the From column and shows it in etable.
-    app.ttable.show_from_account()
-    app.check_current_pane(PaneType.Account, account_name='first')
 
 #---
 def app_three_transactions():
