@@ -84,6 +84,26 @@ def test_show_from_account_unassigned_txn():
     app.ttable.show_from_account() # no crash
     app.check_gui_calls_partial(app.mainwindow_gui, not_expected=['show_entry_table'])
 
+def test_show_transfer_account_duplicate_splits():
+    # When a split txn has the same account multiple times in its splits, this doesn't prevent the
+    # account cycling from going through all accounts. Previously, we would get "stuck" at the
+    # double account occurrence.
+    app = TestApp()
+    app.add_txn_with_splits(
+        [
+            ('a', '', '', '100'),
+            ('b', '', '40', ''),
+            ('b', '', '30', ''),
+            ('c', '', '30', ''),
+        ],
+    ) # now in a tview
+    app.mw.show_account()
+    app.check_current_pane(PaneType.Account, account_name='a')
+    app.mw.show_account()
+    app.check_current_pane(PaneType.Account, account_name='b')
+    app.mw.show_account() # doesn't get stuck on 'b'
+    app.check_current_pane(PaneType.Account, account_name='c')
+
 #---
 def app_one_entry():
     app = TestApp()

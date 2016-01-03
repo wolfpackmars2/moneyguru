@@ -7,6 +7,7 @@
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from hscommon.trans import tr, trget
+from hscommon.util import dedupe
 from hscommon.gui.column import Column, Columns
 from .entry_table_base import EntryTableBase, PreviousBalanceRow, TotalRow
 
@@ -90,7 +91,7 @@ class EntryTable(EntryTableBase):
             row_index = self.selected_index
         entry = self[row_index].entry
         splits = entry.transaction.splits
-        accounts = [split.account for split in splits if split.account is not None]
+        accounts = dedupe(split.account for split in splits if split.account is not None)
         if len(accounts) < 2:
             return # no transfer
         index = accounts.index(entry.account)
