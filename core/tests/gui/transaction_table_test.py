@@ -84,13 +84,6 @@ def test_refresh_on_import(app):
     app.check_gui_calls(app.ttable_gui, ['refresh'])
 
 @with_app(app_tview_shown)
-def test_show_from_account_when_theres_none_does_nothing(app):
-    # show_from_account() when the selected txn has no assigned account does nothing
-    app.clear_gui_calls()
-    app.ttable.show_from_account() # no crash
-    app.check_gui_calls_partial(app.mainwindow_gui, not_expected=['show_entry_table'])
-
-@with_app(app_tview_shown)
 def test_strip_account_name_in_from_to_columns(app):
     # String account names in from_to_columns.
     app.add_txn(from_='foo ', to=' bar')
@@ -168,12 +161,6 @@ def app_unassigned_transaction_with_amount():
 def test_save_load_unassigned_txn(app):
     # Make sure that unassigned transactions are loaded
     app.do_test_save_load()
-
-@with_app(app_unassigned_transaction_with_amount)
-def test_show_from_account_unassigned_txn(app):
-    # show_from_account() when the selected txn has no assigned account does nothing
-    app.ttable.show_from_account() # no crash
-    app.check_gui_calls_partial(app.mainwindow_gui, not_expected=['show_entry_table'])
 
 #--- One transaction
 def app_one_transaction():
@@ -393,12 +380,6 @@ def test_set_row_attr(app):
     table.connect()
     table.show()
     assert_row_has_original_attrs(table[0])
-
-@with_app(app_one_transaction)
-def test_show_from_account(app):
-    # show_from_account() takes the first account in the From column and shows it in etable.
-    app.ttable.show_from_account()
-    app.check_current_pane(PaneType.Account, account_name='first')
 
 @with_app(app_one_transaction)
 def test_show_to_account(app):
@@ -773,20 +754,6 @@ def test_total_row(app):
     eq_(row.date, '31/12/2008')
     eq_(row.description, 'TOTAL')
     eq_(row.amount, '6.00')
-
-@with_app(app_three_transactions)
-def test_show_from_account_specify_index(app):
-    # If a row index is supplied, use this row instead of the selected one.
-    # The currently selected txn in the 3rd one.
-    app.ttable.show_from_account(row_index=0)
-    app.check_current_pane(PaneType.Account, account_name='first')
-
-@with_app(app_three_transactions)
-def test_show_from_account_specify_index_nothing_selected(app):
-    # An empty selection doesn't prevent show_from_account from working with a specified row.
-    app.ttable.select([])
-    app.ttable.show_from_account(row_index=0)
-    app.check_current_pane(PaneType.Account, account_name='first')
 
 #---
 class TestThreeTransactionsEverythingReconciled:

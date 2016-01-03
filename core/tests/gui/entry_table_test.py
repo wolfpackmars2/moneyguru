@@ -8,7 +8,6 @@
 
 from hscommon.testutil import eq_
 
-from ...const import PaneType
 from ...model.account import AccountType
 from ...model.currency import EUR
 from ..base import TestApp, with_app
@@ -62,11 +61,6 @@ def test_set_increase_auto_decimal_place():
     app.app.auto_decimal_place = True
     app.add_entry(increase='1234')
     eq_(app.etable[0].increase, '12.34')
-
-def test_show_transfer_account_on_empty_row_does_nothing():
-    # show_transfer_account() when the table is empty doesn't do anything
-    app = app_one_account()
-    app.etable.show_transfer_account() # no crash
 
 @with_app(app_one_account)
 def test_sort_by_reconciliation_date_same_recdate_different_entry_date_and_position(app):
@@ -131,23 +125,6 @@ def test_add_transfer_entry(app):
     app.bsheet.selected = app.bsheet.assets[0]
     app.show_account()
     eq_(app.etable_count(), 1)
-
-@with_app(app_three_accounts)
-def test_selection_is_kept_on_show_account(app):
-    # Performing a show_account() keeps the txn selection in the newly shown account.
-    app.add_entry(description='foo', transfer='one')
-    app.add_entry(description='bar', transfer='one')
-    # first, let's open the accounts to make sure that selection restoration is not based on
-    # simple initialization, but rather on the show_account() action
-    aview_one = app.show_account('one')
-    aview_three = app.show_account('three')
-    assert app.current_view() is aview_three
-    aview_three.etable.select([0])
-    aview_one.etable.view.clear_gui_calls()
-    aview_three.etable.show_transfer_account()
-    assert app.current_view() is aview_one
-    eq_(aview_one.etable.selected_indexes, [0])
-    aview_one.etable.view.check_gui_calls_partial(['update_selection'])
 
 #--- Entry being added
 def app_entry_being_added():
@@ -303,33 +280,6 @@ def test_set_invalid_reconciliation_date(app):
     app.etable[0].reconciliation_date = 'invalid' # no crash
     eq_(app.etable[0].reconciliation_date, '')
 
-@with_app(app_one_entry)
-def test_show_transfer_account_entry_with_transfer_selected(app):
-    # show_transfer_account() changes the shown account to 'second'
-    app.etable.show_transfer_account()
-    app.link_aview()
-    app.check_current_pane(PaneType.Account, account_name='second')
-    # Previously, this was based on selected_account rather than shown_account
-    assert not app.etable.columns.column_is_visible('balance')
-
-@with_app(app_one_entry)
-def test_show_transfer_account_then_add_entry(app):
-    # When a new entry is created, it is created in the *shown* account, not the *selected*
-    # account.
-    app.etable.show_transfer_account()
-    app.link_aview()
-    app.mainwindow.new_item()
-    app.etable.save_edits()
-    eq_(app.etable_count(), 2)
-
-@with_app(app_one_entry)
-def test_show_transfer_account_twice(app):
-    # calling show_transfer_account() again brings the account view on 'first'
-    app.etable.show_transfer_account()
-    app.link_aview()
-    app.etable.show_transfer_account()
-    app.check_current_pane(PaneType.Account, account_name='first')
-
 #--- Entry without transfer
 def app_entry_without_transfer():
     app = TestApp()
@@ -342,12 +292,6 @@ def app_entry_without_transfer():
 def test_entry_transfer(app):
     # Instead of showing 'Imbalance', the transfer column shows nothing.
     eq_(app.etable[0].transfer, '')
-
-@with_app(app_entry_without_transfer)
-def test_show_transfer_account_when_entry_has_no_transfer(app):
-    # show_transfer_account() does nothing when an entry has no transfer
-    app.etable.show_transfer_account() # no crash
-    app.check_current_pane(PaneType.Account, account_name='account')
 
 #--- Entry with decrease
 def app_entry_with_decrease():
@@ -471,20 +415,6 @@ def test_total_row(app):
     eq_(row.decrease, '12.00')
     eq_(row.balance, '+30.00')
     assert row.is_bold
-
-@with_app(app_two_entries)
-def test_show_transfer_specify_index(app):
-    # When a row index is specified in show_transfer(), we use this index instead of the selected
-    # row. second row is selected now.
-    app.etable.show_transfer_account(row_index=0)
-    app.check_current_pane(PaneType.Account, account_name='account1')
-
-@with_app(app_two_entries)
-def test_show_transfer_specify_index_nothing_selected(app):
-    # An empty selection doesn't prevent show_transfer_account from working with a specified row.
-    app.etable.select([])
-    app.etable.show_transfer_account(row_index=0)
-    app.check_current_pane(PaneType.Account, account_name='account1')
 
 #--- Entry in previous range
 def app_entry_in_previous_range():
@@ -644,31 +574,6 @@ def test_dont_allow_amount_change_for_splits(app):
     assert not app.etable[0].can_edit_cell('debit')
     assert not app.etable[0].can_edit_cell('credit')
 
-def test_show_transfer_account():
-    # show_transfer_account() cycles through all splits of the entry
-    app = app_split_transaction()
-    app.etable.show_transfer_account()
-    app.link_aview()
-    app.check_current_pane(PaneType.Account, account_name='second')
-    app.etable.show_transfer_account()
-    app.link_aview()
-    app.check_current_pane(PaneType.Account, account_name='third')
-    app.etable.show_transfer_account()
-    app.link_aview()
-    app.check_current_pane(PaneType.Account, account_name='first')
-
-def test_show_transfer_account_with_unassigned_split():
-    # If there's an unassigned split among the splits, just skip over it
-    app = app_split_transaction()
-    tpanel = app.mainwindow.edit_item()
-    stable = tpanel.split_table
-    stable.select([1]) # second
-    stable.selected_row.account = ''
-    stable.save_edits()
-    tpanel.save()
-    app.etable.show_transfer_account() # skip unassigned, and to to third
-    app.check_current_pane(PaneType.Account, account_name='third')
-
 #--- Two splits same account
 def app_two_splits_same_account():
     app = TestApp()
@@ -779,3 +684,4 @@ def test_should_show_balance_column():
     # When an asset account is selected, we show the balance column.
     app = app_with_account_of_type(AccountType.Asset)
     yield check, app, True
+

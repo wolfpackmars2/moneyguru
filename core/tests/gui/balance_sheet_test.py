@@ -12,7 +12,6 @@ from hscommon.testutil import eq_
 
 from ..base import DocumentGUI, ApplicationGUI, TestApp, with_app, testdata
 from ...app import Application
-from ...const import PaneType
 from ...document import Document
 from ...model.account import AccountType
 from ...model.date import MonthRange
@@ -234,21 +233,6 @@ def test_save_edits(app):
     app.bsheet.selected.name = 'foobar'
     app.bsheet.save_edits()
     app.check_gui_calls(app.bsheet_gui, ['refresh'])
-
-@with_app(app_account_hierarchy)
-def test_show_selected_account(app):
-    # show_selected_account() switches to the account view.
-    app.bsheet.selected = app.bsheet.assets[0][0]
-    app.clear_gui_calls()
-    app.show_account()
-    # no show_line_graph because it was already selected in the etable view before
-    app.check_current_pane(PaneType.Account, account_name='Bank 1')
-
-@with_app(app_account_hierarchy)
-def test_show_account(app):
-    # show_account() switches to the account view.
-    app.bsheet.show_account([0, 0, 0])
-    app.check_current_pane(PaneType.Account, account_name='Bank 1')
 
 #--- One account
 def app_one_account():

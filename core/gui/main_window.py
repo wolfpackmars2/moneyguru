@@ -490,9 +490,9 @@ class MainWindow(Repeater, GUIObject):
     def show_account(self):
         """Shows the currently selected account in the Account view.
 
-        If a sheet is selected, the selected account will be shown.
-        If the Transaction or Account view is selected, the related account (From, To, Transfer)
-        of the selected transaction will be shown.
+        This action has a different meaning depending on the active view. If a sheet is selected,
+        the selected account will be shown. If the Transaction or Account view is selected, the
+        related account (From, To, Transfer) of the selected transaction will be shown.
         """
         current_view = self._current_pane.view
         if hasattr(current_view, 'show_account'):
