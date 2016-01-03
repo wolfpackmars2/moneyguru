@@ -1,9 +1,9 @@
 # Created By: Virgil Dupras
 # Created On: 2010-06-01
 # Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 # Tests that make sure preferences are correctly saved/restored
@@ -154,6 +154,19 @@ def test_etable_restores_columns(app):
     table = app.etable
     eq_(table.columns.colnames[0], 'payee')
     eq_(table.columns.column_width('payee'), 999)
+
+@with_app(TestApp)
+def test_etable_restores_debit_credit_pref(app):
+    # The "Debit/Credit" preference is properly restored. ref #421
+    app.add_account('foo')
+    aview = app.show_account()
+    etable = aview.etable
+    DEBIT_CREDIT_INDEX = len(etable.columns.menu_items()) - 1
+    etable.columns.toggle_menu_item(DEBIT_CREDIT_INDEX)
+    assert etable.columns.column_is_visible('debit')
+    newapp = app.save_and_load()
+    aview = newapp.show_account('foo')
+    assert aview.etable.columns.column_is_visible('debit')
 
 @with_app(TestApp)
 def test_sctable_restores_columns(app):

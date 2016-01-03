@@ -14,6 +14,12 @@ from .entry_table_base import EntryTableBase, PreviousBalanceRow, TotalRow
 trcol = trget('columns')
 
 class EntryTableColumns(Columns):
+    def _set_debit_credit_mode(self, active):
+        self.set_column_visible('debit', active)
+        self.set_column_visible('credit', active)
+        self.set_column_visible('increase', not active)
+        self.set_column_visible('decrease', not active)
+
     def menu_items(self):
         items = Columns.menu_items(self)
         marked = self.column_is_visible('debit')
@@ -23,12 +29,22 @@ class EntryTableColumns(Columns):
     def toggle_menu_item(self, index):
         if index == len(self._optional_columns()):
             debit_visible = self.column_is_visible('debit')
-            self.set_column_visible('debit', not debit_visible)
-            self.set_column_visible('credit', not debit_visible)
-            self.set_column_visible('increase', debit_visible)
-            self.set_column_visible('decrease', debit_visible)
+            self._set_debit_credit_mode(not debit_visible)
         else:
             Columns.toggle_menu_item(self, index)
+
+    def save_columns(self):
+        Columns.save_columns(self)
+        pref_name = '{}.Columns.debit_credit_mode'.format(self.savename)
+        value = self.column_is_visible('debit')
+        self.prefaccess.set_default(pref_name, value)
+
+    def restore_columns(self):
+        Columns.restore_columns(self)
+        pref_name = '{}.Columns.debit_credit_mode'.format(self.savename)
+        debit_credit_mode = bool(self.prefaccess.get_default(pref_name))
+        self._set_debit_credit_mode(debit_credit_mode)
+
 
 class EntryTable(EntryTableBase):
     SAVENAME = 'EntryTable'
