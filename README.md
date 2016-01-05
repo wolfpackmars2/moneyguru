@@ -72,8 +72,7 @@ and follow instructions from the script. You can then ignore the rest of the bui
 Then, you have to make sure that your system has its "non-pip-installable" prerequisites installed:
 
 * All systems: [Python 3.4+][python]
-* Mac OS X: 10.7+ with XCode command line tools. Python needs to be compiled with the `-framework`
-  option.
+* Mac OS X: 10.7+ with XCode command line tools and a "framework enabled" Python (see below)
 * Windows: Visual Studio 2010, [PyQt 5.4+][pyqt], [cx_Freeze][cxfreeze] and
   [Advanced Installer][advinst] (you only need the last two if you want to create an installer)
 
@@ -84,6 +83,11 @@ On Ubuntu, the apt-get command to install all pre-requisites is:
 On Arch, it's:
 
     $ pacman -S python-pyqt5
+
+On OS X, an easy way to install a "framework enabled" Python 3 is through [pyenv][pyenv]. Once
+pyenv in installed, run a command like:
+
+    env PYTHON_CONFIGURE_OPTS="--enable-framework" pyenv install 3.5.1
 
 ## Setting up the virtual environment
 
@@ -130,6 +134,7 @@ and is also [available online][documentation].
 [nowindows]: https://www.hardcoded.net/archive2015#2015-11-01
 [documentation]: http://www.hardcoded.net/moneyguru/help/en/
 [python]: http://www.python.org/
+[pyenv]: https://github.com/yyuu/pyenv
 [pyqt]: http://www.riverbankcomputing.com
 [cxfreeze]: http://cx-freeze.sourceforge.net/
 [advinst]: http://www.advancedinstaller.com
