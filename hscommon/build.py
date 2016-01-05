@@ -404,6 +404,8 @@ def build_cocoalib_xibless(dest='cocoa/autogen'):
             xibless.generate(srcpath, dstpath, localizationTable='cocoalib')
 
 def copy_embeddable_python_dylib(dst):
+    if not sysconfig.get_config_var('PYTHONFRAMEWORKPREFIX'):
+        raise Exception("Python needs to be compiled with the -framework option. Aborting.")
     runtime = op.join(sysconfig.get_config_var('PYTHONFRAMEWORKPREFIX'), sysconfig.get_config_var('LDLIBRARY'))
     filedest = op.join(dst, 'Python')
     shutil.copy(runtime, filedest)
