@@ -40,7 +40,7 @@ enum {
     PSMTab_PositionSingleMask		= 1 << 7
 };
 
-@interface PSMTabBarControl : NSControl <NSTabViewDelegate>
+@interface PSMTabBarControl : NSControl <NSTabViewDelegate, NSDraggingSource>
 {
     
     // control basics

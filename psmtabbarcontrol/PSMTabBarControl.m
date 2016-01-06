@@ -925,9 +925,17 @@
 }
 
 // NSDraggingSource
-- (NSUInteger)draggingSourceOperationMaskForLocal:(BOOL)isLocal
+- (NSDragOperation)draggingSession:(NSDraggingSession *)session sourceOperationMaskForDraggingContext:(NSDraggingContext)context
 {
-    return (isLocal ? NSDragOperationMove : NSDragOperationNone);
+    switch (context) {
+        case NSDraggingContextOutsideApplication:
+            return NSDragOperationNone;
+            break;
+        case NSDraggingContextWithinApplication:
+        default:
+            return NSDragOperationMove;
+            break;
+    }
 }
 
 - (BOOL)ignoreModifierKeysWhileDragging

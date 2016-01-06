@@ -359,7 +359,7 @@
     [image addRepresentation:rep];
     NSImage *returnImage = [[[NSImage alloc] initWithSize:[rep size]] autorelease];
     [returnImage lockFocus];
-    [image compositeToPoint:NSMakePoint(0.0, 0.0) operation:NSCompositeSourceOver fraction:0.7];
+    [image drawAtPoint:NSMakePoint(0.0, 0.0) fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:0.7];
     [returnImage unlockFocus];
     if(![[self indicator] isHidden]){
         NSImage *pi = [[NSImage alloc] initByReferencingFile:[[PSMTabBarControl bundle] pathForImageResource:@"pi"]];
@@ -367,7 +367,7 @@
         NSPoint indicatorPoint = NSMakePoint([self frame].size.width - MARGIN_X - kPSMTabBarIndicatorWidth, MARGIN_Y);
         if(([self state] == NSOnState) && ([[(PSMTabBarControl *)_controlView styleName] isEqualToString:@"Metal"]))
             indicatorPoint.y += 1.0;
-        [pi compositeToPoint:indicatorPoint operation:NSCompositeSourceOver fraction:0.7];
+        [pi drawAtPoint:indicatorPoint fromRect:NSZeroRect operation:NSCompositeSourceOver fraction:0.7];
         [returnImage unlockFocus];
         [pi release];
     }
