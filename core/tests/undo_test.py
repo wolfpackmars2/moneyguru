@@ -412,6 +412,18 @@ def test_undo_add_group_besides_account_in_group(app, checkstate):
     app.bsheet.add_account_group()
     checkstate()
 
+@with_app(app_load_file)
+def test_undo_account_deletion_with_reassign(app, checkstate):
+    # When we undo an account deletion that implies txns reassignments, undoing that action works
+    # properly. We would previously duplicate all those reassigned txns. ref #438
+    nwview = app.show_nwview()
+    nwview.sheet.selected = nwview.sheet.assets[0]
+    nwview.sheet.delete()
+    arpanel = app.get_current_panel()
+    arpanel.account_list.select(1) # reassign txns
+    arpanel.save() # continue deletion
+    checkstate()
+
 #---
 def app_two_txns_in_two_accounts():
     # 2 accounts, 1 transaction that is a transfer between the 2 accounts, and 1 transaction that

@@ -633,7 +633,7 @@ class Document(BaseDocument, Repeater, GUIObject):
         """
         action = Action(tr('Remove account'))
         accounts = set(accounts)
-        action.delete_accounts(accounts)
+        action.delete_accounts(accounts, reassign=reassign_to is not None)
         affected_schedules = [s for s in self.schedules if accounts & s.affected_accounts()]
         for schedule in affected_schedules:
             action.change_schedule(schedule)

@@ -95,19 +95,23 @@ class Action:
         """Record imminent changes to ``splits``."""
         self.changed_splits |= set((s, copy.copy(s)) for s in splits)
 
-    def delete_accounts(self, accounts):
+    def delete_accounts(self, accounts, reassign=False):
         """Record the imminent deletion of ``accounts``.
 
         Use this method rather than directly modifying the ``deleted_accounts`` set because we also
         trigger the modification of all transasctions related to that account (their splits are
         going to be reassigned).
+
+        If transactions are going to be reassigned, set the ``reassign`` flag so that we don't
+        consider orphaned txns as deleted.
         """
         accounts = set(accounts)
         self.deleted_accounts |= accounts
         all_entries = flatten(a.entries for a in accounts)
-        transactions = set(e.transaction for e in all_entries if not isinstance(e.transaction, Spawn))
-        transactions = set(t for t in transactions if not t.affected_accounts() - accounts)
-        self.deleted_transactions |= transactions
+        if not reassign:
+            transactions = {e.transaction for e in all_entries if not isinstance(e.transaction, Spawn)}
+            transactions = {t for t in transactions if not t.affected_accounts() - accounts}
+            self.deleted_transactions |= transactions
         self.change_splits(e.split for e in all_entries)
 
 
