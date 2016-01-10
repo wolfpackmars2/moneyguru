@@ -624,7 +624,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
             [item setView:[view view]];
         }
         else {
-            item = [[[NSTabViewItem alloc] initWithIdentifier:nil] autorelease];
+            item = [[[NSTabViewItem alloc] init] autorelease];
             [item setLabel:label];
             [item setView:[view view]];
             [tabView addTabViewItem:item];

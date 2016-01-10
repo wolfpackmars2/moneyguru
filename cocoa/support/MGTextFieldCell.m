@@ -142,7 +142,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
     }    
 }
 
-- (NSUInteger)hitTestForEvent:(NSEvent *)event inRect:(NSRect)cellFrame ofView:(NSView *)controlView
+- (NSCellHitResult)hitTestForEvent:(NSEvent *)event inRect:(NSRect)cellFrame ofView:(NSView *)controlView
 {
     NSPoint point = [controlView convertPoint:[event locationInWindow] fromView:nil];
     if (hasArrow) {
