@@ -150,7 +150,8 @@ class CSVOptionsWindow(QWidget):
     #--- model --> view
     # hide() is called from the model, but is already covered by QWidget
     def refresh_columns(self):
-        self.tableModel.reset()
+        self.tableModel.beginResetModel()
+        self.tableModel.endResetModel()
 
     def refresh_columns_name(self):
         self.tableModel.refreshColumnsName()
@@ -167,7 +168,8 @@ class CSVOptionsWindow(QWidget):
         self.layoutComboBox.currentIndexChanged.connect(self.layoutIndexChanged)
 
     def refresh_lines(self):
-        self.tableModel.reset()
+        self.tableModel.beginResetModel()
+        self.tableModel.endResetModel()
         self.fieldSeparatorEdit.setText(self.model.field_separator)
 
     def refresh_targets(self):
