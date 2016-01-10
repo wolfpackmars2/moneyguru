@@ -81,7 +81,14 @@ def parse_args():
     return args
 
 def clean():
-    TOCLEAN = ['build', 'dist', 'install', op.join('help', 'en', 'image')]
+    TOCLEAN = [
+        'build',
+        op.join('cocoa', 'build'),
+        op.join('cocoa', 'autogen'),
+        'dist',
+        'install',
+        op.join('help', 'en', 'image')
+    ]
     for path in TOCLEAN:
         try:
             os.remove(path)
