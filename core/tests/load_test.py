@@ -1,6 +1,4 @@
-# Created By: Virgil Dupras
-# Created On: 2009-12-27
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2016 Virgil Dupras
 #
 # This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
@@ -368,6 +366,7 @@ def app_account_with_apanel_attrs():
     app.add_account()
     apanel = app.mw.edit_item()
     apanel.account_number = '1234'
+    apanel.inactive = True
     apanel.notes = 'some\nnotes'
     apanel.save()
     return app

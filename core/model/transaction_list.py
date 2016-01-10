@@ -1,20 +1,18 @@
-# Created By: Virgil Dupras
-# Created On: 2008-09-14
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+# Copyright 2016 Virgil Dupras
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from operator import itemgetter
 
 class TransactionList(list):
     """Manages the :class:`.Transaction` instances of a document.
-    
+
     This class is mostly about managing transactions sorting order, moving them around and keeping
     a cache of values to use for completion. There's only one of those in a document, in
     :attr:`.Document.transactions`.
-    
+
     Subclasses ``list``.
     """
     def __init__(self, *args, **kwargs):
@@ -22,17 +20,17 @@ class TransactionList(list):
         self._descriptions = None
         self._payees = None
         self._account_names = None
-    
+
     #--- Overrides
     def remove(self, transaction):
         """Removes ``transaction`` from the list."""
         list.remove(self, transaction)
         self.clear_cache()
-    
+
     #--- Private
     def _compute_completion_list(self, data_and_mtime):
         """Returns a list of unique data sorted in mtime order.
-        
+
         ``data_and_mtime`` is an iterable containing ``(data, mtime)`` pairs.
         """
         data2mtime = {}
@@ -41,28 +39,29 @@ class TransactionList(list):
             data2mtime[data] = maxmtime
         data_and_mtime = sorted(data2mtime.items(), key=itemgetter(1), reverse=True)
         return [data for data, mtime in data_and_mtime]
-    
+
     def _compute_account_names(self):
         def data_and_mtime_gen():
             for txn in self:
                 mtime = txn.mtime
                 for account in txn.affected_accounts():
-                    yield (account.name, mtime)
-        
+                    if not account.inactive:
+                        yield (account.name, mtime)
+
         self._account_names = self._compute_completion_list(data_and_mtime_gen())
-    
+
     def _compute_descriptions(self):
         data_and_mtime = ((t.description, t.mtime) for t in self)
         self._descriptions = self._compute_completion_list(data_and_mtime)
-    
+
     def _compute_payees(self):
         data_and_mtime = ((t.payee, t.mtime) for t in self)
         self._payees = self._compute_completion_list(data_and_mtime)
-    
+
     #--- Public
     def add(self, transaction, keep_position=False, position=None):
         """Adds ``transaction`` to self
-        
+
         If you want ``transaction.position`` to stay intact, call with ``keep_position`` at True. If
         you  specify a position, this is the one that will be used.
         """
@@ -74,25 +73,25 @@ class TransactionList(list):
                 transaction.position = max(t.position for t in transactions) + 1
         self.append(transaction)
         self.clear_cache()
-    
+
     def clear(self):
         """Clears the list of all transactions."""
         del self[:]
         self.clear_cache()
-    
+
     def clear_cache(self):
         """Clears cached data.
-        
+
         For now cache date is auto-completion data (payee, transaction, account). Call this when
         a transaction has been changed.
         """
         self._descriptions = None
         self._payees = None
         self._account_names = None
-    
+
     def reassign_account(self, account, reassign_to=None):
         """Calls :meth:`.Transaction.reassign_account` on all transactions.
-        
+
         If, after such an operation, a transaction ends up referencing no account at all, it is
         removed.
         """
@@ -101,10 +100,10 @@ class TransactionList(list):
             if not transaction.affected_accounts():
                 self.remove(transaction)
         self.clear_cache()
-    
+
     def move_before(self, from_transaction, to_transaction):
         """Moves ``from_transaction`` just before ``to_transaction``.
-        
+
         If ``to_transaction`` is ``None``, ``from_transaction`` is moved to the end of the
         list. You must :ref:`recook <cooking>` after having done a move (or a bunch of moves)
         """
@@ -124,34 +123,34 @@ class TransactionList(list):
         for transaction in transactions:
             if transaction.position >= target_position:
                 transaction.position += 1
-    
+
     def move_last(self, transaction):
         """Equivalent to :meth:`move_before` with ``to_transaction`` to ``None``."""
         self.move_before(transaction, None)
-    
+
     def transactions_at_date(self, target_date):
         """Returns a set of all transactions occurring on ``target_date``."""
         return set(t for t in self if t.date == target_date)
-    
+
     #--- Properties
     @property
     def account_names(self):
-        """A list of account names used in the transactions, in reverse mtime order."""
+        """A list of active account names used in the transactions, in reverse mtime order."""
         if self._account_names is None:
             self._compute_account_names()
         return self._account_names
-    
+
     @property
     def descriptions(self):
         """A list of descriptions used in the transactions, in reverse mtime order."""
         if self._descriptions is None:
             self._compute_descriptions()
         return self._descriptions
-    
+
     @property
     def payees(self):
         """A list of payees used in the transactions, in reverse mtime order."""
         if self._payees is None:
             self._compute_payees()
         return self._payees
-    
+

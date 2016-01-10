@@ -1,6 +1,4 @@
-# Created By: Virgil Dupras
-# Created On: 2008-07-03
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2016 Virgil Dupras
 #
 # This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
@@ -71,6 +69,7 @@ class AccountPanel(MainWindowPanel):
         self.type = account.type
         self.currency = account.currency
         self.account_number = account.account_number
+        self.inactive = account.inactive
         self.notes = account.notes
         self.type_list.select(AccountType.InOrder.index(self.type))
         self.currency_list.select(Currency.all.index(self.currency))
@@ -79,7 +78,8 @@ class AccountPanel(MainWindowPanel):
 
     def _save(self):
         kwargs = dict(
-            name=self.name, type=self.type, account_number=self.account_number, notes=self.notes
+            name=self.name, type=self.type, account_number=self.account_number,
+            inactive=self.inactive, notes=self.notes
         )
         if self.can_change_currency:
             kwargs['currency'] = self.currency

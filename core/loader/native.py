@@ -1,6 +1,4 @@
-# Created By: Virgil Dupras
-# Created On: 2008-02-15
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2016 Virgil Dupras
 #
 # This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
@@ -105,6 +103,7 @@ class Loader(base.Loader):
             self.account_info.budget_target = attrib.get('budget_target')
             self.account_info.reference = attrib.get('reference')
             self.account_info.account_number = attrib.get('account_number', '')
+            self.account_info.inactive = attrib.get('inactive') == 'y'
             self.account_info.notes = handle_newlines(attrib.get('notes', ''))
             self.flush_account()
         elements = [e for e in root if e.tag == 'transaction'] # we only want transaction element *at the root*

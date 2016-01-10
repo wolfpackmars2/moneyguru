@@ -1,9 +1,7 @@
-# Created By: Virgil Dupras
-# Created On: 2010-02-28
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
-# 
-# This software is licensed under the "GPLv3" License as described in the "LICENSE" file, 
-# which should be included with this package. The terms are also available at 
+# Copyright 2016 Virgil Dupras
+#
+# This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
+# which should be included with this package. The terms are also available at
 # http://www.gnu.org/licenses/gpl-3.0.html
 
 from hscommon.util import nonone, dedupe
@@ -24,7 +22,7 @@ class CompletableEdit(DocumentGUIObject):
         # If doing completion for an entry table, set the account attribute
         self.account = None
         self.connect()
-    
+
     #--- Private
     def _refresh_candidates(self):
         if self.mainwindow is None or not self.attrname:
@@ -38,34 +36,34 @@ class CompletableEdit(DocumentGUIObject):
         elif attrname in {'from', 'to', 'account', 'transfer'}:
             result = doc.transactions.account_names
             # `result` doesn't contain empty accounts' name, so we'll add them.
-            result += [a.name for a in doc.accounts]
+            result += [a.name for a in doc.accounts if not a.inactive]
             if attrname == 'transfer' and self.account is not None:
                 result = [name for name in result if name != self.account.name]
             self._candidates = result
         self._candidates = dedupe([name for name in self._candidates if name.strip()])
-    
+
     def _set_completion(self, completion):
         completion = nonone(completion, '')
         self._complete_completion = completion
         self.completion = completion[len(self._text):]
         if self.completion:
             self.view.refresh()
-    
+
     #--- Override
     # We override view to allow it to be set multiple times because CompletableEdit, as a special
     # case, can have more than one view swapping each other out
     @property
     def view(self):
         return self._view
-    
+
     @view.setter
     def view(self, value):
         self._view = value
-    
+
     #--- Public
     def commit(self):
         """Accepts current completion and updates the text with it.
-        
+
         If the text is a substring of the completion, completion's case will prevail. If, however,
         the completion is the same length as the text, it means that the user completly types the
         string. In this case, we assume that the user wants his own case to prevail.
@@ -74,28 +72,28 @@ class CompletableEdit(DocumentGUIObject):
             self._text = self._complete_completion
             self.completion = ''
             self.view.refresh()
-    
+
     def down(self):
         if self._completions:
             self._set_completion(self._completions.prev())
-    
+
     def up(self):
         if self._completions:
             self._set_completion(self._completions.next())
-    
+
     def lookup(self):
         self.mainwindow.completion_lookup.show(self)
-    
+
     def set_lookup_choice(self, text):
         self._text = text
         self.completion = ''
         self.view.refresh()
-    
+
     #--- Properties
     @property
     def attrname(self):
         return self._attrname
-    
+
     @attrname.setter
     def attrname(self, value):
         if self._attrname == value:
@@ -105,17 +103,17 @@ class CompletableEdit(DocumentGUIObject):
         self._text = ''
         self._set_completion('')
         self._completions = None
-    
+
     @property
     def candidates(self):
         if self._candidates is None:
             self._refresh_candidates()
         return self._candidates
-    
+
     @property
     def text(self):
         return self._text
-    
+
     @text.setter
     def text(self, value):
         self._text = value
@@ -124,11 +122,11 @@ class CompletableEdit(DocumentGUIObject):
             self._set_completion(self._completions.current())
         else:
             self._completions = None
-    
+
     #--- Events
     def transaction_changed(self):
         self._candidates = None
-    
+
     account_added = transaction_changed
     account_changed = transaction_changed
     account_deleted = transaction_changed
@@ -136,3 +134,4 @@ class CompletableEdit(DocumentGUIObject):
     performed_undo_or_redo = transaction_changed
     transaction_added = transaction_changed
     transaction_deleted = transaction_changed
+

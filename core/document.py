@@ -1,6 +1,4 @@
-# Created By: Virgil Dupras
-# Created On: 2007-10-25
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2016 Virgil Dupras
 #
 # This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
@@ -587,7 +585,7 @@ class Document(BaseDocument, Repeater, GUIObject):
     #--- Account
     def change_accounts(
             self, accounts, name=NOEDIT, type=NOEDIT, currency=NOEDIT, group=NOEDIT,
-            account_number=NOEDIT, notes=NOEDIT):
+            account_number=NOEDIT, inactive=NOEDIT, notes=NOEDIT):
         """Properly sets properties for ``accounts``.
 
         Sets ``accounts``' properties in a proper manner and post a ``account_changed``
@@ -599,6 +597,8 @@ class Document(BaseDocument, Repeater, GUIObject):
         :param currency: :class:`.Currency`
         :param group: :class:`.Group`
         :param account_number: ``str``
+        :param inactive: ``bool``
+        :param notes: ``str``
         """
         assert all(a is not None for a in accounts)
         action = Action(tr('Change account'))
@@ -616,10 +616,13 @@ class Document(BaseDocument, Repeater, GUIObject):
                 account.group = group
             if account_number is not NOEDIT:
                 account.account_number = account_number
+            if inactive is not NOEDIT:
+                account.inactive = inactive
             if notes is not NOEDIT:
                 account.notes = notes
         self._undoer.record(action)
         self._cook()
+        self.transactions.clear_cache()
         self.notify('account_changed')
 
     def delete_accounts(self, accounts, reassign_to=None):

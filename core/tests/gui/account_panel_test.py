@@ -1,6 +1,4 @@
-# Created By: Virgil Dupras
-# Created On: 2008-07-03
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2016 Virgil Dupras
 #
 # This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
@@ -52,6 +50,7 @@ def test_fields(app):
     eq_(apanel.type_list.selected_index, 3) # Expense type is last in the list
     eq_(apanel.currency_list.selected_index, Currency.all.index(CAD))
     eq_(apanel.account_number, '4242')
+    assert not apanel.inactive
     eq_(apanel.notes, '')
 
 @with_app(app_some_account)
@@ -86,6 +85,7 @@ def test_save_then_load(app):
     apanel.currency_list.select(42)
     apanel.name = 'changed name'
     apanel.account_number = '4241'
+    apanel.inactive = True
     apanel.notes = 'some notes'
     apanel.save()
     app.bsheet.selected = app.bsheet.assets[0] # foobar
@@ -103,4 +103,5 @@ def test_save_then_load(app):
     eq_(apanel.type, AccountType.Liability)
     eq_(apanel.name, 'changed name')
     eq_(apanel.account_number, '4241')
+    assert apanel.inactive
     eq_(apanel.notes, 'some notes')

@@ -1,6 +1,4 @@
-# Created By: Virgil Dupras
-# Created On: 2008-06-15
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2016 Virgil Dupras
 #
 # This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
@@ -12,27 +10,32 @@ from .base import TestApp, with_app
 from ..model.account import AccountType
 
 # a little helper that creates a completable edit, sets the text and returns the completion
-def complete_etable(app, value, attrname):
-    ce = app.aview.etable.completable_edit
+def complete_table(target_table, value, attrname):
+    ce = target_table.completable_edit
     ce.attrname = attrname
     ce.text = value
     return ce.completion
 
+def complete_etable(app, value, attrname):
+    return complete_table(app.aview.etable, value, attrname)
+
 def assert_completion(app, s, expected):
     eq_(complete_etable(app, s, 'transfer'), expected)
 
-#--- One empty account
-def app_one_empty_account(monkeypatch):
+#---
+def test_complete_transfer_one_empty_account():
+    # Don't lookup the selected account for transfer completion.
     app = TestApp()
-    monkeypatch.patch_time_ticking()
     app.add_account('Checking')
     app.show_account()
-    return app
-
-@with_app(app_one_empty_account)
-def test_complete_transfer_one_empty_account(app):
-    # Don't lookup the selected account for transfer completion.
     assert_completion(app, 'c', '')
+
+def test_dont_complete_with_inactive_accounts():
+    # Inactive accounts don't show in in auto-completion. ref #412
+    app = TestApp()
+    app.add_account('inactive', inactive=True)
+    tview = app.show_tview()
+    eq_(complete_table(tview.ttable, 'i', 'from'), '')
 
 #--- Empty account with whitespace in name
 def app_empty_account_with_whitespace_in_name(monkeypatch):
@@ -237,6 +240,18 @@ def test_field_completion_on_set_entry_payee(app):
     eq_(app.etable[selected].increase, '42.00')
     eq_(app.etable[selected].description, 'Deposit')
     eq_(app.etable[selected].transfer, 'Salary')
+
+@with_app(app_one_entry)
+def test_dont_complete_with_inactive_account_with_transactions(app):
+    # Make sure that we don't complete inactive accounts with transactions. We would previously
+    # have a cache glitch in the case we made an existing account with txns inactive.
+    # This first check is to populate the completion cache
+    tview = app.show_tview()
+    eq_(complete_table(tview.ttable, 's', 'from'), 'alary')
+    app.select_account('Salary')
+    app.change_selected_account(inactive=True)
+    tview = app.show_tview()
+    eq_(complete_table(tview.ttable, 's', 'from'), '')
 
 #--- Entry with blank description
 def app_entry_with_blank_description(monkeypatch):

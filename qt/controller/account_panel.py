@@ -1,6 +1,4 @@
-# Created By: Virgil Dupras
-# Created On: 2009-11-10
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2016 Virgil Dupras
 #
 # This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
@@ -9,7 +7,7 @@
 from PyQt5.QtCore import Qt, QSize
 from PyQt5.QtWidgets import (
     QVBoxLayout, QFormLayout, QLabel, QLineEdit, QComboBox, QSizePolicy, QPlainTextEdit,
-    QDialogButtonBox
+    QCheckBox, QDialogButtonBox
 )
 
 from hscommon.trans import trget
@@ -23,6 +21,7 @@ class AccountPanel(Panel):
     FIELDS = [
         ('nameEdit', 'name'),
         ('accountNumberEdit', 'account_number'),
+        ('inactiveBox', 'inactive'),
         ('notesEdit', 'notes'),
     ]
     PERSISTENT_NAME = 'accountPanel'
@@ -69,10 +68,10 @@ class AccountPanel(Panel):
         self.accountNumberEdit = QLineEdit()
         self.accountNumberEdit.setMaximumSize(QSize(80, 16777215))
         self.formLayout.setWidget(3, QFormLayout.FieldRole, self.accountNumberEdit)
+        self.inactiveBox = QCheckBox()
+        self.formLayout.addRow(tr("Inactive:"), self.inactiveBox)
         self.notesEdit = QPlainTextEdit()
-        self.formLayout.setWidget(4, QFormLayout.FieldRole, self.notesEdit)
-        self.label1 = QLabel(tr("Notes:"))
-        self.formLayout.setWidget(4, QFormLayout.LabelRole, self.label1)
+        self.formLayout.addRow(tr("Notes:"), self.notesEdit)
         self.verticalLayout.addLayout(self.formLayout)
         self.buttonBox = QDialogButtonBox()
         self.buttonBox.setOrientation(Qt.Horizontal)

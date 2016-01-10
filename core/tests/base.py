@@ -1,6 +1,4 @@
-# Created By: Virgil Dupras
-# Created On: 2009-06-04
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2016 Virgil Dupras
 #
 # This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
@@ -13,7 +11,8 @@ from operator import attrgetter
 import pytest
 
 from hscommon.path import Path
-from hscommon.testutil import eq_, CallLogger, TestApp as TestAppBase, with_app, TestData
+from hscommon.testutil import eq_, CallLogger, TestApp as TestAppBase, TestData
+from hscommon.testutil import with_app # noqa
 from hscommon.gui.base import GUIObject
 
 from ..app import Application, PreferenceNames
@@ -22,6 +21,7 @@ from ..exception import FileFormatError
 from ..const import PaneType
 from ..gui.completable_edit import CompletableEdit
 from ..gui.main_window import MainWindow
+from ..gui.account_panel import AccountPanel
 from ..loader import base
 from ..model.account import AccountType
 from ..model.date import DateFormat
@@ -219,8 +219,9 @@ class TestApp(TestAppBase):
     def check_gui_calls_partial(gui, *args, **kwargs):
         gui.check_gui_calls_partial(*args, **kwargs)
 
-    def add_account(self, name=None, currency=None, account_type=AccountType.Asset, group_name=None,
-            account_number=None):
+    def add_account(
+            self, name=None, currency=None, account_type=AccountType.Asset, group_name=None,
+            account_number=None, inactive=None):
         # This method simulates what a user would do to add an account with the specified attributes
         # Note that, undo-wise, this operation is not atomic.
         if account_type in (AccountType.Income, AccountType.Expense):
@@ -243,15 +244,10 @@ class TestApp(TestAppBase):
             if group_node:
                 sheet.selected = group_node
         self.mw.new_item()
-        if currency or account_number:
-            apanel = self.mw.edit_item()
-            if name:
-                apanel.name = name
-            if currency:
-                apanel.currency = currency
-            if account_number:
-                apanel.account_number = account_number
-            apanel.save()
+        if currency or account_number or inactive:
+            self.change_selected_account(
+                name=name, currency=currency, account_number=account_number, inactive=inactive
+            )
         elif name is not None:
             sheet.selected.name = name
             sheet.save_edits()
@@ -408,6 +404,21 @@ class TestApp(TestAppBase):
         doc = Document(self.app)
         doc.view = self.doc_gui
         return TestApp(app=app, doc=doc)
+
+    def change_selected_account(
+            self, name=None, currency=None, account_type=None, account_number=None, inactive=None):
+        assert account_type is None, "account_type not supported yet, add support now!"
+        apanel = self.mw.edit_item()
+        assert isinstance(apanel, AccountPanel)
+        if name:
+            apanel.name = name
+        if currency:
+            apanel.currency = currency
+        if account_number:
+            apanel.account_number = account_number
+        if inactive is not None:
+            apanel.inactive = inactive
+        apanel.save()
 
     def completable_edit(self, attrname):
         ce = CompletableEdit(self.mw)
@@ -690,9 +701,8 @@ def compare_apps(first, second, qif_mode=False):
             eq_(account1.name, account2.name)
             eq_(account1.type, account2.type)
             if not qif_mode:
-                eq_(account1.currency, account2.currency)
-                eq_(account1.account_number, account2.account_number)
-                eq_(account1.notes, account2.notes)
+                for attr in ['currency', 'account_number', 'inactive', 'notes']:
+                    eq_(getattr(account1, attr), getattr(account2, attr))
             eq_(len(account1.entries), len(account2.entries))
         except AssertionError:
             raise
