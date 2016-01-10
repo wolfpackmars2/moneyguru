@@ -196,7 +196,9 @@ def build_cocoa(dev):
 def build_qt(dev):
     qrc_path = op.join('qt', 'mg.qrc')
     pyrc_path = op.join('qt', 'mg_rc.py')
-    print_and_do("pyrcc5 {0} > {1}".format(qrc_path, pyrc_path))
+    ret = print_and_do("pyrcc5 {} > {}".format(qrc_path, pyrc_path))
+    if ret != 0:
+        raise RuntimeError("pyrcc5 call failed with code {}. Aborting build".format(ret))
     build_help()
     print("Creating the run.py file")
     shutil.copy('run_template_qt.py', 'run.py')
