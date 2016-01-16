@@ -420,6 +420,12 @@ class PyAccountPanel(PyPanel):
     def setAccountNumber_(self, accountNumber: str):
         self.model.account_number = accountNumber
 
+    def isInactive(self) -> bool:
+        return self.model.inactive
+
+    def setInactive_(self, inactive: bool):
+        self.model.inactive = inactive
+    
     def notes(self) -> str:
         return self.model.notes
 

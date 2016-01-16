@@ -18,6 +18,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @synthesize typeSelector;
 @synthesize currencySelector;
 @synthesize accountNumberTextField;
+@synthesize inactiveCheckBox;
 @synthesize notesTextField;
 
 - (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow
@@ -54,6 +55,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 {
     [nameTextField setStringValue:[[self model] name]];
     [accountNumberTextField setStringValue:[[self model] accountNumber]];
+    [inactiveCheckBox setState:[[self model] isInactive] ? NSOnState : NSOffState];
     [notesTextField setStringValue:[[self model] notes]];
     [currencySelector setEnabled:[[self model] canChangeCurrency]];
 }
@@ -62,6 +64,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 {
     [[self model] setName:[nameTextField stringValue]];
     [[self model] setAccountNumber:[accountNumberTextField stringValue]];
+    [[self model] setInactive:[inactiveCheckBox state] == NSOnState];
     [[self model] setNotes:[notesTextField stringValue]];
 }
 

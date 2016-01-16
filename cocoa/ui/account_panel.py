@@ -13,6 +13,8 @@ currencyLabel = FieldLabel(result, "Currency")
 currencyCombo = Combobox(result)
 accountnoLabel = FieldLabel(result, "Account #")
 accountnoField = TextField(result)
+inactiveLabel = FieldLabel(result, "Inactive")
+inactiveField = Checkbox(result, "")
 notesLabel = FieldLabel(result, "Notes")
 notesField = TextField(result)
 cancelButton = Button(result, "Cancel", action=Action(owner, 'cancel:'))
@@ -21,6 +23,7 @@ saveButton = Button(result, "Save", action=Action(owner, 'save:'))
 owner.accountNumberTextField = accountnoField
 owner.currencySelector = currencyCombo
 owner.nameTextField = nameField
+owner.inactiveCheckBox = inactiveField
 owner.notesTextField = notesField
 owner.typeSelector = typePopup
 result.delegate = owner
@@ -31,7 +34,15 @@ saveButton.shortcut = 'return'
 notesField.fixedHeight = False
 
 typePopup.width = accountnoField.width = 110
-for label in [nameLabel, typeLabel, currencyLabel, accountnoLabel, notesLabel]:
+all_labels = [
+	nameLabel,
+	typeLabel,
+	currencyLabel,
+	accountnoLabel,
+	inactiveLabel,
+	notesLabel,
+]
+for label in all_labels:
     label.width = 60
 
 layout = VHLayout([
@@ -40,6 +51,7 @@ layout = VHLayout([
     [typeLabel, typePopup],
     [currencyLabel, currencyCombo],
     [accountnoLabel, accountnoField],
+    [inactiveLabel, inactiveField],
     [notesLabel, notesField],
     [None, cancelButton, saveButton],
     ], hfillers={nameField, currencyCombo, notesField}, vfiller=notesField)

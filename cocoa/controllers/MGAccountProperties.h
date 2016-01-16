@@ -17,6 +17,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
     NSPopUpButton *typeSelector;
     NSComboBox *currencySelector;
     NSTextField *accountNumberTextField;
+    NSButton *inactiveCheckBox;
     NSTextField *notesTextField;
     
     HSPopUpList *typePopUp;
@@ -27,6 +28,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @property (readwrite, retain) NSPopUpButton *typeSelector;
 @property (readwrite, retain) NSComboBox *currencySelector;
 @property (readwrite, retain) NSTextField *accountNumberTextField;
+@property (readwrite, retain) NSButton *inactiveCheckBox;
 @property (readwrite, retain) NSTextField *notesTextField;
 
 - (id)initWithPyRef:(PyObject *)aPyRef parentWindow:(NSWindow *)aParentWindow;
