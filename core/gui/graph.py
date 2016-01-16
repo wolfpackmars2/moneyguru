@@ -56,11 +56,11 @@ class Graph(Chart):
     YLABELS_PADDING = 8
     YAXIS_EXTRA_SPACE_ON_NEGATIVE = 3
 
-    #--- Private
+    # --- Private
     def _offset_xpos(self, xpos):
         return xpos - self._xoffset
 
-    #--- Public
+    # --- Public
     def compute_x_axis(self, min_date=None, max_date=None):
         # By default, xmin and xmax are determined by date range's start and end, but you can
         # override that by specifying min_date and max_date.

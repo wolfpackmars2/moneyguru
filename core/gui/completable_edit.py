@@ -23,7 +23,7 @@ class CompletableEdit(DocumentGUIObject):
         self.account = None
         self.connect()
 
-    #--- Private
+    # --- Private
     def _refresh_candidates(self):
         if self.mainwindow is None or not self.attrname:
             return
@@ -49,7 +49,7 @@ class CompletableEdit(DocumentGUIObject):
         if self.completion:
             self.view.refresh()
 
-    #--- Override
+    # --- Override
     # We override view to allow it to be set multiple times because CompletableEdit, as a special
     # case, can have more than one view swapping each other out
     @property
@@ -60,7 +60,7 @@ class CompletableEdit(DocumentGUIObject):
     def view(self, value):
         self._view = value
 
-    #--- Public
+    # --- Public
     def commit(self):
         """Accepts current completion and updates the text with it.
 
@@ -89,7 +89,7 @@ class CompletableEdit(DocumentGUIObject):
         self.completion = ''
         self.view.refresh()
 
-    #--- Properties
+    # --- Properties
     @property
     def attrname(self):
         return self._attrname
@@ -123,7 +123,7 @@ class CompletableEdit(DocumentGUIObject):
         else:
             self._completions = None
 
-    #--- Events
+    # --- Events
     def transaction_changed(self):
         self._candidates = None
 

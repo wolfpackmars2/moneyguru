@@ -14,7 +14,7 @@ from ...model.account import AccountType
 from ...model.currency import CAD, USD
 from ...model.date import MonthRange
 
-#---
+# ---
 def app_pristine():
     app = TestApp()
     app.show_pview()
@@ -48,7 +48,7 @@ def test_nodes_are_hashable(app):
     # Just make sure it's possible to put the nodes in containers based on hashes.
     eq_(len({app.istatement.income, app.istatement.expenses}), 2) # no crash
 
-#---
+# ---
 def app_accounts_and_entries():
     app = TestApp()
     app.drsel.select_month_range()
@@ -142,7 +142,7 @@ def test_year_to_date_last_cash_flow(app, monkeypatch):
     app.drsel.select_year_to_date_range()
     eq_(app.istatement.income[0].last_cash_flow, '0.00')
 
-#---
+# ---
 def app_multiple_currencies():
     app = TestApp(app=Application(ApplicationGUI(), default_currency=CAD))
     app.drsel.select_month_range()
@@ -180,7 +180,7 @@ def test_income_statement_multiple_currencies(app):
     eq_(app.istatement.income[0].cash_flow, 'CAD 182.00')   # 80 * .8 + 20 * .9 + 100
     eq_(app.istatement.income.cash_flow, 'CAD 182.00')
 
-#---
+# ---
 def app_multiple_currencies_over_two_months():
     app = TestApp(app=Application(ApplicationGUI(), default_currency=CAD))
     app.drsel.select_month_range()
@@ -220,7 +220,7 @@ def test_income_statement_multiple_currencies_over_two_months(app):
     eq_(app.istatement.net_income.delta, 'CAD 22.00')
     eq_(app.istatement.net_income.delta_perc, '+28.2%')
 
-#---
+# ---
 def app_entries_spread_over_a_year():
     app = TestApp()
     app.add_account('Account', account_type=AccountType.Income)
@@ -249,7 +249,7 @@ def test_select_running_year_range(app, monkeypatch):
     # 'Last' is 01/03/2007-28/02/2008, which means 2 + 3 + 4 + 5 (14)
     eq_(app.istatement.income[0].last_cash_flow, '14.00')
 
-#---
+# ---
 def app_busted_budget(monkeypatch):
     monkeypatch.patch_today(2010, 1, 3)
     app = TestApp()

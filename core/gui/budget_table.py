@@ -31,7 +31,7 @@ class BudgetTable(GUITable, TableWithAmountMixin):
         GUITable.__init__(self, document=budget_view.document)
         self.mainwindow = budget_view.mainwindow
 
-    #--- Override
+    # --- Override
     def _update_selection(self):
         self.mainwindow.selected_budgets = self.selected_budgets
 
@@ -42,14 +42,14 @@ class BudgetTable(GUITable, TableWithAmountMixin):
                 self._all_amounts_are_native = False
             self.append(BudgetTableRow(self, budget))
 
-    #--- Public
+    # --- Public
     def delete(self):
         self.document.delete_budgets(self.selected_budgets)
 
     def edit(self):
         self.mainwindow.edit_item()
 
-    #--- Properties
+    # --- Properties
     @property
     def selected_budgets(self):
         return [row.budget for row in self.selected_rows]
@@ -62,7 +62,7 @@ class BudgetTableRow(Row):
         self.budget = budget
         self.load()
 
-    #--- Public
+    # --- Public
     def load(self):
         budget = self.budget
         self._start_date = budget.start_date
@@ -85,7 +85,7 @@ class BudgetTableRow(Row):
         else:
             return Row.sort_key_for_column(self, column_name)
 
-    #--- Properties
+    # --- Properties
     start_date = rowattr('_start_date_fmt')
     stop_date = rowattr('_stop_date_fmt')
     repeat_type = rowattr('_repeat_type')

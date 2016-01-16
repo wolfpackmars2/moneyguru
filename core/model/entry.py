@@ -177,7 +177,7 @@ class EntryList(Sequence):
     def __len__(self):
         return len(self._entries)
 
-    #--- Private
+    # --- Private
     def _balance(self, balance_attr, date=None, currency=None):
         entry = self.last_entry(date) if date else self.last_entry()
         if entry:
@@ -196,7 +196,7 @@ class EntryList(Sequence):
         amounts = (convert_amount(e.amount, currency, e.date) for e in entries)
         return sum(amounts)
 
-    #--- Public
+    # --- Public
     def add_entry(self, entry):
         """Add ``entry`` to the list.
 

@@ -52,7 +52,7 @@ class BudgetPanel(MainWindowPanel, PanelWithScheduleMixIn):
         self.account_list = AccountList(weakref.proxy(self))
         self.target_list = TargetList(weakref.proxy(self))
 
-    #--- Override
+    # --- Override
     def _load(self):
         budget = first(self.mainwindow.selected_budgets)
         self._load_budget(budget)
@@ -63,7 +63,7 @@ class BudgetPanel(MainWindowPanel, PanelWithScheduleMixIn):
     def _save(self):
         self.document.change_budget(self.original, self.budget)
 
-    #--- Private
+    # --- Private
     def _load_budget(self, budget):
         if budget is None:
             raise OperationAborted
@@ -86,7 +86,7 @@ class BudgetPanel(MainWindowPanel, PanelWithScheduleMixIn):
         self.target_list.select(self._targets.index(budget.target))
         self.view.refresh_repeat_every()
 
-    #--- Properties
+    # --- Properties
     @property
     def amount(self):
         return self.document.format_amount(self.budget.amount)

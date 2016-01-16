@@ -29,11 +29,11 @@ class ReadOnlyTablePluginView(BaseView):
         self.tableView.verticalHeader().setDefaultSectionSize(18)
         self.verticalLayout.addWidget(self.tableView)
 
-    #--- QWidget override
+    # --- QWidget override
     def setFocus(self):
         self.table.view.setFocus()
 
-    #--- Public
+    # --- Public
     def fitViewsForPrint(self, viewPrinter):
         viewPrinter.fitTable(self.table)
 

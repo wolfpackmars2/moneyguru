@@ -55,7 +55,7 @@ class PanelWithTransaction(MainWindowPanel):
     def select_splits(self, splits):
         self._selected_splits = splits
 
-    #--- Properties
+    # --- Properties
     @property
     def description(self):
         return self.transaction.description
@@ -94,7 +94,7 @@ class PanelWithTransaction(MainWindowPanel):
 
 
 class TransactionPanel(PanelWithTransaction):
-    #--- Override
+    # --- Override
     def _load(self, transaction):
         self.document.stop_edition()
         self.transaction = transaction.replicate()
@@ -105,7 +105,7 @@ class TransactionPanel(PanelWithTransaction):
     def _save(self):
         self.document.change_transaction(self.original, self.transaction)
 
-    #--- Public
+    # --- Public
     def mct_balance(self):
         """Balances the mct by using xchange rates.
 

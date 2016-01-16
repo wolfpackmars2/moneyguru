@@ -19,7 +19,7 @@ from ...model.date import MonthRange, YearRange
 from ...model.account import AccountType
 from ...model.currency import USD
 
-#---
+# ---
 def app_tview_shown():
     app = TestApp()
     app.show_tview()
@@ -111,7 +111,7 @@ def test_schedule_spawn_sorting(app, monkeypatch):
 def test_all_amount_native_empty(app):
     assert app.ttable.all_amounts_are_native
 
-#---
+# ---
 class TestEditionMode:
     def do_setup(self):
         app = TestApp()
@@ -148,7 +148,7 @@ class TestEditionMode:
         app.ttable.duplicate_selected()
         assert app.ttable.edited is None
 
-#---
+# ---
 def app_unassigned_transaction_with_amount():
     app = TestApp()
     app.show_tview()
@@ -162,7 +162,7 @@ def test_save_load_unassigned_txn(app):
     # Make sure that unassigned transactions are loaded
     app.do_test_save_load()
 
-#--- One transaction
+# --- One transaction
 def app_one_transaction():
     app = TestApp()
     app.drsel.select_month_range()
@@ -420,7 +420,7 @@ def test_can_move_total_row(app):
     # There was a crash when trying to move the total row (no 'transaction' attribute).
     assert not app.ttable.can_move([1], 0) # no crash
 
-#---
+# ---
 def app_txn_linked_to_numbered_acct():
     app = TestApp()
     app.add_account('account1', account_number='4242')
@@ -435,7 +435,7 @@ def test_from_to_column_display_acct_number(app):
     eq_(app.ttable[0].from_, '4242 - account1')
     eq_(app.ttable[0].to, '4241 - account2')
 
-#---
+# ---
 def app_two_way_txn_inverted_splits():
     app = TestApp()
     app.add_account('first')
@@ -452,7 +452,7 @@ def test_from_two_cols_depend_on_split_type_not_order(app):
     eq_(row.to, 'first')
     eq_(row.amount, '42.00')
 
-#--- Three-way transaction
+# --- Three-way transaction
 def app_three_way_transaction():
     app = TestApp()
     splits = [
@@ -487,7 +487,7 @@ def test_edit_from():
     app.ttable.save_edits()
     eq_(app.ttable[0].from_, 'fourth')
 
-#--- Three-way multi-currency transaction
+# --- Three-way multi-currency transaction
 def app_three_way_multi_currency_transaction():
     app = TestApp()
     USD.set_CAD_value(0.8, date(2008, 1, 1))
@@ -509,7 +509,7 @@ def app_three_way_multi_currency_transaction():
     app.show_tview()
     return app
 
-#--- Four way txn with unassigned
+# --- Four way txn with unassigned
 def app_four_way_txn_with_unassigned():
     app = TestApp()
     splits = [
@@ -585,7 +585,7 @@ class TestTwoWayNullAmounts:
         eq_(row.to, 'second')
 
 
-#--- Three way null amounts
+# --- Three way null amounts
 def app_three_way_null_amounts():
     app = TestApp()
     splits = [
@@ -650,7 +650,7 @@ class TestTwoTransactionsOneOutOfRange:
         eq_(tpanel.description, 'first')
 
 
-#--- Three transactions
+# --- Three transactions
 def app_three_transactions():
     app = TestApp()
     app.add_account()
@@ -755,7 +755,7 @@ def test_total_row(app):
     eq_(row.description, 'TOTAL')
     eq_(row.amount, '6.00')
 
-#---
+# ---
 class TestThreeTransactionsEverythingReconciled:
     def do_setup(self):
         app = TestApp()
@@ -793,7 +793,7 @@ class TestThreeTransactionsEverythingReconciled:
         assert app.ttable[0].reconciled
 
 
-#--- Transaction created through the ttable
+# --- Transaction created through the ttable
 def app_transaction_created_through_ttable():
     app = TestApp()
     app.show_tview()
@@ -829,7 +829,7 @@ def test_completion(app):
     ce.text = 's'
     eq_(ce.completion, 'econd')
 
-#--- Transaction on last day of range
+# --- Transaction on last day of range
 def app_txn_on_last_day_of_range(monkeypatch):
     app = TestApp()
     monkeypatch.patch_today(2010, 3, 21)
@@ -845,7 +845,7 @@ def test_added_txn_is_correctly_selected(app):
     eq_(len(app.ttable.rows), 2)
     eq_(app.ttable.selected_index, 1)
 
-#--- Load file
+# --- Load file
 def app_load_file():
     app = TestApp()
     app.doc.date_range = MonthRange(date(2008, 2, 1))
@@ -865,7 +865,7 @@ def test_table_is_refreshed_upon_load(app):
     eq_(app.ttable.row_count, 4)
     eq_(app.ttable.selected_indexes, [3])
 
-#--- Autofill
+# --- Autofill
 def app_autofill():
     app = TestApp()
     app.add_account('Checking')
@@ -1195,7 +1195,7 @@ class TestWithBudget:
         assert app.mw.edit_item() is None # budget spawns can't be edited
 
 
-#--- Generators
+# --- Generators
 def test_attributes():
     def check(app, index, expected):
         row = app.ttable[index]

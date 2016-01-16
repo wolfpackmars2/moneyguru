@@ -110,7 +110,7 @@ class PreferencesPanel(QDialog):
         if restartRequired:
             QMessageBox.information(self, "", tr("moneyGuru has to restart for these changes to take effect"))
 
-    #--- Signals
+    # --- Signals
     def dateFormatEdited(self):
         self.dateFormatEdit.setText(clean_format(self.dateFormatEdit.text()))
 

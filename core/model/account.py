@@ -79,7 +79,7 @@ class Account:
     def __lt__(self, other):
         return sort_string(self.name) < sort_string(other.name)
 
-    #--- Public
+    # --- Public
     def normalize_amount(self, amount):
         """Returns a "displayable" amount depending on our :attr:`type`.
 
@@ -109,7 +109,7 @@ class Account:
         """Returns whether the account is an income or expense."""
         return self.type in (AccountType.Income, AccountType.Expense)
 
-    #--- Properties
+    # --- Properties
     @property
     def combined_display(self):
         """*readonly*. Display name for the account.

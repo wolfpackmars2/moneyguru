@@ -39,7 +39,7 @@ class Loader(base.Loader):
         self.dialect = None # last used dialect
         self.rawlines = [] # last prepared file
 
-    #--- Private
+    # --- Private
     @staticmethod
     def _merge_columns(columns, lines):
         # For any columns that is there more than once, merge the data that goes with it
@@ -133,7 +133,7 @@ class Loader(base.Loader):
                 except ValueError:
                     raise FileLoadError(tr("The Amount column has been set on a column that doesn't contain amounts."))
 
-    #--- Override
+    # --- Override
     def _parse(self, infile):
         self._prepare(infile)
         self._scan_lines()
@@ -171,7 +171,7 @@ class Loader(base.Loader):
                 if value:
                     setattr(self.transaction_info, attr, value)
 
-    #--- Public
+    # --- Public
     def rescan(self, encoding=None):
         self._scan_lines(encoding=encoding)
 

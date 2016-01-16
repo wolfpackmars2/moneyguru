@@ -416,7 +416,7 @@ class Transaction:
         froms += null_amounts
         return froms, tos
 
-    #--- Properties
+    # --- Properties
     @property
     def amount(self):
         """*get/set*. :class:`.Amount`. Total amount of the transaction.
@@ -495,7 +495,7 @@ class Split:
     def __repr__(self):
         return '<Split %r %s>' % (self.account_name, self.amount)
 
-    #--- Public
+    # --- Public
     def is_on_same_side(self, other_split):
         return (self.amount >= 0) == (other_split.amount >= 0)
 
@@ -507,7 +507,7 @@ class Split:
         self.transaction.splits.remove(self)
         self.transaction.balance()
 
-    #--- Properties
+    # --- Properties
     @property
     def account(self):
         """*get/set*. :class:`.Account` our split is assigned to.

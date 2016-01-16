@@ -64,5 +64,5 @@ class DocPropsView(BaseView):
         self.ahead_months_list.select(self.document.ahead_months)
         self.year_start_month_list.select(self.document.year_start_month - 1)
 
-    #--- Events
+    # --- Events
     document_changed = _revalidate

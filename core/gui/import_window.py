@@ -302,7 +302,7 @@ class AccountPane:
 
 
 class ImportWindow(MainWindowGUIObject):
-    #--- View interface
+    # --- View interface
     # close()
     # close_selected_tab()
     # refresh_tabs()
@@ -332,7 +332,7 @@ class ImportWindow(MainWindowGUIObject):
         self.panes = []
         self.import_table = ImportTable(self)
 
-    #--- Private
+    # --- Private
 
     def _collect_action_params(self, import_action, apply=ActionSelectionOptions.ApplyToPane):
         if apply == ActionSelectionOptions.ApplyToSelection:
@@ -469,14 +469,14 @@ class ImportWindow(MainWindowGUIObject):
             listener.connect()
             self._import_action_listeners.append(listener)
 
-    #--- Override
+    # --- Override
     def _view_updated(self):
         self.connect()
         if self.document.can_restore_from_prefs():
             # See MainWindow._view_updated() comment.
             self.document_restoring_preferences()
 
-    #--- Public
+    # --- Public
 
     def can_perform_swap(self):
         index = self.swap_type_list.selected_index
@@ -644,7 +644,7 @@ class ImportWindow(MainWindowGUIObject):
         self.view.refresh_tabs()
         self.view.show()
 
-    #--- Properties
+    # --- Properties
     @property
     def selected_pane(self):
         return self.panes[self.selected_pane_index] if self.panes else None
@@ -680,7 +680,7 @@ class ImportWindow(MainWindowGUIObject):
     def target_account_names(self):
         return [tr('< New Account >')] + [a.name for a in self.target_accounts]
 
-    #--- Events
+    # --- Events
     def account_added(self):
         self.refresh_targets()
         self._refresh_target_selection()

@@ -15,7 +15,7 @@ from .budget_table import BudgetTable
 from .budget_panel import BudgetPanel
 
 class BudgetView(BaseView):
-    #--- model -> view calls:
+    # --- model -> view calls:
     # get_panel_view(panel_model) -> view
     #
 
@@ -34,11 +34,11 @@ class BudgetView(BaseView):
     def _revalidate(self):
         self.table.refresh_and_show_selection()
 
-    #--- Override
+    # --- Override
     def save_preferences(self):
         self.table.columns.save_columns()
 
-    #--- Public
+    # --- Public
     def new_item(self):
         budget_panel = BudgetPanel(self.mainwindow)
         budget_panel.view = weakref.proxy(self.view.get_panel_view(budget_panel))

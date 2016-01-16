@@ -117,7 +117,7 @@ class TransactionPanel(Panel):
         Panel._loadFields(self)
         self.tabWidget.setCurrentIndex(0)
 
-    #--- model --> view
+    # --- model --> view
     def refresh_for_multi_currency(self):
         self.mctButton.setEnabled(self.model.is_multi_currency)
 

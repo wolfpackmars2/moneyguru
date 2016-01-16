@@ -25,7 +25,7 @@ class SplitTable(GUITable):
         self.panel = transaction_panel
         self.completable_edit = self.panel.completable_edit
     
-    #--- Override
+    # --- Override
     def _do_add(self):
         split = self.panel.new_split()
         row = SplitTableRow(self, split)
@@ -48,7 +48,7 @@ class SplitTable(GUITable):
     def _update_selection(self):
         self.panel.select_splits([row.split for row in self.selected_rows])
     
-    #--- Public
+    # --- Public
     def move_split(self, from_index, to_index):
         row = self[from_index]
         row.split.move_to_index(to_index)

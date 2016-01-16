@@ -29,12 +29,12 @@ class NetWorthGraph(BalanceGraph, SheetViewNotificationsMixin):
         self._currency = self.document.default_currency
         BalanceGraph.compute_data(self)
     
-    #--- Event Handlers
+    # --- Event Handlers
     def accounts_excluded(self):
         self.compute()
         self.view.refresh()
     
-    #--- Properties
+    # --- Properties
     @property
     def title(self):
         return tr('Net Worth')

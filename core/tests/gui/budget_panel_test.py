@@ -11,7 +11,7 @@ from hscommon.testutil import eq_
 from ...model.account import AccountType
 from ..base import TestApp, with_app
 
-#--- One asset account
+# --- One asset account
 def app_one_asset_account():
     app = TestApp()
     app.add_account('asset')
@@ -26,7 +26,7 @@ def test_can_create_new():
     app.mainwindow.new_item()
     eq_(len(app.mainwindow_gui.messages), 1) # a message has been shown
 
-#--- One expense with budget
+# --- One expense with budget
 def app_one_expense_with_budget(monkeypatch):
     monkeypatch.patch_today(2008, 1, 27)
     app = TestApp()

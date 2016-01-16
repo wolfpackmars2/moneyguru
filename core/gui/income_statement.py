@@ -23,7 +23,7 @@ class IncomeStatement(Report):
         Column('budgeted', display=trcol("Budgeted"), optional=True),
     ]
 
-    #--- Override
+    # --- Override
     def _compute_account_node(self, node):
         account = node.account
         date_range = self.document.date_range
@@ -90,7 +90,7 @@ class IncomeStatement(Report):
         self.append(self.expenses)
         self.append(self.net_income)
 
-    #--- Public
+    # --- Public
     def make_total_node(self, parent, name):
         node = Report.make_total_node(self, name)
         parent.cash_flow_amount = sum(child.cash_flow_amount for child in parent)

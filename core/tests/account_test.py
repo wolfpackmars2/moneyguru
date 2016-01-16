@@ -13,7 +13,7 @@ from ..exception import FileFormatError
 from ..model.account import AccountType
 from ..model.currency import EUR
 
-#--- Pristine
+# --- Pristine
 @with_app(TestApp)
 def test_account_names_are_stripped(app):
     # Whitespaces are removed from account names when typed.
@@ -40,7 +40,7 @@ def test_delete_root_type_nodes(app):
     app.bsheet.selected = app.bsheet.assets[1] # blank node
     assert not app.bsheet.can_delete()
 
-#--- One empty account
+# --- One empty account
 def app_one_empty_account():
     app = TestApp()
     app.add_account('Checking', EUR, account_number='4242')
@@ -123,7 +123,7 @@ def test_save_and_load(app):
     newapp.show_nwview()
     eq_(newapp.bsheet.assets[0].account_number, '4242')
 
-#--- Three empty accounts
+# --- Three empty accounts
 def app_three_empty_accounts():
     app = TestApp()
     app.add_accounts('one', 'two', 'three')
@@ -203,7 +203,7 @@ def test_set_account_name_same_name(app):
     app.bsheet.save_edits()
     eq_(app.bsheet.selected.name, 'Three')
 
-#--- One account and one group
+# --- One account and one group
 def app_one_account_and_one_group():
     app = TestApp()
     app.add_account()
@@ -260,7 +260,7 @@ def test_user_groups_are_editable(app):
     app.bsheet.selected.name = 'foobar'
     eq_(app.bsheet.assets[0].name, 'foobar')
 
-#--- One account in one group
+# --- One account in one group
 def app_one_account_in_one_group():
     app = TestApp()
     app.add_group('group')
@@ -302,7 +302,7 @@ def test_move_account_in_another_base_group(app):
     eq_(app.account_node_subaccount_count(app.bsheet.get_node([0, 0])), 0)
     eq_(app.account_node_subaccount_count(app.bsheet.get_node([1])), 1)
 
-#--- Two groups
+# --- Two groups
 def app_two_groups():
     app = TestApp()
     app.add_group()
@@ -323,7 +323,7 @@ def test_rename_clash(app):
     app.bsheet.save_edits()
     eq_(app.bsheet.selected.name, 'New group 1')
 
-#--- Two groups in two base types
+# --- Two groups in two base types
 def app_two_groups_in_two_base_types():
     app = TestApp()
     app.add_group()
@@ -336,7 +336,7 @@ def test_same_group_name_in_different_type(app):
     # Groups in different base types can have the same name.
     eq_(app.bsheet.liabilities[0].name, 'New group')
 
-#--- Account and group with same name
+# --- Account and group with same name
 def app_account_and_group_with_same_name():
     app = TestApp()
     app.add_account()
@@ -355,7 +355,7 @@ def test_move_account_in_group(app):
     app.bsheet.move([[0, 1]], [0, 0])
     eq_(app.bsheet.get_node([0, 0]).children_count, 3) # 1 total node, 1 blank node
 
-#--- Different account types
+# --- Different account types
 def app_different_account_types():
     app = TestApp()
     app.add_account('one')
@@ -386,7 +386,7 @@ def test_select_another_type_then_set_attribute_value(app):
     app.bsheet.save_edits()
     eq_(app.account_names(), ['foo', 'one', 'three'])
 
-#--- One Transaction
+# --- One Transaction
 def app_one_transaction():
     app = TestApp()
     app.add_account('first')
@@ -408,7 +408,7 @@ def test_delete_account_unbinds_transactions(app):
     eq_(app.ttable[0].from_, 'first')
     eq_(app.ttable[0].to, '')
 
-#--- Manually created income
+# --- Manually created income
 def app_manually_created_income():
     app = TestApp()
     app.add_account('income', account_type=AccountType.Income)
@@ -425,7 +425,7 @@ def test_auto_clean_doesnt_clean_manually_created(app):
     app.show_pview()
     eq_(app.istatement.income[0].name, 'income')
 
-#--- Account with accents and number
+# --- Account with accents and number
 def app_account_with_accents_and_number():
     app = TestApp()
     app.add_account('fooé', account_number='123')

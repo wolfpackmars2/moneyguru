@@ -13,7 +13,7 @@ from PyQt5.QtWidgets import QApplication
 from core.gui.pie_chart import FontID, BrushID
 from .chart_view import ChartView, gradientFromColor
 
-#0xrrggbb
+# 0xrrggbb
 COLORS = [
     0x5dbc56,
     0x3c5bce,
@@ -32,7 +32,7 @@ class PieChartView(ChartView):
         self.dataSource = None
         self.colors = [QColor(rgbInt) for rgbInt in COLORS]
 
-    #--- Override
+    # --- Override
     def fontForID(self, fontId):
         result = QFont(QApplication.font())
         if fontId == FontID.Title:

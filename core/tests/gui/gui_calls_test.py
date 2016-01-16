@@ -15,7 +15,7 @@ from ...model.account import AccountType
 from ...model.currency import EUR
 from ..base import TestApp, with_app, testdata
 
-#--- No Setup
+# --- No Setup
 def test_initial_gui_calls():
     app = TestApp()
     app.show_nwview()
@@ -24,7 +24,7 @@ def test_initial_gui_calls():
     app.mw.view.check_gui_calls(expected)
     app.drsel.view.check_gui_calls(['refresh_custom_ranges', 'refresh'])
 
-#--- Cleared GUI calls
+# --- Cleared GUI calls
 def app_cleared_gui_calls():
     app = TestApp()
     app.clear_gui_calls()
@@ -165,7 +165,7 @@ def test_stop_editing_on_applying_filter(app):
     tview.filter_bar.filter_type = FilterType.Income
     tview.ttable.view.check_gui_calls_partial(['stop_editing'])
 
-#--- On transaction view
+# --- On transaction view
 def app_on_transaction_view():
     app = TestApp()
     app.show_tview()
@@ -184,7 +184,7 @@ def test_stop_editing_on_pane_change(app):
     app.mw.select_next_view()
     app.check_gui_calls_partial(app.ttable_gui, ['stop_editing'])
 
-#--- One account
+# --- One account
 def app_one_account():
     app = TestApp()
     app.add_account('foobar')
@@ -246,7 +246,7 @@ def test_export_panel(app):
     expanel.account_table[0].export = True
     expanel.view.check_gui_calls(['set_export_button_enabled'])
 
-#--- One transaction
+# --- One transaction
 def app_one_transaction():
     app = TestApp()
     app.add_txn()
@@ -265,7 +265,7 @@ def test_change_tview_filter(app):
     app.tfbar.filter_type = FilterType.Reconciled
     app.check_gui_calls_partial(app.mainwindow_gui, ['refresh_status_line'])
 
-#--- Load file with balance sheet selected
+# --- Load file with balance sheet selected
 def app_load_file_with_bsheet_selected():
     app = TestApp()
     app.show_nwview()
@@ -279,7 +279,7 @@ def test_views_are_refreshed(app):
     app.check_gui_calls_partial(app.bsheet_gui, ['refresh'])
     app.check_gui_calls_partial(app.nwgraph_gui, ['refresh'])
 
-#--- Transaction between income and expense
+# --- Transaction between income and expense
 def app_transaction_between_income_and_expense():
     app = TestApp()
     app.add_account('income', account_type=AccountType.Income)
@@ -299,7 +299,7 @@ def test_etable_show_income_account(app):
     app.etable.view.check_gui_calls(['update_selection', 'show_selected_row', 'refresh'])
     app.bargraph.view.check_gui_calls(['refresh'])
 
-#--- Transaction between asset and liability
+# --- Transaction between asset and liability
 def app_transaction_between_asset_and_liability():
     app = TestApp()
     app.add_account('asset', account_type=AccountType.Asset)
@@ -319,7 +319,7 @@ def test_etable_show_asset_account(app):
     app.etable.view.check_gui_calls(['update_selection', 'show_selected_row', 'refresh'])
     app.balgraph.view.check_gui_calls(['refresh'])
 
-#--- Transaction with panel loaded
+# --- Transaction with panel loaded
 def app_transaction_with_panel_loaded():
     app = TestApp()
     app.add_txn('20/02/2010', from_='foo', to='bar', amount='42')
@@ -335,7 +335,7 @@ def test_move_split():
     stable.move_split(0, 1)
     stable.view.check_gui_calls_partial(['refresh'])
 
-#--- Completable edit
+# --- Completable edit
 def app_completable_edit():
     app = TestApp()
     app.add_txn(description='Bazooka')

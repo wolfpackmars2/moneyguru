@@ -34,7 +34,7 @@ class DateEdit(ClearableEdit):
         selStart, selEnd = self.widget.selection
         self.setSelection(selStart, selEnd-selStart+1)
 
-    #--- Overrides
+    # --- Overrides
     def _clearSearch(self):
         self.widget.date = None
         self._refresh()
@@ -71,7 +71,7 @@ class DateEdit(ClearableEdit):
         self.widget.text = value
         super().setText(value)
 
-    #--- Public
+    # --- Public
     def prepareDataForCommit(self):
         self.widget.exit()
         self._refresh()

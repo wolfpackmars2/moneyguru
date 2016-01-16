@@ -32,7 +32,7 @@ class GeneralLedgerTable(TableWithTransactions):
         TableWithTransactions.__init__(self, model, view)
         self.view.deletePressed.connect(self.model.delete)
 
-    #--- Override
+    # --- Override
     def _getData(self, row, column, role):
         is_account_row = self.model.is_account_row(row)
         if role == EXTRA_ROLE:

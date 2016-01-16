@@ -59,7 +59,7 @@ class GUITable(GUITableBase):
         fp.seek(0)
         return fp.read()
 
-    #--- Event handlers
+    # --- Event handlers
     def edition_must_stop(self):
         self.view.stop_editing()
         self.save_edits()
@@ -142,7 +142,7 @@ class Row(RowBase):
         for row_attr, target_attr in fields:
             setattr(self, row_attr, getattr(target, target_attr))
 
-    #--- Override
+    # --- Override
     def sort_key_for_column(self, column_name):
         value = RowBase.sort_key_for_column(self, column_name)
         if isinstance(value, str):

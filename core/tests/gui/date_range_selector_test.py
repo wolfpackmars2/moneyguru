@@ -10,7 +10,7 @@ from hscommon.testutil import eq_
 
 from ..base import TestApp, with_app
 
-#--- Pristine
+# --- Pristine
 def test_can_navigate():
     # The `can_navigate` property mirrors the date range's `can_navigate`.
     app = TestApp() # year range
@@ -18,7 +18,7 @@ def test_can_navigate():
     app.drsel.select_year_to_date_range()
     assert not app.drsel.can_navigate
 
-#--- Saved custom range
+# --- Saved custom range
 def app_saved_custom_range():
     app = TestApp()
     app.drsel.select_custom_date_range()

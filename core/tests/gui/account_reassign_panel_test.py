@@ -11,7 +11,7 @@ from hscommon.testutil import eq_
 from ...model.currency import USD, EUR
 from ..base import TestApp, with_app
 
-#--- Deleting second account
+# --- Deleting second account
 def app_deleting_second_account():
     app = TestApp()
     app.add_accounts('one', 'two')
@@ -47,7 +47,7 @@ def test_reassign_to_one(app):
     eq_(app.etable[0].transfer, 'three')
     eq_(app.etable[0].increase, '42.00') # got the right side of the txn
 
-#--- Different currencies
+# --- Different currencies
 def app_different_currencies_reconciled_entries():
     app = TestApp()
     app.add_account('one', currency=USD)
@@ -77,7 +77,7 @@ def test_reassign_to_account_with_different_currency(app):
     app.show_account('one')
     eq_(app.etable_count(), 2)
 
-#---
+# ---
 def app_three_accounts_two_entries():
     app = TestApp()
     app.add_accounts('acc1', 'acc2', 'acc3')

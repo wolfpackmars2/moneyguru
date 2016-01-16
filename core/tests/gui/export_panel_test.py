@@ -14,7 +14,7 @@ from ...gui.export_panel import ExportFormat
 from ...model.account import AccountType
 from ..base import TestApp, with_app
 
-#---
+# ---
 @with_app(TestApp)
 def test_account_table_order(app):
     app.add_account('d', account_type=AccountType.Asset)

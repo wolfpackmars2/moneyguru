@@ -16,11 +16,11 @@ class FilterBar(GUIObject):
         self.mainwindow = parent_view.mainwindow
         self.document = parent_view.document
     
-    #--- Public
+    # --- Public
     def refresh(self):
         self.view.refresh()
     
-    #--- Properties
+    # --- Properties
     @property
     def filter_type(self):
         return self.document.filter_type
@@ -35,7 +35,7 @@ class EntryFilterBar(FilterBar): # disables buttons
         FilterBar.__init__(self, account_view)
         self._account = account_view.account
     
-    #--- Override
+    # --- Override
     def _view_updated(self):
         if self._account.is_income_statement_account():
             self.view.disable_transfers()

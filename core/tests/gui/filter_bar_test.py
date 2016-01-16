@@ -173,7 +173,7 @@ class TestThreeEntriesOneReconciled:
         eq_(app.ttable[0].description, 'two')
 
 
-#--- Expense split between asset and liability
+# --- Expense split between asset and liability
 # A transaction going to an expense, half coming from an asset, the other half coming from a
 # liability.
 def app_expense_split_between_asset_and_liability():

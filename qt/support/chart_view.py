@@ -18,7 +18,7 @@ def gradientFromColor(color):
     return gradient
 
 class ChartView(QWidget):
-    #--- Virtual
+    # --- Virtual
     def fontForID(self, fontId):
         # Return a QFont instance that is represented by fontId
         pass
@@ -29,7 +29,7 @@ class ChartView(QWidget):
     def brushForID(self, brushId):
         pass
 
-    #--- Override
+    # --- Override
     def resizeEvent(self, event):
         if self.dataSource is not None:
             self.dataSource.set_view_size(self.width(), self.height())
@@ -45,7 +45,7 @@ class ChartView(QWidget):
         self.dataSource.draw()
         del self.current_painter
 
-    #--- Public
+    # --- Public
     def flipRect(self, rect):
         # Coordinates from the core are based on the origin being at the *lower* left corner. In
         # Qt, it's at the upper left corner. We have to flip that.
@@ -58,7 +58,7 @@ class ChartView(QWidget):
         y = self.height() - y
         return (x, y)
 
-    #--- model --> view
+    # --- model --> view
     def draw_line(self, p1, p2, pen):
         painter = self.current_painter
         painter.setPen(pen)

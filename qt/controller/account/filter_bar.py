@@ -24,7 +24,7 @@ class EntryFilterBar(FilterBar):
         (tr("Not Reconciled"), FilterType.NotReconciled),
     ]
     
-    #--- model --> view
+    # --- model --> view
     def disable_transfers(self):
         self.view.buttons[3].setEnabled(False)
     

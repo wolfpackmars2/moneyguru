@@ -121,7 +121,7 @@ class Lookup:
         self.view.refresh()
         self.view.show()
     
-    #--- Properties
+    # --- Properties
     @property
     def names(self):
         """List of filtered/ordered names based on :attr:`search_query`."""

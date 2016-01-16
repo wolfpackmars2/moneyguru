@@ -31,11 +31,11 @@ class ScheduleView(BaseView):
     def _revalidate(self):
         self.table.refresh_and_show_selection()
 
-    #--- Override
+    # --- Override
     def save_preferences(self):
         self.table.columns.save_columns()
 
-    #--- Public
+    # --- Public
     def new_item(self):
         schedule_panel = SchedulePanel(self.mainwindow)
         schedule_panel.view = weakref.proxy(self.view.get_panel_view(schedule_panel))

@@ -54,7 +54,7 @@ class TableWithTransactions(Table):
         flags = Table._getFlags(self, row, column)
         return flags | Qt.ItemIsDragEnabled
 
-    #--- Drag & Drop
+    # --- Drag & Drop
     def dropMimeData(self, mimeData, action, row, column, parentIndex):
         if not mimeData.hasFormat(MIME_INDEXES):
             return False

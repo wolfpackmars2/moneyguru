@@ -13,7 +13,7 @@ from hscommon.testutil import eq_
 from ..base import TestApp, with_app, testdata
 from ...model.date import YearRange
 
-#---
+# ---
 def app_import_checkbook_qif():
     app = TestApp()
     app.doc.date_range = YearRange(date(2007, 1, 1))
@@ -99,7 +99,7 @@ def test_will_import_value_is_kept(app):
     app.iwin.selected_pane_index = 0
     assert not app.itable[4].will_import
 
-#---
+# ---
 def app_import_checkbook_qif_with_existing_txns():
     # The end result of this setup is that only the 2nd existing entry end up in the table
     # (the first is reconciled)
@@ -162,7 +162,7 @@ def test_rows_mixed_with_existing_rows(app):
     app.itable[2].will_import = True
     assert not app.itable[2].will_import
 
-#---
+# ---
 def app_import_with_empty_target_account():
     app = TestApp()
     app.add_account('foo')
@@ -175,7 +175,7 @@ def test_is_two_sided_with_empty_target_account(app):
     # We have a target account, but no bindable txns to show. The table is one-sided.
     assert not app.itable.is_two_sided
 
-#---
+# ---
 def app_load_then_import_with_references():
     # with_reference1 and 2 have references that overlap. This is supposed to cause matching in the
     # import dialog.
@@ -254,7 +254,7 @@ def test_unbind_unbound(app):
     app.itable.unbind(2)
     eq_(len(app.itable), 3)
 
-#---
+# ---
 def app_load_then_import_with_many_matching_and_unmatching():
     # We ended up at some point with some regressions that were caused by more than one references
     # matching, along with some references not matching. A case which wasn't covered by

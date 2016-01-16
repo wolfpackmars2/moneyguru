@@ -42,7 +42,7 @@ class AccountView(BaseView, ViewWithTransactionsMixin):
             self._shown_graph = self.bargraph
         self.set_children([self.etable, self._shown_graph])
 
-    #--- Private
+    # --- Private
     def _refresh_totals(self):
         account = self.account
         if account is None:
@@ -59,7 +59,7 @@ class AccountView(BaseView, ViewWithTransactionsMixin):
         msg = tr("{0} out of {1} selected. Increase: {2} Decrease: {3}")
         self.status_line = msg.format(selected, total, total_increase_fmt, total_decrease_fmt)
 
-    #--- Override
+    # --- Override
     def _view_updated(self):
         if self._shown_graph is self.balgraph:
             self.view.show_line_graph()
@@ -97,7 +97,7 @@ class AccountView(BaseView, ViewWithTransactionsMixin):
         if height:
             self.document.set_default('AccountView.GraphHeight', height)
 
-    #--- Public
+    # --- Public
     def delete_item(self):
         self.etable.delete()
 
@@ -131,7 +131,7 @@ class AccountView(BaseView, ViewWithTransactionsMixin):
         self.etable.reconciliation_mode = self._reconciliation_mode
         self.view.refresh_reconciliation_button()
 
-    #--- Properties
+    # --- Properties
     @property
     def can_toggle_reconciliation_mode(self):
         return self.account.is_balance_sheet_account()
@@ -140,7 +140,7 @@ class AccountView(BaseView, ViewWithTransactionsMixin):
     def reconciliation_mode(self):
         return self._reconciliation_mode
 
-    #--- Event Handlers
+    # --- Event Handlers
     def area_visibility_changed(self):
         self.view.update_visibility()
 

@@ -20,7 +20,7 @@ class EmptyView(BaseView):
         plugin_names = [p.NAME for p in self.mainwindow.app.plugins if p.IS_VIEW]
         self.plugin_list = GUISelectableList(plugin_names)
     
-    #--- Public
+    # --- Public
     def select_pane_type(self, pane_type):
         self.mainwindow.set_current_pane_type(pane_type)
     

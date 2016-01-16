@@ -98,7 +98,7 @@ class Panel(QDialog):
         self._saveGeometry()
         super().reject()
 
-    #--- Event Handlers
+    # --- Event Handlers
     def widgetChanged(self, sender):
         modelAttr = self._widget2ModelAttr[sender]
         if isinstance(sender, QComboBox):
@@ -113,7 +113,7 @@ class Panel(QDialog):
             newvalue = sender.isChecked()
         setattr(self.model, modelAttr, newvalue)
 
-    #--- model --> view
+    # --- model --> view
     def pre_load(self):
         self._loadGeometry()
 

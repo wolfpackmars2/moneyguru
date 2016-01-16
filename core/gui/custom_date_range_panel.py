@@ -17,7 +17,7 @@ class CustomDateRangePanel(GUIPanel):
         self._start_date = date.today()
         self._end_date = date.today()
 
-    #--- Override
+    # --- Override
     def _load(self):
         self._start_date = self.document.date_range.start
         self._end_date = self.document.date_range.end
@@ -31,7 +31,7 @@ class CustomDateRangePanel(GUIPanel):
             self.app.save_custom_range(self.slot_index-1, self.slot_name, start, end)
         self.document.date_range = CustomDateRange(start, end, self.app.format_date)
 
-    #--- Properties
+    # --- Properties
     @property
     def start_date(self):
         return self.app.format_date(self._start_date)

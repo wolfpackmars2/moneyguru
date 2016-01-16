@@ -39,7 +39,7 @@ def test_yearly_xtickmark_dont_start_at_zero(app):
     # also, don't make the label go left of the xmin
     assert app.nwgraph.xlabels[0]['pos'] >= app.nwgraph.xmin
 
-#--- One account
+# --- One account
 def app_one_account():
     app = TestApp()
     app.add_account()

@@ -11,7 +11,7 @@ from hscommon.testutil import eq_
 from ...model.account import AccountType
 from ..base import TestApp, with_app
 
-#---
+# ---
 def app_two_txns():
     app = TestApp()
     app.add_account('one')

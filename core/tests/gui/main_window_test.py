@@ -15,7 +15,7 @@ from ...const import PaneType, PaneArea
 from ...model.account import AccountType
 from ...model.date import YearRange
 
-#--- Pristine
+# --- Pristine
 @with_app(TestApp)
 def test_close_pane(app):
     # closing a view removes it from main window's subviews
@@ -175,7 +175,7 @@ def test_change_view_options_while_editing(app):
     app.set_column_visible('description', False)
     assert app.ttable.edited is None
 
-#--- Cleared GUI calls
+# --- Cleared GUI calls
 def app_cleared_gui_calls():
     app = TestApp()
     app.clear_gui_calls()
@@ -202,7 +202,7 @@ def test_toggle_area_visibility(app):
     app.show_pview()
     app.pview.view.check_gui_calls(['update_visibility'])
 
-#--- One account
+# --- One account
 def app_one_account():
     app = TestApp()
     app.add_account("foo")
@@ -245,7 +245,7 @@ def test_change_date_range(app):
     app.check_gui_calls_partial(app.balgraph_gui, not_expected=['refresh'])
     app.check_gui_calls_partial(app.bargraph_gui, not_expected=['refresh'])
 
-#--- Asset and Income accounts with txn
+# --- Asset and Income accounts with txn
 def app_asset_and_income_accounts_with_txn():
     app = TestApp()
     app.add_account('Checking')
@@ -338,7 +338,7 @@ def test_switch_panes_through_pane_index(app):
     # and again
     eq_(app.etable[0].transfer, "Checking")
 
-#--- One transaction
+# --- One transaction
 def app_one_transaction():
     app = TestApp()
     app.add_account('first')

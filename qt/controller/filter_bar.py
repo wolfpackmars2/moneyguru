@@ -21,12 +21,12 @@ class FilterBar(QObject):
 
         self.view.itemSelected.connect(self.itemSelected)
 
-    #--- Event Handlers
+    # --- Event Handlers
     def itemSelected(self, index):
         _, filterId = self.BUTTONS[index]
         self.model.filter_type = filterId
 
-    #--- model --> view
+    # --- model --> view
     def refresh(self):
         for index, (title, filterId) in enumerate(self.BUTTONS):
             if filterId is self.model.filter_type:

@@ -11,7 +11,7 @@ from hscommon.testutil import eq_
 from ..base import TestApp, with_app
 from ...gui.transaction_print import TransactionPrint
 
-#--- Split transaction
+# --- Split transaction
 def app_split_transaction():
     app = TestApp()
     splits = [

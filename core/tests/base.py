@@ -567,7 +567,7 @@ class TestApp(TestAppBase):
         self.app._hook_currency_plugins()
         self.iwin._receive_plugins(plugins)
 
-    #--- Shortcut for selecting a view type.
+    # --- Shortcut for selecting a view type.
     def current_view(self):
         return self.mw.pane_view(self.mw.current_pane_index)
 

@@ -106,12 +106,12 @@ class Chart(ViewChild):
         ViewChild.__init__(self, parent_view)
         self.view_size = (0, 0)
     
-    #--- Override
+    # --- Override
     def _revalidate(self):
         self.compute()
         self.view.refresh()
     
-    #--- Virtual
+    # --- Virtual
     def compute(self):
         """*Virtual.* Re-compute the charts data points to be drawn."""
         raise NotImplementedError()
@@ -121,12 +121,12 @@ class Chart(ViewChild):
         if self.has_view():
             self.draw_chart()
     
-    #--- Public
+    # --- Public
     def set_view_size(self, width, height):
         """Changes the size of the view to draw our chart into."""
         self.view_size = (width, height)
     
-    #--- Event Handlers
+    # --- Event Handlers
     def _data_changed(self):
         self._revalidate()
     
@@ -139,7 +139,7 @@ class Chart(ViewChild):
     transaction_deleted = _data_changed
     transactions_imported = _data_changed
     
-    #--- Properties
+    # --- Properties
     @property
     def data(self):
         """List of data points to be drawn.

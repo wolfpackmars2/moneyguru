@@ -72,7 +72,7 @@ class MassEditionPanel(MainWindowPanel):
         self.currency_list = LinkedSelectableList(items=currencies_display, setfunc=setfunc)
         self._init_checkboxes()
 
-    #--- Private
+    # --- Private
     def _init_checkboxes(self):
         self.date_enabled = False
         self.description_enabled = False
@@ -83,7 +83,7 @@ class MassEditionPanel(MainWindowPanel):
         self.amount_enabled = False
         self.currency_enabled = False
 
-    #--- Override
+    # --- Override
     def _load(self, transactions):
         assert len(transactions) >= 2
         self.can_change_accounts = all(len(t.splits) == 2 for t in transactions)

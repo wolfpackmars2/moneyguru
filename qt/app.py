@@ -60,7 +60,7 @@ class MoneyGuru(ApplicationBase):
         self.finishedLaunching.connect(self.applicationFinishedLaunching)
         QCoreApplication.instance().aboutToQuit.connect(self.applicationWillTerminate)
 
-    #--- Public
+    # --- Public
     def showAboutBox(self):
         self.aboutBox.show()
 
@@ -74,7 +74,7 @@ class MoneyGuru(ApplicationBase):
             self.preferencesPanel.save()
             self.prefs.prefsChanged.emit()
 
-    #--- Event Handling
+    # --- Event Handling
     def applicationFinishedLaunching(self):
         self.prefs.restoreGeometry('mainWindowGeometry', self.mainWindow)
         self.prefs.restoreGeometry('importWindowGeometry', self.mainWindow.importWindow)
@@ -88,10 +88,10 @@ class MoneyGuru(ApplicationBase):
         self.prefs.save()
         self.model.shutdown()
 
-    #--- Signals
+    # --- Signals
     willSavePrefs = pyqtSignal()
 
-    #--- model --> view
+    # --- model --> view
     def get_default(self, key):
         return self.prefs.get_value(key)
 

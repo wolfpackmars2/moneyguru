@@ -104,7 +104,7 @@ class CSVOptionsWindow(QWidget):
         self.horizontalLayout.addWidget(self.continueButton)
         self.verticalLayout.addLayout(self.horizontalLayout)
 
-    #--- Private
+    # --- Private
     def _newLayout(self):
         title = tr("New Layout")
         msg = tr("Choose a name for your new layout:")
@@ -119,7 +119,7 @@ class CSVOptionsWindow(QWidget):
         if ok and name:
             self.model.rename_selected_layout(name)
 
-    #--- Event Handling
+    # --- Event Handling
     def layoutIndexChanged(self, index):
         # This one is a little complicated. We want to only be able to select the layouts. If
         # anything else is clicked, we revert back to the old index. If the item has user data,
@@ -147,7 +147,7 @@ class CSVOptionsWindow(QWidget):
     def targetIndexChanged(self, index):
         self.model.selected_target_index = index
 
-    #--- model --> view
+    # --- model --> view
     # hide() is called from the model, but is already covered by QWidget
     def refresh_columns(self):
         self.tableModel.beginResetModel()
@@ -204,7 +204,7 @@ class CSVOptionsTableModel(QAbstractTableModel):
             action.triggered.connect(self.columnMenuItemClicked)
         self.view.horizontalHeader().sectionClicked.connect(self.tableSectionClicked)
 
-    #--- QAbstractTableModel overrides
+    # --- QAbstractTableModel overrides
     # We add an additional "Import" column to the csv columns
     def columnCount(self, index):
         return len(self.model.columns) + 1
@@ -258,11 +258,11 @@ class CSVOptionsTableModel(QAbstractTableModel):
             return True
         return False
 
-    #--- Public
+    # --- Public
     def refreshColumnsName(self):
         self.headerDataChanged.emit(Qt.Horizontal, 0, len(self.model.columns))
 
-    #--- Event Handling
+    # --- Event Handling
     def columnMenuItemClicked(self):
         action = self.sender()
         index = action.data()

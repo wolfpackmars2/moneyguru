@@ -45,7 +45,7 @@ class ExportPanel(GUIPanel):
             daterange = None
         save_func(self.export_path, accounts, daterange=daterange)
 
-    #--- Public
+    # --- Public
     def is_exported(self, name):
         return name in self.exported_names
 
@@ -56,7 +56,7 @@ class ExportPanel(GUIPanel):
             self.exported_names.discard(name)
         self.view.set_export_button_enabled(bool(self._export_all or self.exported_names))
 
-    #--- Properties
+    # --- Properties
     @property
     def export_all(self):
         return self._export_all

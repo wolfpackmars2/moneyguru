@@ -10,7 +10,7 @@ from .transaction_panel import TransactionPanel
 from .mass_edition_panel import MassEditionPanel
 
 class BaseTransactionView(BaseView):
-    #--- model --> view
+    # --- model --> view
     def get_panel_view(self, model):
         if isinstance(model, MassEditionPanelModel):
             return MassEditionPanel(model, self.mainwindow)

@@ -147,12 +147,12 @@ class PieChart(Chart):
         Chart.__init__(self, parent_view)
         self.slice_count = MIN_SLICE_COUNT
 
-    #--- Virtual
+    # --- Virtual
     def _get_data(self):
         # Returns a 2-sized tuple of list of {name: amount}
         raise NotImplementedError()
 
-    #--- Override
+    # --- Override
     def set_view_size(self, width, height):
         Chart.set_view_size(self, width, height)
         size = min(width, height)

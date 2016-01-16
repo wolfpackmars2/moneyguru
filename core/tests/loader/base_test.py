@@ -30,7 +30,7 @@ def test_default_currency():
     eq_(len(loader.account_infos), 1)
     assert loader.account_infos[0].currency is None
 
-#--- One account
+# --- One account
 def loader_one_account():
     loader = base.Loader('USD')
     loader.start_account()

@@ -55,7 +55,7 @@ class Lookup(QWidget):
     def _restoreSelection(self):
         self.namesList.setCurrentRow(self.model.selected_index)
 
-    #--- Event Handlers
+    # --- Event Handlers
     def returnPressed(self):
         self.model.go()
 
@@ -77,7 +77,7 @@ class Lookup(QWidget):
         if self.namesList.currentRow() < self.namesList.count()-1:
             self.namesList.setCurrentRow(self.namesList.currentRow()+1)
 
-    #--- model --> view
+    # --- model --> view
     def refresh(self):
         self.namesList.clear()
         self.namesList.addItems(self.model.names)

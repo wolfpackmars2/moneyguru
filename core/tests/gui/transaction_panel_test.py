@@ -13,13 +13,13 @@ from hscommon.testutil import eq_
 from ...model.currency import USD
 from ..base import TestApp, with_app
 
-#--- Pristine
+# --- Pristine
 def test_can_load():
     # When there's no selection, we don't raise a panel
     app = TestApp()
     assert app.mw.edit_item() is None # no panel returned
 
-#--- One Entry
+# --- One Entry
 def app_one_entry():
     app = TestApp()
     app.add_account()
@@ -103,7 +103,7 @@ def test_values_after_deselect():
     app.etable.select([])
     assert app.mw.edit_item() is None # no panel returned
 
-#--- Amountless Entry Panel Loaded
+# --- Amountless Entry Panel Loaded
 def app_amountless_entry_panel_loaded():
     app = TestApp()
     app.add_account()
@@ -115,7 +115,7 @@ def app_amountless_entry_panel_loaded():
     app.clear_gui_calls()
     return app
 
-#--- Entry With Amount Panel Loaded
+# --- Entry With Amount Panel Loaded
 def app_entry_with_amount_panel_loaded():
     app = TestApp()
     app.add_account()
@@ -135,7 +135,7 @@ def test_change_date():
     tpanel.date = '17/07/2008'
     tpanel.view.check_gui_calls_partial(not_expected=['refresh_repeat_options'])
 
-#--- Two Amountless Entries
+# --- Two Amountless Entries
 def app_two_amountless_entries():
     app = TestApp()
     app.add_account()
@@ -176,7 +176,7 @@ def test_set_values():
     yield set_and_test, 'checkno', '44', '42'
     yield set_and_test, 'notes', 'foo\nbar', ''
 
-#--- Multi-Currency Transaction
+# --- Multi-Currency Transaction
 def app_multi_currency_transaction():
     app = TestApp()
     USD.set_CAD_value(0.8, date(2008, 1, 1))
@@ -287,7 +287,7 @@ def test_mct_assign_imbalance_zero_amount_selected(app):
     eq_(len(stable), 4)
     eq_(stable[3].debit, 'CAD 1.00')
 
-#--- Unassigned split
+# --- Unassigned split
 def app_with_unassigned_split():
     app = TestApp()
     splits = [
@@ -336,7 +336,7 @@ def test_assign_imbalance_nothing_selected(app):
     tpanel.assign_imbalance() # no crash
     eq_(stable[3].credit, '15.00')
 
-#--- Generators (tests with more than one setup)
+# --- Generators (tests with more than one setup)
 def test_is_multi_currency():
     def check(setupfunc, expected):
         app = setupfunc()

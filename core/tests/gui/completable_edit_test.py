@@ -15,7 +15,7 @@ from ..base import TestApp, with_app
 # XXX These tests are flaky on windows because completion order is defined by mtime and all txns
 # have the same mtime. Fix this.
 
-#--- Default completable edit
+# --- Default completable edit
 def app_default():
     app = TestApp()
     app.add_txn(description='Bazooka')
@@ -82,7 +82,7 @@ def test_can_swap_views(app):
     app.ce.text = 'e'
     app.ce.view.check_gui_calls(['refresh'])
 
-#--- Edit with match
+# --- Edit with match
 def app_with_match(monkeypatch):
     # We mock time.time() because the completion order depends on it and on windows, it's possible
     # to call time.time() twice fast enough to get the same value.

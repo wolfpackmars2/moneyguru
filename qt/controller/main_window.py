@@ -397,14 +397,14 @@ class MainWindow(QMainWindow):
         self._shortcutNextTab.activated.connect(self.showNextViewTriggered)
         self._shortcutPrevTab.activated.connect(self.showPreviousViewTriggered)
 
-    #--- QWidget overrides
+    # --- QWidget overrides
     def closeEvent(self, event):
         if self.doc.confirmDestructiveAction():
             event.accept()
         else:
             event.ignore()
 
-    #--- Private
+    # --- Private
     def _print(self):
         dialog = QPrintDialog(self)
         if dialog.exec_() != QPrintDialog.Accepted:
@@ -489,7 +489,7 @@ class MainWindow(QMainWindow):
             self.actionRedo.setEnabled(False)
             self.actionRedo.setText(tr("Redo"))
 
-    #--- Actions
+    # --- Actions
     # Views
     def showNetWorthTriggered(self):
         self.model.select_pane_of_type(PaneType.NetWorth)
@@ -613,7 +613,7 @@ class MainWindow(QMainWindow):
             except FileFormatError as e:
                 QMessageBox.warning(self.app.mainWindow, tr("Cannot import file"), str(e))
 
-    #--- Other Signals
+    # --- Other Signals
     def currentTabChanged(self, index):
         self.model.current_pane_index = index
         self._setTabIndex(index)
@@ -631,7 +631,7 @@ class MainWindow(QMainWindow):
     def tabMoved(self, fromIndex, toIndex):
         self.model.move_pane(fromIndex, toIndex)
 
-    #--- model --> view
+    # --- model --> view
     def change_current_pane(self):
         self._setTabIndex(self.model.current_pane_index)
 

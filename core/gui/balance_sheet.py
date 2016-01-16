@@ -27,7 +27,7 @@ class BalanceSheet(Report):
         Column('budgeted', display=trcol("Budgeted"), optional=True),
     ]
 
-    #--- Override
+    # --- Override
     def _compute_account_node(self, node):
         account = node.account
         date_range = self.document.date_range
@@ -98,7 +98,7 @@ class BalanceSheet(Report):
         self.append(self.liabilities)
         self.append(self.net_worth)
 
-    #--- Public
+    # --- Public
     def make_total_node(self, parent, name):
         node = Report.make_total_node(self, name)
         parent.start_amount = sum(child.start_amount for child in parent)

@@ -11,7 +11,7 @@ from hscommon.testutil import eq_
 from ..base import TestApp, with_app
 from ...gui.transaction_print import EntryPrint
 
-#--- Some account
+# --- Some account
 def app_with_account():
     app = TestApp()
     app.add_account('foobar')
@@ -24,7 +24,7 @@ def test_title(app):
     # In the EntryView, the title is in two lines, the first line being the account name
     assert app.pv.title.startswith('foobar\n')
 
-#--- Split transaction
+# --- Split transaction
 def app_split_transaction():
     app = TestApp()
     splits = [
@@ -59,7 +59,7 @@ def test_main_split_always_first(app):
     pv = EntryPrint(aview)
     eq_(pv.split_values(0, 0), ('bar', '', '-100.00'))
 
-#--- Entry in previous range
+# --- Entry in previous range
 def app_entry_in_previous_range():
     app = TestApp()
     app.drsel.select_month_range()

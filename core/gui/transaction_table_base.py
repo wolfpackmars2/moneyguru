@@ -68,7 +68,7 @@ class TransactionTableBase(GUITable, ViewChild, TransactionSelectionMixin, Table
         GUITable.__init__(self, document=parent_view.document)
         self.completable_edit = CompletableEdit(parent_view.mainwindow)
 
-    #--- Override
+    # --- Override
     def _is_edited_new(self):
         return self.edited.transaction not in self.document.transactions
 
@@ -94,13 +94,13 @@ class TransactionTableBase(GUITable, ViewChild, TransactionSelectionMixin, Table
         self.mainwindow.selected_transactions = self.selected_transactions
         self.view.show_selected_row()
 
-    #--- Protected
+    # --- Protected
 
     @property
     def _explicitly_selected_transactions(self):
         return self.mainwindow.explicitly_selected_transactions
 
-    #--- Public
+    # --- Public
     def can_move(self, row_indexes, position):
         if self._sort_descriptor is not None and self._sort_descriptor != ('date', False):
             return False
@@ -145,7 +145,7 @@ class TransactionTableBase(GUITable, ViewChild, TransactionSelectionMixin, Table
         if self.can_move(self.selected_indexes, position):
             self.move(self.selected_indexes, position)
 
-    #--- Event Handlers
+    # --- Event Handlers
     filter_applied = GUITable._filter_applied
     transaction_changed = GUITable._item_changed
     transaction_deleted = GUITable._item_deleted

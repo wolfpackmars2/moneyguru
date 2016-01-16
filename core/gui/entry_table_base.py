@@ -50,7 +50,7 @@ class BaseEntryTableRow(Row, RowWithDateMixIn, RowWithDebitAndCreditMixIn):
             balance = -balance
         return balance
 
-    #--- Public
+    # --- Public
     def can_edit(self):
         return False
 
@@ -81,7 +81,7 @@ class BaseEntryTableRow(Row, RowWithDateMixIn, RowWithDebitAndCreditMixIn):
         else:
             return Row.sort_key_for_column(self, column_name)
 
-    #--- Properties
+    # --- Properties
     @property
     def description(self):
         return self._description
@@ -230,7 +230,7 @@ class EntryTableRow(BaseEntryTableRow):
         self.table._update_selection()
         self.table.toggle_reconciled()
 
-    #--- Properties
+    # --- Properties
     @BaseEntryTableRow.reconciliation_date.setter
     def reconciliation_date(self, value):
         try:
@@ -347,7 +347,7 @@ class TotalRow(BaseEntryTableRow):
 class EntryTableBase(TransactionTableBase):
     ENTRY_ROWCLASS = EntryTableRow
 
-    #--- Overrides
+    # --- Overrides
     def _do_add(self):
         entry = self._new_entry()
         account = entry.account
@@ -375,14 +375,14 @@ class EntryTableBase(TransactionTableBase):
         if self._get_current_account() is not None:
             TransactionTableBase.add(self)
 
-    #--- Virtual
+    # --- Virtual
     def _get_current_account(self):
         raise NotImplementedError()
 
     def _get_totals_currency(self):
         raise NotImplementedError()
 
-    #--- Private
+    # --- Private
     def _get_account_rows(self, account):
         result = []
         date_range = self.document.date_range
@@ -414,7 +414,7 @@ class EntryTableBase(TransactionTableBase):
         split = transaction.splits[0]
         return Entry(split, 0, 0, 0, 0)
 
-    #--- Public
+    # --- Public
     def get_totals(self):
         # returns (selected_count, total_count, total_debit, total_credit)
         entries = self.selected_entries
@@ -426,7 +426,7 @@ class EntryTableBase(TransactionTableBase):
         total_credit = abs(sum(a for a in amounts if a < 0))
         return (selected, total, total_debit, total_credit)
 
-    #--- Properties
+    # --- Properties
     @property
     def selected_entries(self):
         return [row.entry for row in self.selected_rows if hasattr(row, 'entry')]

@@ -23,14 +23,14 @@ class BrushID:
 
 class BalanceGraph(Graph):
     # BalanceGraph's data point is (float x, float y)
-    #--- Virtual
+    # --- Virtual
     def _balance_for_date(self, date):
         return 0
 
     def _budget_for_date(self, date):
         return 0
 
-    #--- Override
+    # --- Override
     # Computation Notes: When the balance in the graph changes, we have to create a flat line until
     # one day prior to the change. However, when budgets are involved, the line is *not* flattened.
     # To save some calculations (in a year range, those take a lot of time if they're made every day),

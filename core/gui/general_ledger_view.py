@@ -30,14 +30,14 @@ class GeneralLedgerView(BaseView, ViewWithTransactionsMixin):
         self.set_children([self.gltable])
         self.bind_messages(self.INVALIDATING_MESSAGES, self._refresh_totals)
 
-    #--- Overrides
+    # --- Overrides
     def _revalidate(self):
         self._refresh_totals()
 
     def save_preferences(self):
         self.gltable.columns.save_columns()
 
-    #--- Public
+    # --- Public
     def delete_item(self):
         self.gltable.delete()
 
@@ -47,7 +47,7 @@ class GeneralLedgerView(BaseView, ViewWithTransactionsMixin):
     def new_item(self):
         self.gltable.add()
 
-    #--- Private
+    # --- Private
     def _refresh_totals(self):
         selected, total, total_debit, total_credit = self.gltable.get_totals()
         total_debit_fmt = self.document.format_amount(total_debit)

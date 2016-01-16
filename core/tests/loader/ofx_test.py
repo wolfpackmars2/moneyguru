@@ -45,7 +45,7 @@ def test_blank_line_ofx_attrs():
     eq_(len(loader.accounts), 1)
     eq_(len(loader.transactions), 5)
 
-#---
+# ---
 def loader_desjardins():
     loader = ofx.Loader(USD)
     loader.parse(testdata.filepath('ofx', 'desjardins.ofx'))
@@ -85,7 +85,7 @@ def test_reference_desjardins():
     transaction = loader.transaction_infos[0]
     eq_(transaction.reference, 'Th3DJACES')
 
-#---
+# ---
 def loader_ing():
     loader = ofx.Loader(USD)
     loader.parse(testdata.filepath('ofx', 'ing.qfx'))
@@ -107,7 +107,7 @@ def test_entries_ing():
     eq_(entry.description, 'Dépôt')
     eq_(entry.amount, Amount(100, CAD))
 
-#---
+# ---
 def loader_fortis():
     loader = ofx.Loader(EUR)
     loader.parse(testdata.filepath('ofx', 'fortis.ofx'))
@@ -122,7 +122,7 @@ def test_reference_fortis():
     transaction = loader.transaction_infos[0]
     eq_(transaction.reference, '20080026')
 
-#---
+# ---
 def loader_ccstmtrs():
     loader = ofx.Loader(EUR)
     loader.parse(testdata.filepath('ofx', 'ccstmtrs.ofx'))

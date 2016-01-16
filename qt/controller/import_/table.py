@@ -34,7 +34,7 @@ class ImportTable(Table):
         self.view.clicked.connect(self.cellClicked)
         self.view.spacePressed.connect(self.spacePressed)
 
-    #--- Data methods override
+    # --- Data methods override
     def _getData(self, row, column, role):
         if column.name == 'will_import':
             if role == Qt.CheckStateRole:
@@ -69,7 +69,7 @@ class ImportTable(Table):
         else:
             return Table._setData(self, row, column, value, role)
 
-    #--- Drag & Drop
+    # --- Drag & Drop
     def dropMimeData(self, mimeData, action, row, column, parentIndex):
         if not mimeData.hasFormat(MIME_INDEXES):
             return False
@@ -102,7 +102,7 @@ class ImportTable(Table):
     def supportedDropActions(self):
         return Qt.MoveAction
 
-    #--- Private
+    # --- Private
     def _switchToOneSidedMode(self):
         h = self.view.horizontalHeader()
         if h.isSectionHidden(1):
@@ -117,14 +117,14 @@ class ImportTable(Table):
         for i in [1, 2, 3, 4]:
             h.showSection(i)
 
-    #--- Public
+    # --- Public
     def updateColumnsVisibility(self):
         if self.model.is_two_sided:
             self._switchToTwoSidedMode()
         else:
             self._switchToOneSidedMode()
 
-    #--- Event Handling
+    # --- Event Handling
     def cellClicked(self, index):
         column = self.model.columns.column_by_index(index.column())
         rowattr = column.name

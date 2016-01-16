@@ -27,7 +27,7 @@ class _AccountPieChart(PieChart, SheetViewNotificationsMixin):
         PieChart.__init__(self, parent_view)
         self._title = title
 
-    #--- Protected
+    # --- Protected
     def _get_account_data(self, accounts): # Virtual
         raise NotImplementedError()
 
@@ -46,12 +46,12 @@ class _AccountPieChart(PieChart, SheetViewNotificationsMixin):
         accounts = {a for a in self.document.accounts if a.type == account_type}
         return accounts - self.document.excluded_accounts
 
-    #--- Properties
+    # --- Properties
     @property
     def title(self):
         return self._title
 
-    #--- Event Handlers
+    # --- Event Handlers
     def accounts_excluded(self):
         self._revalidate()
 
@@ -63,7 +63,7 @@ class BalancePieChart(_AccountPieChart):
     def __init__(self, networth_view):
         _AccountPieChart.__init__(self, networth_view, tr('Assets & Liabilities'))
 
-    #--- Override
+    # --- Override
     def _get_account_data(self, accounts):
         date = self.document.date_range.end
         currency = self.document.default_currency
@@ -87,7 +87,7 @@ class CashFlowPieChart(_AccountPieChart):
     def __init__(self, profit_view):
         _AccountPieChart.__init__(self, profit_view, tr('Income & Expenses'))
 
-    #--- Override
+    # --- Override
     def _get_account_data(self, accounts):
         date_range = self.document.date_range
         currency = self.document.default_currency

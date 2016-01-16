@@ -15,7 +15,7 @@ from ..model.account import AccountType
 from ..model.date import MonthRange, QuarterRange, YearRange, YearToDateRange
 from .base import TestApp, with_app, testdata
 
-#--- Pristine
+# --- Pristine
 @with_app(TestApp)
 def test_default_date_range(app):
     # By default, the date range is a yearly range for today.
@@ -51,7 +51,7 @@ def test_year_start_month_same_as_ahead_month(app):
     dpview.year_start_month_list.select(dpview.ahead_months_list.selected_index-1)
     eq_(app.doc.year_start_month, app.doc.ahead_months)
 
-#---
+# ---
 def app_range_on_actober_2007(monkeypatch):
     monkeypatch.patch_today(2007, 10, 1)
     app = TestApp()
@@ -129,7 +129,7 @@ def test_select_year_to_date_range(app):
     eq_(app.doc.date_range.end, date.today())
     eq_(app.doc.date_range.display, 'Jan 2007 - Now')
 
-#--- Range on year 2007
+# --- Range on year 2007
 def app_range_on_year2007(monkeypatch):
     monkeypatch.patch_today(2007, 1, 1)
     app = TestApp()
@@ -141,7 +141,7 @@ def test_month_range(app):
     app.drsel.select_month_range()
     eq_(app.doc.date_range, MonthRange(date(2007, 1, 1)))
 
-#---
+# ---
 def app_range_on_year_starts_on_april(monkeypatch):
     monkeypatch.patch_today(2007, 4, 1)
     app = TestApp()
@@ -174,7 +174,7 @@ def test_select_next_then_previous(app):
     app.drsel.select_prev_date_range()
     eq_(app.doc.date_range.start, date(2007, 4, 1))
 
-#---
+# ---
 def app_range_on_year_to_date(monkeypatch):
     monkeypatch.patch_today(2008, 11, 12)
     app = TestApp()
@@ -223,7 +223,7 @@ def test_computations_for_prev_range_are_also_for_ytd(app):
     app.mw.select_pane_of_type(PaneType.Profit)
     eq_(app.istatement.expenses[0].last_cash_flow, '1.00')
 
-#---
+# ---
 def app_range_on_running_year(monkeypatch):
     app = TestApp()
     monkeypatch.patch_today(2009, 1, 25)
@@ -269,7 +269,7 @@ def test_prev_date_range(app):
     app.drsel.select_prev_date_range()
     eq_(app.doc.date_range.start, date(2008, 4, 1))
 
-#---
+# ---
 def app_running_year_range_with_ahead_months(monkeypatch):
     app = TestApp()
     monkeypatch.patch_today(2009, 1, 25)
@@ -284,7 +284,7 @@ def test_running_year_range_with_ahead_months_bounds(app):
     # select_running_year_range() uses the ahead_months preference
     eq_(app.doc.date_range.start, date(2008, 6, 1))
 
-#---
+# ---
 def app_custom_date_range():
     app = TestApp()
     app.drsel.select_custom_date_range()
@@ -300,7 +300,7 @@ def test_close_and_load_restores_custom(app):
     app = app.close_and_load()
     eq_(app.doc.date_range.display, '09/12/2008 - 18/02/2009')
 
-#---
+# ---
 def app_one_entry_year_range_2007():
     app = TestApp()
     app.add_account('Checking')
@@ -343,7 +343,7 @@ def test_set_date_out_of_range(app):
     expected = ['animate_forward', 'refresh']
     app.drsel.view.check_gui_calls(expected)
 
-#---
+# ---
 # One account, two entries, one in January 2007, one in April 2007. The latest entry is
 # selected. The range is Yearly, on 2007.
 def app_two_entries_in_different_quarters_with_year_range():
@@ -367,7 +367,7 @@ def test_select_month_range_uses_selected_txn(app):
     app.drsel.select_month_range()
     eq_(app.doc.date_range, MonthRange(date(2007, 4, 1)))
 
-#---
+# ---
 # One account, two entries in different months. The month range is on the second.
 # The selection is on the 2nd item (The first add_entry adds a Previous Balance, the second
 # add_entry adds a second item and selects it.)
@@ -397,7 +397,7 @@ def test_prev_date_range_goes_down_a_month(app):
     eq_(app.doc.date_range, MonthRange(date(2007, 9, 1)))
 
 
-#---
+# ---
 def app_all_txns_range_with_one_txn_far_in_the_past(monkeypatch):
     monkeypatch.patch_today(2010, 1, 10)
     app = TestApp()

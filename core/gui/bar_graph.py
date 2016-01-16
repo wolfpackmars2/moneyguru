@@ -23,7 +23,7 @@ class BrushID:
 
 class BarGraph(Graph):
     # BarGraph's data point is (float x1, float x2, float past_value, float future_value).
-    #--- Private
+    # --- Private
     def _bar_periods(self):
         def monthly_period(start_date):
             return MonthRange(start_date)
@@ -48,14 +48,14 @@ class BarGraph(Graph):
             yield period
             current_date = period.end + timedelta(1)
     
-    #--- Virtual
+    # --- Virtual
     def _currency(self):
         return None
     
     def _get_cash_flow(self, date_range):
         return 0
     
-    #--- Override
+    # --- Override
     def compute_data(self):
         TODAY = date.today()
         self._data = []
@@ -152,5 +152,5 @@ class BarGraph(Graph):
     def currency(self):
         return self._currency()
     
-    #--- Event Handlers
+    # --- Event Handlers
     first_weekday_changed = Graph._data_changed

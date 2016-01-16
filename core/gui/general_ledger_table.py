@@ -46,7 +46,7 @@ class GeneralLedgerTable(EntryTableBase):
     ]
     ENTRY_ROWCLASS = GeneralLedgerRow
     
-    #--- Override
+    # --- Override
     def _fill(self):
         accounts = self.document.accounts
         sort_accounts(accounts)
@@ -65,14 +65,14 @@ class GeneralLedgerTable(EntryTableBase):
     def _get_totals_currency(self):
         return self.document.default_currency
     
-    #--- Public
+    # --- Public
     def is_account_row(self, row):
         return isinstance(row, AccountRow)
     
     def is_bold_row(self, row):
         return isinstance(row, (TotalRow, PreviousBalanceRow))
     
-    #--- Event Handlers
+    # --- Event Handlers
     def date_range_changed(self):
         self.refresh(refresh_view=False)
         self._update_selection()

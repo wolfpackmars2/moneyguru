@@ -42,7 +42,7 @@ def pytest_funcarg__checkstate(request):
         compare_apps(before_undo, app.doc)
     return docheck
 
-#---
+# ---
 @with_app(TestApp)
 def test_can_redo_initially(app):
     # can_redo is initially false.
@@ -110,7 +110,7 @@ def test_undo_shown_account(app):
     app.show_account()
     app.doc.undo() # no crash
 
-#---
+# ---
 def app_one_nameless_account():
     app = TestApp()
     app.add_account()
@@ -126,7 +126,7 @@ def test_undo_apanel_attrs(app, checkstate):
     apanel.save()
     checkstate()
 
-#---
+# ---
 def app_one_named_account():
     app = TestApp()
     app.add_account('foobar')
@@ -298,7 +298,7 @@ def test_undo_twice(app):
     app.doc.undo()
     eq_(app.bsheet.assets.children_count, 2)
 
-#---
+# ---
 def app_account_group():
     app = TestApp()
     app.add_group()
@@ -333,7 +333,7 @@ def test_undo_rename_group(app, checkstate):
     app.bsheet.save_edits()
     checkstate()
 
-#---
+# ---
 def app_account_in_group():
     app = TestApp()
     app.add_group('group')
@@ -366,7 +366,7 @@ def test_undo_move_account_out_of_group(app, checkstate):
     app.bsheet.move([[0, 0, 0]], [1])
     checkstate()
 
-#---
+# ---
 def app_load_file():
     # Loads 'simple.moneyguru', a file with 2 accounts and 2 entries in each. Select the first entry.
     app = TestApp()
@@ -424,7 +424,7 @@ def test_undo_account_deletion_with_reassign(app, checkstate):
     arpanel.save() # continue deletion
     checkstate()
 
-#---
+# ---
 def app_two_txns_in_two_accounts():
     # 2 accounts, 1 transaction that is a transfer between the 2 accounts, and 1 transaction that
     # is imbalanced.
@@ -550,7 +550,7 @@ def test_undo_schedule_entry_transfer(app):
     app.doc.undo()
     eq_(app.etable[0].transfer, 'second')
 
-#---
+# ---
 def app_two_txns_same_date():
     app = TestApp()
     app.add_account()
@@ -572,7 +572,7 @@ def test_undo_reorder_entry(app, checkstate):
     app.etable.move([1], 0)
     checkstate()
 
-#---
+# ---
 def app_three_txns_reconciled():
     app = TestApp()
     app.add_account()
@@ -630,7 +630,7 @@ def test_toggle_reconciled(app, checkstate):
     app.etable[1].toggle_reconciled()
     checkstate()
 
-#---
+# ---
 def app_import_ofx():
     app = TestApp()
     app.doc.date_range = MonthRange(date(2008, 2, 1))
@@ -667,7 +667,7 @@ def test_undo_import(app, checkstate):
     app.iwin.import_selected_pane()
     checkstate()
 
-#---
+# ---
 def app_with_autocreated_transfer():
     app = TestApp()
     app.add_account()
@@ -682,7 +682,7 @@ def test_undo_delete_transaction_brings_back_auto_created_account(app, checkstat
     app.etable.delete()
     checkstate()
 
-#---
+# ---
 def app_scheduled_txn():
     app = TestApp()
     app.add_account('account')
@@ -755,7 +755,7 @@ def test_reconcile_spawn_by_toggling(app, checkstate):
     app.etable[0].toggle_reconciled()
     checkstate()
 
-#---
+# ---
 def app_with_budget(monkeypatch):
     app = TestApp()
     monkeypatch.patch_today(2008, 1, 27)

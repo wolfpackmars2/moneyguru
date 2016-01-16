@@ -34,7 +34,7 @@ class Report(ViewChild, tree.Tree, SheetViewNotificationsMixin):
         self.edited = None
         self._expanded_paths = {(0, ), (1, )}
 
-    #--- Override
+    # --- Override
     def _do_restore_view(self):
         if not self.document.can_restore_from_prefs():
             return False
@@ -52,7 +52,7 @@ class Report(ViewChild, tree.Tree, SheetViewNotificationsMixin):
         self.view.refresh()
         self.restore_view()
 
-    #--- Virtual
+    # --- Virtual
     def _compute_account_node(self, node):
         pass
 
@@ -64,7 +64,7 @@ class Report(ViewChild, tree.Tree, SheetViewNotificationsMixin):
     def _refresh(self):
         pass
 
-    #--- Protected
+    # --- Protected
     def _node_of_account(self, account):
         return self.find(lambda n: getattr(n, 'account', None) is account)
 
@@ -89,7 +89,7 @@ class Report(ViewChild, tree.Tree, SheetViewNotificationsMixin):
         if not (isinstance(self.selected, Node) and self.selected.is_account):
             self._select_first()
 
-    #--- Public
+    # --- Public
     def add_account(self):
         self.view.stop_editing()
         self.save_edits()
@@ -326,7 +326,7 @@ class Report(ViewChild, tree.Tree, SheetViewNotificationsMixin):
         if affected_accounts:
             self.document.toggle_accounts_exclusion(affected_accounts)
 
-    #--- Event handlers
+    # --- Event handlers
     def account_added(self):
         self.refresh()
 
@@ -370,7 +370,7 @@ class Report(ViewChild, tree.Tree, SheetViewNotificationsMixin):
     def performed_undo_or_redo(self):
         self.refresh()
 
-    #--- Properties
+    # --- Properties
     @property
     def can_show_selected_account(self):
         return self.selected_account is not None

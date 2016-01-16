@@ -61,7 +61,7 @@ class AccountPanel(MainWindowPanel):
                 pass
         self.currency_list = LinkedSelectableList(items=currencies_display, setfunc=setfunc)
 
-    #--- Override
+    # --- Override
     def _load(self, account):
         self.document.stop_edition()
         self._init_fields()
@@ -88,7 +88,7 @@ class AccountPanel(MainWindowPanel):
         except DuplicateAccountNameError:
             pass
 
-    #--- Private
+    # --- Private
     def _init_fields(self):
         self.type = AccountType.Asset
         self.currency = None

@@ -37,15 +37,15 @@ class ScheduleView(BaseView):
         h = self.tableView.horizontalHeader()
         h.setSectionsMovable(True) # column drag & drop reorder
 
-    #--- QWidget override
+    # --- QWidget override
     def setFocus(self):
         self.sctable.view.setFocus()
 
-    #--- Public
+    # --- Public
     def fitViewsForPrint(self, viewPrinter):
         viewPrinter.fitTable(self.sctable)
 
-    #--- model --> view
+    # --- model --> view
     def get_panel_view(self, model):
         return SchedulePanel(model, self.mainwindow)
 

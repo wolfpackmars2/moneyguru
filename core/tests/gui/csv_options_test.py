@@ -13,13 +13,13 @@ from ...app import Application
 from ...gui.csv_options import LAYOUT_PREFERENCE_NAME
 from ...loader.csv import CsvField
 
-#---
+# ---
 def test_invalid_default():
     app_gui = ApplicationGUI()
     app_gui.defaults[LAYOUT_PREFERENCE_NAME] = 'invalid'
     TestApp(app=Application(app_gui)) # no crash when CSVOptions is created
 
-#---
+# ---
 @with_app(TestApp)
 def test_dont_crash_on_invalid_utf8_characters(app):
     app.mw.parse_file_for_import(testdata.filepath('csv/invalid_utf8_char.csv'))
@@ -28,7 +28,7 @@ def test_dont_crash_on_invalid_utf8_characters(app):
     eq_(app.csvopt.lines[0][1], 'description')
     eq_(app.csvopt.lines[0][2], 'payee')
 
-#---
+# ---
 def app_import_fortis():
     app = TestApp()
     app.mw.parse_file_for_import(testdata.filepath('csv/fortis.csv'))
@@ -76,7 +76,7 @@ def test_set_column_field(app):
     eq_(app.csvopt.get_column_name(1), 'Date')
     app.csvopt.view.check_gui_calls(['refresh_columns_name'])
 
-#---
+# ---
 def app_import_fortis_with_wrong_date_col():
     app = TestApp()
     app.mw.parse_file_for_import(testdata.filepath('csv/fortis.csv'))
@@ -98,7 +98,7 @@ def test_show_error_message_on_wrong_date_col(app):
     app.csvopt.continue_import()
     app.csvopt.view.check_gui_calls(['show_message'])
 
-#---
+# ---
 def app_import_fortis_exclude_first_line_and_set_fields():
     app = TestApp()
     app.mw.parse_file_for_import(testdata.filepath('csv/fortis.csv'))
@@ -185,7 +185,7 @@ def test_set_wrong_increase_decrease_column_and_continue_import(app):
     app.csvopt.continue_import()
     app.csvopt.view.check_gui_calls(['show_message'])
 
-#---
+# ---
 def app_lots_of_noise():
     app = TestApp()
     app.mw.parse_file_for_import(testdata.filepath('csv/lots_of_noise.csv'))
@@ -198,7 +198,7 @@ def test_use_latin1_encoding_initially(app):
     assert isinstance(s, str)
     assert 'ä' in s
 
-#---
+# ---
 def app_lots_of_noise_ready_to_import():
     app = TestApp()
     app.mw.parse_file_for_import(testdata.filepath('csv/lots_of_noise.csv'))
@@ -240,7 +240,7 @@ def test_reinclude_last_line(app):
     app.csvopt.set_line_excluded(7, False)
     assert not app.csvopt.line_is_excluded(7)
 
-#---
+# ---
 def app_fortis_with_two_layouts():
     app = TestApp()
     app.add_accounts('one', 'two', 'three')
@@ -312,7 +312,7 @@ def test_select_same_layout_doesnt_refresh_gui(app):
     app.csvopt.select_layout('foobaz')
     app.csvopt.view.check_gui_calls_partial(not_expected=['refresh_layout_menu'])
 
-#---
+# ---
 def app_fortis_with_loaded_layouts():
     app_gui = ApplicationGUI()
     # None values can't be in the preferences. They have to be replaced by empty strings.
@@ -345,7 +345,7 @@ def test_layouts_correctly_load_from_prefs(app):
     eq_(app.csvopt.columns[5], CsvField.Payee)
     eq_(app.csvopt.columns[6], None) # columns for *all* layout have been adjusted
 
-#---
+# ---
 def app_date_field_with_garbage():
     # The date field in date_field_with_garbage.csv has a date value with non-date data around the date
     app = TestApp()
@@ -362,7 +362,7 @@ def test_continue_import_parses_date_with_garbage_correctly(app):
     eq_(len(app.itable), 2)
     eq_(app.itable[0].date_import, '14/01/2009')
 
-#---
+# ---
 def app_fortis_with_three_empty_accounts():
     app = TestApp()
     app.add_accounts('one', 'two', 'three')
@@ -393,7 +393,7 @@ def test_set_fields_select_target_then_continue(app):
     app.csvopt.continue_import()
     eq_(app.iwin.selected_target_account_index, 2)
 
-#---
+# ---
 class TestImportFortisThenAnotherWithLessColumns:
     def do_setup(self):
         app = TestApp()
@@ -432,7 +432,7 @@ class TestImportFortisThenAnotherWithLessColumns:
         eq_(len(app.itable), 3)
     
 
-#---
+# ---
 class TestIncreaseDecrease:
     def do_setup(self):
         # This file has two columns for amounts: increase and decrease. To make the matter worse,
@@ -454,7 +454,7 @@ class TestIncreaseDecrease:
         eq_(app.itable[2].amount_import, '-10.00')
     
 
-#---
+# ---
 class TestWeirdSep:
     def do_setup(self):
         # This file has mixed up field separators (, and ;). The sniffer will auto-detect the comma
@@ -497,7 +497,7 @@ class TestWeirdSep:
         app.csvopt.rescan() # no crash
     
 
-#---
+# ---
 class TestAmountWithDollarSign:
     def do_setup(self):
         # This file has a $ sign in its amount values.
@@ -515,7 +515,7 @@ class TestAmountWithDollarSign:
         eq_(app.itable[1].amount_import, '-42.00')
     
 
-#---
+# ---
 class TestShortDates:
     def do_setup(self):
         # This file has very short dates in m/d/y format
@@ -533,7 +533,7 @@ class TestShortDates:
         eq_(app.itable[1].date_import, '29/01/2010')
     
 
-#---
+# ---
 class TestUtf8Encoded:
     def do_setup(self):
         # This file has utf8-encoded non-ascii descriptions
@@ -552,7 +552,7 @@ class TestUtf8Encoded:
         eq_(app.csvopt.lines[1][1], 'fôø')
         eq_(app.csvopt.lines[2][1], 'bàr')
     
-#---
+# ---
 def app_simple_csv():
     app = TestApp()
     app.mw.parse_file_for_import(testdata.filepath('csv/simple.csv'))

@@ -65,7 +65,7 @@ def test_seek_rate():
     eq_(convert_amount(amount, CAD, date(2008, 5, 21)), expected)
     eq_(convert_amount(amount, CAD, date(2008, 5, 19)), expected)
 
-#---
+# ---
 def test_ask_for_rates_in_the_past():
     # If a rate is asked for a date lower than the lowest fetched date, fetch that range.
     db, log = set_ratedb_for_tests()
@@ -93,7 +93,7 @@ def test_dont_crash_on_None_rates():
     db.ensure_rates(date(2008, 5, 20), ['USD']) # no crash
     db.get_rate(date(2008, 5, 20), 'USD', 'CAD') # no crash
 
-#--- Test for the default XMLRPC provider
+# --- Test for the default XMLRPC provider
 def exception_raiser(exception):
     def f(*args, **kwargs):
         raise exception

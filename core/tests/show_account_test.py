@@ -18,7 +18,7 @@ from ..const import PaneType
 from ..model.account import AccountType
 from .base import TestApp, with_app
 
-#---
+# ---
 def test_show_transfer_account_on_empty_row_does_nothing():
     # show_transfer_account() when the table is empty doesn't do anything
     app = TestApp()
@@ -104,7 +104,7 @@ def test_show_transfer_account_duplicate_splits():
     app.mw.show_account() # doesn't get stuck on 'b'
     app.check_current_pane(PaneType.Account, account_name='c')
 
-#---
+# ---
 def app_one_entry():
     app = TestApp()
     app.drsel.select_month_range()
@@ -141,7 +141,7 @@ def test_show_transfer_account_twice(app):
     app.etable.show_transfer_account()
     app.check_current_pane(PaneType.Account, account_name='first')
 
-#---
+# ---
 def app_two_entries():
     app = TestApp()
     app.add_account()
@@ -165,7 +165,7 @@ def test_show_transfer_specify_index_nothing_selected(app):
     app.etable.show_transfer_account(row_index=0)
     app.check_current_pane(PaneType.Account, account_name='account1')
 
-#---
+# ---
 def app_split_transaction():
     app = TestApp()
     app.add_account('first')
@@ -205,7 +205,7 @@ def test_show_transfer_account_with_unassigned_split():
     app.etable.show_transfer_account() # skip unassigned, and to to third
     app.check_current_pane(PaneType.Account, account_name='third')
 
-#---
+# ---
 def app_three_transactions():
     app = TestApp()
     app.add_account()
@@ -230,7 +230,7 @@ def test_show_from_account_specify_index_nothing_selected(app):
     app.ttable.show_from_account(row_index=0)
     app.check_current_pane(PaneType.Account, account_name='first')
 
-#---
+# ---
 def app_account_hierarchy():
     app = TestApp()
     app.add_account('Asset 1', account_number='4242')

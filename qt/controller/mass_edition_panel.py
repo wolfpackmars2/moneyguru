@@ -147,7 +147,7 @@ class MassEditionPanel(Panel):
         for widget in disableableWidgets:
             self.fromCheckBox.setEnabled(self.model.can_change_amount)
 
-    #--- model --> view
+    # --- model --> view
     def refresh(self):
         # We have to refresh the checkboxes' state.
         self._loadFields()

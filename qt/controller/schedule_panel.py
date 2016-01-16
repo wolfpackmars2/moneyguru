@@ -152,7 +152,7 @@ class SchedulePanel(Panel):
         Panel._loadFields(self)
         self.tabWidget.setCurrentIndex(0)
 
-    #--- model --> view
+    # --- model --> view
     def refresh_for_multi_currency(self):
         pass
 

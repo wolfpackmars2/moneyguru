@@ -21,13 +21,13 @@ class TransactionList(list):
         self._payees = None
         self._account_names = None
 
-    #--- Overrides
+    # --- Overrides
     def remove(self, transaction):
         """Removes ``transaction`` from the list."""
         list.remove(self, transaction)
         self.clear_cache()
 
-    #--- Private
+    # --- Private
     def _compute_completion_list(self, data_and_mtime):
         """Returns a list of unique data sorted in mtime order.
 
@@ -58,7 +58,7 @@ class TransactionList(list):
         data_and_mtime = ((t.payee, t.mtime) for t in self)
         self._payees = self._compute_completion_list(data_and_mtime)
 
-    #--- Public
+    # --- Public
     def add(self, transaction, keep_position=False, position=None):
         """Adds ``transaction`` to self
 
@@ -132,7 +132,7 @@ class TransactionList(list):
         """Returns a set of all transactions occurring on ``target_date``."""
         return set(t for t in self if t.date == target_date)
 
-    #--- Properties
+    # --- Properties
     @property
     def account_names(self):
         """A list of active account names used in the transactions, in reverse mtime order."""

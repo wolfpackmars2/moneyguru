@@ -11,7 +11,7 @@ from hscommon.testutil import eq_
 from ...model.account import AccountType
 from ..base import TestApp, with_app
 
-#--- Transactions with info filled up
+# --- Transactions with info filled up
 # Transactions with all kinds of info filled up (desc, payee, checkno...)
 def app_transactions_with_info_filled_up():
     app = TestApp()
@@ -65,7 +65,7 @@ def test_sort_preserves_total_row(app):
     app.etable.sort_by('description')
     eq_(app.etable[1].description, 'TOTAL')
 
-#--- Transactions with accents
+# --- Transactions with accents
 # Transactions with accented letters in their descriptions
 def app_transactions_with_accents():
     app = TestApp()
@@ -84,7 +84,7 @@ def test_sort_by_description_considers_accents(app):
     eq_(app.ttable[2].description, 'ez')
     eq_(app.ttable[3].description, 'ZZZ')
 
-#--- Entries with reconciliation date
+# --- Entries with reconciliation date
 def app_entries_with_reconciliation_date():
     app = TestApp()
     app.add_account()
@@ -102,7 +102,7 @@ def test_sort_by_reconciliation_date(app):
     eq_(app.etable[0].reconciliation_date, '05/01/2010')
     eq_(app.etable[1].reconciliation_date, '')
 
-#--- Two budgets with one stop date
+# --- Two budgets with one stop date
 def app_two_budgets_one_stop_date():
     app = TestApp()
     app.add_account('expense', account_type=AccountType.Expense)
@@ -117,7 +117,7 @@ def test_sort_btable_by_stop_date(app):
     eq_(app.btable[0].stop_date, '')
     eq_(app.btable[1].stop_date, '21/12/2012')
 
-#--- Two schedules one stop date
+# --- Two schedules one stop date
 def app_two_schedules_one_stop_date():
     app = TestApp()
     app.add_schedule(stop_date=None)
@@ -131,7 +131,7 @@ def test_sort_sctable_by_stop_date(app):
     eq_(app.sctable[0].stop_date, '')
     eq_(app.sctable[1].stop_date, '21/12/2012')
 
-#--- Two transactions different currencies
+# --- Two transactions different currencies
 def app_two_txn_different_currencies():
     app = TestApp()
     app.add_txn(amount='42 GBP')
@@ -145,7 +145,7 @@ def test_sort_by_amount(app):
     eq_(app.ttable[0].amount, 'GBP 42.00')
     eq_(app.ttable[1].amount, 'CAD 43.00')
 
-#--- Mixed up reconciled schedule and budget
+# --- Mixed up reconciled schedule and budget
 # A mix of 4 txns. One reconciled, one normal, one schedule spawn and one budget spawn.
 def app_mixed_up_schedule_and_budget(monkeypatch):
     monkeypatch.patch_today(2010, 1, 1)
@@ -182,7 +182,7 @@ def test_sort_ttable_by_status(app):
     eq_(app.ttable[2].description, 'schedule')
     assert app.ttable[3].is_budget
 
-#--- Two transactions added when sorted by description
+# --- Two transactions added when sorted by description
 def app_two_txns_added_when_sorted_by_description():
     app = TestApp()
     app.show_tview()

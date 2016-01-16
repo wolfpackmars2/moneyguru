@@ -16,7 +16,7 @@ from ...gui.pie_chart import MIN_SLICE_COUNT, MIN_VIEW_SIZE, SIZE_COST_FOR_SLICE
 from ...model.account import AccountType
 from ...model.currency import Currency, USD, CAD
 
-#--- Slice count
+# --- Slice count
 def app_show_nwview():
     app = TestApp()
     app.show_nwview()
@@ -43,7 +43,7 @@ def test_min_between_width_and_height_used(app):
     app.nwview.pie.set_view_size(1, size)
     eq_(app.nwview.pie.slice_count, MIN_SLICE_COUNT)
 
-#---
+# ---
 def app_some_assets_and_liabilities(monkeypatch):
     monkeypatch.patch_today(2009, 1, 29) # On the last day of the month, some tests fail
     app = TestApp()
@@ -154,7 +154,7 @@ class TestSomeAssetsAndLiabilitiesWithBudget:
         ]
         eq_(app.nwview.pie.pie1, expected)
 
-#---
+# ---
 def app_more_assets_than_slice_count():
     app = TestApp()
     app.show_nwview()

@@ -201,7 +201,7 @@ class Recurrence:
     def __repr__(self):
         return '<Recurrence %s %d>' % (self.repeat_type, self.repeat_every)
 
-    #--- Private
+    # --- Private
     def _all_exceptions(self):
         exceptions = chain(self.date2exception.values(), self.date2globalchange.values())
         return (e for e in exceptions if e is not None)
@@ -239,7 +239,7 @@ class Recurrence:
         else:
             self.rtype2desc[RepeatType.WeekdayLast] = ''
 
-    #--- Public
+    # --- Public
     def affected_accounts(self):
         """Returns a set of all :class:`.Account` affected by the schedule.
 
@@ -367,7 +367,7 @@ class Recurrence:
         """Stop further spawning just before ``spawn`` (sets :attr:`stop_date`)."""
         self.stop_date = spawn.recurrence_date - ONE_DAY
 
-    #--- Properties
+    # --- Properties
     @property
     def is_alive(self):
         """Returns whether :meth:`get_spawns` can ever return anything."""

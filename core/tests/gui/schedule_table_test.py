@@ -11,7 +11,7 @@ from hscommon.testutil import eq_
 from ...model.date import MonthRange
 from ..base import TestApp
 
-#--- One schedule
+# --- One schedule
 def app_schedule():
     app = TestApp()
     app.doc.date_range = MonthRange(app.app.parse_date('13/09/2008'))

@@ -15,7 +15,7 @@ class AccountFlowGraph(BarGraph):
         BarGraph.__init__(self, account_view)
         self._account = account_view.account
     
-    #--- Override
+    # --- Override
     def _currency(self):
         return self._account.currency
     
@@ -27,7 +27,7 @@ class AccountFlowGraph(BarGraph):
         budgeted = self.document.budgets.normal_amount_for_account(account, date_range, currency=currency)
         return cash_flow + budgeted
     
-    #--- Properties
+    # --- Properties
     @property
     def title(self):
         return self._account.name

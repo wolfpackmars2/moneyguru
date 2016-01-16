@@ -11,7 +11,7 @@ from hscommon.testutil import eq_
 from ...model.account import AccountType
 from ..base import TestApp, with_app
 
-#---
+# ---
 @with_app(TestApp)
 def test_new_item_in_empty_table(app):
     # Since we have no txn, we have nothing to show in the gltable. Performing new item has no
@@ -20,7 +20,7 @@ def test_new_item_in_empty_table(app):
     app.mw.new_item() # no crash
     eq_(len(app.gltable), 0)
 
-#---
+# ---
 def app_two_sided_txn():
     app = TestApp()
     app.add_accounts('foo', 'bar')
@@ -75,7 +75,7 @@ def test_set_amount_without_shown_account(app):
     app.gltable[1].debit = '42' # no crash
     eq_(app.gltable[1].debit, '42.00')
 
-#---
+# ---
 def app_txns_in_different_date_ranges():
     app = TestApp()
     app.drsel.select_month_range()
@@ -106,7 +106,7 @@ def test_previous_balance_rows(app):
     eq_(app.gltable[1].balance, '42.00')
     assert app.gltable.is_bold_row(app.gltable[1])
 
-#---
+# ---
 def app_txn_in_income():
     app = TestApp()
     app.add_account('foo', account_type=AccountType.Income)

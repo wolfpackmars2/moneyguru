@@ -129,7 +129,7 @@ class ItemViewMixIn: # Must be mixed with a QAbstractItemView subclass
         if callsuper:
             superMethod(self, event)
 
-    #--- Public
+    # --- Public
     def editSelected(self):
         selectedRows = self.selectionModel().selectedRows()
         if not selectedRows:
@@ -145,7 +145,7 @@ class ItemViewMixIn: # Must be mixed with a QAbstractItemView subclass
 
 
 class TableView(QTableView, ItemViewMixIn):
-    #--- QTableView override
+    # --- QTableView override
     def closeEditor(self, editor, hint):
         self._handleCloseEditor(editor, hint, QTableView.closeEditor)
 
@@ -155,17 +155,17 @@ class TableView(QTableView, ItemViewMixIn):
     def mousePressEvent(self, event):
         self._handleMousePressEvent(event, QTableView.mousePressEvent)
 
-    #--- ItemViewMixIn overrides
+    # --- ItemViewMixIn overrides
     def _headerView(self):
         return self.horizontalHeader()
 
-    #--- Signals
+    # --- Signals
     keyPressed = pyqtSignal(['QEvent'])
     deletePressed = pyqtSignal()
     spacePressed = pyqtSignal()
 
 class TreeView(QTreeView, ItemViewMixIn): # Same as in TableView, see comments there
-    #--- QTreeView override
+    # --- QTreeView override
     def closeEditor(self, editor, hint):
         self._handleCloseEditor(editor, hint, QTreeView.closeEditor)
 
@@ -175,11 +175,11 @@ class TreeView(QTreeView, ItemViewMixIn): # Same as in TableView, see comments t
     def mousePressEvent(self, event):
         self._handleMousePressEvent(event, QTreeView.mousePressEvent)
 
-    #--- ItemViewMixIn overrides
+    # --- ItemViewMixIn overrides
     def _headerView(self):
         return self.header()
 
-    #--- Signals
+    # --- Signals
     keyPressed = pyqtSignal(['QEvent'])
     deletePressed = pyqtSignal()
     spacePressed = pyqtSignal()

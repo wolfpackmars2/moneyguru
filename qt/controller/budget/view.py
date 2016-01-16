@@ -37,15 +37,15 @@ class BudgetView(BaseView):
         h = self.tableView.horizontalHeader()
         h.setSectionsMovable(True) # column drag & drop reorder
 
-    #--- QWidget override
+    # --- QWidget override
     def setFocus(self):
         self.btable.view.setFocus()
 
-    #--- Public
+    # --- Public
     def fitViewsForPrint(self, viewPrinter):
         viewPrinter.fitTable(self.btable)
 
-    #--- model --> view
+    # --- model --> view
     def get_panel_view(self, model):
         return BudgetPanel(model, self.mainwindow)
 

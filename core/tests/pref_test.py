@@ -14,7 +14,7 @@ from ..const import PaneType, PaneArea
 from ..gui.main_window import Preference
 from .base import TestApp, with_app, testdata
 
-#--- Pristine
+# --- Pristine
 @with_app(TestApp)
 def test_mainwindow_panes_reopen(app):
     # Main Window panes re-open themselves upon launch, in the same order
@@ -126,7 +126,7 @@ def test_account_prefs_are_saved_if_app_is_closed_with_it_opened(app):
     aview = newapp.show_account()
     eq_(aview.etable.columns.column_width('description'), 4242)
 
-#--- Columns save/restore
+# --- Columns save/restore
 def assert_column_save_restore(app, tablename, colname, show_pane_func):
     getattr(app, show_pane_func)()
     table = getattr(app, tablename)
@@ -184,7 +184,7 @@ def test_bsheet_restores_columns(app):
 def test_istatement_restores_columns(app):
     assert_column_save_restore(app, 'istatement', 'last_cash_flow', 'show_pview')
 
-#--- Expanded group
+# --- Expanded group
 def app_expanded_group():
     app = TestApp()
     app.add_group('group')
@@ -214,7 +214,7 @@ def test_expanded_nodes_are_restored_under_cocoa(app):
     newapp.show_nwview()
     assert (0, 0) in newapp.bsheet.expanded_paths
 
-#--- Two different documents
+# --- Two different documents
 def test_expanded_node_prefs_is_at_document_level():
     # Expanded node preferences are at the document level
     app1 = TestApp()

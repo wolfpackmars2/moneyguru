@@ -14,11 +14,11 @@ from .print_view import PrintView
 SplitValues = namedtuple('SplitValues', 'account memo amount')
 
 class TransactionPrintBase(PrintView):
-    #--- Virtual
+    # --- Virtual
     def _get_splits_at_row(self, row_index):
         return []
     
-    #--- Public
+    # --- Public
     def split_count_at_row(self, row_index):
         return len(self._get_splits_at_row(row_index))
     

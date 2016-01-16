@@ -18,7 +18,7 @@ TND = Currency(code='TND')
 JPY = Currency(code='JPY')
 BHD = Currency(code='BHD')
 
-#--- Amount
+# --- Amount
 def test_auto_quantize():
     # Amounts are automatically set to 2 digits after the dot.
     eq_(Amount(1.11, CAD), Amount(1.111, CAD))
@@ -175,7 +175,7 @@ def test_hash():
     assert hash(Amount(2, CAD)) != hash(Amount(3, CAD))
     assert hash(Amount(2, CAD)) != hash(Amount(2, USD))
 
-#--- Parse amount
+# --- Parse amount
 def test_parse_comma_as_decimal_sep():
     # commas are correctly parsed when used instead of a dot for decimal separators.
     eq_(parse_amount('54,67', USD) , Amount(54.67, USD))
@@ -342,7 +342,7 @@ def test_parse_dot_ambiguity():
     # first dot should be considered a thousand sep
     eq_(parse_amount('USD 1.000*1.055'), Amount(1055, USD))
 
-#--- Format amount
+# --- Format amount
 def test_format_blank_zero():
     # When blank_zero is True, 0 is rendered as an empty string.
     eq_(format_amount(0, blank_zero=True), '')

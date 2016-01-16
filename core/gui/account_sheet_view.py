@@ -21,7 +21,7 @@ class AccountSheetView(BaseView):
         self.bind_messages(self.INVALIDATING_MESSAGES, self._revalidate)
         # Set self.sheet, self.graph and self.pie in subclasses init
 
-    #--- Overrides
+    # --- Overrides
     def _revalidate(self):
         BaseView._revalidate(self)
         self.view.update_visibility()
@@ -47,7 +47,7 @@ class AccountSheetView(BaseView):
             prefname = '{}.PieWidth'.format(self.SAVENAME)
             self.document.set_default(prefname, width)
 
-    #--- Public
+    # --- Public
     def collapse_group(self, group):
         group.expanded = False
         self.notify('group_expanded_state_changed')

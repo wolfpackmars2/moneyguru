@@ -14,7 +14,7 @@ from ..loader.csv import Loader as CSVLoader
 from ..loader.qif import Loader as QIFLoader
 from .base import TestApp, with_app
 
-#--- Utils
+# --- Utils
 def perform_export(app, options=None):
     filepath = str(app.tmppath() + 'foo.csv')
     app.mw.export()
@@ -27,7 +27,7 @@ def perform_export(app, options=None):
     expanel.save()
     return filepath
 
-#---
+# ---
 @with_app(TestApp)
 def test_export_only_current_date_range(app):
     # when the option to export only current date range is selected, well, we only export txns in
@@ -48,7 +48,7 @@ def test_export_only_current_date_range(app):
     loader.parse(expath)
     eq_(len(loader.blocks), 2) # 1 account + 1 entry
 
-#---
+# ---
 def app_transaction_with_payee_and_checkno():
     app = TestApp()
     app.add_account('Checking')
@@ -66,7 +66,7 @@ def test_export_simple_txn_to_csv(app):
     expected = ['Checking', '10/10/2007', 'Deposit', 'Payee', '42', 'Salary', '42.00', 'USD']
     eq_(lines[1], expected)
 
-#---
+# ---
 def app_transaction_with_splits():
     app = TestApp()
     app.add_account('checking')
@@ -88,7 +88,7 @@ def test_export_txn_with_splits_to_csv(app):
     expected = ['checking', '26/10/2010', '', '', '', 'split1, split2', '42.00', 'USD']
     eq_(lines[1], expected)
 
-#---
+# ---
 def app_txn_with_null_amount():
     app = TestApp()
     app.add_account('checking')

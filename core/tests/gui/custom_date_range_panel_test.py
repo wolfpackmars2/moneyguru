@@ -13,7 +13,7 @@ from hscommon.testutil import eq_
 from ..base import TestApp, with_app
 from ...model.date import MonthRange
 
-#--- Month range, panel loaded
+# --- Month range, panel loaded
 def app_monthrange_panel_loaded():
     app = TestApp()
     app.doc.date_range = MonthRange(date(2007, 10, 1))

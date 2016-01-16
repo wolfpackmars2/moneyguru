@@ -11,7 +11,7 @@ from hscommon.testutil import eq_
 from .base import TestApp, with_app, compare_apps
 from ..model.account import AccountType
 
-#--- Pristine
+# --- Pristine
 @with_app(TestApp)
 def test_reconciliation_mode(app):
     #Toggling reconciliation mode on and off
@@ -25,7 +25,7 @@ def test_reconciliation_mode(app):
     app.aview.toggle_reconciliation_mode()
     assert not app.aview.reconciliation_mode
 
-#--- One account
+# --- One account
 def app_one_account():
     app = TestApp()
     app.add_account()
@@ -50,7 +50,7 @@ def test_multiple_recdate_overlapping(app):
     app.etable[3].toggle_reconciled()
     eq_(app.etable[3].balance, '15.00')
 
-#--- One entry
+# --- One entry
 def app_one_entry():
     app = TestApp()
     app.add_account()
@@ -90,7 +90,7 @@ def test_toggle_entries_reconciled(app):
     app.etable.toggle_reconciled()
     assert not app.etable[0].reconciled
 
-#--- One entry in reconciliation mode
+# --- One entry in reconciliation mode
 def app_one_entry_reconciliation_mode():
     app = TestApp()
     app.add_account()
@@ -151,7 +151,7 @@ def test_toggle_entries_reconciled_sets_dirty_flag(app):
     app.etable.toggle_reconciled()
     assert app.doc.is_dirty()
 
-#--- Entry in future
+# --- Entry in future
 def app_entry_in_future(monkeypatch):
     monkeypatch.patch_today(2009, 12, 26)
     app = TestApp()
@@ -166,7 +166,7 @@ def test_can_reconcile_entry_in_future(app):
     # It's not possible to reconcile an entry in the future.
     assert not app.etable[0].can_reconcile()
 
-#--- Entry in liability
+# --- Entry in liability
 def app_entry_in_liability():
     app = TestApp()
     app.add_account(account_type=AccountType.Liability)
@@ -181,7 +181,7 @@ def test_entry_balance_in_liability(app):
     # Previously, it would crash because it would try to negate None
     eq_(app.etable[0].balance, '')
 
-#--- Reconciled entry
+# --- Reconciled entry
 def app_reconciled_entry():
     app = TestApp()
     app.add_account()
@@ -233,7 +233,7 @@ def test_change_ttable_asset_account_unreconciles_entry(app):
     app.ttable.save_edits()
     assert not app.ttable[0].reconciled
 
-#--- Entry different reconciliation date
+# --- Entry different reconciliation date
 def app_entry_different_reconciliation_date(monkeypatch):
     app = TestApp()
     monkeypatch.patch_today(2008, 7, 20)
@@ -253,7 +253,7 @@ def test_save_and_load_different_reconciliation_date(app):
     newapp.show_account()
     eq_(newapp.etable[0].reconciliation_date, '12/07/2008')
 
-#--- Three entries
+# --- Three entries
 def app_three_entries():
     app = TestApp()
     app.add_account()
@@ -278,7 +278,7 @@ def test_toggle_reconcile_then_save(app):
     app.save_file()
     assert app.etable[1].reconciled
 
-#--- Three entries one reconciled
+# --- Three entries one reconciled
 def app_three_entries_one_reconciled():
     app = TestApp()
     app.add_account()
@@ -350,7 +350,7 @@ def test_can_change_other_account_attributes(app):
     apanel.notes = 'foo'
     apanel.save() # no crash
 
-#--- Three entries all reconciled
+# --- Three entries all reconciled
 def app_three_entries_all_reconciled():
     app = TestApp()
     app.add_account('account')
@@ -374,7 +374,7 @@ def test_reconcile_schedule_spawn_by_setting_recdate(app):
     # There was a bug that caused the spawn to be duplicated when setting a reconciliation date for it.
     assert not app.etable[4].reconciled
 
-#--- Entries with a different order under reconciliation date sorting
+# --- Entries with a different order under reconciliation date sorting
 def app_different_reconciliation_date_order():
     app = TestApp()
     app.add_account()
@@ -417,7 +417,7 @@ def test_set_reconciliation_date_lower_than_other(app):
     app.etable.save_edits()
     eq_(app.etable[1].balance, '2.00')
 
-#---
+# ---
 def app_entries_linked_to_same_txn_and_same_account():
     app = TestApp()
     app.add_account('foo')

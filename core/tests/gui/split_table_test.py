@@ -11,7 +11,7 @@ from hscommon.testutil import eq_
 from ...model.currency import CAD, EUR
 from ..base import TestApp, with_app
 
-#--- One entry
+# --- One entry
 def app_one_entry():
     app = TestApp()
     app.add_account('first', currency=CAD)
@@ -116,7 +116,7 @@ def test_set_wrong_values_for_attributes():
     row.credit = 'invalid'
     # no crash occured
 
-#--- Transaction being added
+# --- Transaction being added
 def app_transaction_being_added():
     app = TestApp()
     app.show_tview()
@@ -154,7 +154,7 @@ def test_delete_split_with_none_selected(app):
     except AttributeError:
         raise AssertionError("When the table is empty, don't try to delete")
 
-#--- Transaction with splits
+# --- Transaction with splits
 def app_transaction_with_splits():
     app = TestApp()
     app.add_txn(from_='foo', to='bar', amount='42')
@@ -190,7 +190,7 @@ def test_move_split():
     eq_(stable[2].account, first_account)
     eq_(stable.selected_indexes, [2])
 
-#--- EUR account and EUR transfer
+# --- EUR account and EUR transfer
 def app_eur_account_and_eur_transfer():
     app = TestApp()
     app.add_account('first', EUR)

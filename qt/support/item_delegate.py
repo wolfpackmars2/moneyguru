@@ -21,7 +21,7 @@ class ItemDelegate(QStyledItemDelegate):
         QStyledItemDelegate.__init__(self, *args, **kwargs)
         self._display_text = True
 
-    #--- Virtual
+    # --- Virtual
     def _get_decorations(self, index, isSelected):
         """Returns a list of ItemDecorations which are drawn during the paint event.
 
@@ -58,7 +58,7 @@ class ItemDelegate(QStyledItemDelegate):
         """
         return None
 
-    #--- Overrides
+    # --- Overrides
 
     def displayText(self, p_object, locale):
         if self._display_text:

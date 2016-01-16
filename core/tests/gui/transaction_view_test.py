@@ -13,7 +13,7 @@ from hscommon.testutil import eq_
 from ...model.currency import USD
 from ..base import TestApp, with_app
 
-#--- three transactions
+# --- three transactions
 def app_three_transactions():
     app = TestApp()
     app.add_txn(amount='1')
@@ -34,7 +34,7 @@ def test_totals_select_two(app):
     expected = "2 out of 3 selected. Amount: 5.00"
     eq_(app.mw.status_line, expected)
 
-#--- Multiple currencies
+# --- Multiple currencies
 def app_multiple_currencies():
     app = TestApp()
     USD.set_CAD_value(2, date(2010, 3, 9))

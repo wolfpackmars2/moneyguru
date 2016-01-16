@@ -85,7 +85,7 @@ class ExportPanel(Panel):
         self.exportButton = self.buttonBox.addButton(tr("Export"), QDialogButtonBox.ActionRole)
         self.mainLayout.addWidget(self.buttonBox)
 
-    #--- Overrides
+    # --- Overrides
     def _loadFields(self):
         self.exportAllButton.setChecked(self.model.export_all)
         self.exportAsQIFButton.setChecked(self.model.export_format == ExportFormat.QIF)
@@ -94,7 +94,7 @@ class ExportPanel(Panel):
     def _saveFields(self):
         self.model.current_daterange_only = self.dateRangeOnlyCheckbox.isChecked()
 
-    #--- Event Handlers
+    # --- Event Handlers
     def exportButtonClicked(self):
         title = tr("Export")
         fileext = 'qif' if self.model.export_format == ExportFormat.QIF else 'csv'
@@ -111,7 +111,7 @@ class ExportPanel(Panel):
     def exportFormatSelected(self, typeId):
         self.model.export_format = typeId
 
-    #--- model --> view
+    # --- model --> view
     def set_table_enabled(self, enabled):
         self.tableView.setEnabled(enabled)
 

@@ -23,7 +23,7 @@ from ..model.account import AccountType
 from ..model.currency import EUR
 from ..model.date import MonthRange, QuarterRange, YearRange
 
-#--- No Setup
+# --- No Setup
 def test_can_use_another_amount_format():
     app = TestApp(app=Application(ApplicationGUI(), decimal_sep=',', grouping_sep=' '))
     app.add_account()
@@ -112,7 +112,7 @@ def test_modified_flag():
     app = TestApp()
     assert not app.doc.is_dirty()
 
-#--- Range on October 2007
+# --- Range on October 2007
 def app_range_on_october2007(monkeypatch):
     monkeypatch.patch_today(2007, 10, 1)
     app = TestApp()
@@ -163,7 +163,7 @@ class TestRangeOnYearToDate:
         eq_([d['text'] for d in app.nwgraph.xlabels], expected)
 
 
-#---
+# ---
 def app_one_empty_account_range_on_october_2007(monkeypatch):
     # One empty account, range on October 2007
     app = TestApp()
@@ -221,7 +221,7 @@ def test_save_dest_folder_doesnt_exist(app, tmpdir):
     app.doc.save_to_xml(str(dest))
     assert dest.exists()
 
-#---
+# ---
 class TestThreeAccountsAndOneEntry:
     def do_setup(self):
         app = TestApp()

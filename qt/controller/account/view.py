@@ -94,11 +94,11 @@ class EntryView(BaseTransactionView):
         h = self.tableView.horizontalHeader()
         h.setSectionsMovable(True) # column drag & drop reorder
 
-    #--- QWidget override
+    # --- QWidget override
     def setFocus(self):
         self.etable.view.setFocus()
 
-    #--- Public
+    # --- Public
     def fitViewsForPrint(self, viewPrinter):
         hidden = self.model.mainwindow.hidden_areas
         viewPrinter.fitTable(self.etable)
@@ -112,7 +112,7 @@ class EntryView(BaseTransactionView):
             sizes = [splitterHeight-graphHeight, graphHeight]
             self.splitterView.setSizes(sizes)
 
-    #--- model --> view
+    # --- model --> view
     def refresh_reconciliation_button(self):
         if self.model.can_toggle_reconciliation_mode:
             self.reconciliationButton.setEnabled(True)

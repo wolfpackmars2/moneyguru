@@ -75,7 +75,7 @@ def test_corrupt_db(tmpdir):
     db = RatesDB(dbpath)
     eq_(db.get_rate(date(2008, 4, 20), 'USD', 'CAD'), 42)
 
-#--- Daily rate
+# --- Daily rate
 def setup_daily_rate():
     USD.set_CAD_value(1/0.996115, date(2008, 4, 20))
 
@@ -116,7 +116,7 @@ def test_set_rate_after_get_the_day_after():
     USD.set_CAD_value(1/42, date(2008, 4, 20))
     assert_almost_equal(CAD.value_in(USD, date(2008, 4, 21)), 42)
 
-#--- Two daily rates
+# --- Two daily rates
 def setup_two_daily_rate():
     # Don't change the set order, it's important for the tests
     USD.set_CAD_value(1/0.997115, date(2008, 4, 25))
@@ -148,7 +148,7 @@ def test_seek_rate_before():
     setup_two_daily_rate()
     eq_(USD.value_in(CAD, date(2008, 4, 19)), 1/0.996115)
 
-#--- Rates of multiple currencies
+# --- Rates of multiple currencies
 def setup_rates_of_multiple_currencies():
     USD.set_CAD_value(1/0.996115, date(2008, 4, 20))
     EUR.set_CAD_value(1/0.633141, date(2008, 4, 20))
@@ -170,7 +170,7 @@ def test_get_rate_doesnt_exist():
     setup_rates_of_multiple_currencies()
     eq_(USD.value_in(PLN, date(2008, 4, 20)), 1 / 0.996115 / PLN.latest_rate)
 
-#--- Problems after connection
+# --- Problems after connection
 def get_problematic_db():
     class MockConnection(sqlite.Connection): # can't mock sqlite3.Connection's attribute, so we subclass it
         mocking = False
@@ -197,7 +197,7 @@ def test_set_rate_with_problematic_db():
     db = get_problematic_db()
     db.set_CAD_value(date(2008, 4, 20), 'USD', 42) # no crash
 
-#--- DB that doesn't allow get_rate calls
+# --- DB that doesn't allow get_rate calls
 def setup_db_raising_error_on_getrate():
     db = RatesDB()
     def mock_get_rate(*args, **kwargs):

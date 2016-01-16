@@ -10,7 +10,7 @@ from ..base import TestApp, with_app
 from ...model.account import AccountType
 from ...model.currency import CAD
 
-#--- Pristine
+# --- Pristine
 @with_app(TestApp)
 def test_balgraph_yaxis_scaling_works_if_negative(app):
     # The y axis scaling (ymin being "higher" than 0) works when the balance is negative.
@@ -91,7 +91,7 @@ class TestForeignAccount:
         eq_(app.balgraph.currency, CAD)
 
 
-#---
+# ---
 def app_budget_and_no_txn(monkeypatch):
     monkeypatch.patch_today(2008, 1, 1)
     app = TestApp()
@@ -121,7 +121,7 @@ def test_show_budget_data_even_when_account_is_excluded(app):
     expected = [('02/01/2008', '0.00'), ('01/02/2008', '100.00')]
     eq_(app.graph_data(), expected)
 
-#---
+# ---
 class TestTwoAccountsOneTransaction:
     def do_setup(self):
         app = TestApp()

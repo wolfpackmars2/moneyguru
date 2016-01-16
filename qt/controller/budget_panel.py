@@ -102,7 +102,7 @@ class BudgetPanel(Panel):
         self.label_4.setBuddy(self.targetComboBoxView)
         self.label_5.setBuddy(self.amountEdit)
 
-    #--- model --> view
+    # --- model --> view
     def refresh_repeat_every(self):
         self.repeatEveryDescLabel.setText(self.model.repeat_every_desc)
 

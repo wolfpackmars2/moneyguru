@@ -28,7 +28,7 @@ class Document(QObject):
         self.model = DocumentModel(app=app.model)
         self.model.view = self
 
-    #--- Public
+    # --- Public
     def close(self):
         if self.documentPath:
             self.model.close()
@@ -120,7 +120,7 @@ class Document(QObject):
         dialog = ScheduleScopeDialog(self.app.mainWindow)
         return dialog.queryForScope()
 
-    #--- Signals
+    # --- Signals
     documentOpened = pyqtSignal(str)
     documentSavedAs = pyqtSignal(str)
     documentPathChanged = pyqtSignal()

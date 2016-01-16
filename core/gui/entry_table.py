@@ -70,7 +70,7 @@ class EntryTable(EntryTableBase):
         self.completable_edit.account = self.account
         self._reconciliation_mode = False
 
-    #--- Override
+    # --- Override
     def _fill(self):
         account = self.account
         if account is None:
@@ -99,7 +99,7 @@ class EntryTable(EntryTableBase):
     def _get_totals_currency(self):
         return self._get_current_account().currency
 
-    #--- Public
+    # --- Public
     def show_transfer_account(self, row_index=None):
         if row_index is None:
             if not self.selected_entries:
@@ -122,7 +122,7 @@ class EntryTable(EntryTableBase):
         entries = [row.entry for row in self.selected_rows if row.can_reconcile()]
         self.document.toggle_entries_reconciled(entries)
 
-    #--- Properties
+    # --- Properties
     @property
     def reconciliation_mode(self):
         return self._reconciliation_mode
@@ -134,7 +134,7 @@ class EntryTable(EntryTableBase):
         self._reconciliation_mode = value
         self.refresh()
 
-    #--- Event Handlers
+    # --- Event Handlers
     def date_range_changed(self):
         date_range = self.document.date_range
         self.refresh(refresh_view=False)

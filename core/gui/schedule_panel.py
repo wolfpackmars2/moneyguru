@@ -119,7 +119,7 @@ class SchedulePanel(PanelWithTransaction, PanelWithScheduleMixIn):
         PanelWithTransaction.__init__(self, mainwindow)
         self.create_repeat_type_list()
 
-    #--- Override
+    # --- Override
     def _load(self):
         schedule = first(self.mainwindow.selected_schedules)
         self._load_schedule(schedule)
@@ -136,7 +136,7 @@ class SchedulePanel(PanelWithTransaction, PanelWithScheduleMixIn):
             stop_date=stop_date
         )
 
-    #--- Private
+    # --- Private
     def _load_schedule(self, schedule):
         if schedule is None:
             raise OperationAborted()

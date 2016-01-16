@@ -57,7 +57,7 @@ class Chart:
             self.index2brush[brushID] = result
         return result
 
-    #--- model --> view
+    # --- model --> view
     def refresh(self):
         self.view.update()
 

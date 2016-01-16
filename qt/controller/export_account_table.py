@@ -23,7 +23,7 @@ class ExportAccountTable(Table):
         view.horizontalHeader().setSectionResizeMode(0, QHeaderView.Stretch)
         view.horizontalHeader().setSectionResizeMode(1, QHeaderView.Fixed)
 
-    #--- Data methods override
+    # --- Data methods override
     def _getData(self, row, column, role):
         if column.name == 'export':
             if role == Qt.CheckStateRole:

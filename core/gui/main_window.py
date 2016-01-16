@@ -73,7 +73,7 @@ class ViewPane:
 
 
 class MainWindow(Repeater, GUIObject):
-    #--- model -> view calls:
+    # --- model -> view calls:
     # change_current_pane()
     # get_panel_view(model)
     # refresh_panes()
@@ -110,7 +110,7 @@ class MainWindow(Repeater, GUIObject):
         msgs = MESSAGES_DOCUMENT_CHANGED | {'filter_applied', 'date_range_changed'}
         self.bind_messages(msgs, self._invalidate_visible_entries)
 
-    #--- Private
+    # --- Private
     def _add_pane(self, pane):
         self.panes.append(pane)
         self.view.refresh_panes()
@@ -298,7 +298,7 @@ class MainWindow(Repeater, GUIObject):
             entries = [e for e in entries if not e.reconciled]
         return entries
 
-    #--- Override
+    # --- Override
     def _view_updated(self):
         self.daterange_selector.refresh()
         self.daterange_selector.refresh_custom_ranges()
@@ -311,7 +311,7 @@ class MainWindow(Repeater, GUIObject):
         if not self.panes:
             self._restore_default_panes()
 
-    #--- Public
+    # --- Public
     def close_pane(self, index):
         if self.pane_count == 1: # don't close the last pane
             return
@@ -518,7 +518,7 @@ class MainWindow(Repeater, GUIObject):
             self._account2visibleentries[account] = self._visible_entries_for_account(account)
         return self._account2visibleentries[account]
 
-    #Column menu
+    # Column menu
     def column_menu_items(self):
         # Returns a list of (display_name, marked) items for each optional column in the current
         # view (marked means that it's visible).
@@ -531,7 +531,7 @@ class MainWindow(Repeater, GUIObject):
             return None
         self._current_pane.view.columns.toggle_menu_item(index)
 
-    #--- Properties
+    # --- Properties
     @property
     def current_pane_index(self):
         return self._current_pane_index
@@ -588,7 +588,7 @@ class MainWindow(Repeater, GUIObject):
     def status_line(self):
         return self._current_pane.view.status_line
 
-    #--- Event callbacks
+    # --- Event callbacks
     def _undo_stack_changed(self):
         self.view.refresh_undo_actions()
 

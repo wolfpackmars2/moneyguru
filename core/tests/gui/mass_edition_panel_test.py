@@ -11,7 +11,7 @@ from hscommon.testutil import eq_
 from ...gui.mass_edition_panel import MassEditionPanel
 from ..base import TestApp, with_app
 
-#--- Two Transactions
+# --- Two Transactions
 def app_two_transactions():
     app = TestApp()
     app.show_tview()
@@ -46,7 +46,7 @@ def test_saving_nothing_does_nothing(app):
     mepanel.save()
     assert not app.doc.is_dirty()
 
-#--- Two transactions different values
+# --- Two transactions different values
 def app_two_transactions_different_value():
     app = TestApp()
     app.add_account('from1')
@@ -196,7 +196,7 @@ def test_change_description_only():
     eq_(row.date, '06/07/2008')
     eq_(row.description, 'description3')
 
-#--- Two transactions same values
+# --- Two transactions same values
 def app_two_transactions_same_values():
     app = TestApp()
     app.add_account('account1')
@@ -271,7 +271,7 @@ def test_load_again(app, monkeypatch):
     eq_(mepanel.payee_field.text, '')
     eq_(mepanel.checkno_field.text, '')
 
-#--- Two transactions one split
+# --- Two transactions one split
 def app_two_transactions_one_split():
     app = TestApp()
     app.add_account('account1')
@@ -295,7 +295,7 @@ def test_cant_change_accounts():
     assert not mepanel.can_change_accounts
 
 
-#--- Two foreign transactions
+# --- Two foreign transactions
 def app_two_foreign_transactions():
     app = TestApp()
     app.add_account('account1')
@@ -328,7 +328,7 @@ def test_change_currency():
     eq_(app.ttable[0].amount, 'CAD 42.00')
     eq_(app.ttable[1].amount, 'CAD 42.00')
 
-#--- Two transactions with a multi-currency one
+# --- Two transactions with a multi-currency one
 def app_two_transactions_with_a_multi_currency_one():
     app = TestApp()
     app.add_txn('20/02/2010')
@@ -345,7 +345,7 @@ def app_two_transactions_with_a_multi_currency_one():
     app.mw.edit_item()
     return app
 
-#--- Transactions with splits
+# --- Transactions with splits
 def app_transactions_with_splits():
     app = TestApp()
     app.add_txn()
@@ -367,7 +367,7 @@ def test_currency_change_on_splits(app):
     mepanel.save() # no crash
     eq_(app.ttable[1].amount, 'GBP 20.00')
 
-#---
+# ---
 def app_transactions_with_different_currencies():
     app = TestApp()
     app.add_txn(amount='42 eur')
@@ -382,7 +382,7 @@ def test_set_currency_to_native_one_when_we_cant_choose_one_from_selection(app):
     mepanel = app.mw.edit_item()
     eq_(mepanel.currency_list.selected_index, 0) # USD
 
-#--- Generators
+# --- Generators
 def test_can_change_amount():
     def check(app, expected):
         mepanel = app.get_current_panel()

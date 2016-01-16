@@ -28,7 +28,7 @@ class AccountBalanceGraph(BalanceGraph):
             self._account, date_range, filter_excluded=False
         )
 
-    #--- Properties
+    # --- Properties
     @property
     def title(self):
         return self._account.name

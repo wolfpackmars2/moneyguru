@@ -10,7 +10,7 @@ from ..base import TestApp, with_app
 from ...model.account import AccountType
 from ...model.currency import Currency, CAD
 
-#--- Some account
+# --- Some account
 def app_some_account():
     app = TestApp()
     app.add_account('foobar', CAD, account_type=AccountType.Expense, account_number='4242')
@@ -60,7 +60,7 @@ def test_load_stops_edition(app):
     app.mw.edit_item()
     app.check_gui_calls(app.istatement_gui, ['stop_editing'])
 
-#--- Two accounts
+# --- Two accounts
 def app_two_accounts():
     app = TestApp()
     app.add_account('foobar')

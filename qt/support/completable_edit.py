@@ -31,7 +31,7 @@ class CompletableEdit(QLineEdit):
         else:
             return str(self.text())[:self.selectionStart()]
 
-    #--- QLineEdit overrides
+    # --- QLineEdit overrides
     def focusInEvent(self, event):
         QLineEdit.focusInEvent(self, event)
         self.model.view = self
@@ -55,14 +55,14 @@ class CompletableEdit(QLineEdit):
             if len(oldPrefix) < len(prefix):
                 self.model.text = prefix
 
-    #--- Public
+    # --- Public
     def prepareDataForCommit(self):
         # On focus out, we want to see if the text we have is exactly the same as the completion,
         # case-insensitive-wise. If yes, we use the case of the completion rather than our own.
         if self.selectedText() and self.selectedText() == self.model.completion:
             self.model.commit()
 
-    #--- model --> view
+    # --- model --> view
     def refresh(self):
         self.setText(self.model.text + self.model.completion)
         self.setSelection(len(self.model.text), len(self.model.completion))

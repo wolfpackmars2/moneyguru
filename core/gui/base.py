@@ -130,7 +130,7 @@ class HideableObject:
         self._hidden = True
         self._invalidated = True
 
-    #--- Protected
+    # --- Protected
     def _process_message(self, msg):
         """*Protected*. Process notification ``msg``.
 
@@ -151,7 +151,7 @@ class HideableObject:
         our content.
         """
 
-    #--- Public
+    # --- Public
     def show(self):
         """Show the object and revalidate if necessary.
 
@@ -268,7 +268,7 @@ class GUIPanel(GUIObject):
         #: Parent :class:`app <.Application>`.
         self.app = document.app
 
-    #--- Virtual
+    # --- Virtual
     def _load(self):
         """*Virtual*. Load the panel's content.
 
@@ -292,7 +292,7 @@ class GUIPanel(GUIObject):
         """
         raise NotImplementedError()
 
-    #--- Overrides
+    # --- Overrides
     def load(self, *args, **kwargs):
         """Load the panel's content.
 
@@ -355,7 +355,7 @@ class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, 
     ways. There's many buttons and menu items (new, edit, delete, etc.) that have a name that is
     generic enough to be applied to multiple situations depending on the active tab.
     """
-    #--- model -> view calls:
+    # --- model -> view calls:
     # restore_subviews_size()
     #
 
@@ -377,7 +377,7 @@ class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, 
         self.app = mainwindow.document.app
         self._status_line = ""
 
-    #--- Virtual
+    # --- Virtual
     def new_item(self):
         """*Virtual*. Create a new item."""
         raise NotImplementedError()
@@ -414,7 +414,7 @@ class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, 
         raise NotImplementedError()
 
 
-    #--- Overrides
+    # --- Overrides
     def dispatch(self, msg):
         if self._process_message(msg):
             Repeater.dispatch(self, msg)
@@ -439,7 +439,7 @@ class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, 
         for child in self._children:
             child.hide()
 
-    #--- Public
+    # --- Public
     @classmethod
     def can_perform(cls, action_name):
         """Returns whether our view subclass can perform ``action_name``.
@@ -461,7 +461,7 @@ class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, 
     def save_preferences(self):
         """*Virtual*. Save subviews size to preferences."""
 
-    #--- Properties
+    # --- Properties
     @property
     def status_line(self):
         """*get/set*. A short textual description of the global status of the tab.
@@ -476,7 +476,7 @@ class BaseView(Repeater, GUIObject, HideableObject, DocumentNotificationsMixin, 
         if not self._hidden:
             self.mainwindow.update_status_line()
 
-    #--- Notifications
+    # --- Notifications
     def document_restoring_preferences(self):
         self.restore_subviews_size()
         if self.view: # Some BaseView don't have a view

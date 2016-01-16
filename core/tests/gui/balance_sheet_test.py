@@ -20,7 +20,7 @@ from ...model.currency import Currency, USD, CAD
 # IMPORTANT NOTE: Keep in mind that every node count check in these tests take the total node and the
 # blank node into account. For example, the node count of an empty ASSETS node is 2.
 
-#--- Pristine app
+# --- Pristine app
 @with_app(TestApp)
 def test_add_account(app):
     # The default name for an account is 'New Account', and the selection goes from None to 0.
@@ -160,7 +160,7 @@ def test_delta_perc_with_negative_start(app):
     app.show_nwview()
     eq_(app.bsheet.net_worth.delta_perc, '+150.0%')
 
-#--- Account hierarchy
+# --- Account hierarchy
 def app_account_hierarchy():
     app = TestApp()
     app.add_account('Asset 1', account_number='4242')
@@ -234,7 +234,7 @@ def test_save_edits(app):
     app.bsheet.save_edits()
     app.check_gui_calls(app.bsheet_gui, ['refresh'])
 
-#--- One account
+# --- One account
 def app_one_account():
     app = TestApp()
     app.add_account('Checking')
@@ -273,7 +273,7 @@ def test_selection_follows_account_after_editing(app):
     app.mw.edit_item()
     eq_(app.bsheet.selected.name, 'aaa')
 
-#--- Account in editing mode
+# --- Account in editing mode
 def app_account_in_editing_mode():
     app = TestApp()
     app.show_nwview()
@@ -295,7 +295,7 @@ def test_add_group_while_editing(app):
     app.bsheet.add_account_group()
     eq_(app.bsheet.assets[1].name, 'foo')
 
-#---
+# ---
 def app_two_accounts_selected():
     # Two accounts being selected
     app = TestApp()
@@ -325,7 +325,7 @@ def test_toggle_exclusion_with_multiple_selection_doesnt_change_selection(app):
     app.bsheet.toggle_excluded()
     eq_(len(app.bsheet.selected_nodes), 2)
 
-#--- With group
+# --- With group
 def app_with_group():
     app = TestApp()
     app.show_nwview()
@@ -354,7 +354,7 @@ def test_save_edits_on_group(app):
     app.bsheet.save_edits()
     app.check_gui_calls(app.bsheet_gui, ['refresh'])
 
-#--- Group in editing mode
+# --- Group in editing mode
 def app_group_in_editing_mode():
     app = TestApp()
     app.show_nwview()
@@ -368,7 +368,7 @@ def test_add_account_while_editing_group(app):
     app.bsheet.add_account()
     eq_(app.bsheet.assets[0].name, 'foo')
 
-#---
+# ---
 def app_with_two_groups_selected():
     app = TestApp()
     app.show_nwview()
@@ -383,7 +383,7 @@ def test_delete_two_groups_at_once(app):
     app.mw.delete_item()
     eq_(app.account_node_subaccount_count(app.bsheet.assets), 0)
 
-#--- Account beside group
+# --- Account beside group
 def app_account_beside_group():
     app = TestApp()
     app.add_account()
@@ -399,7 +399,7 @@ def test_add_account_when_a_group_is_selected(app):
     eq_(app.account_node_subaccount_count(app.bsheet.assets), 2)
     eq_(app.account_node_subaccount_count(app.bsheet.assets[0]), 1)
 
-#--- Account in group
+# --- Account in group
 def app_account_in_group():
     app = TestApp()
     app.add_group('group')
@@ -446,7 +446,7 @@ def test_invalid_expanded_paths_are_removed_on_refreshes(app):
     app.doc.clear()
     eq_(app.bsheet.expanded_paths, [(0, ), (1, )])
 
-#--- Accounts and entries (Re-used in sub-app funcs below)
+# --- Accounts and entries (Re-used in sub-app funcs below)
 def app_accounts_and_entries():
     app = TestApp()
     app.drsel.select_month_range()
@@ -604,7 +604,7 @@ def test_selection_as_csv(app):
     expected = [['Account 1', '250.00', '0.00', '0.00']]
     eq_(rows, expected)
 
-#--- Multiple currencies
+# --- Multiple currencies
 def app_multiple_currencies():
     app = TestApp(app=Application(ApplicationGUI(), default_currency=CAD))
     app.drsel.select_month_range()
@@ -684,7 +684,7 @@ def test_exclude_group_with_one_child_excluded(app):
     assert not app.bsheet.assets[0][0].is_excluded
     assert not app.bsheet.assets[0][1].is_excluded
 
-#--- With liabilities
+# --- With liabilities
 def app_with_liabilities():
     app = TestApp()
     app.add_group('foo', account_type=AccountType.Liability)
@@ -709,7 +709,7 @@ def test_balance_sheet_with_liabilies(app):
     eq_(app.bsheet.net_worth.end, '-1100.00')
     eq_(app.bsheet.net_worth.delta, '-1200.00')
 
-#--- Excluded account
+# --- Excluded account
 def app_excluded_account():
     app = app_accounts_and_entries()
     app.bsheet.selected = app.bsheet.assets[1]

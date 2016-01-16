@@ -24,7 +24,7 @@ from .model.currency_test import set_ratedb_for_tests
 def pytest_funcarg__fake_server(request):
     set_ratedb_for_tests()
 
-#--- Pristine
+# --- Pristine
 def test_cache_path_is_auto_created(fake_server, tmpdir):
     # the cache_path directory is automatically created.
     cache_path = str(tmpdir.join('foo/bar'))
@@ -71,7 +71,7 @@ def test_set_account_list_currency_on_load(app, fake_server):
     # Because our amount entered earlier is native, we shouldn't get stuff like "USD 15.76"
     eq_(pview.istatement.income[0].cash_flow, '12.00')
 
-#--- One empty account EUR
+# --- One empty account EUR
 def app_one_empty_account_eur(monkeypatch):
     monkeypatch.patch_today(2008, 5, 25)
     app = TestApp()
@@ -162,7 +162,7 @@ class TestCaseCADLiabilityAndUSDLiability:
         eq_(app.etable[0].increase, '42.00')
 
 
-#--- Entry with foreign currency
+# --- Entry with foreign currency
 # 2 accounts (including one income), one entry. The entry has an amount that differs from the
 # account's currency.
 def app_entry_with_foreign_currency():
@@ -285,7 +285,7 @@ class TestCaseDifferentCurrencies:
         eq_(app.etable[1].decrease, 'EUR 42.00')
 
 
-#--- Three currencies two entries
+# --- Three currencies two entries
 def app_three_currencies_two_entries(monkeypatch):
     # Three account of different currencies, and 2 entries on differenet date. The app is saved,
     # and then loaded (The goal of this is to test that moneyguru ensures it got the rates it needs).
@@ -334,7 +334,7 @@ def test_ensures_rates_async(app, monkeypatch):
             thread.join(1)
     eq_(rates_db.get_rate(date(2008, 4, 20), 'USD', 'CAD'), 1.42)
 
-#--- Multi-currency transaction
+# --- Multi-currency transaction
 def app_multi_currency_transaction():
     app = TestApp()
     app.add_account('CAD Account', CAD)

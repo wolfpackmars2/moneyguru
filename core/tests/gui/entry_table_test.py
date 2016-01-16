@@ -12,7 +12,7 @@ from ...model.account import AccountType
 from ...model.currency import EUR
 from ..base import TestApp, with_app
 
-#--- One account
+# --- One account
 def app_one_account():
     app = TestApp()
     app.add_account()
@@ -97,7 +97,7 @@ def test_toggle_debit_credit(app):
     assert not app.etable.columns.column_is_visible('increase')
     assert not app.etable.columns.column_is_visible('decrease')
 
-#---
+# ---
 def app_eur_account():
     app = TestApp()
     app.add_account(currency=EUR)
@@ -110,7 +110,7 @@ def test_total_line_balance_has_sign_in_front_of_amount(app):
     app.add_entry(increase='42')
     eq_(app.etable.footer.balance, 'EUR +42.00')
 
-#--- Three accounts
+# --- Three accounts
 def app_three_accounts():
     app = TestApp()
     app.add_accounts('one', 'two', 'three') # three is the selected account (in second position)
@@ -126,7 +126,7 @@ def test_add_transfer_entry(app):
     app.show_account()
     eq_(app.etable_count(), 1)
 
-#--- Entry being added
+# --- Entry being added
 def app_entry_being_added():
     app = TestApp()
     app.add_account()
@@ -156,7 +156,7 @@ def test_save(app, tmpdir):
     assert app.etable.edited is None
     eq_(app.etable_count(), 1)
 
-#--- One entry
+# --- One entry
 def app_one_entry():
     app = TestApp()
     app.drsel.select_month_range()
@@ -280,7 +280,7 @@ def test_set_invalid_reconciliation_date(app):
     app.etable[0].reconciliation_date = 'invalid' # no crash
     eq_(app.etable[0].reconciliation_date, '')
 
-#--- Entry without transfer
+# --- Entry without transfer
 def app_entry_without_transfer():
     app = TestApp()
     app.add_account('account')
@@ -293,7 +293,7 @@ def test_entry_transfer(app):
     # Instead of showing 'Imbalance', the transfer column shows nothing.
     eq_(app.etable[0].transfer, '')
 
-#--- Entry with decrease
+# --- Entry with decrease
 def app_entry_with_decrease():
     app = TestApp()
     app.add_account()
@@ -315,7 +315,7 @@ def test_set_increase_to_zero_with_non_zero_decrease(app):
     row.increase = ''
     eq_(app.etable[0].decrease, '42.00')
 
-#--- Entry in liability
+# --- Entry in liability
 def app_entry_in_liability():
     app = TestApp()
     app.add_account('Credit card', account_type=AccountType.Liability)
@@ -323,7 +323,7 @@ def app_entry_in_liability():
     app.add_entry('1/1/2008', 'Payment', increase='10')
     return app
 
-#--- Transaction linked to numbered accounts
+# --- Transaction linked to numbered accounts
 def app_txn_linked_to_numbered_accounts():
     app = TestApp()
     app.add_account('account1', account_number='4242')
@@ -338,7 +338,7 @@ def test_transfer_column(app):
     # When an account is numbered, the from and to column display those numbers with the name.
     eq_(app.etable[0].transfer, '4241 - account2')
 
-#--- EUR account with EUR entries
+# --- EUR account with EUR entries
 def app_eur_account_with_eur_entries():
     app = TestApp()
     app.add_account(currency=EUR)
@@ -359,7 +359,7 @@ def test_amounts_display(app):
 def test_all_amount_native_with_foreign(app):
     assert not app.etable.all_amounts_are_native
 
-#--- Two entries
+# --- Two entries
 def app_two_entries():
     app = TestApp()
     app.add_account()
@@ -416,7 +416,7 @@ def test_total_row(app):
     eq_(row.balance, '+30.00')
     assert row.is_bold
 
-#--- Entry in previous range
+# --- Entry in previous range
 def app_entry_in_previous_range():
     app = TestApp()
     app.drsel.select_month_range()
@@ -438,7 +438,7 @@ def test_selection_after_date_range_change(app):
     tpanel = app.mw.edit_item()
     eq_(tpanel.description, 'first')
 
-#--- Two entries in two accounts
+# --- Two entries in two accounts
 def app_two_entries_in_two_accounts():
     app = TestApp()
     app.add_account()
@@ -461,7 +461,7 @@ def test_selection_after_connect(app):
     tpanel = app.mw.edit_item()
     eq_(tpanel.description, 'second')
 
-#--- Two entries with one reconciled
+# --- Two entries with one reconciled
 def app_two_entries_with_one_reconciled():
     app = TestApp()
     app.add_account()
@@ -496,7 +496,7 @@ def test_toggle_both_twice(app):
     assert not app.etable[0].reconciled
     assert not app.etable[1].reconciled
 
-#--- Two entries in two currencies
+# --- Two entries in two currencies
 def app_two_entries_two_currencies():
     app = TestApp()
     app.add_account()
@@ -526,7 +526,7 @@ def test_toggle_reconcilitation_on_both(app):
     assert app.etable[0].reconciled
     assert not app.etable[1].reconciled
 
-#--- Three entries different dates
+# --- Three entries different dates
 def app_three_entries_different_dates():
     app = TestApp()
     app.add_account()
@@ -544,7 +544,7 @@ def test_delete_second_entry(app):
     app.etable.delete()
     eq_(app.etable.selected_indexes, [1])
 
-#--- Split transaction
+# --- Split transaction
 def app_split_transaction():
     app = TestApp()
     app.add_account('first')
@@ -574,7 +574,7 @@ def test_dont_allow_amount_change_for_splits(app):
     assert not app.etable[0].can_edit_cell('debit')
     assert not app.etable[0].can_edit_cell('credit')
 
-#--- Two splits same account
+# --- Two splits same account
 def app_two_splits_same_account():
     app = TestApp()
     app.add_account('first')
@@ -598,7 +598,7 @@ def test_delete_both_entries(app):
     app.etable.delete() # no crash
     eq_(app.etable_count(), 0)
 
-#--- With budget
+# --- With budget
 def app_with_budget(monkeypatch):
     app = TestApp()
     monkeypatch.patch_today(2008, 1, 27)
@@ -627,7 +627,7 @@ def test_budget_spawns_are_picked_up_by_previous_balance(app):
     # figure is supposed to be 100$.
     eq_(aview.etable[0].balance, '100.00')
 
-#--- Unreconciled entry in the middle of two reconciled entries
+# --- Unreconciled entry in the middle of two reconciled entries
 def app_unreconciled_between_two_reconciled():
     app = TestApp()
     app.add_account()
@@ -645,7 +645,7 @@ def test_sort_by_reconciliation_date_with_unreconciled_in_middle(app):
     eq_(app.etable[1].description, 'three')
     eq_(app.etable[2].description, 'two')
 
-#--- Generators
+# --- Generators
 def app_with_account_of_type(account_type):
     app = TestApp()
     app.add_account(account_type=account_type)

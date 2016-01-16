@@ -15,7 +15,7 @@ class ProfitGraph(BarGraph, SheetViewNotificationsMixin):
     def __init__(self, profit_view):
         BarGraph.__init__(self, profit_view)
 
-    #--- Override
+    # --- Override
     def _currency(self):
         return self.document.default_currency
 
@@ -30,12 +30,12 @@ class ProfitGraph(BarGraph, SheetViewNotificationsMixin):
     def _is_reverted(self):
         return True
 
-    #--- Event Handlers
+    # --- Event Handlers
     def accounts_excluded(self):
         self.compute()
         self.view.refresh()
 
-    #--- Properties
+    # --- Properties
     @property
     def title(self):
         return tr('Profit & Loss')

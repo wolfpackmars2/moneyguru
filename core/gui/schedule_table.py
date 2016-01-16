@@ -34,7 +34,7 @@ class ScheduleTable(GUITable, TableWithAmountMixin):
         GUITable.__init__(self, document=schedule_view.document)
         self.mainwindow = schedule_view.mainwindow
 
-    #--- Override
+    # --- Override
     def _update_selection(self):
         self.mainwindow.selected_schedules = self.selected_schedules
 
@@ -46,14 +46,14 @@ class ScheduleTable(GUITable, TableWithAmountMixin):
                 self._all_amounts_are_native = False
             self.append(row)
 
-    #--- Public
+    # --- Public
     def delete(self):
         self.document.delete_schedules(self.selected_schedules)
 
     def edit(self):
         self.mainwindow.edit_item()
 
-    #--- Properties
+    # --- Properties
     @property
     def selected_schedules(self):
         return [row.schedule for row in self.selected_rows]
@@ -66,7 +66,7 @@ class ScheduleTableRow(Row):
         self.transaction = schedule.ref
         self.load()
 
-    #--- Public
+    # --- Public
     def load(self):
         schedule = self.schedule
         txn = schedule.ref
@@ -106,7 +106,7 @@ class ScheduleTableRow(Row):
         else:
             return Row.sort_key_for_column(self, column_name)
 
-    #--- Properties
+    # --- Properties
     start_date = rowattr('_start_date_fmt')
     stop_date = rowattr('_stop_date_fmt')
     repeat_type = rowattr('_repeat_type')

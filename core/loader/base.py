@@ -94,7 +94,7 @@ class Loader:
         # self.parse_date_str as a default value
         self.parsing_date_format = self.NATIVE_DATE_FORMAT
 
-    #--- Virtual
+    # --- Virtual
     def _parse(self, infile):
         """Parse infile and raise FileFormatError if infile is not the right format. Don't bother
         with an exception message, app.MoneyGuru will re-raise it with a message if needed.
@@ -112,7 +112,7 @@ class Loader:
         """
         pass
 
-    #--- Protected
+    # --- Protected
     def clean_date(self, str_date):
         # return str_date without garbage around (such as timestamps) or None if impossible
         match = re_possibly_a_date.search(str_date)
@@ -208,7 +208,7 @@ class Loader:
             self.budget_infos.append(self.budget_info)
         self.budget_info = BudgetInfo()
 
-    #--- Public
+    # --- Public
     def parse(self, filename):
         """Parses 'filename' and raises FileFormatError if appropriate."""
         try:

@@ -15,7 +15,7 @@ from ..model.date import MonthRange
 from .base import compare_apps, TestApp, with_app, testdata
 
 
-#--- Pristine
+# --- Pristine
 def test_dont_save_invalid_xml_characters(tmpdir):
     # It's possible that characters that are invalid in an XML file end up in a moneyGuru document
     # (mostly through imports). Don't let this happen.
@@ -36,7 +36,7 @@ def test_saved_file_starts_with_xml_header(tmpdir):
     contents = fp.read()
     assert contents.startswith('<?xml version="1.0" encoding="utf-8"?>\n')
 
-#---
+# ---
 class TestLoadFile:
     # Loads 'simple.moneyguru', a file with 2 accounts and 2 entries in each. Select the first entry.
     def do_setup(self, monkeypatch):
@@ -267,7 +267,7 @@ class TestLoadWithReferences1:
         assert app.etable[1].reconciled
 
 
-#--- All app functions below are tested in the following test generators
+# --- All app functions below are tested in the following test generators
 def app_account_with_budget():
     app = TestApp()
     app.add_account('asset')

@@ -88,7 +88,7 @@ class NewView(BaseView):
             shortcut.setContext(Qt.WidgetShortcut)
             setattr(self, 'shortcut{0}'.format(i), shortcut)
 
-    #--- Event Handlers
+    # --- Event Handlers
     def networthButtonClicked(self):
         self.model.select_pane_type(PaneType.NetWorth)
 

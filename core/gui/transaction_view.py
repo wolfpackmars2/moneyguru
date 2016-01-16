@@ -57,7 +57,7 @@ class TransactionView(BaseView, ViewWithTransactionsMixin):
         self._refresh_totals()
         self.filter_bar.refresh()
 
-    #--- Private
+    # --- Private
     def _invalidate_cache(self):
         self._visible_transactions = None
         self._refresh_totals()
@@ -98,11 +98,11 @@ class TransactionView(BaseView, ViewWithTransactionsMixin):
             txns = [t for t in txns if all(not s.reconciled for s in t.splits)]
         self._visible_transactions = txns
 
-    #--- Override
+    # --- Override
     def save_preferences(self):
         self.ttable.columns.save_columns()
 
-    #--- Public
+    # --- Public
     def delete_item(self):
         self.ttable.delete()
 
@@ -124,14 +124,14 @@ class TransactionView(BaseView, ViewWithTransactionsMixin):
     def show_account(self):
         self.ttable.show_from_account()
 
-    #--- Properties
+    # --- Properties
     @property
     def visible_transactions(self):
         if self._visible_transactions is None:
             self._set_visible_transactions()
         return self._visible_transactions
 
-    #--- Event Handlers
+    # --- Event Handlers
     def date_range_changed(self):
         self._invalidate_cache()
 

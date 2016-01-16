@@ -24,7 +24,7 @@ def importall(app, filename):
     while app.iwin.panes:
         app.iwin.import_selected_pane()
 
-#--- Pristine
+# --- Pristine
 @with_app(TestApp)
 def test_qif_export_import(app):
     # Make sure nothing is wrong when the file is empty
@@ -110,7 +110,7 @@ def test_import_updates_undo_description(app):
     importall(app, testdata.filepath('qif', 'checkbook.qif'))
     app.mw.view.check_gui_calls_partial(['refresh_undo_actions'])
 
-#---
+# ---
 def app_qif_import():
     # One account named 'Account 1' and then an parse_file_for_import() call for the 'checkbook.qif' test file.
     PLN = Currency(code='PLN')
@@ -160,7 +160,7 @@ def test_imported_txns_have_mtime(app):
     tview = app.show_tview()
     assert tview.ttable[0].mtime != ''
 
-#---
+# ---
 class TestOFXImport:
     # A pristine app importing an OFX file
     def do_setup(self):
@@ -304,7 +304,7 @@ class TestTripleOFXImportAcrossSessions:
         eq_(app.etable_count(), 3)
 
 
-#--- Double OFX import with split in the middle
+# --- Double OFX import with split in the middle
 # Import an OFX, change one entry into a split, and then re-import.
 def app_double_ofx_import_with_split_in_the_middle():
     app = TestApp()
@@ -374,7 +374,7 @@ class TestTwoEntriesInRangeSaveThenLoad:
         app.etable.save_edits()
         eq_(app.etable[0].description, 'first')
 
-#---
+# ---
 def app_transfer_between_two_referenced_accounts():
     app = TestApp()
     app.doc.date_range = MonthRange(date(2008, 2, 1))
@@ -421,7 +421,7 @@ def test_bound_amount_correctly_imported(app):
     app.show_account('Account 4')
     eq_(app.etable[0].debit, 'CAD 42.00')
 
-#---
+# ---
 class TestImportFileWithMultipleTransferReferences:
     def do_setup(self):
         app = TestApp()

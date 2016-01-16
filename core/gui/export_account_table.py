@@ -23,7 +23,7 @@ class ExportAccountTable(GUITable):
         self.panel = export_panel
         GUITable.__init__(self, document=export_panel.document)
     
-    #--- Override
+    # --- Override
     def _fill(self):
         accounts = sorted(self.panel.accounts, key=ACCOUNT_SORT_KEY)
         for account in accounts:
@@ -35,14 +35,14 @@ class ExportAccountTableRow(Row):
         Row.__init__(self, table)
         self.account = account
     
-    #--- Public
+    # --- Public
     def load(self):
         pass # nothing to load
     
     def save(self):
         pass # read-only
     
-    #--- Properties
+    # --- Properties
     @property
     def name(self):
         return self.account.name

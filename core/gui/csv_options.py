@@ -111,7 +111,7 @@ class CSVOptions(MainWindowGUIObject):
         self.layout = self._default_layout
         self.connect()
 
-    #--- Private
+    # --- Private
     def _refresh_columns(self):
         self._colcount = len(self.mainwindow.loader.lines[0])
         self.layout.adjust_columns(self._colcount)
@@ -126,7 +126,7 @@ class CSVOptions(MainWindowGUIObject):
         self._target_accounts.sort(key=lambda a: a.name.lower())
         self.view.refresh_targets()
 
-    #--- Public
+    # --- Public
     def continue_import(self):
         loader = self.mainwindow.loader
         loader.columns = self.layout.columns
@@ -214,7 +214,7 @@ class CSVOptions(MainWindowGUIObject):
         self.view.refresh_layout_menu()
         self.view.show()
 
-    #--- Properties
+    # --- Properties
     @property
     def columns(self):
         columns = self.layout.columns
@@ -258,7 +258,7 @@ class CSVOptions(MainWindowGUIObject):
     def target_account_names(self):
         return [tr('< New Account >')] + [a.name for a in self._target_accounts]
 
-    #--- Events
+    # --- Events
     def document_will_close(self):
         def layout2preference(layout):
             result = {}

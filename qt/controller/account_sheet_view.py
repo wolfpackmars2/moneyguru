@@ -15,11 +15,11 @@ from .account_reassign_panel import AccountReassignPanel
 class AccountSheetView(BaseView):
     # In sublasses' _setup(), set self.sheet, self.graph, self.piechart, self.splitterView and
     # self.subSplitterView
-    #--- QWidget override
+    # --- QWidget override
     def setFocus(self):
         self.sheet.view.setFocus()
 
-    #--- Public
+    # --- Public
     def fitViewsForPrint(self, viewPrinter):
         hidden = self.model.mainwindow.hidden_areas
         viewPrinter.fitTree(self.sheet)
@@ -40,7 +40,7 @@ class AccountSheetView(BaseView):
             sizes = [splitterWidth-pieWidth, pieWidth]
             self.subSplitterView.setSizes(sizes)
 
-    #--- model --> view
+    # --- model --> view
     def get_panel_view(self, model):
         if isinstance(model, AccountReassignPanelModel):
             return AccountReassignPanel(model, self.mainwindow)

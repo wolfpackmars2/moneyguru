@@ -11,7 +11,7 @@ from hscommon.testutil import eq_
 from ..model.account import AccountType
 from .base import TestApp, with_app
 
-#-- Account with budget
+# -- Account with budget
 def app_account_with_budget(monkeypatch):
     # 4 days left to the month, 100$ monthly budget
     monkeypatch.patch_today(2008, 1, 27)
@@ -59,7 +59,7 @@ def test_set_budget_again(app):
     app.show_tview()
     eq_(app.ttable[0].from_, 'Some Income')
 
-#--- Income with budget in past
+# --- Income with budget in past
 def app_income_with_budget_in_past(monkeypatch):
     monkeypatch.patch_today(2009, 11, 16)
     app = TestApp()
@@ -75,7 +75,7 @@ def test_spawns_dont_linger(app):
      # Only the spawns for november and december, NOT, september and october.
     eq_(app.ttable.row_count, 2)
 
-#--- Expense with budget and txn
+# --- Expense with budget and txn
 def app_budget_with_expense_and_txn(monkeypatch):
     monkeypatch.patch_today(2008, 1, 27)
     app = TestApp()
@@ -99,7 +99,7 @@ def test_busted_budget_spaws_dont_show_up(app):
     eq_(app.ttable[1].date, '29/02/2008')
 
 
-#--- Expense with budget and target
+# --- Expense with budget and target
 def app_expense_with_budget_and_target(monkeypatch):
     monkeypatch.patch_today(2008, 1, 27)
     app = TestApp()
@@ -170,7 +170,7 @@ def test_delete_target_and_reassign(app):
     app.show_bview()
     eq_(app.btable[0].target, 'other asset')
 
-#--- Two budgets from same account
+# --- Two budgets from same account
 def app_two_budgets_from_same_account(monkeypatch):
     # XXX this mock is because the test previously failed because we were currently on the last
     # day of the month. TODO: Re-create the last-day condition and fix the calculation bug
@@ -189,7 +189,7 @@ def test_both_budgets_are_counted(app):
     app.show_pview()
     eq_(app.istatement.income[0].budgeted, '175.00')
 
-#--- Yearly buget with txn before current month
+# --- Yearly buget with txn before current month
 def app_yearly_budget_with_txn_before_current_month(monkeypatch):
     monkeypatch.patch_today(2009, 8, 24)
     app = TestApp()
@@ -212,7 +212,7 @@ def test_spawn_has_correct_date(app):
     # first txn is the entry on 01/07
     eq_(app.ttable[1].date, '31/12/2009')
 
-#--- Scheduled txn and budget
+# --- Scheduled txn and budget
 def app_scheduled_txn_and_budget(monkeypatch):
     monkeypatch.patch_today(2009, 9, 10)
     app = TestApp()

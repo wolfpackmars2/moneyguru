@@ -11,7 +11,7 @@ from hscommon.testutil import eq_
 from ...const import PaneType
 from ..base import TestApp, with_app
 
-#--- Pristine
+# --- Pristine
 @with_app(TestApp)    
 def test_set_query(app):
     # Setting the 'query' property works"""
@@ -26,7 +26,7 @@ def test_set_query_selects_transaction_pane(app):
     app.sfield.text = 'foo'
     app.check_current_pane(PaneType.Transaction)
 
-#--- Two transactions
+# --- Two transactions
 def app_two_transactions():
     app = TestApp()
     app.add_account('Desjardins')
@@ -122,7 +122,7 @@ def test_dont_parse_amount_with_expression(app):
     app.sfield.text = '100+40' # The txn with the '140' amount shouldn't show up.
     eq_(app.ttable.row_count, 0)
 
-#---
+# ---
 def app_ambiguity_in_txn_values():
     # Transactions have similar values in different fields
     app = TestApp()
@@ -148,7 +148,7 @@ def test_targeted_checkno_search(app):
     eq_(app.ttable.row_count, 1)
     eq_(app.ttable[0].description, 'foo1')
 
-#--- Three txns with zero amount
+# --- Three txns with zero amount
 def app_three_txns_with_zero_amount():
     app = TestApp()
     app.add_txn(description='foo', amount='212.12')
@@ -162,7 +162,7 @@ def test_query_amount_with_zero_amount_txn(app):
     app.sfield.text = '212.12' # no crash
     eq_(app.ttable.row_count, 1)
 
-#--- Split
+# --- Split
 def app_split():
     app = TestApp()
     splits = [
@@ -185,7 +185,7 @@ def test_query_split_account(app):
     app.sfield.text = 'third'
     eq_(app.ttable.row_count, 1)
 
-#--- Three txns filtered
+# --- Three txns filtered
 def app_three_txns_filtered():
     app = TestApp()
     app.add_txn(description='foo')
@@ -224,7 +224,7 @@ def test_modify_transaction_out_of_filter(app):
     eq_(app.ttable.row_count, 1)
     eq_(app.ttable.selected_indexes, [0])
 
-#--- Grouped and ungrouped txns
+# --- Grouped and ungrouped txns
 def app_grouped_and_ungrouped_txns():
     app = TestApp()
     app.add_group('MyGroup')

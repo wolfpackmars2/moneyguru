@@ -11,7 +11,7 @@ from hscommon.testutil import eq_
 from ...model.account import AccountType
 from ..base import TestApp, with_app
 
-#--- Two entries
+# --- Two entries
 def app_two_entries():
     app = TestApp()
     app.add_account()
@@ -43,7 +43,7 @@ def test_totals_with_unicode_amount_format(app):
     expected = "1 out of 2 selected. Increase: 0\xa000 Decrease: 12\xa000"
     eq_(app.mw.status_line, expected)
 
-#--- Asset Shown
+# --- Asset Shown
 def app_asset_shown():
     app = TestApp()
     app.add_account()
@@ -55,7 +55,7 @@ def test_can_toggle_reconciliation_mode_with_asset_shown(app):
     # When an asset is shown, reconciliation mode can be toggled
     assert app.aview.can_toggle_reconciliation_mode
 
-#--- Expense Shown
+# --- Expense Shown
 def app_expense_shown():
     app = TestApp()
     app.add_account(account_type=AccountType.Expense)

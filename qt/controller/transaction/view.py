@@ -56,11 +56,11 @@ class TransactionView(BaseTransactionView):
         h = self.tableView.horizontalHeader()
         h.setSectionsMovable(True) # column drag & drop reorder
 
-    #--- QWidget override
+    # --- QWidget override
     def setFocus(self):
         self.ttable.view.setFocus()
 
-    #--- Public
+    # --- Public
     def fitViewsForPrint(self, viewPrinter):
         viewPrinter.fitTable(self.ttable)
 

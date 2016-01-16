@@ -26,7 +26,7 @@ def test_edit_schedule(app):
     app.show_scview()
     app.mainwindow.edit_item() # no crash
 
-#---
+# ---
 def app_daily_scheduled_txn():
     app = TestApp()
     app.add_schedule(start_date='13/09/2008', repeat_every=3)
@@ -81,7 +81,7 @@ def test_repeat_options_on_last_week(app):
     eq_(app.scpanel.repeat_type_list[:], expected)
     app.scpanel.repeat_type_list.view.check_gui_calls(['refresh'])
 
-#--- Daily schedule loaded
+# --- Daily schedule loaded
 def app_daily_schedule_loaded():
     app = TestApp()
     app.doc.date_range = MonthRange(app.app.parse_date('13/09/2008'))

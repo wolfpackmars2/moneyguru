@@ -114,7 +114,7 @@ class BaseDocument:
         self.budgets = BudgetList()
         self.oven = Oven(self.accounts, self.transactions, self.schedules, self.budgets)
 
-    #--- Private
+    # --- Private
     def _add_transactions(self, transactions):
         if not transactions:
             return
@@ -167,7 +167,7 @@ class BaseDocument:
         # Without date ranges and spawns, it's OK to pass `None` as an `until_date`.
         self.oven.cook(from_date=from_date, until_date=None)
 
-    #--- Public
+    # --- Public
     def change_transaction(self, original, new, global_scope=False):
         """Changes the attributes of ``original`` so that they match those of ``new``.
 
@@ -380,7 +380,7 @@ class BaseDocument:
             return True
         return amount.currency == self.default_currency
 
-    #--- Properties
+    # --- Properties
     @property
     def default_currency(self):
         return self._properties['default_currency']
@@ -429,7 +429,7 @@ class Document(BaseDocument, Repeater, GUIObject):
         self._dirty_flag = False
         self._restore_preferences()
 
-    #--- Private
+    # --- Private
     def _adjust_date_range(self, new_date):
         new_date_range = self.date_range.adjusted(new_date)
         if new_date_range is None:
@@ -582,7 +582,7 @@ class Document(BaseDocument, Repeater, GUIObject):
         excluded_account_names = [a.name for a in self.excluded_accounts]
         self.set_default(EXCLUDED_ACCOUNTS_PREFERENCE, excluded_account_names)
 
-    #--- Account
+    # --- Account
     def change_accounts(
             self, accounts, name=NOEDIT, type=NOEDIT, currency=NOEDIT, group=NOEDIT,
             account_number=NOEDIT, inactive=NOEDIT, notes=NOEDIT):
@@ -701,7 +701,7 @@ class Document(BaseDocument, Repeater, GUIObject):
             self.excluded_accounts |= accounts
         self.notify('accounts_excluded')
 
-    #--- Group
+    # --- Group
     def change_group(self, group, name=NOEDIT):
         """Properly sets properties for ``group``.
 
@@ -758,7 +758,7 @@ class Document(BaseDocument, Repeater, GUIObject):
         self.notify('account_added')
         return group
 
-    #--- Transaction
+    # --- Transaction
     def can_move_transactions(self, transactions, before, after):
         """Returns whether ``transactions`` can be be moved (re-ordered).
 
@@ -897,7 +897,7 @@ class Document(BaseDocument, Repeater, GUIObject):
         BaseDocument.move_transactions(self, transactions, to_transaction)
         self.notify('transaction_changed')
 
-    #--- Entry
+    # --- Entry
     @handle_abort
     def change_entry(
             self, entry, date=NOEDIT, reconciliation_date=NOEDIT, description=NOEDIT, payee=NOEDIT,
@@ -960,7 +960,7 @@ class Document(BaseDocument, Repeater, GUIObject):
             for split in splits:
                 split.reconciliation_date = split.transaction.date
             for spawn in spawns:
-                #XXX update transaction selection
+                # XXX update transaction selection
                 materialized_split = self._reconcile_spawn_split(spawn, spawn.transaction.date)
                 action.added_transactions.add(materialized_split.transaction)
         else:
@@ -969,7 +969,7 @@ class Document(BaseDocument, Repeater, GUIObject):
         self._cook(from_date=min_date)
         self.notify('transaction_changed')
 
-    #--- Budget
+    # --- Budget
     def budgeted_amount_for_target(self, target, date_range, filter_excluded=True):
         """Returns the amount budgeted for **all** budgets targeting ``target``.
 
@@ -1052,7 +1052,7 @@ class Document(BaseDocument, Repeater, GUIObject):
         self._cook(from_date=min_date)
         self.notify('budget_deleted')
 
-    #--- Schedule
+    # --- Schedule
     def change_schedule(self, schedule, new_ref, repeat_type, repeat_every, stop_date):
         """Change attributes of ``schedule``.
 
@@ -1107,7 +1107,7 @@ class Document(BaseDocument, Repeater, GUIObject):
         self._cook(from_date=min_date)
         self.notify('schedule_deleted')
 
-    #--- Load / Save / Import
+    # --- Load / Save / Import
     def adjust_example_file(self):
         """Adjusts all document's transactions so that they become current.
 
@@ -1293,7 +1293,7 @@ class Document(BaseDocument, Repeater, GUIObject):
         # flag is for.
         self._dirty_flag = True
 
-    #--- Date Range
+    # --- Date Range
     def select_month_range(self, starting_point):
         """Sets :attr:`date_range` to a :class:`.MonthRange`.
 
@@ -1381,7 +1381,7 @@ class Document(BaseDocument, Repeater, GUIObject):
         self.oven.continue_cooking(date_range.end)
         self.notify('date_range_changed')
 
-    #--- Undo
+    # --- Undo
     def can_undo(self):
         """Returns whether the document has something to undo."""
         return self._undoer.can_undo()
@@ -1412,7 +1412,7 @@ class Document(BaseDocument, Repeater, GUIObject):
         self._cook()
         self.notify('performed_undo_or_redo')
 
-    #--- Misc
+    # --- Misc
     def close(self):
         """Cleanup the document and close it.
 
@@ -1447,7 +1447,7 @@ class Document(BaseDocument, Repeater, GUIObject):
         key = 'Doc{0}.{1}'.format(self._document_id, key)
         self.app.set_default(key, value)
 
-    #--- Properties
+    # --- Properties
     @property
     def filter_string(self):
         """*get/set*. Restrict visible elements in lists to those matching the string.
@@ -1532,7 +1532,7 @@ class Document(BaseDocument, Repeater, GUIObject):
         self.accounts.default_currency = value
         self.notify('document_changed')
 
-    #--- Events
+    # --- Events
     def must_autosave(self):
         # this is called async
         self._async_autosave()

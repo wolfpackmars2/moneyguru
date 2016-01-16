@@ -176,7 +176,7 @@ class Application(Broadcaster):
         self._hook_currency_plugins()
         self._update_autosave_timer()
 
-    #--- Private
+    # --- Private
     def _autosave_all_documents(self):
         self.notify('must_autosave')
         self._update_autosave_timer()
@@ -248,7 +248,7 @@ class Application(Broadcaster):
                 custom_ranges.append([])
         self.set_default(PreferenceNames.CustomRanges, custom_ranges)
 
-    #--- Public
+    # --- Public
     def format_amount(self, amount, **kw):
         """Returns a formatted amount using app-wide preferences.
 
@@ -375,7 +375,7 @@ class Application(Broadcaster):
         """Default, app-wide date format."""
         return self._date_format
 
-    #--- Preferences
+    # --- Preferences
     @property
     def autosave_interval(self):
         """*get/set int*. Interval (in minutes) at which we perform autosave."""

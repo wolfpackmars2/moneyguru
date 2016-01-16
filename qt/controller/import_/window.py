@@ -92,7 +92,7 @@ class ImportWindow(QWidget):
         l.setAlignment(self.targetAccountLabel, Qt.AlignTop)
         l.setAlignment(self.targetAccountComboBox, Qt.AlignTop)
 
-    #--- Event Handlers
+    # --- Event Handlers
     def currentTabChanged(self, index):
         self.model.selected_pane_index = index
 
@@ -112,7 +112,7 @@ class ImportWindow(QWidget):
         self.model.selected_target_account_index = index
         self.table.updateColumnsVisibility()
 
-    #--- model --> view
+    # --- model --> view
     def close(self):
         self.hide()
 

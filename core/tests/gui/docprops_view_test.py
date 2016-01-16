@@ -12,7 +12,7 @@ from hscommon.testutil import eq_
 from ...model.date import MonthRange
 from ..base import ApplicationGUI, TestApp, with_app
 
-#---
+# ---
 def app_props_shown():
     app = TestApp()
     app.dpview = app.show_dpview()

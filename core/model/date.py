@@ -15,7 +15,7 @@ from hscommon.util import iterdaterange
 
 ONE_DAY = timedelta(1)
 
-#--- Date Ranges
+# --- Date Ranges
 
 class DateRange:
     """A range between two dates.
@@ -409,7 +409,7 @@ class CustomDateRange(DateRange):
         """String representation of the range (ex: "01-01-2013 - 15-01-2013")."""
         return '{0} - {1}'.format(self._format_func(self.start), self._format_func(self.end))
 
-#--- Date Incrementing
+# --- Date Incrementing
 
 def inc_day(date, count):
     """Increments ``date`` by ``count`` days.
@@ -487,7 +487,7 @@ def inc_last_weekday_in_month(date, count):
         diff += 7
     return new_month.replace(day=days_in_month - diff)
 
-#--- Date Formatting
+# --- Date Formatting
 # For the functions below, the format used is a subset of the Unicode format type
 # http://unicode.org/reports/tr35/tr35-6.html#Date_Format_Patterns
 # Only the basics are supported: /-. yyyy yy MM M dd d

@@ -12,7 +12,7 @@ from ..const import PaneType
 from ..document import ScheduleScope
 from .base import TestApp, with_app
 
-#--- Pristine
+# --- Pristine
 @with_app(TestApp)
 def test_schedule_with_eralier_stop_date(app):
     # A schedule with a stop date that is earlier than its start date is never supposed to produce
@@ -22,7 +22,7 @@ def test_schedule_with_eralier_stop_date(app):
     tview = app.show_tview()
     eq_(tview.ttable.row_count, 0)
 
-#--- One transaction
+# --- One transaction
 def app_one_transaction():
     app = TestApp()
     app.drsel.select_month_range()
@@ -65,7 +65,7 @@ def test_make_schedule_from_selected_weekly(app):
     app.show_tview()
     eq_(app.ttable[1].date, '18/07/2008')
 
-#--- Daily schedule
+# --- Daily schedule
 def app_daily_schedule(monkeypatch):
     monkeypatch.patch_today(2008, 9, 13)
     app = TestApp()
@@ -364,7 +364,7 @@ def test_delete_spawns_until_global_change(app):
     tview = app.show_tview()
     eq_(tview.ttable[0].description, 'changed again')
 
-#--- One Schedule and one normal txn
+# --- One Schedule and one normal txn
 def app_one_schedule_and_one_normal_txn():
     app = TestApp()
     app.drsel.select_month_range()
@@ -414,7 +414,7 @@ def test_schedule_exceptions_are_correctly_reassigned(app):
     app.show_tview()
     eq_(app.ttable[3].to, '')
 
-#--- Schedule with local change
+# --- Schedule with local change
 def app_schedule_with_local_change(monkeypatch):
     monkeypatch.patch_today(2008, 9, 30)
     app = TestApp()
@@ -444,7 +444,7 @@ def test_save_load_schedule_with_local_changes(app):
     assert not newapp.ttable[2].recurrent
     eq_(newapp.ttable[2].description, 'changed')
 
-#--- Schedule with global change
+# --- Schedule with global change
 def app_schedule_with_global_change(monkeypatch):
     monkeypatch.patch_today(2008, 9, 30)
     app = TestApp()
@@ -476,7 +476,7 @@ def test_delete_spawns_past_global_change(app):
     scview = app.show_scview()
     eq_(scview.table[0].description, 'changed')
 
-#--- Schedule with local deletion
+# --- Schedule with local deletion
 def app_schedule_with_local_deletion(monkeypatch):
     monkeypatch.patch_today(2008, 9, 30)
     app = TestApp()
@@ -504,7 +504,7 @@ def test_delete_account_with_schedule_containing_deletions(app):
     arpanel = app.get_current_panel()
     arpanel.save() # no crash
 
-#--- Schedule with stop date
+# --- Schedule with stop date
 def app_schedule_with_stop_date():
     app = TestApp()
     app.add_schedule(start_date='13/09/2008', repeat_every=3)
@@ -522,7 +522,7 @@ def test_perform_global_change_on_schedule_with_stop_date(app):
     app.ttable.save_edits()
     eq_(app.ttable.row_count, 3)
 
-#--- Weekly schedule
+# --- Weekly schedule
 def app_weekly_schedule():
     app = TestApp()
     app.drsel.select_month_range()
@@ -563,7 +563,7 @@ def test_deleting_first_spawn_changes_start_date(app):
     scview = app.show_scview()
     eq_(scview.table[0].start_date, '27/09/2008')
 
-#--- Monthly schedule on 31st of the month
+# --- Monthly schedule on 31st of the month
 def app_monthly_schedule_on_thirty_first():
     app = TestApp()
     app.drsel.select_month_range()
@@ -582,7 +582,7 @@ def test_use_last_day_in_invalid_months_for_31(app):
     eq_(app.ttable.row_count, 1)
     eq_(app.ttable[0].date, '31/10/2008')
 
-#--- Yearly schedule on 29th of february
+# --- Yearly schedule on 29th of february
 def app_yearly_schedule_on_twenty_ninth():
     app = TestApp()
     app.drsel.select_year_range()
@@ -603,7 +603,7 @@ def test_use_last_day_in_invalid_years_for_29(app):
     eq_(app.ttable.row_count, 1)
     eq_(app.ttable[0].date, '29/02/2012')
 
-#--- Schedule on 3rd monday of the month
+# --- Schedule on 3rd monday of the month
 def app_schedule_on_third_monday_of_the_month():
     app = TestApp()
     app.drsel.select_year_range()
@@ -621,7 +621,7 @@ def test_spawn_dates_for_weekno_in_month_schedule(app):
     eq_(app.ttable[2].date, '17/11/2008')
     eq_(app.ttable[3].date, '15/12/2008')
 
-#--- Schedule on 5th tuesday of the month
+# --- Schedule on 5th tuesday of the month
 def app_schedule_on_fifth_tuesday_of_the_month():
     app = TestApp()
     app.drsel.select_month_range()
@@ -641,7 +641,7 @@ def test_spawn_dates_for_weekno_in_month_schedule_fifth_weekday(app):
     eq_(app.ttable.row_count, 1)
     eq_(app.ttable[0].date, '30/12/2008')
 
-#--- Schedule on last tuesday of the month
+# --- Schedule on last tuesday of the month
 def app_schedule_on_last_tuesday_of_the_month():
     app = TestApp()
     app.drsel.select_month_range()
@@ -657,7 +657,7 @@ def test_spawn_dates_for_weekno_in_month_schedule_last_weekday(app):
     eq_(app.ttable.row_count, 1)
     eq_(app.ttable[0].date, '28/10/2008')
 
-#--- Two daily schedules
+# --- Two daily schedules
 def app_two_daily_schedules():
     app = TestApp()
     app.add_account('account')
@@ -671,7 +671,7 @@ def test_schedule_spawns_cant_be_reordered(app):
     app.show_tview()
     assert not app.ttable.can_move([3], 2)
 
-#--- Daily schedule with one reconciled spawn
+# --- Daily schedule with one reconciled spawn
 def app_daily_schedule_one_spawn_reconciled():
     app = TestApp()
     app.drsel.select_month_range()

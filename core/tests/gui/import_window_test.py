@@ -32,7 +32,7 @@ class SwapType:
     InvertAmount = 4
 
 
-#--- Support test plugin
+# --- Support test plugin
 
 class ChangeStructure(ImportActionPlugin):
     NAME = "Structure Change Import Plugin"
@@ -114,7 +114,7 @@ class ValueImportBind(ImportBindPlugin):
 
         return matches
 
-#--- No setup
+# --- No setup
 
 @with_app(TestApp)
 def test_MMM_date_formats_are_supported(app):
@@ -156,7 +156,7 @@ def test_fuzzy_matching_plugin(app):
         eq_(row.amount_import, amount_import)
 
 
-#---
+# ---
 def app_import_checkbook_qif():
     app = TestApp()
     app.clear_gui_calls()
@@ -323,7 +323,7 @@ def test_swap_date_texts_after_swap(app):
     app.iwin.selected_pane_index = 1
     eq_(app.iwin.swap_type_list[0], "MM/dd/yy --> dd/MM/yy")
 
-#---
+# ---
 def app_import_checkbook_qif_twice():
     app = TestApp()
     app.doc.date_range = YearRange(date(2007, 1, 1))
@@ -346,7 +346,7 @@ def test_switch_description_payee_apply_to_all(app):
     eq_(app.itable[3].payee_import, 'Power Bill')
 
 
-#---
+# ---
 def app_import_checkbook_qif_with_existing_txns():
     app = TestApp()
     app.add_account('foo')
@@ -385,7 +385,7 @@ def test_match_then_import(app):
     eq_(row.increase, '80.00')
 
 
-#---
+# ---
 def app_load_with_ref():
     app = TestApp()
     app.TXNS = [
@@ -403,7 +403,7 @@ def test_import_with_same_reference_twice(app):
     app.fake_import('foo', app.TXNS)
     app.iwin.selected_target_account_index = 1 # no crash
 
-#---
+# ---
 def app_load_then_import_with_ref(monkeypatch):
     monkeypatch.patch_today(2008, 1, 1)
     app = TestApp()
@@ -417,7 +417,7 @@ def test_selected_target_account(app):
     eq_(app.iwin.selected_target_account_index, 1)
 
 
-#---
+# ---
 def app_import_moneyguru_file_with_expense_account():
     app = TestApp()
     app.doc.date_range = YearRange(date(2008, 1, 1))
@@ -432,7 +432,7 @@ def test_account_panes(app):
     eq_(app.iwin.panes[1].name, 'Account 2')
 
 
-#---
+# ---
 def app_import_accountless_qif():
     app = TestApp()
     app.doc.date_range = YearRange(date(2007, 1, 1))
@@ -447,7 +447,7 @@ def test_account_tabs_has_default_account_name(app):
     eq_(app.iwin.panes[0].count, 5)
 
 
-#---
+# ---
 def app_import_accountless_qif_with_splits():
     app = TestApp()
     app.doc.date_range = YearRange(date(2008, 1, 1))
@@ -470,7 +470,7 @@ def test_transfers(app):
     eq_(app.itable[1].transfer_import, 'Web Accept Payment Received, Fee')
     eq_(app.itable[1].amount_import, '18.95')
 
-#---
+# ---
 def app_import_qif_with_empty_accounts():
     # like checkbook.qif, but with 2 extra empty accounts
     app = TestApp()
@@ -502,7 +502,7 @@ HIGH_YEAR_FIELDS = [
     {'date': '13/01/1999', 'amount': '1'},
 ]
 
-#---
+# ---
 def app_import_txns_with_low_day_fields():
     app = TestApp()
     app.fake_import('foo', LOW_DATE_FIELDS)
@@ -542,7 +542,7 @@ def test_switch_day_year(app):
 
 
 
-#---
+# ---
 def app_import_txns_with_high_day_fields():
     app = TestApp()
     app.fake_import('foo', HIGH_DAY_FIELDS)
@@ -559,7 +559,7 @@ def test_can_switch_fields_on_high_day(app):
     assert app.iwin.can_perform_swap()
 
 
-#---
+# ---
 def app_import_txns_with_high_year_fields():
     app = TestApp()
     app.fake_import('foo', HIGH_YEAR_FIELDS)
@@ -576,7 +576,7 @@ def test_can_switch_fields_on_high_year(app):
     assert not app.iwin.can_perform_swap()
 
 
-#---
+# ---
 def app_import_txn_with_31st_day_in_date():
     # The date 31/07/2009 has a high day, and if we were to swap year and month, we'd be ending up
     # with an invalid date (31/09/2007).
@@ -591,7 +591,7 @@ def test_can_switch_fields_with_31st_as_day(app):
     assert not app.iwin.can_perform_swap()
 
 
-#---
+# ---
 def app_three_imports_two_of_them_with_low_date():
     app = TestApp()
     app.fake_import('foo1', LOW_DATE_FIELDS)
@@ -610,7 +610,7 @@ def test_switch_apply_to_all(app):
     eq_(app.itable[0].date_import, '02/01/2009') # not switched
 
 
-#---
+# ---
 def app_two_accounts_with_common_txn():
     app = TestApp()
     txns = [
@@ -647,7 +647,7 @@ def test_switch_description_payee_with_common_txn(app):
     eq_(app.itable[0].payee_import, 'foo')
 
 
-#---
+# ---
 def app_with_structure_change_import_plugin():
     app = TestApp()
     app.set_plugins([ChangeStructure])
@@ -706,7 +706,7 @@ def test_change_split_structure(app):
     eq_(app.itable[2].amount_import, '2.00')
 
 
-#---
+# ---
 def app_import_checkbook_qif_with_existing_txns_and_change_import_plugin():
     app = app_import_checkbook_qif_with_existing_txns()
     app.set_plugins([ChangeStructure])
@@ -724,7 +724,7 @@ def test_match_then_run_plugin_that_calls_change_transaction(app):
     eq_(app.itable.row_count, 5) # we still have 5 lines because the binding wasn't broken.
 
 
-#---
+# ---
 def app_with_transfer_change_import_plugin():
     app = TestApp()
     app.set_plugins([ChangeTransfer])

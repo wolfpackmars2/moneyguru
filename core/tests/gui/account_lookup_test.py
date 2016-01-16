@@ -12,7 +12,7 @@ from ...const import PaneType
 from ...model.account import AccountType
 from ..base import TestApp, with_app
 
-#--- Some accounts
+# --- Some accounts
 def app_accounts():
     app = TestApp()
     app.add_accounts('foo', 'bar', 'Zo-of')
@@ -106,7 +106,7 @@ def test_select_and_go(app):
     app.alookup.go()
     app.check_current_pane(PaneType.Account, account_name='foo')
 
-#--- Accounts with numbers
+# --- Accounts with numbers
 def app_accounts_with_number():
     app = TestApp()
     app.add_account('bar')
@@ -114,7 +114,7 @@ def app_accounts_with_number():
     app.mainwindow.jump_to_account()
     return app
 
-#--- Generators
+# --- Generators
 def test_account_order():
     def check(app, expected):
         eq_(app.alookup.names, expected)

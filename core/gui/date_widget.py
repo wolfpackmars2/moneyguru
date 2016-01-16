@@ -38,7 +38,7 @@ class DateWidget:
         self._year = 0
         self.date = date.today()
 
-    #--- Private
+    # --- Private
     def _next(self):
         if self._selected == DAY:
             self._selected = MONTH
@@ -82,7 +82,7 @@ class DateWidget:
         else:
             self.date = inc_year(olddate, inc_count)
 
-    #--- Public
+    # --- Public
     def backspace(self):
         self._buffer = self._buffer[:-1]
 

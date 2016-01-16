@@ -57,7 +57,7 @@ class EntryTable(TableWithTransactions):
         self.view.spacePressed.connect(self.model.toggle_reconciled)
         self.view.deletePressed.connect(self.model.delete)
 
-    #--- Data methods override
+    # --- Data methods override
     def _getStatusData(self, row, role):
         # DecorationRole is handled in TableWithTransactions
         if role == Qt.CheckStateRole:

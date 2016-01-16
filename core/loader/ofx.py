@@ -25,7 +25,7 @@ class Loader(SGMLParser, base.Loader):
         self.data = ''
         self.data_handler = None
 
-    #--- Override
+    # --- Override
     def _parse(self, infile):
         # First line is OFXHEADER (section 2.2.1)
         line = '\n'
@@ -41,7 +41,7 @@ class Loader(SGMLParser, base.Loader):
             self.feed(line)
         self.close()
 
-    #--- Helper methods
+    # --- Helper methods
 
     def flush_data(self):
         if self.data_handler:
@@ -49,7 +49,7 @@ class Loader(SGMLParser, base.Loader):
             self.data_handler = None
         self.data = ''
 
-    #--- Global hooks
+    # --- Global hooks
 
     def handle_starttag(self, tag, method, attributes):
         self.flush_data()
@@ -68,7 +68,7 @@ class Loader(SGMLParser, base.Loader):
     def handle_data(self, data):
         self.data += data
 
-    #--- Account tags
+    # --- Account tags
 
     def start_stmtrs(self, attributes):
         self.start_account()
@@ -112,7 +112,7 @@ class Loader(SGMLParser, base.Loader):
     def handle_balamt(self, data):
         self.account_info.balance = data
 
-    #--- Entry tags
+    # --- Entry tags
 
     def start_stmttrn(self, attributes):
         self.start_transaction()

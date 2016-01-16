@@ -13,7 +13,7 @@ from .base import TestApp, with_app
 def first_debit_credit_indexes(stable):
     return (0, 1) if stable[0].debit else (1, 0)
 
-#--- Empty account
+# --- Empty account
 def app_empty_account():
     app = TestApp()
     app.add_account('Checking')
@@ -48,7 +48,7 @@ def test_add_entry_save_split(app):
     tpanel.save()
     eq_(app.etable_count(), 1)
 
-#--- One entry
+# --- One entry
 def app_one_entry():
     app = TestApp()
     app.add_account('Checking')
@@ -161,7 +161,7 @@ def test_divide_split_amount_rounding(app):
     # want a specific python implementation to come and create a false failure.
     assert {stable[dindex].debit, stable[2].debit} == {'6.18', '6.19'}
 
-#--- Entry without transfer
+# --- Entry without transfer
 def app_entry_without_transfer():
     app = TestApp()
     app.add_account()
@@ -180,7 +180,7 @@ def test_split_has_unassigned_account(app):
     eq_(stable[1].account, '')
     eq_(stable[1].debit, '130.00')
 
-#--- Split transaction
+# --- Split transaction
 def app_split_transaction():
     # New Account   0 100
     # expense1    100   0
@@ -283,7 +283,7 @@ def test_transfer_read_only(app):
     eq_(app.etable[0].transfer, 'expense1, expense2, income')
     assert not app.etable.can_edit_cell('transfer', 0)
 
-#--- Split with no account
+# --- Split with no account
 def app_split_with_no_account():
     app = TestApp()
     app.add_account()
@@ -303,7 +303,7 @@ def test_transfer_doesnt_include_unassigned_split(app):
     # The transfer column don't include splits with no account.
     eq_(app.etable[0].transfer, 'expense1')
 
-#--- Split txn no unassigned
+# --- Split txn no unassigned
 def app_split_txn_no_unassigned():
     app = TestApp()
     splits = [('foo', '', '37', ''), ('bar', '', '', '42'), ('baz', '', '5', '')]

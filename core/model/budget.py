@@ -60,7 +60,7 @@ class Budget(Recurrence):
     def __repr__(self):
         return '<Budget %r %r %r>' % (self.account, self.target, self.amount)
     
-    #--- Override
+    # --- Override
     def _create_spawn(self, ref, recurrence_date):
         # `recurrence_date` is the date at which the budget *starts*.
         # We need a date counter to see which date is next (so we can know when our period ends
@@ -107,7 +107,7 @@ class Budget(Recurrence):
         self._previous_spawns = spawns
         return spawns
     
-    #--- Public
+    # --- Public
     def amount_for_date_range(self, date_range, currency):
         """Returns the budgeted amount for ``date_range``.
 

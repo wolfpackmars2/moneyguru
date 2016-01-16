@@ -30,6 +30,6 @@ class BaseView(QWidget):
         # restore_subviews_size() which happens when a document is loaded.
         pass
 
-    #--- model --> view
+    # --- model --> view
     def restore_subviews_size(self):
         self.restoreSubviewsSize()

@@ -22,7 +22,7 @@ def complete_etable(app, value, attrname):
 def assert_completion(app, s, expected):
     eq_(complete_etable(app, s, 'transfer'), expected)
 
-#---
+# ---
 def test_complete_transfer_one_empty_account():
     # Don't lookup the selected account for transfer completion.
     app = TestApp()
@@ -37,7 +37,7 @@ def test_dont_complete_with_inactive_accounts():
     tview = app.show_tview()
     eq_(complete_table(tview.ttable, 'i', 'from'), '')
 
-#--- Empty account with whitespace in name
+# --- Empty account with whitespace in name
 def app_empty_account_with_whitespace_in_name(monkeypatch):
     app = TestApp()
     monkeypatch.patch_time_ticking()
@@ -51,7 +51,7 @@ def test_complete_transfer_empty_account_with_whitespace_in_name(app):
     # transfer completion looking up account names ignores whitespaces (and case).
     assert_completion(app, 'f', 'oobar')
 
-#--- Three empty accounts
+# --- Three empty accounts
 def app_three_empty_accounts(monkeypatch):
     app = TestApp()
     monkeypatch.patch_time_ticking()
@@ -76,7 +76,7 @@ def test_complete_description(app):
     # description completion does *not* look into accounts.
     eq_(complete_etable(app, 'o', 'description'), '')
 
-#--- Income account shown
+# --- Income account shown
 def app_income_account_shown(monkeypatch):
     app = TestApp()
     monkeypatch.patch_time_ticking()
@@ -89,7 +89,7 @@ def test_complete_transfer_income_account_shown(app):
     # Ignore selected account in completion in cases where non-asset accounts are shown as well.
     assert_completion(app, 'f', '')
 
-#--- Different account types
+# --- Different account types
 def app_different_account_types(monkeypatch):
     app = TestApp()
     monkeypatch.patch_time_ticking()
@@ -103,7 +103,7 @@ def test_complete_transfer_different_account_types(app):
     # Complete transfer with non-asset categories as well.
     assert_completion(app, 'in', 'come')
 
-#--- Entry in editing mode
+# --- Entry in editing mode
 def app_entry_in_editing_mode(monkeypatch):
     app = TestApp()
     monkeypatch.patch_time_ticking()
@@ -121,7 +121,7 @@ def test_complete(app):
     # Don't make completion match with the edited entry.
     eq_(complete_etable(app, 'foo', 'description'), '')
 
-#--- One entry
+# --- One entry
 def app_one_entry(monkeypatch):
     app = TestApp()
     monkeypatch.patch_time_ticking()
@@ -253,7 +253,7 @@ def test_dont_complete_with_inactive_account_with_transactions(app):
     tview = app.show_tview()
     eq_(complete_table(tview.ttable, 's', 'from'), '')
 
-#--- Entry with blank description
+# --- Entry with blank description
 def app_entry_with_blank_description(monkeypatch):
     app = TestApp()
     monkeypatch.patch_time_ticking()
@@ -278,7 +278,7 @@ def test_complete_empty_string(app):
     # complete() always returns nothing on empty strings.
     eq_(complete_etable(app, '', 'description'), '')
 
-#--- Entry with whitespace in description
+# --- Entry with whitespace in description
 def app_entry_with_whitespace_in_description(monkeypatch):
     app = TestApp()
     monkeypatch.patch_time_ticking()
@@ -297,7 +297,7 @@ def test_completion_strip_whitespace(app):
     # Ignore whitespace when finding a completion match.
     eq_(complete_etable(app, 'foo', 'description'), 'bar')
 
-#--- Two entries
+# --- Two entries
 def app_two_entries(monkeypatch):
     app = TestApp()
     monkeypatch.patch_time_ticking()
@@ -324,7 +324,7 @@ def test_amount_completion_already_set(app):
     row.description = 'second'
     eq_(app.etable[app.etable.selected_indexes[0]].increase, '102.00')
 
-#--- Three entries in two account types
+# --- Three entries in two account types
 def app_three_entries_in_two_account_types(monkeypatch):
     app = TestApp()
     monkeypatch.patch_time_ticking()
@@ -342,7 +342,7 @@ def test_completion_from_other_accounts_show_up(app):
     # Even in the entry table, completion from other accounts show up
     eq_(complete_etable(app, 'f', 'description'), 'irst')
 
-#--- Four entries with description and category collision
+# --- Four entries with description and category collision
 def app_four_entries_with_description_and_category_collision(monkeypatch):
     # Four entries. Mostly for completion, I can't see any other use. The first is a 'booby trap'.
     # (simply having the completion iterate the list made all tests pass). The second is the base
@@ -561,7 +561,7 @@ def test_persistence_of_completion(app, tmpdir, monkeypatch):
     app.show_account()
     assert_completion_order_changed(app)
 
-#--- Account created through transaction table
+# --- Account created through transaction table
 def app_account_created_through_transaction_table(monkeypatch):
     app = TestApp()
     monkeypatch.patch_time_ticking()

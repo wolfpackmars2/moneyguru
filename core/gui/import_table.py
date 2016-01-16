@@ -35,7 +35,7 @@ class ImportTable(GUITable, TransactionSelectionMixin):
         self._is_two_sided = False
         self.__last_explicitly_selected = []
     
-    #--- Override
+    # --- Override
     def select_transactions(self, transactions):
         selected_indexes = []
         for index, row in enumerate(self):
@@ -66,7 +66,7 @@ class ImportTable(GUITable, TransactionSelectionMixin):
                 self._is_two_sided = True
             self.append(ImportTableRow(self, existing, imported))
     
-    #--- Public
+    # --- Public
     def bind(self, source_index, dest_index):
         source = self[source_index]
         dest = self[dest_index]
@@ -96,7 +96,7 @@ class ImportTable(GUITable, TransactionSelectionMixin):
         row.unbind()
         self.refresh()
     
-    #--- Properties
+    # --- Properties
     @property
     def is_two_sided(self):
         """Returns whether the table should show columns to display matches from the target account.
@@ -141,7 +141,7 @@ class ImportTableRow(Row):
     def unbind(self):
         self.table.pane.unbind(self.entry, self.imported)
     
-    #--- Properties
+    # --- Properties
     @property
     def date(self):
         return self.table.document.app.format_date(self._date) if self._date else ''

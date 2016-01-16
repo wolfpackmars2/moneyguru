@@ -18,7 +18,7 @@ class DateRangeSelector:
         self.view = NoopGUI()
         self._old_date_range = None
     
-    #--- Private
+    # --- Private
     def _date_range_starting_point(self):
         if self.mainwindow.selected_transactions:
             return self.mainwindow.selected_transactions[0].date
@@ -27,7 +27,7 @@ class DateRangeSelector:
         else:
             return self.document.date_range
     
-    #--- Public
+    # --- Public
     def select_month_range(self):
         self.document.select_month_range(starting_point=self._date_range_starting_point())
     
@@ -80,7 +80,7 @@ class DateRangeSelector:
     def refresh_custom_ranges(self):
         self.view.refresh_custom_ranges()
     
-    #--- Properties
+    # --- Properties
     @property
     def can_navigate(self):
         return self.document.date_range.can_navigate
