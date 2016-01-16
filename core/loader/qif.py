@@ -185,7 +185,7 @@ class Loader(base.Loader):
                 seen_split_fields = set()
                 for header, data in lines:
                     if header in {'S', 'E', '$'}: # splits field
-                        if header in seen_split_fields: #must flush the split
+                        if header in seen_split_fields: # must flush the split
                             self.flush_split()
                             seen_split_fields.clear()
                         parse_split_line(header, data)

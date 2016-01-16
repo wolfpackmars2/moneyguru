@@ -460,7 +460,7 @@ class MainWindow(QMainWindow):
             PaneType.Schedule: tr("New Schedule"),
             PaneType.Budget: tr("New Budget"),
             PaneType.GeneralLedger: tr("New Transaction"),
-        }.get(viewType, tr("New Item")) #XXX make "New Item" disabled
+        }.get(viewType, tr("New Item")) # XXX make "New Item" disabled
         self.actionNewItem.setText(newItemLabel)
         self.actionNewAccountGroup.setEnabled(isSheet)
         self.actionMoveDown.setEnabled(isTransactionOrEntryTable)
