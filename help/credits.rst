@@ -1,34 +1,19 @@
-| **Virgil Dupras, Developer** (`Website <http://www.hardcoded.net>`__)
+| `Virgil Dupras <http://www.hardcoded.net>`__, Developer
 
-| **Eric Mc Sween, Developer**
+| Eric Mc Sween, Developer
 
-| **Nelson Brown, Developer** (`Github profile <https://github.com/brownnrl>`__)
+| `Mike Rohde <http://www.rohdesign.com>`__, Main icon design
 
-| **Mike Rohde, Main icon design** (`Website <http://www.rohdesign.com>`__)
+| `Github contributors <https://github.com/hsoft/moneyguru/graphs/contributors>`__
 
-| **Mariann Landsberger, German localization**
+| `Transifex translators <https://www.transifex.com/hsoft/moneyguru/>`__
 
-| **Michael Pitra, German localization**
-
-| **Roberto Padovani, Italian localization**
-
-| **Aleš Nehyba, Czech localization**
-
-| **Arnold Huzen, Dutch localization**
-
-| **Igor Fokusov, Russian localization** (`Github profile <https://github.com/fokusov>`__)
-
-| **Python, Programming language** (`Website <http://www.python.org>`__)
-| The bestest of the bests
-
-| **Sparkle, Auto-update library** (`Website <http://andymatuschak.org/pages/sparkle>`__)
+| `Sparkle <http://sparkle-project.org/>`__, Auto-update library
 | Used for the Mac OS X version
 
-| **AMButtonBar, Filter bar component** (`Website <http://www.harmless.de>`__)
+| `AMButtonBar <http://www.harmless.de>`__, Filter bar component
 | Used for the Mac OS X version
 
-| **PSMTabBarControl, Tab bar component** (`Website <http://www.positivespinmedia.com>`__)
+| `PSMTabBarControl <http://www.positivespinmedia.com>`__, Tab bar component
 | Used for the Mac OS X version
 
-| **You, moneyGuru user**
-| You rock.
