@@ -1,0 +1,8 @@
+<?xml version="1.0"?>
+<!-- Transaction with unsupported currency -->
+<moneyguru-file>
+    <transaction date="2016-01-30">
+        <split account="foo" amount="ZZZ 42.00"/>
+        <split account="bar" amount="ZZZ 42.00"/>
+	</transaction>
+</moneyguru-file>
