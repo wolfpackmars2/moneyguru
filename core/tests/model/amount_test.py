@@ -12,11 +12,6 @@ from hscommon.testutil import eq_
 from ...model.currency import Currency, CAD, EUR, USD
 from ...model.amount import format_amount, parse_amount, Amount
 
-PLN = Currency(code='PLN')
-CZK = Currency(code='CZK')
-TND = Currency(code='TND')
-JPY = Currency(code='JPY')
-BHD = Currency(code='BHD')
 
 # --- Amount
 def test_auto_quantize():
@@ -183,6 +178,7 @@ def test_parse_comma_as_decimal_sep():
 def test_parse_comma_as_grouping_sep():
     # When a comma is used as a grouping separator, it doesn't prevent the number from being read.
     eq_(parse_amount('1,454,67', USD) , Amount(1454.67, USD))
+    CZK = Currency.register('CZK', 'CZK')
     eq_(parse_amount('CZK 3,000.00', USD) , Amount(3000, CZK))
     eq_(parse_amount('CZK 3 000.00', USD) , Amount(3000, CZK))
 
@@ -262,6 +258,7 @@ def test_parse_zero():
 def test_parse_zero_prefixed():
     # Parsing an amount prefixed by a zero does not result in it being interpreted as an octal
     # number.
+    PLN = Currency.register('PLN', 'PLN')
     eq_(parse_amount('0200+0200 PLN'), Amount(400, PLN))
 
 def test_parse_zero_after_dot():
@@ -275,6 +272,8 @@ def test_parse_auto_decimal_places():
 def test_parse_auto_decimal_places_different_exponent():
     # When the currency has a different exponent, the decimal is correctly placed.
     # TND has 3 decimal places.
+    TND = Currency.register('TND', 'TND', exponent=3)
+    JPY = Currency.register('JPY', 'JPY', exponent=0)
     eq_(parse_amount('1234', default_currency=TND, auto_decimal_place=True), Amount(1.234, TND))
     # JPY has 0 decimal places
     eq_(parse_amount('1234', default_currency=JPY, auto_decimal_place=True), Amount(1234, JPY))
@@ -282,6 +281,7 @@ def test_parse_auto_decimal_places_different_exponent():
 def test_parse_auto_decimal_places_only_cents():
     # Parsing correctly occurs when the amount of numbers typed is below the decimal places.
     # TND has 3 decimal places.
+    TND = Currency.register('TND', 'TND', exponent=3)
     eq_(parse_amount('123', default_currency=TND, auto_decimal_place=True), Amount(.123, TND))
     eq_(parse_amount('1', default_currency=TND, auto_decimal_place=True), Amount(.001, TND))
 
@@ -312,6 +312,7 @@ def test_parse_currencies_with_large_exponents():
     # specifically look for 2 digits after the separator to avoid confusion with thousand sep. For
     # dinars, however, we look for 3 digits adter the decimal sep. So yes, we are vulnerable to
     # confusion with the thousand sep, but well, there isn't much we can do about that.
+    BHD = Currency.register('BHD', 'BHD', exponent=3)
     eq_(parse_amount('1,000 BHD'), Amount(1, BHD))
     # Moreover, with custom currencies, we might have currencies with even bigger exponent.
     ABC = Currency.register('ABC', 'My foo currency', exponent=5)
