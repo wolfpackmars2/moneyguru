@@ -320,8 +320,8 @@ class Application(Broadcaster):
 
         :param int slot: The slot number (0-2) to save this range into.
         :param str name: A name for the range.
-        :param date start: Start of the range.
-        :param date end: End of the range.
+        :param datetime.date start: Start of the range.
+        :param datetime.date end: End of the range.
         """
         self.saved_custom_ranges[slot] = SavedCustomRange(name, start, end)
         self._save_custom_ranges()
