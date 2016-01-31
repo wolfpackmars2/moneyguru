@@ -99,6 +99,17 @@ class Currency:
         return currency
 
     @staticmethod
+    def reset_currencies():
+        # Clear all currencies except USD, EUR and CAD because these are directly imported in too
+        # many modules and we depend on those instances being present at too many places.
+        # For now, this is only called during testing.
+        Currency.all = [c for c in Currency.all if c.code in {'CAD', 'USD', 'EUR'}]
+        Currency.by_name = {c.name: c for c in Currency.all}
+        Currency.by_code = {c.code: c for c in Currency.all}
+        Currency.rates_db = None
+        Currency.sort_currencies()
+
+    @staticmethod
     def set_rates_db(db):
         """Sets a new currency ``RatesDB`` instance to be used with all ``Currency`` instances.
         """

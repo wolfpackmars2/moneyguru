@@ -1,6 +1,4 @@
-# Created By: Virgil Dupras
-# Created On: 2008-07-06
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2016 Virgil Dupras
 #
 # This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
@@ -37,6 +35,7 @@ from .schedule_view import ScheduleView
 from .budget_view import BudgetView
 from .general_ledger_view import GeneralLedgerView
 from .docprops_view import DocPropsView
+from .pluginlist_view import PluginListView
 from .empty_view import EmptyView
 
 PANETYPE2LABEL = {
@@ -47,6 +46,7 @@ PANETYPE2LABEL = {
     PaneType.Budget: tr("Budgets"),
     PaneType.GeneralLedger: tr("General Ledger"),
     PaneType.DocProps: tr("Document Properties"),
+    PaneType.PluginList: tr("Plugin Management"),
     PaneType.Empty: tr("New Tab"),
 }
 
@@ -170,6 +170,8 @@ class MainWindow(Repeater, GUIObject):
             result = GeneralLedgerView(self)
         elif pane_type == PaneType.DocProps:
             result = DocPropsView(self)
+        elif pane_type == PaneType.PluginList:
+            result = PluginListView(self)
         elif pane_type == PaneType.Empty:
             result = EmptyView(self)
         else:
@@ -226,7 +228,7 @@ class MainWindow(Repeater, GUIObject):
             if pane.account is not None:
                 data['account_name'] = pane.account.name
             if pane.view.VIEW_TYPE >= PaneType.Plugin:
-                data['plugin_name'] = pane.view.plugin.NAME
+                data['plugin_name'] = pane.view.plugin.plugin_id()
             opened_panes.append(data)
         logging.debug('Saving panes with data %r', opened_panes)
         self.document.set_default(Preference.OpenedPanes, opened_panes)
@@ -245,7 +247,7 @@ class MainWindow(Repeater, GUIObject):
         self.panes = []
         for pane_type, arg in pane_data:
             if pane_type >= PaneType.Plugin:
-                plugin = first(p for p in self.app.plugins if p.NAME == arg)
+                plugin = first(p for p in self.app.get_enabled_plugins() if p.plugin_id() == arg)
                 if plugin is not None:
                     self.panes.append(self._create_pane_from_plugin(plugin))
                 else:

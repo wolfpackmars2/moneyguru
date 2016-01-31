@@ -1,4 +1,4 @@
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2016 Virgil Dupras
 #
 # This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
@@ -23,6 +23,7 @@ from urllib.request import urlopen
 # https://github.com/hsoft/moneyguru/blob/master/core/plugin.py
 class YahooProviderPlugin(CurrencyProviderPlugin):
     NAME = 'Yahoo currency rates fetcher'
+    AUTHOR = "Virgil Dupras"
 
     # First, we must tell moneyGuru what currencies we support. We have to return a list of tuples
     # containing the code, the name, the decimal precision and a fallback rate for each currencies

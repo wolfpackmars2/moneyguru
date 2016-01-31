@@ -8,6 +8,7 @@ from hscommon.testutil import eq_
 from core.plugin import CurrencyProviderPlugin, ViewPlugin
 
 from ..model.currency import Currency
+from ..const import PaneType
 from .base import TestApp, with_app
 
 @with_app(TestApp)
@@ -51,4 +52,38 @@ def test_dont_crash_on_missing_appdata_path(tmpdir):
     # When the "appdata" path doesn't exist, don't crash on startup. ref #437
     appdata = str(tmpdir.join('appdata'))
     TestApp(appargs={'appdata_path': appdata}) # no crash
+
+@with_app(TestApp)
+def test_disable_view_plugin(app):
+    # Disabling a view plugin removes it from the plugin view list. ref #451
+    app.mw.select_pane_of_type(PaneType.PluginList)
+    pview = app.current_view()
+    for row in pview.table:
+        if row.name == 'Account List':
+            row.enabled = False
+            break
+    else:
+        raise AssertionError("can't find Account List row")
+    newapp = app.new_app_same_prefs()
+    newapp.mw.select_pane_of_type(PaneType.Empty)
+    eview = newapp.current_view()
+    assert 'Account List' not in eview.plugin_list
+
+@with_app(TestApp)
+def test_disable_currency_plugin(app):
+    # Disabling a currency plugin makes currencies it provides unavailable. ref #451
+    app.mw.select_pane_of_type(PaneType.PluginList)
+    pview = app.current_view()
+    for row in pview.table:
+        if row.name == 'Stale currencies provider':
+            row.enabled = False
+            break
+    else:
+        raise AssertionError("can't find Stale currencies provider row")
+    Currency.reset_currencies()
+    newapp = app.new_app_same_prefs()
+    tview = newapp.show_tview()
+    newapp.add_txn(amount='42 ats')
+    # ATS, not being supported is replaced by our default currency
+    eq_(tview.ttable[0].amount, '42.00')
 

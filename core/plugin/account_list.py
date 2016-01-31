@@ -9,14 +9,15 @@ from core.model.account import AccountType, sort_accounts
 class AccountListPlugin(ReadOnlyTablePlugin):
     # The name that shows up when moneyGuru needs to list plugins
     NAME = 'Account List'
-    
+    AUTHOR = "Virgil Dupras"
+
     # The columns that will be present in our table. For each column we add here, we have to set
     # a field value in each row we'll add in fill_table().
     COLUMNS = [
         Column('name', "Account Name"),
         Column('type', "Account Type"),
     ]
-    
+
     # This is where the central part of the work is done. We fetch the accounts from the document
     # and we add a row to our table for each of these accounts.
     def fill_table(self):
@@ -43,4 +44,4 @@ class AccountListPlugin(ReadOnlyTablePlugin):
                 AccountType.Expense: "Expense",
             }[account.type]
             row.set_field('type', account_type_display)
-    
+

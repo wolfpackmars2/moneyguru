@@ -37,6 +37,7 @@ from .transaction.view import TransactionView
 from .schedule.view import ScheduleView
 from .general_ledger.view import GeneralLedgerView
 from .docprops_view import DocPropsView
+from .pluginlist_view import PluginListView
 from .new_view import NewView
 from .readonly_table_plugin_view import ReadOnlyTablePluginView
 from .lookup import Lookup
@@ -58,6 +59,7 @@ PANETYPE2ICON = {
     PaneType.Budget: 'budget_16',
     PaneType.GeneralLedger: 'gledger_16',
     PaneType.DocProps: 'gledger_16',
+    PaneType.PluginList: '',
 }
 
 PANETYPE2VIEWCLASS = {
@@ -69,6 +71,7 @@ PANETYPE2VIEWCLASS = {
     PaneType.Budget: BudgetView,
     PaneType.GeneralLedger: GeneralLedgerView,
     PaneType.DocProps: DocPropsView,
+    PaneType.PluginList: PluginListView,
     PaneType.Empty: NewView,
     PaneType.ReadOnlyTablePlugin: ReadOnlyTablePluginView,
 }

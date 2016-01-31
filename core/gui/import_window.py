@@ -47,7 +47,7 @@ class AccountPane:
         self.parsing_date_format = self.import_document.parsing_date_format
         self.account = account
         self.binding_plugins = [
-            plugin() for plugin in self.import_document.app.plugins
+            plugin() for plugin in self.import_document.app.get_enabled_plugins()
             if issubclass(plugin, ImportBindPlugin)
         ]
         self._selected_target = target_account
@@ -321,7 +321,7 @@ class ImportWindow(MainWindowGUIObject):
 
         self._import_action_listeners = []
         self._add_plugin_listeners(self._import_action_plugins)
-        self._receive_plugins(self.app.plugins)
+        self._receive_plugins(self.app.get_enabled_plugins())
 
         def setfunc(index):
             self.view.set_swap_button_enabled(self.can_perform_swap())

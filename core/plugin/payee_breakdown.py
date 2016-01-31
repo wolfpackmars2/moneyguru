@@ -15,13 +15,14 @@ from core.model.amount import convert_amount
 
 class PayeeBreakdownPlugin(ReadOnlyTablePlugin):
     NAME = 'Payee Breakdown'
-    
+    AUTHOR = "Virgil Dupras"
+
     COLUMNS = [
         Column('payee', "Payee"),
         Column('count', "# Transactions"),
         Column('amount', "Total Amount"),
     ]
-    
+
     def fill_table(self):
         # The currently selected date range
         date_range = self.document.date_range
@@ -71,4 +72,4 @@ class PayeeBreakdownPlugin(ReadOnlyTablePlugin):
             # function to do that.
             total_amount_fmt = self.document.app.format_amount(total_amount)
             row.set_field('amount', total_amount_fmt, sort_value=total_amount)
-    
+

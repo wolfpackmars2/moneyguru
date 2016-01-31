@@ -37,10 +37,23 @@ class Plugin:
     """
     #: Display name of the plugin (for when we list plugins and stuff)
     NAME = ''
+    #: Display name of the plugin basic type (import action, currency, etc.)
+    TYPE_NAME = ''
+    #: Author of the plugin
+    AUTHOR = ''
     #: Determines the loading order of the plugins. Lower priorities are loaded first.
     PRIORITY = 0
     #: Whether this plugin is a View, and thus should be in the plugin section of the New View tab.
     IS_VIEW = False
+
+    @classmethod
+    def plugin_id(cls):
+        return "{}.{}".format(cls.__module__, cls.__qualname__)
+
+    @classmethod
+    def is_core(cls):
+        return cls.plugin_id().startswith('core.')
+
 
 class ViewPlugin(Plugin):
     """Base class for viewable plugins.
@@ -121,6 +134,7 @@ class ReadOnlyTablePlugin(ViewPlugin):
 
     Subclasses :class:`ViewPlugin`.
     """
+    TYPE_NAME = "Display Table"
     #: List of columns to be displayed in our table. See :class:`Columns`.
     COLUMNS = []
 
@@ -157,6 +171,8 @@ class CurrencyProviderPlugin(Plugin):
 
     Subclasses :class:`Plugin`
     """
+    TYPE_NAME = "Currency Provider"
+
     def __init__(self):
         Plugin.__init__(self)
         self.supported_currency_codes = set()
@@ -265,6 +281,7 @@ class ImportActionPlugin(Plugin, Broadcaster):
     to fetch those currencies' exchange rates.
     Subclasses :class:`Plugin`, :class:`Broadcaster`
     """
+    TYPE_NAME = "Import Action"
 
     # Signal to the import window to change the name in our drop down list
     action_name_changed = 'action_name_changed'
@@ -294,6 +311,7 @@ EntryMatch = namedtuple('EntryMatch', 'existing imported will_import weight')
 
 
 class ImportBindPlugin(Plugin):
+    TYPE_NAME = "Import Bind"
 
     def match_entries(self, target_account, document, import_document, existing_entries, imported_entries):
         # Returns a list of EntryMatch objects.

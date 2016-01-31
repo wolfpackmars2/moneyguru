@@ -40,6 +40,8 @@ class PreferenceNames:
     AutoDecimalPlace = 'AutoDecimalPlace'
     CustomRanges = 'CustomRanges'
     ShowScheduleScopeDialog = 'ShowScheduleScopeDialog'
+    DisabledCorePlugins = 'DisabledCorePlugins'
+    EnabledUserPlugins = 'EnabledUserPlugins'
 
 # http://stackoverflow.com/questions/1606436/adding-docstrings-to-namedtuples-in-python
 class SavedCustomRange(namedtuple('SavedCustomRange', 'name start end')):
@@ -171,6 +173,11 @@ class Application(Broadcaster):
         self.saved_custom_ranges = [None] * 3
         self._load_custom_ranges()
         self.plugins = []
+        # All core plugins are enabled by default, so we keep track of *disabled* plugins instead
+        # of enabled ones.
+        self._disabled_core_plugins = self.get_default(PreferenceNames.DisabledCorePlugins, set())
+        # User plugins are disabled by default.
+        self._enabled_user_plugins = self.get_default(PreferenceNames.EnabledUserPlugins, set())
         self._load_core_plugins()
         self._load_user_plugins()
         self._hook_currency_plugins()
@@ -232,7 +239,7 @@ class Application(Broadcaster):
         del sys.path[0]
 
     def _hook_currency_plugins(self):
-        currency_plugins = [p for p in self.plugins if issubclass(p, CurrencyProviderPlugin)]
+        currency_plugins = [p for p in self.get_enabled_plugins() if issubclass(p, CurrencyProviderPlugin)]
         for p in currency_plugins:
             Currency.get_rates_db().register_rate_provider(p().wrapped_get_currency_rates)
 
@@ -340,6 +347,31 @@ class Application(Broadcaster):
         """
         self._autosave_interval = 0
         self._update_autosave_timer()
+
+    def get_enabled_plugins(self):
+        return [p for p in self.plugins if self.is_plugin_enabled(p)]
+
+    def is_plugin_enabled(self, plugin):
+        pid = plugin.plugin_id()
+        if plugin.is_core():
+            return pid not in self._disabled_core_plugins
+        else:
+            return pid in self._enabled_user_plugins
+
+    def set_plugin_enabled(self, plugin, enabled):
+        pid = plugin.plugin_id()
+        if plugin.is_core():
+            if enabled:
+                self._disabled_core_plugins.discard(pid)
+            else:
+                self._disabled_core_plugins.add(pid)
+            self.set_default(PreferenceNames.DisabledCorePlugins, self._disabled_core_plugins)
+        else:
+            if enabled:
+                self._enabled_user_plugins.add(pid)
+            else:
+                self._enabled_user_plugins.discard(pid)
+            self.set_default(PreferenceNames.EnabledUserPlugins, self._enabled_user_plugins)
 
     def get_default(self, key, fallback_value=None):
         """Returns moneyGuru user pref for ``key``.

@@ -1,4 +1,4 @@
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2016 Virgil Dupras
 #
 # This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
@@ -8,6 +8,7 @@ from core.plugin import ImportBindPlugin, EntryMatch
 
 class ReferenceBind(ImportBindPlugin):
     NAME = "Reference Import Bind"
+    AUTHOR = "Nelson Brown"
 
     def match_entries(self,
                       target_account,

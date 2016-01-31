@@ -1,6 +1,4 @@
-# Created By: Virgil Dupras
-# Created On: 2008-09-14
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2016 Virgil Dupras
 #
 # This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
@@ -29,6 +27,7 @@ class PaneType:
     Budget = 5
     GeneralLedger = 7
     DocProps = 8
+    PluginList = 9
     Empty = 100
     Plugin = 1000
     ReadOnlyTablePlugin = 1001
