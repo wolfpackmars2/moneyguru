@@ -52,10 +52,11 @@ class MoneyGuru(ApplicationBase):
         self.mainWindow = MainWindow(doc=self.doc)
         self.preferencesPanel = PreferencesPanel(self.mainWindow, app=self)
         self.aboutBox = AboutBox(self.mainWindow, self)
+        self.initialFilePath = None
         if filepath and op.exists(filepath):
-            self.doc.open(filepath)
+            self.initialFilePath = filepath
         elif self.prefs.recentDocuments:
-            self.doc.open(self.prefs.recentDocuments[0])
+            self.initialFilePath = self.prefs.recentDocuments[0]
 
         self.finishedLaunching.connect(self.applicationFinishedLaunching)
         QCoreApplication.instance().aboutToQuit.connect(self.applicationWillTerminate)
@@ -79,6 +80,8 @@ class MoneyGuru(ApplicationBase):
         self.prefs.restoreGeometry('mainWindowGeometry', self.mainWindow)
         self.prefs.restoreGeometry('importWindowGeometry', self.mainWindow.importWindow)
         self.mainWindow.show()
+        if self.initialFilePath:
+            self.doc.open(self.initialFilePath, initial=True)
 
     def applicationWillTerminate(self):
         self.doc.close()

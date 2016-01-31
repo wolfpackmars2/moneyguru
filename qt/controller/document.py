@@ -62,7 +62,9 @@ class Document(QObject):
         self.model.clear()
         self.documentPathChanged.emit()
 
-    def open(self, docpath):
+    def open(self, docpath, initial=False):
+        # initial flag is true when open() is called at the document's initialization. When that's
+        # the case, we need to create a new document when we fail opening this one.
         if not self.confirmDestructiveAction():
             return
         self.close()
@@ -71,6 +73,8 @@ class Document(QObject):
             self.documentPath = docpath
         except FileFormatError as e:
             QMessageBox.warning(self.app.mainWindow, tr("Cannot load file"), str(e))
+            if initial:
+                self.new()
         self.documentPathChanged.emit()
         self.documentOpened.emit(docpath)
 
