@@ -19,7 +19,6 @@ from ...model.account import AccountType
 from ...model.amount import Amount
 from ...model.currency import Currency, USD
 
-PLN = Currency(code='PLN')
 
 def pytest_funcarg__loader(request):
     return native.Loader(USD)
@@ -57,6 +56,7 @@ def test_wrong_mtime(loader):
 
 def test_account_and_entry_values(loader):
     # Make sure loaded values are correct.
+    PLN = Currency.register('PLN', 'PLN')
     loader.parse(testdata.filepath('moneyguru', 'simple.moneyguru'))
     loader.load()
     accounts = loader.accounts
@@ -115,3 +115,10 @@ def test_account_and_entry_values(loader):
     split = transaction.splits[0]
     eq_(split.account.name, 'Account 2')
     eq_(split.amount, Amount(-101, PLN))
+
+def test_unsupported_currency(loader):
+    # Trying to load a file containing amounts of unsupported currencies raises FileFormatError
+    loader.parse(testdata.filepath('moneyguru', 'unsupported_currency.moneyguru'))
+    with raises(FileFormatError):
+        loader.load()
+

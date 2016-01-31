@@ -11,10 +11,11 @@ from itertools import groupby
 from operator import attrgetter
 
 from hscommon.util import nonone, flatten, stripfalse, dedupe
+from hscommon.trans import tr
 
 from ..exception import FileFormatError
 from ..model.account import Account, Group, AccountList, GroupList, AccountType
-from ..model.amount import parse_amount, of_currency
+from ..model.amount import parse_amount, of_currency, UnsupportedCurrencyError
 from ..model.budget import Budget
 from ..model.currency import Currency
 from ..model.oven import Oven
@@ -62,6 +63,9 @@ class Loader:
     NATIVE_DATE_FORMAT = None
     # Some extra date formats to try before standard date guessing order
     EXTRA_DATE_FORMATS = None
+    # Whether we fail with a ``FileFormatError`` when encountering an unsupported currency or we
+    # fall back to the default currency
+    STRICT_CURRENCY = False
 
     def __init__(self, default_currency, default_date_format=None):
         self.default_currency = default_currency
@@ -221,9 +225,17 @@ class Loader:
         except IOError:
             raise FileFormatError()
 
-    @staticmethod
-    def parse_amount(string, currency):
-        return parse_amount(string, currency, with_expression=False)
+    @classmethod
+    def parse_amount(cls, string, currency):
+        try:
+            return parse_amount(
+                string, currency, with_expression=False, strict_currency=cls.STRICT_CURRENCY
+            )
+        except UnsupportedCurrencyError as e:
+            msg = tr(
+                "Unsupported currency: {}. Aborting load. Did you disable a currency plugin?"
+            ).format(e.currency)
+            raise FileFormatError(msg)
 
     def load(self):
         """Loads the parsed info into self.accounts and self.transactions.

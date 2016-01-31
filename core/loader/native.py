@@ -17,6 +17,7 @@ from . import base
 class Loader(base.Loader):
     FILE_OPEN_MODE = 'rb'
     NATIVE_DATE_FORMAT = '%Y-%m-%d'
+    STRICT_CURRENCY = True
 
     def _parse(self, infile):
         try:

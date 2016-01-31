@@ -20,6 +20,12 @@ except ImportError:
     print("Using amount_ref")
     from ._amount_ref import Amount
 
+class UnsupportedCurrencyError(ValueError):
+    """We're trying to parse an amount specifying an unsupported currency."""
+    def __init__(self, currency):
+        self.currency = currency
+        ValueError.__init__(self, "Unsupported currency: {}".format(currency))
+
 re_arithmetic_operators = re.compile(r"[+\-*/()]")
 re_not_arithmetic_operators = re.compile(r"[^+\-*/()]+")
 # 3 letters (capturing)
@@ -159,7 +165,9 @@ def parse_amount_single(string, exponent, auto_decimal_place, parens_for_negativ
             value = -value
     return value
 
-def parse_amount(string, default_currency=None, with_expression=True, auto_decimal_place=False):
+def parse_amount(
+        string, default_currency=None, with_expression=True, auto_decimal_place=False,
+        strict_currency=False):
     """Returns an :class:`Amount` from ``string``.
 
     We can parse strings like "42.54 cad" or "CAD 42.54".
@@ -174,6 +182,10 @@ def parse_amount(string, default_currency=None, with_expression=True, auto_decim
     typed to the last precision digit and automatically place our decimal separator if there isn't
     one. For example, "1234" would be parsed as "12.34" in a CAD context (in BHD, a currency with 3
     digits, it would be parsed as "1.234"). This doesn't work with expressions.
+
+    With ``strict_currency`` enabled, ``UnsupportedCurrencyError`` is raised if an unsupported
+    currency is specified. We still parse sucessfully if no currency is specified and
+    ``default_currency`` is not ``None``.
     """
     if string is None or not string.strip():
         return 0
@@ -185,7 +197,8 @@ def parse_amount(string, default_currency=None, with_expression=True, auto_decim
         try:
             currency = Currency(capture)
         except ValueError:
-            pass
+            if strict_currency:
+                raise UnsupportedCurrencyError(capture)
         else:
             string = re_currency.sub('', string)
     currency = currency or default_currency
@@ -256,3 +269,4 @@ def same_currency(amount1, amount2):
 
 def of_currency(amount, currency):
     return not amount or amount.currency == currency
+

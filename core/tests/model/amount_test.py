@@ -10,7 +10,7 @@ from pytest import raises
 from hscommon.testutil import eq_
 
 from ...model.currency import Currency, CAD, EUR, USD
-from ...model.amount import format_amount, parse_amount, Amount
+from ...model.amount import format_amount, parse_amount, Amount, UnsupportedCurrencyError
 
 
 # --- Amount
@@ -342,6 +342,13 @@ def test_parse_dot_ambiguity():
     eq_(parse_amount('USD 1000*1.055'), Amount(1055, USD))
     # first dot should be considered a thousand sep
     eq_(parse_amount('USD 1.000*1.055'), Amount(1055, USD))
+
+def test_strict_currency():
+    # With the strict_currency flag enabled, we raise UnsupportedCurrencyError on unsupported
+    # currencies, even with a default_currency.
+    eq_(parse_amount('42', default_currency=USD, strict_currency=True), Amount(42, USD))
+    with raises(UnsupportedCurrencyError):
+        parse_amount('ZZZ 42', default_currency=USD, strict_currency=True)
 
 # --- Format amount
 def test_format_blank_zero():
