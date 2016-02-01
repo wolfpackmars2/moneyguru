@@ -1,6 +1,4 @@
-# Created By: Virgil Dupras
-# Created On: 2009-02-12
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2016 Virgil Dupras
 #
 # This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
@@ -175,9 +173,9 @@ class Application(Broadcaster):
         self.plugins = []
         # All core plugins are enabled by default, so we keep track of *disabled* plugins instead
         # of enabled ones.
-        self._disabled_core_plugins = self.get_default(PreferenceNames.DisabledCorePlugins, set())
+        self._disabled_core_plugins = set(self.get_default(PreferenceNames.DisabledCorePlugins, []))
         # User plugins are disabled by default.
-        self._enabled_user_plugins = self.get_default(PreferenceNames.EnabledUserPlugins, set())
+        self._enabled_user_plugins = set(self.get_default(PreferenceNames.EnabledUserPlugins, []))
         self._load_core_plugins()
         self._load_user_plugins()
         self._hook_currency_plugins()
@@ -365,13 +363,13 @@ class Application(Broadcaster):
                 self._disabled_core_plugins.discard(pid)
             else:
                 self._disabled_core_plugins.add(pid)
-            self.set_default(PreferenceNames.DisabledCorePlugins, self._disabled_core_plugins)
+            self.set_default(PreferenceNames.DisabledCorePlugins, list(self._disabled_core_plugins))
         else:
             if enabled:
                 self._enabled_user_plugins.add(pid)
             else:
                 self._enabled_user_plugins.discard(pid)
-            self.set_default(PreferenceNames.EnabledUserPlugins, self._enabled_user_plugins)
+            self.set_default(PreferenceNames.EnabledUserPlugins, list(self._enabled_user_plugins))
 
     def get_default(self, key, fallback_value=None):
         """Returns moneyGuru user pref for ``key``.

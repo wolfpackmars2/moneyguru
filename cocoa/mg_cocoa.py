@@ -1,4 +1,4 @@
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2016 Virgil Dupras
 #
 # This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
@@ -958,6 +958,10 @@ class PyDocPropsView(PyBaseView):
     def yearStartMonthList(self) -> pyref:
         return self.model.year_start_month_list
 
+
+class PyPluginListView(PyBaseView):
+    def table(self) -> pyref:
+        return self.model.table
 
 class PyEmptyView(PyBaseView):
     def pluginList(self) -> pyref:

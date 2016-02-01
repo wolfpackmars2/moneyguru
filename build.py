@@ -1,6 +1,4 @@
-# Created By: Virgil Dupras
-# Created On: 2009-12-30
-# Copyright 2015 Hardcoded Software (http://www.hardcoded.net)
+# Copyright 2016 Virgil Dupras
 #
 # This software is licensed under the "GPLv3" License as described in the "LICENSE" file,
 # which should be included with this package. The terms are also available at
@@ -356,8 +354,8 @@ def build_cocoa_bridging_interfaces():
         PanelWithTransactionView, PyTransactionPanel, PySchedulePanel, SchedulePanelView,
         BaseViewView, PyAccountSheetView, PyTransactionView,
         PyAccountView, AccountViewView, PyScheduleView, PyBudgetView,
-        PyGeneralLedgerView, PyDocPropsView, PyEmptyView, PyReadOnlyPluginView, PyMainWindow,
-        MainWindowView, PyDocument, DocumentView, PyMoneyGuruApp
+        PyGeneralLedgerView, PyDocPropsView, PyPluginListView, PyEmptyView, PyReadOnlyPluginView,
+        PyMainWindow, MainWindowView, PyDocument, DocumentView, PyMoneyGuruApp
     )
     from mg_cocoa import PyPrintView, PySplitPrint, PyTransactionPrint, PyEntryPrint
     allclasses = [
@@ -369,7 +367,7 @@ def build_cocoa_bridging_interfaces():
         PyMassEditionPanel, PyBudgetPanel, PyCustomDateRangePanel, PyAccountReassignPanel,
         PyExportPanel, PyPanelWithTransaction, PyTransactionPanel, PySchedulePanel,
         PyAccountSheetView, PyTransactionView, PyAccountView, PyScheduleView, PyBudgetView,
-        PyGeneralLedgerView, PyDocPropsView, PyEmptyView, PyReadOnlyPluginView,
+        PyGeneralLedgerView, PyDocPropsView, PyPluginListView, PyEmptyView, PyReadOnlyPluginView,
         PyMainWindow, PyDocument, PyMoneyGuruApp
     ]
     proxy.destroyPool()

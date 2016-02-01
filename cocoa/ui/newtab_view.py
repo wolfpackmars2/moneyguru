@@ -10,6 +10,7 @@ BUTTONS_DATA = [
     ("Schedules", 'schedules_48', 'selectScheduleView'),
     ("Budgets", 'budget_48', 'selectBudgetView'),
     ("Document Properties", 'gledger_48', 'selectDocPropsView'),
+    ("Plugin Management", '', 'selectPluginListView'),
 ]
 BUTTON_LABEL_FONT = Font("Lucida Grande", 24)
 BUTTON_FONT = Font("Lucida Grande", 14, [FontTrait.Bold])
@@ -53,7 +54,7 @@ buttonLayout = VHLayout([
     list(buttons[0] + (None, ) + buttons[4]),
     list(buttons[1] + (None, ) + buttons[5]),
     list(buttons[2] + (None, ) + buttons[6]),
-    list(buttons[3] + (None, )),
+    list(buttons[3] + (None, ) + buttons[7]),
     ])
 layout = VLayout([promptLabel, buttonLayout, pluginsLabel, pluginsTable], filler=pluginsTable, align=Pack.Middle)
 layout.moveTo(Pack.UpperLeft)
