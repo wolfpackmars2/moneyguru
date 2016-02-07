@@ -10,12 +10,12 @@ import os
 import os.path as op
 import compileall
 import shutil
-import json
 from argparse import ArgumentParser
 import platform
+import venv
 
 from core.app import Application as MoneyGuru
-from hscommon.plat import ISWINDOWS, ISLINUX
+from hscommon.plat import ISWINDOWS, ISLINUX, ISOSX
 from hscommon.build import (
     copy_packages, build_debian_changelog, copy_qt_plugins, print_and_do,
     move, copy_all, setup_package_argparser, package_cocoa_app_in_dmg,
@@ -27,7 +27,7 @@ def parse_args():
     setup_package_argparser(parser)
     return parser.parse_args()
 
-def package_windows(dev):
+def package_windows():
     if not ISWINDOWS:
         print("Qt packaging only works under Windows.")
         return
@@ -63,11 +63,10 @@ def package_windows(dev):
         executables=executables
     )
 
-    if not dev:
-        # Copy qt plugins
-        plugin_dest = op.join('dist', 'qt4_plugins')
-        plugin_names = ['accessible', 'codecs', 'iconengines', 'imageformats']
-        copy_qt_plugins(plugin_names, plugin_dest)
+    # Copy qt plugins
+    plugin_dest = op.join('dist', 'qt4_plugins')
+    plugin_names = ['accessible', 'codecs', 'iconengines', 'imageformats']
+    copy_qt_plugins(plugin_names, plugin_dest)
 
     print("Copying forgotten DLLs")
     shutil.copy(find_in_path('msvcp110.dll'), distdir)
@@ -75,13 +74,12 @@ def package_windows(dev):
     shutil.copytree('build\\help', 'dist\\help')
     shutil.copytree('build\\locale', 'dist\\locale')
 
-    if not dev:
-        # AdvancedInstaller.com has to be in your PATH
-        # this is so we don'a have to re-commit installer.aip at every version change
-        shutil.copy('qt\\installer.aip', 'installer_tmp.aip')
-        print_and_do('AdvancedInstaller.com /edit installer_tmp.aip /SetVersion %s' % MoneyGuru.VERSION)
-        print_and_do('AdvancedInstaller.com /build installer_tmp.aip -force')
-        os.remove('installer_tmp.aip')
+    # AdvancedInstaller.com has to be in your PATH
+    # this is so we don'a have to re-commit installer.aip at every version change
+    shutil.copy('qt\\installer.aip', 'installer_tmp.aip')
+    print_and_do('AdvancedInstaller.com /edit installer_tmp.aip /SetVersion %s' % MoneyGuru.VERSION)
+    print_and_do('AdvancedInstaller.com /build installer_tmp.aip -force')
+    os.remove('installer_tmp.aip')
 
 def copy_files_to_package(destpath, packages, with_so):
     # when with_so is true, we keep .so files in the package, and otherwise, we don't. We need this
@@ -128,23 +126,22 @@ def package_arch():
     copy_files_to_package(srcpath, packages, with_so=True)
 
 def package_source_tgz():
-    if not op.exists('deps'):
-        print("Downloading PyPI dependencies")
-        os.mkdir('deps')
-        print_and_do('pip install --download=deps -r requirements.txt setuptools pip')
+    venv.create('build/pkgenv', clear=True, with_pip=True)
+    print_and_do('./build/pkgenv/bin/pip install -r requirements.txt')
+    print_and_do('./build/pkgenv/bin/pip freeze > build/requirements.freeze')
     app_version = MoneyGuru.VERSION
     name = 'moneyguru-src-{}.tar'.format(app_version)
     dest = op.join('build', name)
     print_and_do('git archive -o {} HEAD'.format(dest))
-    print("Adding dependencies and wrapping up")
-    print_and_do('tar -rf {} deps'.format(dest))
-    print_and_do('gzip {}'.format(dest))
+    print("Adding requirements.freeze and wrapping up")
+    os.chdir('build')
+    print_and_do('tar -rf {} requirements.freeze'.format(name))
+    print_and_do('gzip {}'.format(name))
+    os.chdir('..')
 
 def main():
     args = parse_args()
-    conf = json.load(open('conf.json'))
-    ui = conf['ui']
-    dev = conf['dev']
+    ui = 'cocoa' if ISOSX else 'qt'
     if args.src_pkg:
         print("Creating source package for moneyGuru")
         package_source_tgz()
@@ -154,7 +151,7 @@ def main():
         package_cocoa_app_in_dmg('build/moneyGuru.app', '.', args)
     elif ui == 'qt':
         if ISWINDOWS:
-            package_windows(dev)
+            package_windows()
         elif ISLINUX:
             if not args.arch_pkg:
                 distname, _, _ = platform.dist()
@@ -171,3 +168,4 @@ def main():
 
 if __name__ == '__main__':
     main()
+
