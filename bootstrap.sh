@@ -19,21 +19,12 @@ if [ ! -d "env" ]; then
     # install. To achieve our latter goal, we start with a normal venv, which we later upgrade to
     # a system-site-packages once pip is installed.
     if ! $PYTHON -m venv env ; then
-        # We're probably under braindead Ubuntu 14.04 which completely messed up ensurepip.
-        # Work around it :(
-        echo "Ubuntu 14.04's version of Python 3.4 is braindead stupid, but we work around it anyway..."
-        $PYTHON -m venv --without-pip env
-        ./env/bin/python get-pip.py $PIPARGS --force-reinstall
+        echo "Creation of our virtualenv failed. If you're on Ubuntu, you probably need python3-venv."
+        exit 1
     fi
     if [ "$(uname)" != "Darwin" ]; then
         # We only need system site packages for PyQt, so under OS X, we don't enable it
-        if ! $PYTHON -m venv env --upgrade --system-site-packages ; then
-            # We're probably under v3.4.1 and experiencing http://bugs.python.org/issue21643
-            # Work around it.
-            echo "Oops, can't upgrade our venv. Trying to work around it."
-            rm env/lib64
-            $PYTHON -m venv env --upgrade --system-site-packages
-        fi
+        $PYTHON -m venv env --upgrade --system-site-packages
     fi
 fi
 

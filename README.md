@@ -78,7 +78,7 @@ Then, you have to make sure that your system has its "non-pip-installable" prere
 
 On Ubuntu, the apt-get command to install all pre-requisites is:
 
-    $ apt-get install python3-dev python3-pyqt5 pyqt5-dev-tools
+    $ apt-get install python3-dev python3-venv python3-pyqt5 pyqt5-dev-tools
 
 On Arch, it's:
 
