@@ -1162,3 +1162,15 @@ msgstr ""
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Zoom"
 msgstr ""
+
+#: qt/controller/account_panel.py:72
+msgid "Inactive:"
+msgstr ""
+
+#: qt/controller/new_view.py:64
+msgid "8. Plugin Management"
+msgstr ""
+
+#: qt/controller/pluginlist_view.py:25
+msgid "moneyGuru has to be restarted for plugin changes to take effect."
+msgstr ""
