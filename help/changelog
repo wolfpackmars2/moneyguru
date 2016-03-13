@@ -1,3 +1,21 @@
+=== 2.10.0 (2016-03-13)
+
+* From now on, the changelog is going to be a bit more developer-oriented.
+* Add plugin management view. (#451)
+* Refuse to load moneyguru files with unsupported currencies. (#451)
+* Add "inactive" flag to accounts. (#412)
+* Fix transaction duplication bug on undo. (#438)
+* Fix crash on CSV import [qt]. (#440)
+* Fix debit/credit preference so it's properly restored on startup. (#421)
+* Fix "Show Account" for transactions having multiple splits to the same
+  account.
+* Make all panels instantiate on-the-fly rather than on startup. (#434)
+* Various minor refactorings. See git log.
+* Improve build process, notably on OS X. See git log.
+* Convert to Qt5.
+* Remove dependency on ``sgmllib3k``.
+* Bump Python requirement to 3.4+.
+
 === 2.9.4 (2015-12-24)
 
 * Fix crash on loading files with inconsistent currencies. (#442)
