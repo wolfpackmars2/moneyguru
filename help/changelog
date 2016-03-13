@@ -1,6 +1,8 @@
 === 2.10.0 (2016-03-13)
 
 * From now on, the changelog is going to be a bit more developer-oriented.
+* Drop Windows support, maybe temporarily.
+  `Details <https://www.hardcoded.net/archive2015#2015-11-01>`_
 * Add plugin management view. (#451)
 * Refuse to load moneyguru files with unsupported currencies. (#451)
 * Add "inactive" flag to accounts. (#412)
