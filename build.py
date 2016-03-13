@@ -75,6 +75,10 @@ def parse_args():
         '--xibless', action='store_true', dest='xibless',
         help="Build only xibless UIs"
     )
+    parser.add_argument(
+        '--normpo', action='store_true', dest='normpo',
+        help="Normalize all PO files (do this before commit)."
+    )
     args = parser.parse_args()
     return args
 
@@ -286,6 +290,11 @@ def build_mergepot():
     loc.merge_pots_into_pos('locale')
     loc.merge_pots_into_pos(op.join('qtlib', 'locale'))
 
+def build_normpo():
+    loc.normalize_all_pos('locale')
+    loc.normalize_all_pos(op.join('qtlib', 'locale'))
+    loc.normalize_all_pos(op.join('cocoalib', 'locale'))
+
 def build_ext():
     print("Building C extensions")
     if ISWINDOWS and platform.architecture()[0] == '64bit':
@@ -418,6 +427,8 @@ def main():
         build_updatepot()
     elif args.mergepot:
         build_mergepot()
+    elif args.normpo:
+        build_normpo()
     elif args.cocoamod:
         build_cocoa_proxy_module()
         build_cocoa_bridging_interfaces()
