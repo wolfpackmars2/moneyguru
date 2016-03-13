@@ -1,8 +1,14 @@
-# 
+# Translators:
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=utf-8\n"
+"Project-Id-Version: moneyGuru\n"
+"PO-Revision-Date: 2016-02-07 20:52+0000\n"
+"Last-Translator: Virgil Dupras <hsoft@hardcoded.net>\n"
+"Language-Team: Spanish (http://www.transifex.com/hsoft/moneyguru/language/es/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: utf-8\n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: core/gui/balance_sheet.py:21 core/gui/budget_table.py:25
 #: core/gui/export_account_table.py:18 core/gui/income_statement.py:17
@@ -54,64 +60,64 @@ msgstr "Intervalo"
 msgid "Target"
 msgstr "Destino"
 
-#: core/gui/budget_table.py:27 core/gui/import_table.py:21
-#: core/gui/import_table.py:28 core/gui/schedule_table.py:30
+#: core/gui/budget_table.py:27 core/gui/import_table.py:22
+#: core/gui/import_table.py:29 core/gui/schedule_table.py:30
 #: core/gui/transaction_table.py:32
 msgid "Amount"
 msgstr "Importe"
 
-#: core/gui/entry_table.py:36 core/gui/general_ledger_table.py:37
-#: core/gui/import_table.py:19 core/gui/import_table.py:23
+#: core/gui/entry_table.py:53 core/gui/general_ledger_table.py:37
+#: core/gui/import_table.py:20 core/gui/import_table.py:24
 #: core/gui/transaction_table.py:26
 msgid "Date"
 msgstr "Fecha"
 
-#: core/gui/entry_table.py:37 core/gui/general_ledger_table.py:38
+#: core/gui/entry_table.py:54 core/gui/general_ledger_table.py:38
 msgid "Reconciliation Date"
 msgstr "Fecha de conciliación"
 
-#: core/gui/entry_table.py:38 core/gui/general_ledger_table.py:39
-#: core/gui/import_table.py:26 core/gui/schedule_table.py:25
+#: core/gui/entry_table.py:55 core/gui/general_ledger_table.py:39
+#: core/gui/import_table.py:27 core/gui/schedule_table.py:25
 #: core/gui/transaction_table.py:27
 msgid "Check #"
 msgstr "N.º referencia"
 
-#: core/gui/entry_table.py:39 core/gui/general_ledger_table.py:40
-#: core/gui/import_table.py:20 core/gui/import_table.py:24
+#: core/gui/entry_table.py:56 core/gui/general_ledger_table.py:40
+#: core/gui/import_table.py:21 core/gui/import_table.py:25
 #: core/gui/schedule_table.py:26 core/gui/transaction_table.py:28
 msgid "Description"
 msgstr "Descripción"
 
-#: core/gui/entry_table.py:40 core/gui/general_ledger_table.py:41
-#: core/gui/import_table.py:25 core/gui/schedule_table.py:27
+#: core/gui/entry_table.py:57 core/gui/general_ledger_table.py:41
+#: core/gui/import_table.py:26 core/gui/schedule_table.py:27
 #: core/gui/transaction_table.py:29
 msgid "Payee"
 msgstr "Beneficiario"
 
-#: core/gui/entry_table.py:41 core/gui/general_ledger_table.py:42
-#: core/gui/import_table.py:27
+#: core/gui/entry_table.py:58 core/gui/general_ledger_table.py:42
+#: core/gui/import_table.py:28
 msgid "Transfer"
 msgstr "Transferencia"
 
-#: core/gui/entry_table.py:42
+#: core/gui/entry_table.py:59
 msgid "Increase"
 msgstr "Incremento"
 
-#: core/gui/entry_table.py:43
+#: core/gui/entry_table.py:60
 msgid "Decrease"
 msgstr "Disminución"
 
-#: core/gui/entry_table.py:44 core/gui/general_ledger_table.py:43
+#: core/gui/entry_table.py:61 core/gui/general_ledger_table.py:43
 #: core/gui/split_table.py:19
 msgid "Debit"
 msgstr "Debe"
 
-#: core/gui/entry_table.py:45 core/gui/general_ledger_table.py:44
+#: core/gui/entry_table.py:62 core/gui/general_ledger_table.py:44
 #: core/gui/split_table.py:20
 msgid "Credit"
 msgstr "Haber"
 
-#: core/gui/entry_table.py:46 core/gui/general_ledger_table.py:45
+#: core/gui/entry_table.py:63 core/gui/general_ledger_table.py:45
 msgid "Balance"
 msgstr "Saldo"
 
@@ -126,6 +132,22 @@ msgstr "Actual"
 #: core/gui/income_statement.py:20
 msgid "Last"
 msgstr "Anterior"
+
+#: core/gui/pluginlist_table.py:17
+msgid "Enabled"
+msgstr ""
+
+#: core/gui/pluginlist_table.py:18
+msgid "Name"
+msgstr ""
+
+#: core/gui/pluginlist_table.py:19
+msgid "Type"
+msgstr ""
+
+#: core/gui/pluginlist_table.py:20
+msgid "Author"
+msgstr ""
 
 #: core/gui/schedule_table.py:28 core/gui/transaction_table.py:30
 msgid "From"

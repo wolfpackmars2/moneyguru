@@ -1,8 +1,14 @@
-# 
+# Translators:
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=utf-8\n"
+"Project-Id-Version: moneyGuru\n"
+"PO-Revision-Date: 2016-02-07 20:52+0000\n"
+"Last-Translator: Virgil Dupras <hsoft@hardcoded.net>\n"
+"Language-Team: Czech (http://www.transifex.com/hsoft/moneyguru/language/cs/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: utf-8\n"
+"Language: cs\n"
+"Plural-Forms: nplurals=3; plural=(n==1) ? 0 : (n>=2 && n<=4) ? 1 : 2;\n"
 
 #: qt/controller/account/filter_bar.py:18 qt/controller/export_panel.py:50
 #: qt/controller/transaction/filter_bar.py:18
@@ -237,18 +243,6 @@ msgstr ""
 msgid "Do you want to save your changes before continuing?"
 msgstr ""
 
-#: qt/controller/main_window.py:609
-msgid "Select a document to import"
-msgstr ""
-
-#: qt/controller/main_window.py:610
-msgid "Supported files (*.moneyguru *.ofx *.qfx *.qif *.csv *.txt)"
-msgstr ""
-
-#: qt/controller/main_window.py:625
-msgid "Cannot import file"
-msgstr ""
-
 #: qt/controller/document.py:73
 msgid "Cannot load file"
 msgstr ""
@@ -378,9 +372,17 @@ msgstr "Import"
 msgid "Target Account:"
 msgstr "Cílový účet:"
 
+#: qt/controller/import_/window.py:53 cocoa/en.lproj/Localizable.strings:0
+msgid "Are some fields wrong? Fix them!"
+msgstr ""
+
 #: qt/controller/import_/window.py:57 cocoa/en.lproj/Localizable.strings:0
 msgid "Apply to all accounts"
 msgstr "Použít pro všechny účty"
+
+#: qt/controller/import_/window.py:59 cocoa/en.lproj/Localizable.strings:0
+msgid "Fix"
+msgstr ""
 
 #: qt/controller/lookup.py:35 cocoa/en.lproj/Localizable.strings:0
 msgid "Lookup"
@@ -486,6 +488,10 @@ msgstr "Nový dokument"
 #: qt/controller/main_window.py:230 cocoa/en.lproj/Localizable.strings:0
 msgid "Open Example Document"
 msgstr "Otevřít vzorový dokument"
+
+#: qt/controller/main_window.py:231 cocoa/en.lproj/Localizable.strings:0
+msgid "Open Plugin Folder"
+msgstr ""
 
 #: qt/controller/main_window.py:232 cocoa/en.lproj/Localizable.strings:0
 msgid "Import..."
@@ -607,8 +613,51 @@ msgstr ""
 msgid "Redo {0}"
 msgstr ""
 
+#: qt/controller/main_window.py:609
+msgid "Select a document to import"
+msgstr ""
+
+#: qt/controller/main_window.py:610
+msgid "Supported files (*.moneyguru *.ofx *.qfx *.qif *.csv *.txt)"
+msgstr ""
+
+#: qt/controller/main_window.py:625
+msgid "Cannot import file"
+msgstr ""
+
 #: qt/controller/main_window.py:696
 msgid "Warning"
+msgstr ""
+
+#: qt/controller/mass_edition_panel.py:57
+#: qt/controller/transaction_panel.py:61
+msgid "Date:"
+msgstr "Datum:"
+
+#: qt/controller/mass_edition_panel.py:65 qt/controller/schedule_panel.py:84
+#: qt/controller/transaction_panel.py:63
+msgid "Description:"
+msgstr "Popis:"
+
+#: qt/controller/mass_edition_panel.py:73 qt/controller/schedule_panel.py:88
+#: qt/controller/transaction_panel.py:65
+msgid "Payee:"
+msgstr "Příjemce:"
+
+#: qt/controller/mass_edition_panel.py:81 cocoa/en.lproj/Localizable.strings:0
+msgid "Check #"
+msgstr "Šek č."
+
+#: qt/controller/mass_edition_panel.py:89
+msgid "From:"
+msgstr ""
+
+#: qt/controller/mass_edition_panel.py:97
+msgid "To:"
+msgstr ""
+
+#: qt/controller/mass_edition_panel.py:113
+msgid "Currency:"
 msgstr ""
 
 #: qt/controller/new_view.py:48
@@ -643,6 +692,10 @@ msgstr ""
 msgid "7. Document Properties"
 msgstr ""
 
+#: qt/controller/new_view.py:74 cocoa/en.lproj/Localizable.strings:0
+msgid "Plugins (double-click to open)"
+msgstr ""
+
 #: qt/controller/preferences_panel.py:36
 msgid "Preferences"
 msgstr "Předvolby"
@@ -654,6 +707,14 @@ msgstr "minut(y) (0 vypíná)"
 #: qt/controller/preferences_panel.py:45 cocoa/en.lproj/Localizable.strings:0
 msgid "Auto-save interval:"
 msgstr "Interval ukládání:"
+
+#: qt/controller/preferences_panel.py:51
+msgid "Date format:"
+msgstr ""
+
+#: qt/controller/preferences_panel.py:56 cocoa/en.lproj/Localizable.strings:0
+msgid "Font size:"
+msgstr "Velikost písma:"
 
 #: qt/controller/preferences_panel.py:62
 msgid "Language:"
@@ -667,6 +728,10 @@ msgstr "Zobrazit dialog pro určení rozsahu při změně naplánované transakc
 msgid "Automatically place decimals when typing"
 msgstr "Automaticky vkládat desetinnou čárku při psaní"
 
+#: qt/controller/preferences_panel.py:69 cocoa/en.lproj/Localizable.strings:0
+msgid "Debug mode (restart required)"
+msgstr ""
+
 #: qt/controller/preferences_panel.py:110
 msgid "moneyGuru has to restart for these changes to take effect"
 msgstr ""
@@ -674,16 +739,6 @@ msgstr ""
 #: qt/controller/schedule_panel.py:53 cocoa/en.lproj/Localizable.strings:0
 msgid "Schedule Info"
 msgstr "Info o plánu"
-
-#: qt/controller/mass_edition_panel.py:65 qt/controller/schedule_panel.py:84
-#: qt/controller/transaction_panel.py:63
-msgid "Description:"
-msgstr "Popis:"
-
-#: qt/controller/mass_edition_panel.py:73 qt/controller/schedule_panel.py:88
-#: qt/controller/transaction_panel.py:65
-msgid "Payee:"
-msgstr "Příjemce:"
 
 #: qt/controller/schedule_panel.py:92 qt/controller/transaction_panel.py:68
 msgid "Check #:"
@@ -741,188 +796,164 @@ msgstr "Výdaje"
 msgid "Transaction Info"
 msgstr "Info o transakci"
 
-#: qt/controller/mass_edition_panel.py:57
-#: qt/controller/transaction_panel.py:61
-msgid "Date:"
-msgstr "Datum:"
+#: qt/controller/transaction_panel.py:87
+msgid "&Multi-currency balance"
+msgstr ""
 
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Window"
-msgstr "Okno"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "No Account"
-msgstr "Žádný účet"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Start Date"
-msgstr "Odkdy"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Repeat"
-msgstr "Opakovat"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Every"
-msgstr "Každých"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Stop Date"
-msgstr "Dokdy"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Account"
-msgstr "Účet"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Target"
-msgstr "Cíl"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Amount"
-msgstr "Částka"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Date"
-msgstr "Datum"
-
-#: qt/controller/mass_edition_panel.py:81 cocoa/en.lproj/Localizable.strings:0
-msgid "Check #"
-msgstr "Šek č."
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Description"
-msgstr "Popis"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Payee"
-msgstr "Příjemce"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "From"
-msgstr "Z"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "To"
-msgstr "Na"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Transfer"
-msgstr "Přesun"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Start"
-msgstr "Start"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "End"
-msgstr "Konec"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "CSV Import Options"
-msgstr "Možnosti importu CSV"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Transaction ID"
-msgstr "ID transakce"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Default"
-msgstr "Výchozí"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Layout Name"
-msgstr "Název rozvržení"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Layout Name:"
-msgstr "Název rozvržení:"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "OK"
-msgstr "OK"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Custom date range"
-msgstr "Vlastní časové rozmezí"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Select start and end dates for your custom range:"
-msgstr "Vyberte počáteční a koncové datum vlastního rozmezí:"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Save this custom range in slot:"
-msgstr "Uložit toto časové rozmezí jako předvolbu:"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Custom date range..."
-msgstr "Vlastní časové rozmezí..."
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Running year"
-msgstr "Probíhající rok"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Year to date"
-msgstr "Aktuální rok"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Document Properties"
-msgstr "Document Properties"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Account Lookup"
-msgstr "Vyhledání účtu"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Completion Lookup"
-msgstr "Vyhledání doplnění"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Filter"
-msgstr "Filtr"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Profit/Loss"
-msgstr "Zisk/Ztráta"
+#: qt/controller/transaction_panel.py:89
+msgid "Assign &imbalance"
+msgstr ""
 
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "%@ (Page %d of %d)"
 msgstr "%@ (Strana %d ze %d)"
 
 #: cocoa/en.lproj/Localizable.strings:0
-msgid ""
-"This is your first time running moneyGuru. Do you want to open the example "
-"file?"
-msgstr "Spustili jste moneyGuru poprvé. Přejete si otevřít vzorový soubor?"
+msgid "Account"
+msgstr "Účet"
 
 #: cocoa/en.lproj/Localizable.strings:0
-msgid "moneyGuru is about to restart"
-msgstr "moneyGuru bude restartován"
+msgid "Account Lookup"
+msgstr "Vyhledání účtu"
 
 #: cocoa/en.lproj/Localizable.strings:0
-msgid "Select a file to import"
-msgstr "Vyberte soubor pro import"
+msgid "All future occurences"
+msgstr "Všechny budoucí výskyty"
 
 #: cocoa/en.lproj/Localizable.strings:0
-msgid "Export to file"
-msgstr "Exportovat do souboru"
+msgid "All transactions"
+msgstr ""
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Amount"
+msgstr "Částka"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Assign imbalance"
+msgstr ""
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Automatically check for updates"
+msgstr "Automaticky kontrolovat aktualizace"
 
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Bring All to Front"
 msgstr "Přenést vše do popředí"
 
 #: cocoa/en.lproj/Localizable.strings:0
-msgid "Minimize"
-msgstr "Minimalizovat"
+msgid "Check for update..."
+msgstr "Zkontrolovat aktualizace..."
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Choose a view for this tab"
+msgstr "Vyberte pohled pro tuto záložku"
 
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Close"
 msgstr "Zavřít"
 
 #: cocoa/en.lproj/Localizable.strings:0
-msgid "Services"
-msgstr "Služby"
+msgid "Close Window"
+msgstr "Zavřít okno"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Completion Lookup"
+msgstr "Vyhledání doplnění"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Copy"
+msgstr "Kopírovat"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "CSV Import Options"
+msgstr "Možnosti importu CSV"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Custom date range"
+msgstr "Vlastní časové rozmezí"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Custom date range..."
+msgstr "Vlastní časové rozmezí..."
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Cut"
+msgstr "Vyjmout"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Date"
+msgstr "Datum"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Date range buttons"
+msgstr ""
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Date range type selector"
+msgstr ""
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Default"
+msgstr "Výchozí"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Delete"
+msgstr "Smazat"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Delete Selected"
+msgstr ""
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Description"
+msgstr "Popis"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid ""
+"Do you want this change to affect all future occurrences of this "
+"transaction?"
+msgstr ""
+"Přejete si, aby tato změna ovlivnila všechny budoucí výskyty této transakce?"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Document"
+msgstr "Dokument"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Document Properties"
+msgstr "Document Properties"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Duplicate"
+msgstr "Duplikovat"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Edit Selected"
+msgstr ""
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "End"
+msgstr "Konec"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Every"
+msgstr "Každých"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Export to file"
+msgstr "Exportovat do souboru"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Filter"
+msgstr "Filtr"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "From"
+msgstr "Z"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "General Ledger"
+msgstr "Účetní kniha"
 
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Hide moneyGuru"
@@ -933,115 +964,202 @@ msgid "Hide Others"
 msgstr "Skrýt ostatní"
 
 #: cocoa/en.lproj/Localizable.strings:0
-msgid "Show All"
-msgstr "Zobrazit vše"
+msgid "Layout Name"
+msgstr "Název rozvržení"
 
 #: cocoa/en.lproj/Localizable.strings:0
-msgid "Copy"
-msgstr "Kopírovat"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Cut"
-msgstr "Vyjmout"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Delete"
-msgstr "Smazat"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Paste"
-msgstr "Vložit"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Select All"
-msgstr "Vybrat vše"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Zoom"
-msgstr "Zoom"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Document"
-msgstr "Dokument"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Previous Date Range"
-msgstr "Předchozí časové rozmezí"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Next Date Range"
-msgstr "Další časové rozmezí"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Search..."
-msgstr "Hledat..."
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Next Tab"
-msgstr "Další záložka"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Previous Tab"
-msgstr "Předchozí záložka"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "moneyGuru Preferences"
-msgstr "Předvolby moneyGuru"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Automatically check for updates"
-msgstr "Automaticky kontrolovat aktualizace"
-
-#: qt/controller/preferences_panel.py:56 cocoa/en.lproj/Localizable.strings:0
-msgid "Font size:"
-msgstr "Velikost písma:"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Today's Date Range"
-msgstr "Časové rozmezí pro dnešek"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Print"
-msgstr "Tisk"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Page Setup..."
-msgstr "Nastavení stránky..."
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Duplicate"
-msgstr "Duplikovat"
+msgid "Layout Name:"
+msgstr "Název rozvržení:"
 
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Lookup Completion..."
 msgstr "Vyhledání doplnění..."
 
 #: cocoa/en.lproj/Localizable.strings:0
-msgid "Close Window"
-msgstr "Zavřít okno"
-
-#: cocoa/en.lproj/Localizable.strings:0
 msgid "Mass Editing"
 msgstr "Hromadné úpravy"
 
 #: cocoa/en.lproj/Localizable.strings:0
-msgid "Choose a view for this tab"
-msgstr "Vyberte pohled pro tuto záložku"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "General Ledger"
-msgstr "Účetní kniha"
+msgid "Minimize"
+msgstr "Minimalizovat"
 
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Modification Scope"
 msgstr "Rozsah změn"
 
 #: cocoa/en.lproj/Localizable.strings:0
-msgid ""
-"Do you want this change to affect all future occurrences of this "
-"transaction?"
+msgid "moneyGuru"
 msgstr ""
-"Přejete si, aby tato změna ovlivnila všechny budoucí výskyty této transakce?"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "moneyGuru is about to restart"
+msgstr "moneyGuru bude restartován"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "moneyGuru Preferences"
+msgstr "Předvolby moneyGuru"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "moneyGuru Website"
+msgstr ""
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Multi-Currency Balance"
+msgstr "Zůstatek ve více měnách"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Next Date Range"
+msgstr "Další časové rozmezí"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Next Tab"
+msgstr "Další záložka"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "No Account"
+msgstr "Žádný účet"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "OK"
+msgstr "OK"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Page Setup..."
+msgstr "Nastavení stránky..."
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Paste"
+msgstr "Vložit"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Payee"
+msgstr "Příjemce"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Placeholder for the date range menu"
+msgstr ""
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Previous Date Range"
+msgstr "Předchozí časové rozmezí"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Previous Tab"
+msgstr "Předchozí záložka"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Print"
+msgstr "Tisk"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Printing font size:"
+msgstr "Velikost písma pro tisk:"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Profit/Loss"
+msgstr "Zisk/Ztráta"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Repeat"
+msgstr "Opakovat"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Running year"
+msgstr "Probíhající rok"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Save this custom range in slot:"
+msgstr "Uložit toto časové rozmezí jako předvolbu:"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Search..."
+msgstr "Hledat..."
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Select a file to import"
+msgstr "Vyberte soubor pro import"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Select All"
+msgstr "Vybrat vše"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Select start and end dates for your custom range:"
+msgstr "Vyberte počáteční a koncové datum vlastního rozmezí:"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Services"
+msgstr "Služby"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Show All"
+msgstr "Zobrazit vše"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Show this dialog next time"
+msgstr "Show this dialog next time"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Start"
+msgstr "Start"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Start Date"
+msgstr "Odkdy"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Status label"
+msgstr ""
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Stop Date"
+msgstr "Dokdy"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Target"
+msgstr "Cíl"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid ""
+"This is your first time running moneyGuru. Do you want to open the example "
+"file?"
+msgstr "Spustili jste moneyGuru poprvé. Přejete si otevřít vzorový soubor?"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "To"
+msgstr "Na"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Today's Date Range"
+msgstr "Časové rozmezí pro dnešek"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Toggle Columns"
+msgstr ""
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Toggle Pie Charts"
+msgstr ""
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Transaction ID"
+msgstr "ID transakce"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Transfer"
+msgstr "Přesun"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Use ⌥+Return to insert a new line."
+msgstr "Nový řádek vložíte stiskem ⌥+Return."
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Window"
+msgstr "Okno"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Year to date"
+msgstr "Aktuální rok"
 
 #: cocoa/en.lproj/Localizable.strings:0
 msgid ""
@@ -1052,124 +1170,21 @@ msgstr ""
 "slovy ovlivnit všechny budoucí výskyty)."
 
 #: cocoa/en.lproj/Localizable.strings:0
-msgid "Show this dialog next time"
-msgstr "Show this dialog next time"
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "All future occurences"
-msgstr "Všechny budoucí výskyty"
-
-#: cocoa/en.lproj/Localizable.strings:0
 msgid "You can navigate tabs with ⌘⌥→ and ⌘⌥←"
 msgstr "Mezi záložkami můžet přecházet pomocí ⌘⌥→ a ⌘⌥←"
 
 #: cocoa/en.lproj/Localizable.strings:0
-msgid "Use ⌥+Return to insert a new line."
-msgstr "Nový řádek vložíte stiskem ⌥+Return."
+msgid "Zoom"
+msgstr "Zoom"
 
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Multi-Currency Balance"
-msgstr "Zůstatek ve více měnách"
-
-#: qt/controller/mass_edition_panel.py:89
-msgid "From:"
+#: qt/controller/account_panel.py:72
+msgid "Inactive:"
 msgstr ""
 
-#: qt/controller/mass_edition_panel.py:97
-msgid "To:"
+#: qt/controller/new_view.py:64
+msgid "8. Plugin Management"
 msgstr ""
 
-#: qt/controller/mass_edition_panel.py:113
-msgid "Currency:"
+#: qt/controller/pluginlist_view.py:25
+msgid "moneyGuru has to be restarted for plugin changes to take effect."
 msgstr ""
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Date range buttons"
-msgstr ""
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Placeholder for the date range menu"
-msgstr ""
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Delete Selected"
-msgstr ""
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Edit Selected"
-msgstr ""
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Status label"
-msgstr ""
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Toggle Columns"
-msgstr ""
-
-#: qt/controller/main_window.py:231 cocoa/en.lproj/Localizable.strings:0
-msgid "Open Plugin Folder"
-msgstr ""
-
-#: qt/controller/new_view.py:74 cocoa/en.lproj/Localizable.strings:0
-msgid "Plugins (double-click to open)"
-msgstr ""
-
-#: qt/controller/preferences_panel.py:69 cocoa/en.lproj/Localizable.strings:0
-msgid "Debug mode (restart required)"
-msgstr ""
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Toggle Pie Charts"
-msgstr ""
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "All transactions"
-msgstr ""
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Check for update..."
-msgstr "Zkontrolovat aktualizace..."
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Date range type selector"
-msgstr ""
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "moneyGuru"
-msgstr ""
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "moneyGuru Website"
-msgstr ""
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Printing font size:"
-msgstr "Velikost písma pro tisk:"
-
-#: qt/controller/import_/window.py:53 cocoa/en.lproj/Localizable.strings:0
-msgid "Are some fields wrong? Fix them!"
-msgstr ""
-
-#: qt/controller/import_/window.py:59 cocoa/en.lproj/Localizable.strings:0
-msgid "Fix"
-msgstr ""
-
-#: qt/controller/preferences_panel.py:51
-msgid "Date format:"
-msgstr ""
-
-#: qt/controller/transaction_panel.py:87
-msgid "&Multi-currency balance"
-msgstr ""
-
-#: qt/controller/transaction_panel.py:89
-msgid "Assign &imbalance"
-msgstr ""
-
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Assign imbalance"
-msgstr ""
-
-#~ msgid "Multi-currency balance"
-#~ msgstr ""

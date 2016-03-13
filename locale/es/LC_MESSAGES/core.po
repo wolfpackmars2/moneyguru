@@ -2,103 +2,99 @@
 msgid ""
 msgstr ""
 "Project-Id-Version: moneyGuru\n"
-"PO-Revision-Date: 2013-03-17 12:01+0000\n"
-"Last-Translator: Enrique González Paredes <egparedes@gmail.com>\n"
-"Language-Team: Spanish (http://www.transifex.com/projects/p/moneyguru/language/es/)\n"
+"PO-Revision-Date: 2016-02-07 20:52+0000\n"
+"Last-Translator: Virgil Dupras <hsoft@hardcoded.net>\n"
+"Language-Team: Spanish (http://www.transifex.com/hsoft/moneyguru/language/es/)\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: utf-8\n"
 "Language: es\n"
 "Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
-#: core/document.py:217
+#: core/document.py:479
 msgid "Add transaction"
 msgstr "Añadir operación"
 
-#: core/document.py:220 core/document.py:538
+#: core/document.py:482 core/document.py:796
 msgid "Change transaction"
 msgstr "Modificar operación"
 
-#: core/document.py:340
+#: core/document.py:604
 msgid "Change account"
 msgstr "Modificar cuenta"
 
-#: core/document.py:370
+#: core/document.py:637
 msgid "Remove account"
 msgstr "Eliminar cuenta"
 
-#: core/document.py:412
+#: core/document.py:679
 msgid "New account"
 msgstr "Nueva cuenta"
 
-#: core/document.py:415
+#: core/document.py:682
 msgid "Add account"
 msgstr "Añadir cuenta"
 
-#: core/document.py:448
+#: core/document.py:715
 msgid "Change group"
 msgstr "Modificar grupo"
 
-#: core/document.py:465
+#: core/document.py:732
 msgid "Remove group"
 msgstr "Eliminar grupo"
 
-#: core/document.py:485
+#: core/document.py:752
 msgid "New group"
 msgstr "Nuevo grupo"
 
-#: core/document.py:487
+#: core/document.py:754
 msgid "Add group"
 msgstr "Añadir grupo"
 
-#: core/document.py:629
+#: core/document.py:848
 msgid "Remove transaction"
 msgstr "Eliminar operación"
 
-#: core/document.py:665
+#: core/document.py:874
 msgid "Duplicate transactions"
 msgstr "Duplicar operaciones"
 
-#: core/document.py:692
+#: core/document.py:894
 msgid "Move transaction"
 msgstr "Mover operación"
 
-#: core/document.py:779
+#: core/document.py:951
 msgid "Change reconciliation"
 msgstr "Modificar conciliación"
 
-#: core/document.py:846
+#: core/document.py:1018
 msgid "Change Budget"
 msgstr "Modificar presupuesto"
 
-#: core/document.py:849
+#: core/document.py:1021
 msgid "Add Budget"
 msgstr "Añadir presupuesto"
 
-#: core/document.py:874
+#: core/document.py:1046
 msgid "Remove Budget"
 msgstr "Eliminar presupuesto"
 
-#: core/document.py:899
+#: core/document.py:1071
 msgid "Change Schedule"
 msgstr "Modificar programación"
 
-#: core/document.py:902
+#: core/document.py:1074
 msgid "Add Schedule"
 msgstr "Añadir programación"
 
-#: core/document.py:929
+#: core/document.py:1101
 msgid "Remove Schedule"
 msgstr "Eliminar programación"
 
-#: core/document.py:997
+#: core/document.py:1169
 msgid "\"%s\" is not a moneyGuru file"
 msgstr "\"%s\" no es un fichero moneyGuru"
 
-#: core/gui/main_window.py:476
-msgid "%s is of an unknown format."
-msgstr "%s está en un formato desconocido."
-
-#: core/document.py:1087
+#: core/document.py:1259
 msgid "Import"
 msgstr "Importar"
 
@@ -130,7 +126,7 @@ msgstr "Ingresos y gastos"
 msgid "No Account"
 msgstr "Ninguna cuenta"
 
-#: core/gui/account_view.py:20
+#: core/gui/account_view.py:21
 msgid ""
 "{account_name}\n"
 "Entries from {start_date} to {end_date}"
@@ -138,7 +134,7 @@ msgstr ""
 "{account_name}\n"
 "Entradas desde {start_date} hasta {end_date}"
 
-#: core/gui/account_view.py:58
+#: core/gui/account_view.py:59
 msgid "{0} out of {1} selected. Increase: {2} Decrease: {3}"
 msgstr "{0} de {1} seleccionados. Incremento: {2} Disminución: {3}"
 
@@ -154,16 +150,16 @@ msgstr "PASIVOS"
 msgid "NET WORTH"
 msgstr "PATRIMONIO NETO"
 
-#: core/gui/budget_panel.py:45 core/gui/csv_options.py:20
+#: core/gui/budget_panel.py:46 core/gui/csv_options.py:20
 msgid "None"
 msgstr "Ninguno"
 
-#: core/gui/budget_panel.py:76
+#: core/gui/budget_panel.py:77
 msgid "Income/Expense accounts must be created before budgets can be set."
 msgstr ""
 "Deben crearse cuentas de ingresos/gastos antes de definir presupuestos."
 
-#: core/gui/budget_view.py:16
+#: core/gui/budget_view.py:23
 msgid "Budgets from {start_date} to {end_date}"
 msgstr "Presupuestos desde {start_date} hasta {end_date}"
 
@@ -212,7 +208,7 @@ msgstr "ID Operación"
 msgid "Default"
 msgstr "Por defecto"
 
-#: core/gui/csv_options.py:259 core/gui/import_window.py:369
+#: core/gui/csv_options.py:259 core/gui/import_window.py:681
 msgid "< New Account >"
 msgstr "< Nueva cuenta >"
 
@@ -292,7 +288,7 @@ msgstr "Noviembre"
 msgid "December"
 msgstr "Diciembre"
 
-#: core/gui/entry_table.py:19
+#: core/gui/entry_table.py:26
 msgid "Debit/Credit"
 msgstr "Debe/Haber"
 
@@ -300,25 +296,17 @@ msgstr "Debe/Haber"
 msgid "Previous Balance"
 msgstr "Saldo anterior"
 
-#: core/gui/entry_table_base.py:301 core/gui/transaction_table.py:260
+#: core/gui/entry_table_base.py:301 core/gui/transaction_table.py:265
 msgid "TOTAL"
 msgstr "TOTAL"
 
-#: core/gui/general_ledger_view.py:17
+#: core/gui/general_ledger_view.py:18
 msgid "General Ledger from {start_date} to {end_date}"
 msgstr "Libro mayor desde {start_date} hasta {end_date}"
 
-#: core/gui/general_ledger_view.py:54
+#: core/gui/general_ledger_view.py:55
 msgid "{0} out of {1} selected. Debit: {2} Credit: {3}"
 msgstr "{0} de {1} seleccionados. Debe: {2} Haber: {3}"
-
-#: core/gui/import_window.py:153
-msgid "Description <--> Payee"
-msgstr "Descripción <--> Beneficiario"
-
-#: core/gui/import_window.py:154
-msgid "Invert Amounts"
-msgstr "Invertir importes"
 
 #: core/gui/income_statement.py:67
 msgid "INCOME"
@@ -332,37 +320,45 @@ msgstr "GASTOS"
 msgid "NET INCOME"
 msgstr "INGRESOS NETOS"
 
-#: core/gui/main_window.py:49 core/gui/net_worth_graph.py:40
+#: core/gui/main_window.py:42 core/gui/net_worth_graph.py:40
 msgid "Net Worth"
 msgstr "Patrimonio neto"
 
-#: core/gui/main_window.py:50 core/gui/profit_graph.py:41
+#: core/gui/main_window.py:43 core/gui/profit_graph.py:41
 msgid "Profit & Loss"
 msgstr "Beneficios y pérdidas"
 
-#: core/gui/main_window.py:51
+#: core/gui/main_window.py:44
 msgid "Transactions"
 msgstr "Operaciones"
 
-#: core/gui/main_window.py:52
+#: core/gui/main_window.py:45
 msgid "Schedules"
 msgstr "Programaciones"
 
-#: core/gui/main_window.py:53
+#: core/gui/main_window.py:46
 msgid "Budgets"
 msgstr "Presupuestos"
 
-#: core/gui/main_window.py:54
+#: core/gui/main_window.py:47
 msgid "General Ledger"
 msgstr "Libro mayor"
 
-#: core/gui/main_window.py:55
+#: core/gui/main_window.py:48
 msgid "Document Properties"
 msgstr "Propiedades del documento"
 
-#: core/gui/main_window.py:56
+#: core/gui/main_window.py:49
+msgid "Plugin Management"
+msgstr ""
+
+#: core/gui/main_window.py:50
 msgid "New Tab"
 msgstr "Nueva pestaña"
+
+#: core/gui/main_window.py:460
+msgid "%s is of an unknown format."
+msgstr "%s está en un formato desconocido."
 
 #: core/gui/networth_view.py:19
 msgid "Net Worth at {end_date}, starting from {start_date}"
@@ -376,69 +372,74 @@ msgstr "Otros"
 msgid "Profit and Loss from {start_date} to {end_date}"
 msgstr "Beneficios y pérdidas desde {start_date} hasta {end_date}"
 
-#: core/gui/report.py:211
+#: core/gui/report.py:213
 msgid "Total "
 msgstr "Total "
 
-#: core/gui/report.py:231
+#: core/gui/report.py:233
 msgid "TOTAL "
 msgstr "TOTAL "
 
-#: core/gui/report.py:274
+#: core/gui/report.py:281
 msgid "The account '{0}' already exists."
 msgstr "La cuenta '{0}' ya existe."
 
-#: core/gui/schedule_panel.py:26
+#: core/gui/schedule_panel.py:27
 msgid "day"
 msgstr "día"
 
-#: core/gui/schedule_panel.py:27
+#: core/gui/schedule_panel.py:28
 msgid "week"
 msgstr "semana"
 
-#: core/gui/schedule_panel.py:28 core/gui/schedule_panel.py:30
-#: core/gui/schedule_panel.py:31
+#: core/gui/schedule_panel.py:29 core/gui/schedule_panel.py:31
+#: core/gui/schedule_panel.py:32
 msgid "month"
 msgstr "mes"
 
-#: core/gui/schedule_panel.py:29
+#: core/gui/schedule_panel.py:30
 msgid "year"
 msgstr "año"
 
-#: core/gui/schedule_panel.py:35
+#: core/gui/schedule_panel.py:36
 msgid "days"
 msgstr "días"
 
-#: core/gui/schedule_panel.py:36
+#: core/gui/schedule_panel.py:37
 msgid "weeks"
 msgstr "semanas"
 
-#: core/gui/schedule_panel.py:37 core/gui/schedule_panel.py:39
-#: core/gui/schedule_panel.py:40
+#: core/gui/schedule_panel.py:38 core/gui/schedule_panel.py:40
+#: core/gui/schedule_panel.py:41
 msgid "months"
 msgstr "meses"
 
-#: core/gui/schedule_panel.py:38
+#: core/gui/schedule_panel.py:39
 msgid "years"
 msgstr "años"
 
-#: core/gui/schedule_table.py:84 core/gui/schedule_table.py:86
-#: core/gui/transaction_print.py:28 core/gui/transaction_table.py:155
-#: core/gui/transaction_table.py:158
+#: core/gui/schedule_table.py:88 core/gui/schedule_table.py:90
+#: core/gui/transaction_print.py:28 core/gui/transaction_table.py:160
+#: core/gui/transaction_table.py:163
 msgid "Unassigned"
 msgstr "Sin asignar"
 
-#: core/gui/schedule_view.py:16
+#: core/gui/schedule_view.py:19
 msgid "Schedules from {start_date} to {end_date}"
 msgstr "Programaciones desde {start_date} hasta {end_date}"
 
-#: core/gui/transaction_view.py:21
+#: core/gui/transaction_view.py:42
 msgid "Transactions from {start_date} to {end_date}"
 msgstr "Operaciones desde {start_date} hasta {end_date}"
 
-#: core/gui/transaction_view.py:50
+#: core/gui/transaction_view.py:71
 msgid "{0} out of {1} selected. Amount: {2}"
 msgstr "{0} de {1} seleccionados. Importe: {2}"
+
+#: core/loader/base.py:235
+msgid ""
+"Unsupported currency: {}. Aborting load. Did you disable a currency plugin?"
+msgstr ""
 
 #: core/loader/csv.py:121
 msgid "The Date column has been set on a column that doesn't contain dates."
@@ -455,19 +456,19 @@ msgstr ""
 msgid "The Date and Amount columns must be set."
 msgstr "Debe asignar también las columnas de Fecha e Importe."
 
-#: core/model/date.py:250
+#: core/model/date.py:246
 msgid "Q{0} {1}"
 msgstr "{0}T {1}"
 
-#: core/model/date.py:318
+#: core/model/date.py:314
 msgid "{0} - Now"
 msgstr "{0} - Presente"
 
-#: core/model/date.py:361
+#: core/model/date.py:357
 msgid "Running year ({0} - {1})"
 msgstr "Año flotante ({0} - {1})"
 
-#: core/model/date.py:394
+#: core/model/date.py:390
 msgid "All Transactions"
 msgstr "Todas las operaciones"
 
@@ -514,3 +515,11 @@ msgstr "Cada %s %s del mes"
 #: core/model/recurrence.py:238
 msgid "Every last %s of the month"
 msgstr "Cada último %s del mes"
+
+#: core/plugin/base_import_actions.py:132
+msgid "Description <--> Payee"
+msgstr "Descripción <--> Beneficiario"
+
+#: core/plugin/base_import_actions.py:143
+msgid "Invert Amount"
+msgstr ""

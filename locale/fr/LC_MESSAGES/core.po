@@ -1,98 +1,100 @@
-# 
+# Translators:
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=utf-8\n"
+"Project-Id-Version: moneyGuru\n"
+"PO-Revision-Date: 2016-02-07 20:52+0000\n"
+"Last-Translator: Virgil Dupras <hsoft@hardcoded.net>\n"
+"Language-Team: French (http://www.transifex.com/hsoft/moneyguru/language/fr/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: utf-8\n"
+"Language: fr\n"
+"Plural-Forms: nplurals=2; plural=(n > 1);\n"
 
-#: core/document.py:217
+#: core/document.py:479
 msgid "Add transaction"
 msgstr "Ajouter transaction"
 
-#: core/document.py:220 core/document.py:538
+#: core/document.py:482 core/document.py:796
 msgid "Change transaction"
 msgstr "Modifier transaction"
 
-#: core/document.py:340
+#: core/document.py:604
 msgid "Change account"
 msgstr "Modifier compte"
 
-#: core/document.py:370
+#: core/document.py:637
 msgid "Remove account"
 msgstr "Supprimer compte"
 
-#: core/document.py:412
+#: core/document.py:679
 msgid "New account"
 msgstr "Nouveau compte"
 
-#: core/document.py:415
+#: core/document.py:682
 msgid "Add account"
 msgstr "Ajouter compte"
 
-#: core/document.py:448
+#: core/document.py:715
 msgid "Change group"
 msgstr "Modifier groupe"
 
-#: core/document.py:465
+#: core/document.py:732
 msgid "Remove group"
 msgstr "Supprimer groupe"
 
-#: core/document.py:485
+#: core/document.py:752
 msgid "New group"
 msgstr "Nouveau groupe"
 
-#: core/document.py:487
+#: core/document.py:754
 msgid "Add group"
 msgstr "Ajouter groupe"
 
-#: core/document.py:629
+#: core/document.py:848
 msgid "Remove transaction"
 msgstr "Supprimer transaction"
 
-#: core/document.py:665
+#: core/document.py:874
 msgid "Duplicate transactions"
 msgstr "Dupliquer transactions"
 
-#: core/document.py:692
+#: core/document.py:894
 msgid "Move transaction"
 msgstr "Déplacer transactions"
 
-#: core/document.py:779
+#: core/document.py:951
 msgid "Change reconciliation"
 msgstr "Modifier la réconciliation"
 
-#: core/document.py:846
+#: core/document.py:1018
 msgid "Change Budget"
 msgstr "Modifier budget"
 
-#: core/document.py:849
+#: core/document.py:1021
 msgid "Add Budget"
 msgstr "Ajouter budget"
 
-#: core/document.py:874
+#: core/document.py:1046
 msgid "Remove Budget"
 msgstr "Supprimer budget"
 
-#: core/document.py:899
+#: core/document.py:1071
 msgid "Change Schedule"
 msgstr "Modifier récurrence"
 
-#: core/document.py:902
+#: core/document.py:1074
 msgid "Add Schedule"
 msgstr "Ajouter récurrence"
 
-#: core/document.py:929
+#: core/document.py:1101
 msgid "Remove Schedule"
 msgstr "Supprimer récurrence"
 
-#: core/document.py:997
+#: core/document.py:1169
 msgid "\"%s\" is not a moneyGuru file"
 msgstr "\"%s\" n'est pas un fichier moneyGuru"
 
-#: core/gui/main_window.py:476
-msgid "%s is of an unknown format."
-msgstr "%s est d'un format inconnu"
-
-#: core/document.py:1087
+#: core/document.py:1259
 msgid "Import"
 msgstr "Importer"
 
@@ -112,11 +114,19 @@ msgstr "Revenu"
 msgid "Expense"
 msgstr "Dépense"
 
+#: core/gui/account_pie_chart.py:64
+msgid "Assets & Liabilities"
+msgstr ""
+
+#: core/gui/account_pie_chart.py:88
+msgid "Income & Expenses"
+msgstr ""
+
 #: core/gui/account_reassign_panel.py:26
 msgid "No Account"
 msgstr "Aucun compte"
 
-#: core/gui/account_view.py:20
+#: core/gui/account_view.py:21
 msgid ""
 "{account_name}\n"
 "Entries from {start_date} to {end_date}"
@@ -124,7 +134,7 @@ msgstr ""
 "{account_name}\n"
 "Entrées de {start_date} à {end_date}"
 
-#: core/gui/account_view.py:58
+#: core/gui/account_view.py:59
 msgid "{0} out of {1} selected. Increase: {2} Decrease: {3}"
 msgstr "{0} / {1} sélectionnés. Dépôt: {2} Retrait: {3}"
 
@@ -140,17 +150,17 @@ msgstr "PASSIFS"
 msgid "NET WORTH"
 msgstr "VALEUR NETTE"
 
-#: core/gui/budget_panel.py:45 core/gui/csv_options.py:20
+#: core/gui/budget_panel.py:46 core/gui/csv_options.py:20
 msgid "None"
 msgstr "Aucun"
 
-#: core/gui/budget_panel.py:76
+#: core/gui/budget_panel.py:77
 msgid "Income/Expense accounts must be created before budgets can be set."
 msgstr ""
 "Des comptes de revenu et dépenses doivent être créés avant de faire un "
 "budget."
 
-#: core/gui/budget_view.py:16
+#: core/gui/budget_view.py:23
 msgid "Budgets from {start_date} to {end_date}"
 msgstr "Budgets de {start_date} à {end_date}"
 
@@ -199,7 +209,7 @@ msgstr "ID transaction"
 msgid "Default"
 msgstr "Défaut"
 
-#: core/gui/csv_options.py:259 core/gui/import_window.py:369
+#: core/gui/csv_options.py:259 core/gui/import_window.py:681
 msgid "< New Account >"
 msgstr "< Nouveau compte >"
 
@@ -279,7 +289,7 @@ msgstr "Novembre"
 msgid "December"
 msgstr "Décembre"
 
-#: core/gui/entry_table.py:19
+#: core/gui/entry_table.py:26
 msgid "Debit/Credit"
 msgstr "Débit/Crédit"
 
@@ -287,15 +297,15 @@ msgstr "Débit/Crédit"
 msgid "Previous Balance"
 msgstr "Balance précédente"
 
-#: core/gui/entry_table_base.py:301 core/gui/transaction_table.py:260
+#: core/gui/entry_table_base.py:301 core/gui/transaction_table.py:265
 msgid "TOTAL"
 msgstr "TOTAL"
 
-#: core/gui/general_ledger_view.py:17
+#: core/gui/general_ledger_view.py:18
 msgid "General Ledger from {start_date} to {end_date}"
 msgstr "Grand Livre de {start_date} à {end_date}"
 
-#: core/gui/general_ledger_view.py:54
+#: core/gui/general_ledger_view.py:55
 msgid "{0} out of {1} selected. Debit: {2} Credit: {3}"
 msgstr "{0} / {1} sélectionnés. Débit: {2} Crédit: {3}"
 
@@ -311,37 +321,45 @@ msgstr "DÉPENSES"
 msgid "NET INCOME"
 msgstr "REVENU NET"
 
-#: core/gui/main_window.py:49 core/gui/net_worth_graph.py:40
+#: core/gui/main_window.py:42 core/gui/net_worth_graph.py:40
 msgid "Net Worth"
 msgstr "Valeur nette"
 
-#: core/gui/main_window.py:50 core/gui/profit_graph.py:41
+#: core/gui/main_window.py:43 core/gui/profit_graph.py:41
 msgid "Profit & Loss"
 msgstr "Profits & pertes"
 
-#: core/gui/main_window.py:51
+#: core/gui/main_window.py:44
 msgid "Transactions"
 msgstr "Transactions"
 
-#: core/gui/main_window.py:52
+#: core/gui/main_window.py:45
 msgid "Schedules"
 msgstr "Récurrences"
 
-#: core/gui/main_window.py:53
+#: core/gui/main_window.py:46
 msgid "Budgets"
 msgstr "Budgets"
 
-#: core/gui/main_window.py:54
+#: core/gui/main_window.py:47
 msgid "General Ledger"
 msgstr "Grand Livre"
 
-#: core/gui/main_window.py:55
+#: core/gui/main_window.py:48
 msgid "Document Properties"
 msgstr ""
 
-#: core/gui/main_window.py:56
+#: core/gui/main_window.py:49
+msgid "Plugin Management"
+msgstr ""
+
+#: core/gui/main_window.py:50
 msgid "New Tab"
 msgstr "Nouvel onglet"
+
+#: core/gui/main_window.py:460
+msgid "%s is of an unknown format."
+msgstr "%s est d'un format inconnu"
 
 #: core/gui/networth_view.py:19
 msgid "Net Worth at {end_date}, starting from {start_date}"
@@ -355,69 +373,74 @@ msgstr "Autres"
 msgid "Profit and Loss from {start_date} to {end_date}"
 msgstr "Profits et Pertes de {start_date} à {end_date}"
 
-#: core/gui/report.py:211
+#: core/gui/report.py:213
 msgid "Total "
 msgstr "Total "
 
-#: core/gui/report.py:231
+#: core/gui/report.py:233
 msgid "TOTAL "
 msgstr "TOTAL "
 
-#: core/gui/report.py:274
+#: core/gui/report.py:281
 msgid "The account '{0}' already exists."
 msgstr "Le compte '{0}' existe déjà."
 
-#: core/gui/schedule_panel.py:26
+#: core/gui/schedule_panel.py:27
 msgid "day"
 msgstr "jour"
 
-#: core/gui/schedule_panel.py:27
+#: core/gui/schedule_panel.py:28
 msgid "week"
 msgstr "semaine"
 
-#: core/gui/schedule_panel.py:28 core/gui/schedule_panel.py:30
-#: core/gui/schedule_panel.py:31
+#: core/gui/schedule_panel.py:29 core/gui/schedule_panel.py:31
+#: core/gui/schedule_panel.py:32
 msgid "month"
 msgstr "mois"
 
-#: core/gui/schedule_panel.py:29
+#: core/gui/schedule_panel.py:30
 msgid "year"
 msgstr "année"
 
-#: core/gui/schedule_panel.py:35
+#: core/gui/schedule_panel.py:36
 msgid "days"
 msgstr "jours"
 
-#: core/gui/schedule_panel.py:36
+#: core/gui/schedule_panel.py:37
 msgid "weeks"
 msgstr "semaines"
 
-#: core/gui/schedule_panel.py:37 core/gui/schedule_panel.py:39
-#: core/gui/schedule_panel.py:40
+#: core/gui/schedule_panel.py:38 core/gui/schedule_panel.py:40
+#: core/gui/schedule_panel.py:41
 msgid "months"
 msgstr "mois"
 
-#: core/gui/schedule_panel.py:38
+#: core/gui/schedule_panel.py:39
 msgid "years"
 msgstr "années"
 
-#: core/gui/schedule_table.py:84 core/gui/schedule_table.py:86
-#: core/gui/transaction_print.py:28 core/gui/transaction_table.py:155
-#: core/gui/transaction_table.py:158
+#: core/gui/schedule_table.py:88 core/gui/schedule_table.py:90
+#: core/gui/transaction_print.py:28 core/gui/transaction_table.py:160
+#: core/gui/transaction_table.py:163
 msgid "Unassigned"
 msgstr "Non-assigné"
 
-#: core/gui/schedule_view.py:16
+#: core/gui/schedule_view.py:19
 msgid "Schedules from {start_date} to {end_date}"
 msgstr "Récurrences de {start_date} à {end_date}"
 
-#: core/gui/transaction_view.py:21
+#: core/gui/transaction_view.py:42
 msgid "Transactions from {start_date} to {end_date}"
 msgstr "Transactions de {start_date} à {end_date}"
 
-#: core/gui/transaction_view.py:50
+#: core/gui/transaction_view.py:71
 msgid "{0} out of {1} selected. Amount: {2}"
 msgstr "{0} / {1} sélectionnés. Montant: {2}"
+
+#: core/loader/base.py:235
+msgid ""
+"Unsupported currency: {}. Aborting load. Did you disable a currency plugin?"
+msgstr ""
 
 #: core/loader/csv.py:121
 msgid "The Date column has been set on a column that doesn't contain dates."
@@ -433,19 +456,19 @@ msgstr ""
 msgid "The Date and Amount columns must be set."
 msgstr "Les colonnes Date et Montant doivent être définis."
 
-#: core/model/date.py:250
+#: core/model/date.py:246
 msgid "Q{0} {1}"
 msgstr "Trim. {0} {1}"
 
-#: core/model/date.py:318
+#: core/model/date.py:314
 msgid "{0} - Now"
 msgstr "{0} - Aujourd'hui"
 
-#: core/model/date.py:361
+#: core/model/date.py:357
 msgid "Running year ({0} - {1})"
 msgstr "Année flottante ({0} - {1})"
 
-#: core/model/date.py:394
+#: core/model/date.py:390
 msgid "All Transactions"
 msgstr "Toutes les transactions"
 
@@ -493,18 +516,10 @@ msgstr "Chaque %s %s du mois"
 msgid "Every last %s of the month"
 msgstr "Chaque dernier %s du mois"
 
-#: core/gui/import_window.py:153
+#: core/plugin/base_import_actions.py:132
 msgid "Description <--> Payee"
 msgstr "Description <--> Tiers"
 
-#: core/gui/import_window.py:154
-msgid "Invert Amounts"
-msgstr "Inverser les montants"
-
-#: core/gui/account_pie_chart.py:64
-msgid "Assets & Liabilities"
-msgstr ""
-
-#: core/gui/account_pie_chart.py:88
-msgid "Income & Expenses"
+#: core/plugin/base_import_actions.py:143
+msgid "Invert Amount"
 msgstr ""

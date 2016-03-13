@@ -1,8 +1,14 @@
-# 
+# Translators:
 msgid ""
 msgstr ""
-"Content-Type: text/plain; charset=utf-8\n"
+"Project-Id-Version: moneyGuru\n"
+"PO-Revision-Date: 2016-02-07 20:52+0000\n"
+"Last-Translator: Virgil Dupras <hsoft@hardcoded.net>\n"
+"Language-Team: Spanish (http://www.transifex.com/hsoft/moneyguru/language/es/)\n"
+"Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: utf-8\n"
+"Language: es\n"
+"Plural-Forms: nplurals=2; plural=(n != 1);\n"
 
 #: qt/controller/account/filter_bar.py:18 qt/controller/export_panel.py:50
 #: qt/controller/transaction/filter_bar.py:18
@@ -236,18 +242,6 @@ msgstr "Documento sin guardar"
 #: qt/controller/document.py:43
 msgid "Do you want to save your changes before continuing?"
 msgstr "¿Desea guardar los cambios antes de continuar?"
-
-#: qt/controller/main_window.py:609
-msgid "Select a document to import"
-msgstr "Seleccione el documento a importar:"
-
-#: qt/controller/main_window.py:610
-msgid "Supported files (*.moneyguru *.ofx *.qfx *.qif *.csv *.txt)"
-msgstr "Archivos soportados (*.moneyguru *.ofx *.qfx *.qif *.csv *.txt)"
-
-#: qt/controller/main_window.py:625
-msgid "Cannot import file"
-msgstr "No se puede importar el archivo"
 
 #: qt/controller/document.py:73
 msgid "Cannot load file"
@@ -619,6 +613,18 @@ msgstr "Deshacer {0}"
 msgid "Redo {0}"
 msgstr "Rehacer {0}"
 
+#: qt/controller/main_window.py:609
+msgid "Select a document to import"
+msgstr "Seleccione el documento a importar:"
+
+#: qt/controller/main_window.py:610
+msgid "Supported files (*.moneyguru *.ofx *.qfx *.qif *.csv *.txt)"
+msgstr "Archivos soportados (*.moneyguru *.ofx *.qfx *.qif *.csv *.txt)"
+
+#: qt/controller/main_window.py:625
+msgid "Cannot import file"
+msgstr "No se puede importar el archivo"
+
 #: qt/controller/main_window.py:696
 msgid "Warning"
 msgstr "Advertencia"
@@ -701,6 +707,14 @@ msgstr "minuto(s) (0 = inactivo)"
 #: qt/controller/preferences_panel.py:45 cocoa/en.lproj/Localizable.strings:0
 msgid "Auto-save interval:"
 msgstr "Intervalo de guardado automático:"
+
+#: qt/controller/preferences_panel.py:51
+msgid "Date format:"
+msgstr "Formato de fecha:"
+
+#: qt/controller/preferences_panel.py:56 cocoa/en.lproj/Localizable.strings:0
+msgid "Font size:"
+msgstr "Tamaño de letra:"
 
 #: qt/controller/preferences_panel.py:62
 msgid "Language:"
@@ -786,6 +800,14 @@ msgstr "Gastos"
 msgid "Transaction Info"
 msgstr "Información de la operación"
 
+#: qt/controller/transaction_panel.py:87
+msgid "&Multi-currency balance"
+msgstr ""
+
+#: qt/controller/transaction_panel.py:89
+msgid "Assign &imbalance"
+msgstr ""
+
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "%@ (Page %d of %d)"
 msgstr "%@ (página %d de %d)"
@@ -809,6 +831,10 @@ msgstr "Todas las operaciones"
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Amount"
 msgstr "Importe"
+
+#: cocoa/en.lproj/Localizable.strings:0
+msgid "Assign imbalance"
+msgstr ""
 
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Automatically check for updates"
@@ -925,10 +951,6 @@ msgstr "Exportar a un archivo"
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "Filter"
 msgstr "Filtrar"
-
-#: qt/controller/preferences_panel.py:56 cocoa/en.lproj/Localizable.strings:0
-msgid "Font size:"
-msgstr "Tamaño de letra:"
 
 #: cocoa/en.lproj/Localizable.strings:0
 msgid "From"
@@ -1162,21 +1184,14 @@ msgstr "Puede cambiar de pestaña con ⌘⌥→ y ⌘⌥←"
 msgid "Zoom"
 msgstr "Ampliar"
 
-#: qt/controller/preferences_panel.py:51
-msgid "Date format:"
-msgstr "Formato de fecha:"
-
-#: qt/controller/transaction_panel.py:87
-msgid "&Multi-currency balance"
+#: qt/controller/account_panel.py:72
+msgid "Inactive:"
 msgstr ""
 
-#: qt/controller/transaction_panel.py:89
-msgid "Assign &imbalance"
+#: qt/controller/new_view.py:64
+msgid "8. Plugin Management"
 msgstr ""
 
-#: cocoa/en.lproj/Localizable.strings:0
-msgid "Assign imbalance"
+#: qt/controller/pluginlist_view.py:25
+msgid "moneyGuru has to be restarted for plugin changes to take effect."
 msgstr ""
-
-#~ msgid "Multi-currency balance"
-#~ msgstr "Saldo multidivisa"
