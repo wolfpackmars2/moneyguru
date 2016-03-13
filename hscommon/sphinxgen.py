@@ -25,7 +25,9 @@ def tixgen(tixurl):
     for the tix #
     """
     urlpattern = tixurl.format('\\1') # will be replaced buy the content of the first group in re
-    R = re.compile(r'#(\d+)')
+    # We enforce "()" around tix ref to avoid conflicts with HS news permalinks, which anchors name
+    # are the date of the news, such as "#2015-12-12". Unfortunate clash...
+    R = re.compile(r'\(#(\d+)\)')
     repl = '`#\\1 <{}>`__'.format(urlpattern)
     return lambda text: R.sub(repl, text)
 
