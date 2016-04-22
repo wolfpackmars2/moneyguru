@@ -100,7 +100,7 @@ class ExportPanel(Panel):
         fileext = 'qif' if self.model.export_format == ExportFormat.QIF else 'csv'
         filters = tr("{0} Files (*.{1})").format(fileext.upper(), fileext)
         filename = 'export.{0}'.format(fileext)
-        docpath = str(QFileDialog.getSaveFileName(self.mainwindow, title, filename, filters))
+        docpath = QFileDialog.getSaveFileName(self.mainwindow, title, filename, filters)[0]
         if docpath:
             self.model.export_path = docpath
             self.accept()
