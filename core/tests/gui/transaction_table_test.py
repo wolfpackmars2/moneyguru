@@ -227,7 +227,7 @@ def test_change_transaction_gui_calls(app):
     row = app.ttable[0]
     row.date = '12/07/2008'
     app.ttable.save_edits()
-    app.ttable.view.check_gui_calls(['refresh', 'update_selection', 'show_selected_row'])
+    app.ttable.view.check_gui_calls(['refresh', 'show_selected_row'])
 
 @with_app(app_one_transaction)
 def test_duplicate_transaction(app):

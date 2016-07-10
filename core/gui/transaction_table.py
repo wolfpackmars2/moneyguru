@@ -63,7 +63,7 @@ class TransactionTable(TransactionTableBase):
             if not self.document.is_amount_native(transaction.amount):
                 self._all_amounts_are_native = False
         self.footer = TotalRow(self, self.document.date_range.end, total_amount)
-        self._restore_from_explicit_selection()
+        self._restore_from_explicit_selection(refresh_view=False)
 
     # --- Private
     def _show_account(self, row_index=None, use_to_column=False):

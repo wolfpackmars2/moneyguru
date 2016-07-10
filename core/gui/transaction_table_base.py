@@ -37,12 +37,13 @@ class TransactionSelectionMixin:
         return []
 
     # private
-    def _restore_from_explicit_selection(self):
+    def _restore_from_explicit_selection(self, refresh_view=True):
         if self._explicitly_selected_transactions:
             self.select_transactions(self._explicitly_selected_transactions)
             if not self.selected_indexes:
                 self._select_nearest_date(self._explicitly_selected_transactions[0].date)
-            self.view.update_selection()
+            if refresh_view:
+                self.view.update_selection()
 
     def _select_nearest_date(self, target_date):
         # This method assumes that self is sorted by date

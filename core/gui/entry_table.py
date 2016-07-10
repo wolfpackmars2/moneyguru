@@ -91,7 +91,7 @@ class EntryTable(EntryTableBase):
         self.footer = rows[-1]
         balance_visible = account.is_balance_sheet_account()
         self.columns.set_column_visible('balance', balance_visible)
-        self._restore_from_explicit_selection()
+        self._restore_from_explicit_selection(refresh_view=False)
 
     def _get_current_account(self):
         return self.account

@@ -198,7 +198,7 @@ def test_change_entry_gui_calls(app):
     row.date = '12/07/2008'
     app.clear_gui_calls()
     app.etable.save_edits()
-    app.check_gui_calls(app.etable_gui, ['refresh', 'update_selection', 'show_selected_row'])
+    app.check_gui_calls(app.etable_gui, ['refresh', 'show_selected_row'])
 
 @with_app(app_one_entry)
 def test_change_transfer(app):
