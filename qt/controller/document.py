@@ -106,7 +106,7 @@ class Document(QObject):
     def saveAs(self):
         title = tr("Save As")
         filters = tr("moneyGuru Documents (*.moneyguru)")
-        docpath = str(QFileDialog.getSaveFileName(self.app.mainWindow, title, '', filters))
+        docpath = QFileDialog.getSaveFileName(self.app.mainWindow, title, '', filters)[0]
         if docpath:
             if not docpath.endswith('.moneyguru'):
                 docpath += '.moneyguru'
