@@ -162,7 +162,7 @@ def main():
             else:
                 print("Packaging for Ubuntu")
                 # We only support LTS releases
-                for distribution in ['trusty']:
+                for distribution in ['trusty', 'xenial']:
                     package_debian(distribution)
         else:
             print("Qt packaging only works under Windows or Linux.")
