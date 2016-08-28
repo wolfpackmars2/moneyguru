@@ -1,3 +1,8 @@
+=== 2.10.2 (2016-08-28)
+
+* Fix crash when opening panels on some versions of PyQt. [qt] (#456)
+* Fix misalignment of bold figures in networth/profit sheets. [cocoa] (#459)
+
 === 2.10.1 (2016-07-30)
 
 * Fix crash on exporting. [qt] (#461)
