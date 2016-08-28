@@ -96,7 +96,6 @@ class Panel(QDialog):
     # --- Event Handlers
     def _widgetChanged(self, sender, newvalue):
         modelAttr = self._widget2ModelAttr[sender]
-        print(repr(sender), modelAttr, repr(newvalue))
         setattr(self.model, modelAttr, newvalue)
 
     def comboboxChanged(self):
