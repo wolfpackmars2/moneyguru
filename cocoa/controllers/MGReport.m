@@ -157,13 +157,11 @@ NSArray* convertPaths(NSArray *paths)
         // Totals are italic and dedented
         if (isTotal && level > 0)
         {
-            font = [fontManager convertFont:font toFamily:@"Helvetica"]; // Lucida doesn't have italics
             font = [fontManager convertFont:font toHaveTrait:NSFontItalicTrait];
             [cell setIndent:-[[self view] indentationPerLevel]];
         }
         else
         {
-            font = [fontManager convertFont:font toFamily:@"Lucida Grande"];
             font = [fontManager convertFont:font toNotHaveTrait:NSFontItalicTrait];
             [cell setIndent:0];
         }
