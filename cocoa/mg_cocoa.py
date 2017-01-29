@@ -8,7 +8,7 @@ import logging
 import os.path as op
 from objp.util import pyref, dontwrap, nsrect, nssize, nspoint
 
-from cocoa import install_exception_hook, proxy, install_cocoa_logger
+from cocoa import install_exception_hook, proxy, CocoaHandler
 from cocoa.inter import (PyGUIObject, GUIObjectView, PyTextField, PyTable, PyColumns, PyOutline,
     OutlineView, PySelectableList, PyBaseApp)
 from hscommon.util import nonone
@@ -41,9 +41,9 @@ import urllib.request
 class PyMoneyGuruApp(PyBaseApp):
     def __init__(self):
         LOGGING_LEVEL = logging.DEBUG if proxy.prefValue_('DebugMode') else logging.WARNING
-        logging.basicConfig(level=LOGGING_LEVEL, format='%(levelname)s %(message)s')
+        logging.basicConfig(level=LOGGING_LEVEL, format='%(levelname)s %(message)s',
+                            handlers=[CocoaHandler()])
         install_exception_hook('https://github.com/hsoft/moneyguru/issues')
-        install_cocoa_logger()
         logging.debug('started in debug mode')
         cache_path = op.join(proxy.getCachePath(), 'moneyGuru')
         appdata_path = op.join(proxy.getAppdataPath(), 'moneyGuru')

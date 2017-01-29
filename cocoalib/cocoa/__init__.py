@@ -106,9 +106,6 @@ class CocoaHandler(logging.Handler):
         LOG_BUFFER.append(msg)
         del LOG_BUFFER[:-20]
 
-def install_cocoa_logger():
-    logging.getLogger().addHandler(CocoaHandler())
-
 def patch_threaded_job_performer():
     # _async_run, under cocoa, has to be run within an autorelease pool to prevent leaks.
     # You only need this patch is you use one of CocoaProxy's function (which allocate objc
