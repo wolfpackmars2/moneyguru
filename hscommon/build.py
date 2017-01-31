@@ -415,11 +415,12 @@ def copy_embeddable_python_dylib(dst):
 
 def collect_stdlib_dependencies(script, dest_folder, extra_deps=None):
     sysprefix = sys.prefix # could be a virtualenv
-    real_lib_prefix = sysconfig.get_config_var('LIBDEST')
+    # python 3.6's resources gets installed under a symlink, at least under brew on macOS
+    real_lib_prefix = os.path.realpath(sysconfig.get_config_var('LIBDEST'))
     def is_stdlib_path(path):
         # A module path is only a stdlib path if it's in either sys.prefix or
         # sysconfig.get_config_var('prefix') (the 2 are different if we are in a virtualenv) and if
-        # there's no "site-package in the path.
+        # there's no "site-package" in the path.
         if not path:
             return False
         if 'site-package' in path:
