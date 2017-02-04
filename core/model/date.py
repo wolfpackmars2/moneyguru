@@ -559,6 +559,9 @@ class DateFormat:
         if m_separators:
             self.separator = m_separators.group()
             elements = format.split(self.separator)
+            # macOS (and possibly others) use 'y' to denote the year with a non-zero filled century.
+            # Since there is no % equivalent, we'll just use 'yyyy' here instead.
+            elements = ['yyyy' if x == 'y' else x for x in elements]
             if all(elem in self.ISO2SYS for elem in elements):
                 self.elements = elements
 
@@ -605,4 +608,3 @@ class DateFormat:
         """Returns the format as sys (``%d-%m-%Y``)."""
         repl_elems = [self.ISO2SYS[elem] for elem in self.elements]
         return self.separator.join(repl_elems)
-

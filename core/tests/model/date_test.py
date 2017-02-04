@@ -23,6 +23,8 @@ def test_clean_format():
     eq_(clean_format('EEEE/MMMM/dd/yyyy'), 'dd/MM/yyyy')
     # We force a numerical date format (this means no MMM)
     eq_(clean_format('MMM.yyyy.dd'), 'MM.yyyy.dd')
+    # We substitute 'yyyy' for 'y'
+    eq_(clean_format('y-MM-dd'), 'yyyy-MM-dd')
 
 def test_parse_date():
     eq_(parse_date('11/10/2007', 'dd/MM/yyyy'), date(2007, 10, 11))
