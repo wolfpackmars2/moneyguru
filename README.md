@@ -1,5 +1,7 @@
 # moneyGuru
 
+[![Build Status](https://travis-ci.org/hsoft/moneyguru.svg?branch=master)](https://travis-ci.org/hsoft/moneyguru)
+
 [moneyGuru][moneyguru] is a personal finance management application. With it, you can evaluate your
 financial situation so you can make informed (and thus better) decisions. Most finance applications
 have the same goal, but moneyGuru's difference is in the way it achieves it. Rather than having
