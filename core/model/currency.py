@@ -31,7 +31,7 @@ class Currency:
 
     A ``Currency`` instance is created with either a 3-letter ISO code or with a full name. If it's
     present in the database, an instance will be returned. If not, ``ValueError`` is raised. The
-    easiest way to access a currency instance, however, if by using module-level constants. For
+    easiest way to access a currency instance, however, is by using module-level constants. For
     example::
 
         >>> from hscommon.currency import USD, EUR
@@ -51,6 +51,7 @@ class Currency:
         """Returns the currency with the given code."""
         assert (code is None and name is not None) or (code is not None and name is None)
         if code is not None:
+            code = code.upper()
             try:
                 return cls.by_code[code]
             except KeyError:
@@ -81,6 +82,7 @@ class Currency:
 
         ``priority`` determines the order of currencies in :meth:`all`. Lower priority goes first.
         """
+        code = code.upper()
         if code in Currency.by_code:
             return Currency.by_code[code]
         assert name not in Currency.by_name
@@ -384,10 +386,11 @@ class RatesDB:
                     range_end = cached_start - timedelta(days=1)
             # We don't want to fetch ranges that are too big. It can cause various problems, such
             # as hangs. We prefer to take smaller bites.
-            if (range_end - range_start).days > 30:
-                range_start = range_end - timedelta(days=30)
-            if range_start <= range_end:
-                currencies_and_range.append((currency, range_start, range_end))
+            cur_start = cur_end = range_start
+            while cur_end < range_end:
+                cur_end = min(cur_end + timedelta(days=30), range_end)
+                currencies_and_range.append((currency, cur_start, cur_end))
+                cur_start = cur_end
             self._fetched_ranges[currency] = (start_date, date.today())
         if self.async:
             threading.Thread(target=do).start()

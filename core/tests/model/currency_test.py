@@ -51,8 +51,9 @@ def test_async_and_repeat():
     # If you make an ensure_rates() call and then the same call right after (before the first one
     # is finished, the server will not be hit twice.
     db, log = set_ratedb_for_tests(async=True, slow_down_provider=True)
-    db.ensure_rates(date(2008, 5, 20), ['USD'])
-    db.ensure_rates(date(2008, 5, 20), ['USD'])
+    lastweek = date.today() - timedelta(days=7)
+    db.ensure_rates(lastweek, ['USD'])
+    db.ensure_rates(lastweek, ['USD'])
     jointhreads()
     eq_(len(log), 1)
 
@@ -69,10 +70,12 @@ def test_seek_rate():
 def test_ask_for_rates_in_the_past():
     # If a rate is asked for a date lower than the lowest fetched date, fetch that range.
     db, log = set_ratedb_for_tests()
-    db.ensure_rates(date(2008, 5, 20), ['USD']) # fetch some rates
-    db.ensure_rates(date(2008, 5, 19), ['USD']) # this one should also fetch rates
+    someday = date.today() - timedelta(days=4)
+    db.ensure_rates(someday, ['USD']) # fetch some rates
+    otherday = someday - timedelta(days=6)
+    db.ensure_rates(otherday, ['USD']) # this one should also fetch rates
     eq_(len(log), 2)
-    eq_(log[1], (date(2008, 5, 19), date(2008, 5, 19), 'USD'))
+    eq_(log[1], (otherday, someday - timedelta(days=1), 'USD'))
 
 def test_ask_for_rates_in_the_future(monkeypatch):
     # If a rate is asked for a date equal or higher than the lowest fetched date, fetch cached_end - today.
