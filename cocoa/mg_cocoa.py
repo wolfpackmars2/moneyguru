@@ -89,6 +89,12 @@ class PyMoneyGuruApp(PyBaseApp):
     def setAutoDecimalPlace_(self, value: bool):
         self.model.auto_decimal_place = value
 
+    def dayFirstDateEntry(self) -> bool:
+        return self.model.day_first_date_entry
+
+    def setDayFirstDateEntry_(self, value: bool):
+        self.model.day_first_date_entry = value
+
     def showScheduleScopeDialog(self) -> bool:
         return self.model.show_schedule_scope_dialog
 

@@ -133,11 +133,6 @@ class TestCaseDDMMYYYYWithSlash:
         self.w.type('!')
         self._assert_unchanged()
 
-    def test_type_slash(self):
-        """Typing the separator doesn't do anything because we're not buffering"""
-        self.w.type('/')
-        self._assert_unchanged()
-
     def test_type_t(self, monkeypatch):
         # Typing 't' sets the date to today
         monkeypatch.patch_today(2010, 9, 8)
@@ -293,7 +288,7 @@ class TestCaseDDMMYYYYWithSlashBuffering:
         eq_(self.w.selection, (3, 4))
 
     def test_type_slash(self):
-        """Typing the separator saves the bufferand goes to the month field"""
+        """Typing the separator saves the buffer and goes to the month field"""
         self.w.type('/')
         eq_(self.w.text, '01/06/2008')
         eq_(self.w.date, date(2008, 6, 1))
@@ -400,8 +395,12 @@ class TestCaseDDMMYYYYWithHyphen:
 
 class TestCaseYYYYMMDDWithDot:
     def setup_method(self, method):
+        DateWidget.setDMYEntryOrder(True)
         self.w = DateWidget('yyyy.MM.dd')
         self.w.date = date(2008, 6, 12)
+
+    def teardown_method(self, method):
+        DateWidget.setDMYEntryOrder(False)
 
     def test_left(self):
         """Selects the month which is in the middle"""
@@ -417,9 +416,36 @@ class TestCaseYYYYMMDDWithDot:
         """The day is selected, which is in last position"""
         eq_(self.w.selection, (8, 9))
 
+    def test_type(self):
+        """Enter an partial (abbreviated) date.
+        The period will move the selection from the day field to the month field"""
+        for ch in '2.3':
+            self.w.type(ch)
+        eq_(self.w.text, '2008.3 .02')
+
     def test_text(self):
         """Text is the formatted date"""
         eq_(self.w.text, '2008.06.12')
+
+
+class TestCaseYYYYMMDDWithHyphen:
+    def setup_method(self, method):
+        self.w = DateWidget('yyyy-MM-dd')
+        self.w.date = date(2008, 6, 12)
+
+    def test_selection(self):
+        """The year is selected, which is in first position"""
+        eq_(self.w.selection, (0, 3))
+
+    def test_text(self):
+        """Text is the formatted date"""
+        eq_(self.w.text, '2008-06-12')
+
+    def test_type(self):
+        """Enter an (abbreviated) date with each hyphen moving forward to the next subfield"""
+        for ch in '7-5-11':
+            self.w.type(ch)
+        eq_(self.w.text, '2007-05-11')
 
 
 class TestCaseDDMMYYYYOnJanuaryFocusOnMonth:
@@ -572,7 +598,8 @@ class TestCaseInvalidBuffer:
         eq_(self.w.text, '12/06/2008')
 
     def test_type_sep(self):
-        # There was a crash when a sep-caused _flush_buffer would be called with an invalid value
+        # Move to the next subfield and insert a '1'
         self.w.type('/')
-        eq_(self.w.text, '0 /06/2008') # don't do anything (stay on DAY)
+        self.w.type('1')
+        eq_(self.w.text, '12/1 /2008')
 

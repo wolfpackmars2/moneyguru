@@ -1,7 +1,7 @@
 ownerclass = 'MGAppDelegate'
 ownerimport = 'MGAppDelegate.h'
 
-result = Window(442, 193, "moneyGuru Preferences")
+result = Window(442, 213, "moneyGuru Preferences")
 autosaveIntervalLabel = Label(result, "Auto-save interval:")
 autosaveIntervalField = TextField(result)
 autosaveIntervalLabel2 = Label(result, "minute(s) (0 for none)")
@@ -12,11 +12,13 @@ printFontSizeLabel = Label(result, "Printing font size:")
 printFontSizeCombo = Combobox(result, items=fontsizes)
 scopeDialogBox = Checkbox(result, "Show scope dialog when modifying a scheduled transaction")
 decimalPlacesBox = Checkbox(result, "Automatically place decimals when typing")
+dateEntryOrderBox = Checkbox(result, "Enter dates in day → month → year order")
 updatesBox = Checkbox(result, "Automatically check for updates")
 debugBox = Checkbox(result, "Debug mode (restart required)")
 
 owner.autoSaveIntervalField = autosaveIntervalField
 owner.autoDecimalPlaceButton = decimalPlacesBox
+owner.dateEntryOrderButton = dateEntryOrderBox
 
 result.canMinimize = result.canResize = False
 defaultFont = Font('Lucida Grande', 12)
@@ -24,7 +26,7 @@ for label in [autosaveIntervalLabel, fontSizeLabel, printFontSizeLabel]:
     label.alignment = TextAlignment.Right
     label.width = 175
     label.font = defaultFont
-for view in [autosaveIntervalLabel2, scopeDialogBox, decimalPlacesBox, updatesBox, debugBox]:
+for view in [autosaveIntervalLabel2, scopeDialogBox, decimalPlacesBox, dateEntryOrderBox, updatesBox, debugBox]:
     view.font = defaultFont
 autosaveIntervalField.formatter = NumberFormatter(NumberStyle.Decimal)
 autosaveIntervalField.formatter.maximumFractionDigits = 0
@@ -44,6 +46,6 @@ layout = VHLayout([
     ], vmargin=4, hfillers={autosaveIntervalLabel2, })
 layout.moveTo(Pack.UpperLeft)
 layout.fill(Pack.Right)
-layout2 = VLayout([scopeDialogBox, decimalPlacesBox, updatesBox, debugBox], margin=6)
+layout2 = VLayout([scopeDialogBox, decimalPlacesBox, dateEntryOrderBox, updatesBox, debugBox], margin=6)
 layout2.moveNextTo(layout, Pack.Below, margin=8)
 layout2.fill(Pack.Right)

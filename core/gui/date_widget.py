@@ -21,9 +21,17 @@ FMT_ELEM = {
     'M': MONTH,
     'yyyy': YEAR,
     'yy': YEAR,
+    'y': YEAR,
 }
 
 class DateWidget:
+    # Should dates be entered in day -> month -> year order instead of just left-to-right order?
+    _dmyOrder = False
+
+    @classmethod
+    def setDMYEntryOrder(cls, dmyOrder):
+        cls._dmyOrder = dmyOrder
+
     def __init__(self, format):
         if not isinstance(format, DateFormat):
             format = DateFormat(format)
@@ -31,7 +39,7 @@ class DateWidget:
         fmt_elems = format.elements
         self._order = [FMT_ELEM[elem] for elem in fmt_elems]
         self._elem2fmt = dict(zip(self._order, fmt_elems))
-        self._selected = DAY
+        self._selected = None
         self._buffer = ''
         self._day = 0
         self._month = 0
@@ -39,8 +47,20 @@ class DateWidget:
         self.date = date.today()
 
     # --- Private
+    @property
+    def _selected(self):
+        return self.__selected or (DAY if self._dmyOrder else self._order[0])
+
+    @_selected.setter
+    def _selected(self, value):
+        self.__selected = value
+
     def _next(self):
-        if self._selected == DAY:
+        if not self._dmyOrder:
+            # right() will wrap but we shouldn't do that
+            if self._selected != self._order[2]:
+                self.right()
+        elif self._selected == DAY:
             self._selected = MONTH
         elif self._selected == MONTH:
             self._selected = YEAR
@@ -92,7 +112,7 @@ class DateWidget:
     def exit(self):
         self._flush_buffer(force=True)
         self.date # will correct the date
-        self._selected = DAY
+        self._selected = None
 
     def increase(self):
         self._increase_or_decrease(increase=True)
@@ -109,8 +129,8 @@ class DateWidget:
 
     def type(self, stuff):
         if stuff == self._format.separator:
-            if self._flush_buffer():
-                self._next()
+            self._flush_buffer()
+            self._next()
             return
         if stuff in {'t', 'T'}:
             self._buffer = ''

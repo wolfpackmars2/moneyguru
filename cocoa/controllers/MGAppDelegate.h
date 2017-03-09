@@ -17,6 +17,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
     NSWindow *preferencesPanel;
     NSTextField *autoSaveIntervalField;
     NSButton *autoDecimalPlaceButton;
+    NSButton *dateEntryOrderButton;
     SUUpdater *updater;
     NSMenuItem *customDateRangeItem1;
     NSMenuItem *customDateRangeItem2;
@@ -30,6 +31,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @property (readwrite, retain) NSWindow *preferencesPanel;
 @property (readwrite, retain) NSTextField *autoSaveIntervalField;
 @property (readwrite, retain) NSButton *autoDecimalPlaceButton;
+@property (readwrite, retain) NSButton *dateEntryOrderButton;
 @property (readwrite, retain) SUUpdater *updater;
 @property (readwrite, retain) NSMenuItem *customDateRangeItem1;
 @property (readwrite, retain) NSMenuItem *customDateRangeItem2;

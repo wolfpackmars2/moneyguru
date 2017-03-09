@@ -20,6 +20,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
 @synthesize preferencesPanel;
 @synthesize autoSaveIntervalField;
 @synthesize autoDecimalPlaceButton;
+@synthesize dateEntryOrderButton;
 @synthesize updater;
 @synthesize customDateRangeItem1;
 @synthesize customDateRangeItem2;
@@ -178,6 +179,7 @@ http://www.gnu.org/licenses/gpl-3.0.html
     // binding cannot be done in the NIB, it has to be done manually here.
     [autoSaveIntervalField bind:@"value" toObject:self withKeyPath:@"model.autoSaveInterval" options:nil];
     [autoDecimalPlaceButton bind:@"value" toObject:self withKeyPath:@"model.autoDecimalPlace" options:nil];
+    [dateEntryOrderButton bind:@"value" toObject:self withKeyPath:@"model.dayFirstDateEntry" options:nil];
 }
 
 - (void)applicationWillTerminate:(NSNotification *)aNotification

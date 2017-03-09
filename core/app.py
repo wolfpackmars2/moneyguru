@@ -17,6 +17,8 @@ import importlib
 from hscommon.notify import Broadcaster
 from hscommon.util import nonone
 
+from .gui.date_widget import DateWidget
+
 from .const import DATE_FORMAT_FOR_PREFERENCES
 from .model import currency
 from .model.amount import parse_amount, format_amount
@@ -36,6 +38,7 @@ class PreferenceNames:
     HadFirstLaunch = 'HadFirstLaunch'
     AutoSaveInterval = 'AutoSaveInterval'
     AutoDecimalPlace = 'AutoDecimalPlace'
+    DayFirstDateEntry = 'DayFirstDateEntry'
     CustomRanges = 'CustomRanges'
     ShowScheduleScopeDialog = 'ShowScheduleScopeDialog'
     DisabledCorePlugins = 'DisabledCorePlugins'
@@ -167,6 +170,7 @@ class Application(Broadcaster):
         self._autosave_timer = None
         self._autosave_interval = self.get_default(PreferenceNames.AutoSaveInterval, 10)
         self._auto_decimal_place = self.get_default(PreferenceNames.AutoDecimalPlace, False)
+        self._day_first_date_entry = self.get_default(PreferenceNames.DayFirstDateEntry, False)
         self._show_schedule_scope_dialog = self.get_default(PreferenceNames.ShowScheduleScopeDialog, True)
         self.saved_custom_ranges = [None] * 3
         self._load_custom_ranges()
@@ -180,6 +184,7 @@ class Application(Broadcaster):
         self._load_user_plugins()
         self._hook_currency_plugins()
         self._update_autosave_timer()
+        self._update_date_entry_order()
 
     # --- Private
     def _autosave_all_documents(self):
@@ -196,6 +201,9 @@ class Application(Broadcaster):
             self._autosave_timer.start()
         else:
             self._autosave_timer = None
+
+    def _update_date_entry_order(self):
+        DateWidget.setDMYEntryOrder(self._day_first_date_entry)
 
     def _load_custom_ranges(self):
         custom_ranges = self.get_default(PreferenceNames.CustomRanges)
@@ -433,6 +441,21 @@ class Application(Broadcaster):
             return
         self._auto_decimal_place = value
         self.set_default(PreferenceNames.AutoDecimalPlace, value)
+
+    @property
+    def day_first_date_entry(self):
+        """*get/set bool*. Whether the user wants to enter dates in day -> month -> year order or
+        the natural left-to-right order in the user's date format.
+        """
+        return self._day_first_date_entry
+
+    @day_first_date_entry.setter
+    def day_first_date_entry(self, value):
+        if value == self._day_first_date_entry:
+            return
+        self._day_first_date_entry = value
+        self.set_default(PreferenceNames.DayFirstDateEntry, value)
+        self._update_date_entry_order()
 
     @property
     def show_schedule_scope_dialog(self):

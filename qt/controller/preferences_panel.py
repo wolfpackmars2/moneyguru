@@ -67,6 +67,8 @@ class PreferencesPanel(QDialog):
         self.verticalLayout.addWidget(self.scopeDialogCheckBox)
         self.autoDecimalPlaceCheckBox = QCheckBox(tr("Automatically place decimals when typing"), self)
         self.verticalLayout.addWidget(self.autoDecimalPlaceCheckBox)
+        self.dateEntryBox = QCheckBox(tr("Enter dates in day → month → year order"), self)
+        self.verticalLayout.addWidget(self.dateEntryBox)
         self.debugModeCheckBox = QCheckBox(tr("Debug mode (restart required)"), self)
         self.verticalLayout.addWidget(self.debugModeCheckBox)
         self.verticalLayout.addItem(verticalSpacer())
@@ -82,6 +84,7 @@ class PreferencesPanel(QDialog):
         self.fontSizeSpinBox.setValue(self.app.prefs.tableFontSize)
         self.scopeDialogCheckBox.setChecked(appm.show_schedule_scope_dialog)
         self.autoDecimalPlaceCheckBox.setChecked(appm.auto_decimal_place)
+        self.dateEntryBox.setChecked(appm.day_first_date_entry)
         self.debugModeCheckBox.setChecked(self.app.prefs.debugMode)
         try:
             langindex = SUPPORTED_LANGUAGES.index(self.app.prefs.language)
@@ -99,6 +102,7 @@ class PreferencesPanel(QDialog):
         self.app.prefs.tableFontSize = self.fontSizeSpinBox.value()
         appm.show_schedule_scope_dialog = self.scopeDialogCheckBox.isChecked()
         appm.auto_decimal_place = self.autoDecimalPlaceCheckBox.isChecked()
+        appm.day_first_date_entry = self.dateEntryBox.isChecked()
         self.app.prefs.debugMode = self.debugModeCheckBox.isChecked()
         lang = SUPPORTED_LANGUAGES[self.languageComboBox.currentIndex()]
         oldlang = self.app.prefs.language
