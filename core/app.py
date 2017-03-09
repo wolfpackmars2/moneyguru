@@ -170,7 +170,7 @@ class Application(Broadcaster):
         self._autosave_timer = None
         self._autosave_interval = self.get_default(PreferenceNames.AutoSaveInterval, 10)
         self._auto_decimal_place = self.get_default(PreferenceNames.AutoDecimalPlace, False)
-        self._day_first_date_entry = self.get_default(PreferenceNames.DayFirstDateEntry, False)
+        self._day_first_date_entry = self.get_default(PreferenceNames.DayFirstDateEntry, True)
         self._show_schedule_scope_dialog = self.get_default(PreferenceNames.ShowScheduleScopeDialog, True)
         self.saved_custom_ranges = [None] * 3
         self._load_custom_ranges()
