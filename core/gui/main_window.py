@@ -390,12 +390,13 @@ class MainWindow(Repeater, GUIObject):
     def move_up(self):
         self._perform_if_possible('move_up')
 
-    def move_pane(self, pane_index, dest_index):
+    def move_pane(self, pane_index, dest_index, refresh_panes=True):
         pane = self.panes[pane_index]
         del self.panes[pane_index]
         self.panes.insert(dest_index, pane)
         self.current_pane_index = self.panes.index(self._current_pane)
-        self.view.refresh_panes()
+        if refresh_panes:
+            self.view.refresh_panes()
 
     def navigate_back(self):
         self._perform_if_possible('navigate_back')

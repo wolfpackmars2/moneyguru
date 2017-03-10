@@ -632,7 +632,9 @@ class MainWindow(QMainWindow):
         self.model.close_pane(index)
 
     def tabMoved(self, fromIndex, toIndex):
-        self.model.move_pane(fromIndex, toIndex)
+        # We don't refresh panes because tabMoved is apparently now called *during* drag operations.
+        # If we start a full pane refresh during a drag operation, we segfault.
+        self.model.move_pane(fromIndex, toIndex, refresh_panes=False)
 
     # --- model --> view
     def change_current_pane(self):
