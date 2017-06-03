@@ -618,8 +618,9 @@ class MainWindow(QMainWindow):
 
     # --- Other Signals
     def currentTabChanged(self, index):
-        self.model.current_pane_index = index
-        self._setTabIndex(index)
+        if not index >= len(self.model.panes):
+            self.model.current_pane_index = index
+            self._setTabIndex(index)
 
     def documentPathChanged(self):
         if self.doc.documentPath:
@@ -634,7 +635,8 @@ class MainWindow(QMainWindow):
     def tabMoved(self, fromIndex, toIndex):
         # We don't refresh panes because tabMoved is apparently now called *during* drag operations.
         # If we start a full pane refresh during a drag operation, we segfault.
-        self.model.move_pane(fromIndex, toIndex, refresh_panes=False)
+        if not fromIndex >= len(self.model.panes):
+            self.model.move_pane(fromIndex, toIndex, refresh_panes=False)
 
     # --- model --> view
     def change_current_pane(self):
